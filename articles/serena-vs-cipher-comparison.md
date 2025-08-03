@@ -1,5 +1,5 @@
 ---
-title: "あなたのAI開発、もっと賢くしませんか？ Serena vs Cipher 徹底比較【前編】"
+title: "Claude Codeで選ぶMCPサーバ：SerenaとCipher、理解か記憶か"
 emoji: "🤔"
 type: "tech"
 topics: ["AI", "開発環境", "CLI", "VSCode", "OSS"]
