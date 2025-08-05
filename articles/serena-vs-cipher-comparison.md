@@ -153,9 +153,9 @@ uvx --from git+https://github.com/oraios/serena serena project index
 ※ `/path/to/your/serena` は実際のクローン先パスに置き換えてください（例：`/home/user/tools/serena`）。
 
 **設定が失敗する場合のトラブルシューティング：**
-- パスが正しいか確認：`ls -la /path/to/your/serena`
+- パスが正しいか確認：`ls -la /home/user/tools/serena`
 - uvコマンドが利用可能か確認：`uv --version`
-- MCPサーバが起動するか確認：`uv run --directory /path/to/your/serena serena-mcp-server --help`
+- MCPサーバが起動するか確認：`uv run --directory /home/user/tools/serena serena-mcp-server --help`
 
 ### 5.4 よくあるつまずき
 - **初回解析が長い**：大きいリポジトリは待つ。最小ディレクトリから試す。
