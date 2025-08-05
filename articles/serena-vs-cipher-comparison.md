@@ -221,7 +221,7 @@ curl -m 10 http://localhost:3000/health
 - **ポート競合**：他常駐ツールと重なる場合はポートを明示。
   - 解決策：`cipher --mode api --port 3001` のようにポート指定
 - **初回インデックス時間**：大規模リポジトリは待つ。最初は小さく。
-  - 解決策：`cipher index --directory ./src/components` のように範囲を限定
+  - 解決策：`cipher --mode index --directory ./src/components` のように範囲を限定
 
 ### Cipherのコツ（メモリ活用例）
 **メモリレイヤーの仕組み：**
