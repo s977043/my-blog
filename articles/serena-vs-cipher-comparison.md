@@ -159,7 +159,7 @@ uvx --from git+https://github.com/oraios/serena serena project index
 
 ### 5.4 よくあるつまずき
 - **初回解析が長い**：大きいリポジトリは待つ。最小ディレクトリから試す。
-  - 解決策：`serena project index --directory ./src` のように範囲を限定
+  - 解決策：`uvx --from git+https://github.com/oraios/serena serena project index --directory ./src` のように範囲を限定
 - **言語サーバ依存**：対象言語の LSP の導入状況を確認。
   - 解決策：言語別にLSPをインストール（例：TypeScript なら `npm install -g typescript-language-server`）
 - **無駄トークン**：質問を具体化（ファイル/関数名を明示）→無駄を削減。
