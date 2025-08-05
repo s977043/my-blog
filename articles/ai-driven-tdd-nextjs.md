@@ -1,99 +1,263 @@
 ---
-title: "OSS記憶保持ツールと実践する「AI駆動テスト開発」〜AIをプロジェクトの専門家にする方法〜"
-emoji: "🤖"
+title: "AI-driven TDD × Next.js：小さく速く回す赤→緑→整えるの最小ループ"
+emoji: "🧭"
 type: "tech"
-topics: ["Nextjs", "TypeScript", "Jest", "AI", "TDD"]
-published: false # 公開する準備ができたら true にする
+topics: ["Next.js", "TypeScript", "Jest", "Playwright", "TDD", "AI"]
+published: false
 ---
 
-OSS記憶保持ツールと実践する「AI駆動テスト開発」〜AIをプロジェクトの専門家にする方法〜
-はじめに
-「このAI、さっき伝えたこともう忘れてる…」
+:::message
+**あらすじ**
 
-AIを開発に利用したことがある方なら、一度はこう感じたことがあるのではないでしょうか。AIアシスタントは強力ですが、対話の文脈をすぐに忘れてしまうため、プロジェクト全体のパートナーとして活用するには限界がありました。
+- まず **Red**（失敗するテスト）。次に **Green**（最小実装）。最後に **Refactor**。  
+- AI は「テスト雛形」「意図の要約」「実装候補」を出す係。**人が境界を決める**。  
+- 本稿は **Next.js / TypeScript** 前提で、**Jest + Testing Library + Playwright** を軸に最小ループだけに絞る。
+:::
 
-この課題を解決するため、本プロジェクトではAIにプロジェクトの仕様や構造を記憶させるオープンソースの記憶保持ツールCipherを導入。AIを「自己学習」させ、プロジェクトの専門家へと育てることで、AI駆動テスト開発（AITDD） のワークフローを構築しました。
+## はじめに
 
-この記事では、OSSを活用してAIの記憶問題をどう解決し、それによって開発体験がどう変わったのかを共有します。
+AI は賢い。けれど、文脈は薄れやすい。  
+意図をテストに残し、変更を小さく刻む。すると、会話も差分も穏やかになる。
 
-開発したリポジトリはこちらです。
-https://github.com/s977043/digital-omikuji-aitdd
+ここでは **AI-driven TDD（AITDD）** を Next.js で回すための一式を最小構成でまとめる。  
+大事なことはひとつ。**テストが先、実装は最小、リファクタは緑のまま。**
 
-本プロジェクトの核心：なぜ「自己学習」が重要なのか？
-従来のAI支援開発では、開発者がその都度AIにコンテキスト（前提情報）を与える必要がありました。これは非常に手間がかかり、AIの応答も表層的なものになりがちです。
+---
 
-そこで私たちは、この課題を解決するオープンソースの記憶保持ツール「Cipher」を導入しました。
+## 1. AITDD の最小ループ
 
-記憶保持ツール「Cipher」の役割
-Cipherは、AIに長期的な記憶を持たせるためのプロトコルサーバーとして機能するOSSです。
+### 1-1. Red（テスト先行）
+- 1 機能に絞って **テストを 1 本** 書く（ユニット or コンポーネント）。  
+- まず **落ちること** を確認する。失敗理由が記事化できるくらい明確だとよい。  
+- AI へ依頼する時は、**対象・前提・期待値** を短く渡す。
 
-役割: プロジェクトの仕様書、ファイル構造、過去の決定事項などをAIに記憶させる。
+### 1-2. Green（最小実装）
+- テストを通すための **最小限の差分** のみ。  
+- 余計な抽象化はしない。最適化もしない。  
+- もう一度流して、**緑** を確認。
 
-効果: 開発のどの段階でも、AIはプロジェクト全体の文脈を理解した上で応答を返す。これにより、AIは単なるツールから、プロジェクトと共に成長するパートナーへと進化します。
+### 1-3. Refactor（整える）
+- 命名、分割、依存の位置。**次の変更が楽** になるように。  
+- テストは常に緑のまま。  
+- 迷ったら AI に代替案とトレードオフを 2〜3 行で出させる。
 
-この「自己学習」能力こそが、効率的なAITDDを実現するための鍵となります。
+---
 
-AI駆動テスト開発（AITDD）への応用
-自己学習によってプロジェクトの「専門家」となったAIは、TDDのプロセスで絶大な効果を発揮します。
+## 2. Next.js 前提（最小の土台）
 
-Red: 仕様を深く理解しているため、エッジケースまで考慮した精度の高いテストコードを生成できる。
+- App Router / React 18 / TypeScript  
+- テスト：**Jest + @testing-library/react**（ユニット＆コンポーネント）  
+- E2E：**Playwright**（任意）  
+- CI：GitHub Actions など（後述のジョブ例）
 
-Green: 生成されたテストの意図を汲み取り、仕様に沿ったプロダクションコードを的確に実装できる。
+> この記事は **手元の既存プロジェクトで実施** を想定。リポジトリ取得の手順は載せません。
 
-Refactor: プロジェクト全体の設計思想を踏まえた、質の高いリファクタリング案を提示できる。
+---
 
-自己学習AIとの開発ワークフロー
-それでは、実際にどのように開発を進めたかを見ていきましょう。
+## 3. ユニットテストの型（formatPrice の例）
 
-Step 1: 環境構築と役割定義
-まず、プロジェクトの骨格を定義します。この時点から、AIに学習させるためのドキュメントを意識して作成することが重要です。
+**仕様**  
+- 入力：`number`  
+- 出力：`"¥1,234"` のような JPY 表記（負数は `-¥...`）
 
-# リポジトリをクローン
-gh repo clone s977043/digital-omikuji-aitdd
-cd digital-omikuji-aitdd
+**テスト例（Jest + RTL）**
+```ts
+// __tests__/formatPrice.test.ts
+import { formatPrice } from '@/utils/formatPrice';
 
-特にdocs/SPEC.md（仕様書）は、AIの教科書となる最も重要なファイルです。
+describe('formatPrice', () => {
+  test('正の数をJPY表記に整形する', () => {
+    expect(formatPrice(1234)).toBe('¥1,234');
+  });
 
-Step 2: AIにプロジェクトを「自己学習」させる
-ここが本ワークフローの最重要ステップです。OSSツールであるCipherサーバーを起動し、Gemini CLIを通じてプロジェクトの情報をAIに記憶させます。
+  test('負の数は先頭にマイナスを付ける', () => {
+    expect(formatPrice(-50)).toBe('-¥50');
+  });
+});
+```
 
-# 記憶調整プロトコルサーバーを起動
-./run_cipher_server.sh &
+**（まずは落とす）最小実装の雛形**
+```ts
+// utils/formatPrice.ts
+export const formatPrice = (value: number) => {
+  // あえて未実装 or バグ実装でスタート
+  return String(value);
+};
+```
 
-# geminiコマンドでプロジェクトの文脈をAIに記憶させる
-gemini "このプロジェクトの全体構造と docs/SPEC.md の内容を分析し、今後の開発のために記憶してください。これはPythonで実装するおみくじアプリです。"
+> ここで一度テストを流し、**赤** を確認してから通す。  
+> 通したら、命名や責務の分割など **軽いリファクタ** を 1 つだけ。
 
-このコマンド一つで、AIはプロジェクトの専属アシスタントとなり、以降の対話の質が劇的に向上します。
+---
 
-Step 3: AITDDサイクルで開発を加速
-AIがプロジェクトを完全に理解した状態で、TDDサイクルを回します。
+## 4. コンポーネントテストの型（SearchBox の例）
 
-1. Red (失敗するテストの生成)
+**要件**
+- placeholder: `"Search…"`  
+- 入力 → **400ms** 後に `onSearch` が 1 回呼ばれる  
+- 空文字は呼ばれない
 
-👤 User's Prompt (to Gemini CLI)
-docs/SPEC.md に基づいて、omikuji.py に実装する draw_omikuji 関数のテストを pytest で書いて。
+**テスト例（Jest + RTL）**
+```tsx
+// __tests__/SearchBox.test.tsx
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import SearchBox from '@/components/SearchBox';
 
-2. Green (テストをパスするコードの生成)
+jest.useFakeTimers();
 
-👤 User's Prompt (to Gemini CLI)
-先ほどのテストをパスするための draw_omikuji 関数を実装して。
+test('入力から400ms後にonSearchが呼ばれる（空文字は呼ばれない）', async () => {
+  const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+  const onSearch = jest.fn();
+  render(<SearchBox onSearch={onSearch} />);
 
-自己学習のおかげで、プロンプトは非常にシンプルになります。AIは仕様書の内容を覚えているため、「どの運勢を返すか」などを細かく指示する必要はありません。
+  const input = screen.getByPlaceholderText('Search…');
 
-Step 4: AIと共にリファクタリング
-最後に、AIにコードの改善案を求めます。
+  await user.type(input, 'nextjs');
+  jest.advanceTimersByTime(400);
+  expect(onSearch).toHaveBeenCalledWith('nextjs');
 
-👤 User's Prompt (to Gemini CLI)
-omikuji.py のコードを、よりクリーンで効率的な形にリファクタリングする提案をしてください。
+  // 空文字
+  await user.clear(input);
+  jest.advanceTimersByTime(400);
+  expect(onSearch).toHaveBeenCalledTimes(1);
+});
+```
 
-ここでもAIはプロジェクトの全体像を把握しているため、場当たり的ではない、一貫性のある提案をしてくれます。
+> デバウンスはテストで時間を進めるのが安定。`useFakeTimers` を忘れない。
 
-まとめ：AI開発は「育てる」時代へ
-本プロジェクトを通じて、AIは単に「使う」だけの存在から、プロジェクトの文脈を「学習」させ「育てる」パートナーへと変貌を遂げました。
+---
 
-適切なOSS（今回はCipher）を見つけ出し、導入することで、AIの弱点であった記憶問題を解決し、その能力を最大限に引き出すことができました。
+## 5. E2E を足すなら（任意・最低限）
 
-AIに定型作業や思考の補助を任せ、私たちはより創造的な作業や、どのツールをどう活用するかといったアーキテクチャの意思決定に集中する。この「人間とAIの新しい関係性」こそが、これからのソフトウェア開発のスタンダードになっていくのかもしれません。
+**例：/products の検索で件数が更新される**
+```ts
+// e2e/products.spec.ts
+import { test, expect } from '@playwright/test';
 
-本プロジェクトの詳細はこちらのリポジトリでご覧いただけます。
-https://github.com/s977043/digital-omikuji-aitdd
+test('/products で検索すると件数が更新される', async ({ page }) => {
+  await page.goto('/products');
+  await page.getByPlaceholder('Search…').fill('shirt');
+  await page.keyboard.press('Enter');
+  await expect(page.getByTestId('result-count')).toHaveText(/^\d+ 件$/);
+});
+```
+
+> 安定化のコツ：`data-testid` を固定、遷移待ちは `expect` で吸収、`test.retry(2)` も検討。
+
+---
+
+## 6. AI への依頼テンプレ（雛形だけ）
+
+**ユニット（テスト→最小実装）**
+```
+役割: Next.js/TS の TDD 支援
+目的: 指定関数のテストを 1 本作り、まず失敗させたい。次に最小実装を提案してほしい。
+
+対象: utils/formatPrice.ts
+要件:
+- 入力 number → "¥1,234" 形式で出力
+- 負数は "-¥..." とする
+
+出力:
+1) テストファイル全文（Jest + RTL）
+2) なぜ失敗するか（1〜2行）
+3) 通すための最小実装の差分
+4) 次に書くテスト候補（1行×3）
+```
+
+**コンポーネント（debounce）**
+```
+役割: React コンポーネントのテスト設計者
+対象: <SearchBox />
+要件:
+- placeholder "Search…"
+- 入力→400ms後に onSearch 1 回（空文字は呼ばれない）
+
+出力:
+1) RTLテスト全文
+2) fakeTimers を使った安定化のポイントを1行
+```
+
+**E2E（任意）**
+```
+役割: Playwright の設計者
+対象: /products 検索 → 件数表示
+出力:
+1) e2eテスト全文
+2) 安定化（selector/data-testid/retry）の工夫を2行
+```
+
+---
+
+## 7. CI の最小ジョブ（例）
+
+```yaml
+# .github/workflows/ci.yml
+name: CI
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - run: pnpm install --frozen-lockfile
+      - name: Unit / Component
+        run: pnpm jest --runInBand
+      - name: E2E (optional)
+        run: |
+          npx playwright install --with-deps
+          pnpm exec playwright test
+```
+
+> E2E は PR ラベルで分岐するのも手（重いときはオプション化）。
+
+---
+
+## 8. よくあるつまずき
+
+- **AI が先に実装を書き始める**  
+  → プロンプトで「まずテスト。実装は赤確認の後」と明記。
+
+- **巨大な一括差分**  
+  → 1 テスト = 1 変更。PR は ±300 行以内を目安に。
+
+- **E2E が不安定**  
+  → `data-testid` を固定、遷移待ちは `expect` 側で吸収、`retry` を併用。
+
+- **“正しさ”が曖昧**  
+  → 期待値を **具体例** で渡す（入出力を 2〜3 個）。
+
+---
+
+## おわりに
+
+AI を“使う”だけでなく、**育てる**。  
+テストとプロンプトは、そのための型だ。
+
+- **今日やる 3 手**  
+  1) 10〜30 分で終わる小粒な機能を選ぶ  
+  2) テストを 1 本だけ書き、まず **赤** を出す  
+  3) 緑に通し、軽いリファクタを 1 つ
+
+あとは繰り返し。ループが小さいほど、速くなる。  
+
+---
+
+## 参考リンク
+
+- Jest（公式）: https://jestjs.io/
+- Testing Library（公式）: https://testing-library.com/docs/
+- Playwright（公式）: https://playwright.dev/
+- GitHub Actions（公式）: https://docs.github.com/actions
