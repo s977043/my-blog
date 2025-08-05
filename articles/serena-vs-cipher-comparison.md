@@ -30,7 +30,7 @@ AIによるコーディング支援が広がる一方で、課題はいつも「
 ## 1. はじめに：AIはプロジェクトの「文脈」をどこまで掴めるか？
 
 AI コーディング支援の弱点は、しばしば**文脈不足**にあります。  
-「関係のないファイルに手を入れてしまう」「会話が変わると前提を忘れる」。心当たりがあるはずです。
+「関係のないファイルに手を入れてしまう」「会話が変わると前提を忘れる」という経験があるはずです。
 
 この壁を崩す鍵が **MCP（Model Context Protocol）** と、その上で動く OSS ツール群。  
 本シリーズでは、注目度の高い **Serena** と **Cipher** を取り上げ、実務の観点で比較します。
@@ -110,7 +110,7 @@ AI コーディング支援の弱点は、しばしば**文脈不足**にあり�
 | スケール | 小〜中規模に好相性 | 中〜大規模に強い |
 | 典型ユースケース | 個人/短期/CLI派 | IDE派/チーム/長期運用 |
 
-> 迷ったら——**軽く試す：Serena** → **継続運用：Cipher**。
+> 迷ったら：**軽く試す：Serena** → **継続運用：Cipher**。
 
 ## 5. 「Serena」のメリット・デメリット
 
@@ -130,6 +130,7 @@ AI コーディング支援の弱点は、しばしば**文脈不足**にあり�
 
 ```bash
 # 例：uv を使う場合（公式の案内に準拠）
+# ⚠️ セキュリティ注意：実行前にスクリプト内容を確認することを推奨
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Serena を取得
@@ -145,6 +146,7 @@ cp serena_config.template.yml serena_config.yml
 ```
 
 ### 大規模は初回が重くなりがち。事前に **index** すると体感が変わります。
+
 ```bash
 uvx --from git+https://github.com/oraios/serena serena project index
 ```
@@ -160,15 +162,35 @@ uvx --from git+https://github.com/oraios/serena serena project index
   }
 }
 ```
-※ `/path/to/your/serena` は実際のクローン先パスに置き換えてください。
+※ `/path/to/your/serena` は実際のクローン先パスに置き換えてください（例：`/home/user/tools/serena`）。
+
+**設定が失敗する場合のトラブルシューティング：**
+- パスが正しいか確認：`ls -la /home/user/tools/serena`
+- uvコマンドが利用可能か確認：`uv --version`
+- MCPサーバが起動するか確認：`uv run --directory /home/user/tools/serena serena-mcp-server --help`
 
 ### 5.4 よくあるつまずき
-- 初回解析が長い：大きいリポジトリは待つ。最小ディレクトリから試す。
-- 言語サーバ依存：対象言語の LSP の導入状況を確認。
-- 無駄トークン：質問を具体化（ファイル/関数名を明示）→無駄を削減。
+- **初回解析が長い**：大きいリポジトリは待つ。最小ディレクトリから試す。
+  - 解決策：`uvx --from git+https://github.com/oraios/serena serena project index --directory ./src` のように範囲を限定
+- **言語サーバ依存**：対象言語の LSP の導入状況を確認。
+  - 解決策：言語別にLSPをインストール（例：TypeScript なら `npm install -g typescript-language-server`）
+- **無駄トークン**：質問を具体化（ファイル/関数名を明示）→無駄を削減。
+  - 解決策：「`UserService.js` の `authenticate` メソッドにログイン履歴機能を追加」のように具体化
 
-### Serenaのコツ（短冊）
-- “1タスク=1プロンプト”。範囲を絞る。
+### Serenaのコツ（プロンプト例）
+**良い例：**
+```
+`UserService.js` の `authenticate` メソッドに、ログイン失敗3回でアカウントロック機能を追加。
+既存のバリデーション処理は保持し、新たに `failureCount` と `lockedUntil` フィールドを使用。
+```
+
+**悪い例：**
+```
+ログイン機能を改善してください。
+```
+
+**コツ：**
+- "1タスク=1プロンプト"。範囲を絞る。
 - ファイル/シンボル名を入れる。
 - 変更の狙い（目的・制約）を先に言う。
 
@@ -197,18 +219,42 @@ cipher --mode mcp         # MCPサーバ
 
 # Cipherの動作確認
 cipher --mode api &
-curl http://localhost:3000/health
+
+# プロセス確認
+ps aux | grep cipher
+
+# ヘルスチェック（タイムアウト付き）
+curl -m 10 http://localhost:3000/health
 ```
 
 ## 6.4 よくあるつまずき
-- .env の鍵漏れ：必ず .env を .gitignore。共有は Vault 系で。
-- ポート競合：他常駐ツールと重なる場合はポートを明示。
-- 初回インデックス時間：大規模リポジトリは待つ。最初は小さく。
+- **.env の鍵漏れ**：必ず .env を .gitignore。共有は Vault 系で。
+  - 解決策：API キーは環境変数で管理（`export OPENAI_API_KEY=your_key`）、チーム共有には AWS Secrets Manager や HashiCorp Vault を使用
+- **ポート競合**：他常駐ツールと重なる場合はポートを明示。
+  - 解決策：`cipher --mode api --port 3001` のようにポート指定
+- **初回インデックス時間**：大規模リポジトリは待つ。最初は小さく。
+  - 解決策：`cipher --mode index --path ./src/components` のように範囲を限定
 
-### Cipherのコツ（短冊）
-- 記憶化する単位（課題/変更理由/インターフェース）を決める。
-- “学習ログ”を残すと、後続の応答が安定。
-- チームでは共有用メモリの命名規約を作る（例：feature/<ticket>）。
+### Cipherのコツ（メモリ活用例）
+**メモリレイヤーの仕組み：**
+Cipherは会話の文脈、コード理解、ユーザー設定を永続化したメモリ空間に保存し、
+後続の質問で即座に参照できるようにしています。
+
+**良いメモリ管理例：**
+- 記憶化する単位（課題/変更理由/インターフェース）を決める
+- "学習ログ"を残すと、後続の応答が安定
+- チームでは共有用メモリの命名規約を作る（例：`feature/<ticket>`、`bug/<id>`）
+
+**メモリ設定の具体例：**
+```json
+{
+  "memory": {
+    "project_context": "Next.js ecommerce app",
+    "coding_style": "TypeScript strict mode, functional components",
+    "test_framework": "Jest + React Testing Library"
+  }
+}
+```
 
 ### 付録：導入の順番（最短ルート）
 
@@ -282,7 +328,7 @@ curl http://localhost:3000/health
 - **品質**：差分のレビューヒット率、手戻り件数。  
 - **プロンプト**：テンプレの AB テスト（指示の粒度・順序）。
 
-> うまくいかないときは **Phase を一段戻す**。  
+> うまくいかないときは **前のフェーズに戻る**。  
 > 例：Cipher で運用が重い → Serena のスポット活用に寄せる。
 
 ---
