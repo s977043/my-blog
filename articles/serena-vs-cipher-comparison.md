@@ -134,6 +134,76 @@ cp serena_config.template.yml serena_config.yml
 # ↳ 上記 my-project.yml を登録
 ```
 
+### 大規模は初回が重くなりがち。事前に **index** すると体感が変わります。
+```bash
+uvx --from git+https://github.com/oraios/serena serena project index
+```
+
+### MCP クライアント設定（例：Claude Desktop）
+```json
+{
+  "mcpServers": {
+    "serena": {
+      "command": "/Users/you/.local/bin/uv",
+      "args": ["run", "--directory", "/path/to/serena", "serena-mcp-server"]
+    }
+  }
+}
+```
+
+### 5.4 よくあるつまずき
+	•	初回解析が長い：大きいリポジトリは待つ。最小ディレクトリから試す。
+	•	言語サーバ依存：対象言語の LSP の導入状況を確認。
+	•	無駄トークン：質問を具体化（ファイル/関数名を明示）→無駄を削減。
+
+### Serenaのコツ（短冊）
+	•	“1タスク=1プロンプト”。範囲を絞る。
+	•	ファイル/シンボル名を入れる。
+	•	変更の狙い（目的・制約）を先に言う。
+
+## 6. 「Cipher」のメリット・デメリット
+
+### 6.1 メリット
+	•	持続的な記憶：会話を跨いでも理解が深まる。
+	•	IDE連携が強い：VS Code/Cursor から透過利用。
+	•	応答が速い：二回目以降の質問で効く。
+	•	チーム運用しやすい：メモリ共有、文脈の再利用。
+
+### 6.2 デメリット
+	•	常駐プロセス：メモリ/CPU を常時消費。
+	•	初期設定：環境変数や埋め込み設定など、最初に少し手数。
+	•	設計の理解が必要：メモリ設計（保存/検索の粒度）に慣れが要る。
+
+### 6.3 最短導入（例）
+```bash
+# グローバル導入
+npm install -g @byterover/cipher
+
+# 対話/サーバ/MCP の各モード
+cipher                    # 対話
+cipher --mode api         # APIサーバ
+cipher --mode mcp         # MCPサーバ
+
+# Cipherの動作確認
+cipher --mode api &
+curl http://localhost:3000/health
+```
+
+## 6.4 よくあるつまずき
+	•	.env の鍵漏れ：必ず .env を .gitignore。共有は Vault 系で。
+	•	ポート競合：他常駐ツールと重なる場合はポートを明示。
+	•	初回インデックス時間：大規模リポジトリは待つ。最初は小さく。
+
+### Cipherのコツ（短冊）
+	•	記憶化する単位（課題/変更理由/インターフェース）を決める。
+	•	“学習ログ”を残すと、後続の応答が安定。
+	•	チームでは共有用メモリの命名規約を作る（例：feature/<ticket>）。
+
+### 付録：導入の順番（最短ルート）
+	1.	Serena を個人で試す（CLI/小粒タスク）。
+	2.	継続運用や IDE 中心が見えたら Cipher を導入。
+	3.	チーム共有が増えたら、メモリ運用のルール化（命名・保存粒度・削除基準）。
+
 ---
 :::message
 **あらすじ（7-9章）**
@@ -220,5 +290,5 @@ cp serena_config.template.yml serena_config.yml
   4. 応答時間・手戻りを**定点観測**。テンプレートを更新。
 
 - **公式リソース**（必要なら脚注へ）  
-  - Serena：`https://github.com/oraios/serena`  
-  - Cipher：`https://github.com/campfirein/cipher`
+  - Serena: https://github.com/oraios/serena
+  - Cipher: https://github.com/campfirein/cipher
