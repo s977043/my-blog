@@ -18,14 +18,13 @@ published: true
 ## ワークフロー全体像 🗺️
 
 ```mermaid
-graph LR
-    A[Dev pushes branch] --> B[GitHub PR / Issue]
-    B --> C[run-gemini-cli Action]
-    C --> D{Task Type?}
-    D -->|/review| E[AI comment (PR)]
-    D -->|/triage| F[Labeling]
-    D -->|@gemini-cli| G[On-demand reply]
-```
+graph LR;
+    dev["Dev pushes branch"] --> pr["GitHub PR / Issue"];
+    pr --> act["run-gemini-cli Action"];
+    act --> task{Task type?};
+    task -->|"/review"| review["AI comment (PR)"];
+    task -->|"/triage"| label["Label added"];
+    task -->|@gemini-cli| ondemand["On-demand reply"];
 
 > **図のポイント** — PR・Issue・コメントの3系統トリガーが一本化される。
 
