@@ -1,4 +1,11 @@
-title: "Gemini CLI GitHub Actions登場！あなたのリポジトリにAIチームメイトを迎えよう" emoji: "🤖" type: "tech" # tech: 技術記事 / idea: アイデア topics: ["github", "githubactions", "ai", "gemini", "googlecloud"] published: true
+---
+title: "Gemini CLI GitHub Actions登場！あなたのリポジトリにAIチームメイトを迎えよう" 
+emoji: "🤖" 
+type: "tech" # tech: 技術記事 / idea: アイデア 
+topics: ["github", "githubactions", "ai", "gemini", "googlecloud"] 
+published: true
+---
+
 はじめに：開発ワークフローに「AIの相棒」がやってきた！
 ソフトウェア開発の自動化は、CI/CDの登場によって大きく進化しました。しかし、その次の波はもう目の前に来ています。それは、単なる命令実行型の自動化から、文脈を理解し自律的に行動する**AIとの「協業」**へのシフトです。
 
