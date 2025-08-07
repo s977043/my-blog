@@ -1,98 +1,99 @@
 ---
-title: "Gemini CLI GitHub Actions登場！あなたのリポジトリにAIチームメイトを迎えよう" 
-emoji: "🤖" 
-type: "tech" # tech: 技術記事 / idea: アイデア 
-topics: ["github", "githubactions", "ai", "gemini", "googlecloud"] 
-published: true
+title: "Gemini CLI GitHub Actions登場！あなたのリポジトリにAIチームメイトを迎えよう"
+emoji: "🤖"
+type: "tech"
+topics: ["github", "githubactions", "ai", "gemini", "googlecloud"]
+published: false
 ---
 
-はじめに：開発ワークフローに「AIの相棒」がやってきた！
-ソフトウェア開発の自動化は、CI/CDの登場によって大きく進化しました。しかし、その次の波はもう目の前に来ています。それは、単なる命令実行型の自動化から、文脈を理解し自律的に行動する**AIとの「協業」**へのシフトです。
+## はじめに：開発ワークフローに「AIの相棒」を
 
-2025年8月、Googleはまさにその未来を具現化するツール「Gemini CLI GitHub Actions」を発表しました 。これは、あなたのGitHubリポジトリに常駐し、開発をサポートしてくれる「   
+CI/CDで自動化は大きく進みました。次の波は、**指示待ちの自動化**を超えて、文脈を理解し自律的に動く**AIとの協業**です。
 
-AIコーディングチームメイト」または「AIパートナー」と呼ぶべき存在です 。   
+2025年8月、Googleがその未来を形にした「**Gemini CLI GitHub Actions**」を発表しました。リポジトリに常駐し、日々の開発を支える――まさに**AIコーディングチームメイト**。しかも、Google AI Studioの無料枠で多くの開発者が追加費用なく試せます。
 
-この記事では、Gemini CLI GitHub Actionsがどのように開発体験を変えるのか、その核心的な機能と、今日からあなたのプロジェクトに導入するための簡単な手順を分かりやすく解説します。しかも、Google AI Studioの寛大な無料枠のおかげで、多くの開発者が追加費用なしでこの未来を体験できます 。   
+この記事では、Gemini CLI GitHub Actionsの要点と、今日から導入する手順をシンプルに解説します。
 
-何がすごいの？AIチームメイトができること
-Gemini CLI GitHub Actionsは、すぐに使える3つの強力なワークフローを提供し、開発チームが直面する面倒なタスクを解決してくれます 。   
+---
 
-1. インテリジェントなIssueトリアージ
-新しいIssueが作成されるたびに、その内容をAIが自動で分析。「これはバグ報告だな」「これは機能要望だ」といった判断を下し、適切なラベル（bug, feature-requestなど）を付与してくれます 。開発者は面倒な整理作業から解放され、問題解決そのものに集中できます。   
+## 何がすごい？AIチームメイトができること
 
-2. 迅速なPull Request (PR) レビュー
-新しいPRが作成されると、AIが即座にコードをレビュー。品質、スタイル、潜在的な問題点をチェックし、フィードバックをコメントしてくれます 。これにより、人間のレビュー担当者は、タイポやスタイルといった細かな指摘に時間を費やすことなく、アーキテクチャやロジックの妥当性といった、より本質的なレビューに集中できるようになります。   
+**Gemini CLI GitHub Actions**は、すぐ使える強力な3ワークフローを提供します。面倒をAIに任せ、開発者は本質へ集中できます。
 
-3. @gemini-cliで呼び出す、オンデマンドAIアシスタント
-これが最も強力で柔軟な機能です。IssueやPRのコメント欄で @gemini-cli とメンションするだけで、いつでもAIにタスクを依頼できます 。まるで、隣にいる優秀な同僚に声をかけるような感覚です。   
+1. **インテリジェントなIssueトリアージ**  
+   新規IssueをAIが解析し、内容に応じて `bug` や `feature-request` などのラベルを自動付与。雑務の整理から解放されます。
 
-例えば、以下のような依頼が可能です 。   
+2. **迅速なPull Requestレビュー**  
+   PR作成時にAIがコード品質・スタイル・潜在的な問題をチェックしてコメント。人のレビューは設計やロジックなど本丸に集中できます。
 
-コードの解説: @gemini-cli explain this code change
+3. **@gemini-cliで呼べるオンデマンドAI**  
+   Issue／PRのコメントで `@gemini-cli` をメンションするだけ。隣の優秀な同僚に頼む感覚でタスクを依頼できます。
 
-リファクタリング提案: @gemini-cli suggest improvements for this function
+**依頼例：**
 
-テストコード生成: @gemini-cli write unit tests for the 'calculate_total' function
+- コード解説: `@gemini-cli explain this code change`  
+- リファクタ提案: `@gemini-cli suggest improvements for this function`  
+- テスト生成: `@gemini-cli write unit tests for the 'calculate_total' function`  
+- バグ調査: `@gemini-cli help me debug this error: 'NullPointerException'`  
+- 実装依頼: `@gemini-cli implement the changes suggested by @human-reviewer above`
 
-バグ修正: @gemini-cli help me debug this error: 'NullPointerException'
+コメント欄が、AIへの万能ホットラインに早変わりします。
 
-実装の依頼: @gemini-cli implement the changes suggested by @human-reviewer above
+---
 
-あなたのリポジトリのコメント欄が、AIへの万能ホットラインに変わるのです。
+## さっそく導入：3ステップ・クイックスタート
 
-さっそく始めよう！3ステップ・クイックスタートガイド
-AIチームメイトの導入は驚くほど簡単です。数分で完了します 。   
+数分で完了します。
 
-Step 1: APIキーを取得してGitHubに登録する
-Google AI Studioにアクセスし、GoogleアカウントでログインしてAPIキーを生成します 。   
+### Step 1：APIキーを用意（GitHubに登録）
+1. **Google AI Studio**でAPIキーを発行。  
+2. GitHubの **Settings > Secrets and variables > Actions** へ。  
+3. **New repository secret** を選び、名前を `GEMINI_API_KEY`、値にAPIキーを保存。
 
-GitHubリポジトリの Settings > Secrets and variables > Actions に移動し、「New repository secret」をクリックします。
+### Step 2：ワークフローをセットアップ
+最速はローカルの**Gemini CLI**を使う方法（Node.js v20+）。  
+ターミナルでCLIを起動し、プロンプトで以下を実行します：
 
-シークレット名を GEMINI_API_KEY とし、値に取得したAPIキーを貼り付けて保存します 。   
-
-Step 2: ワークフローをセットアップする
-最も簡単な方法は、ローカルにインストールしたGemini CLIを使うことです（Node.js v20以上が必要）。   
-
-ターミナルで gemini と入力してCLIを起動し、プロンプトに対して以下のコマンドを実行します。bash
+```
 /setup-github
+```
 
+対話に沿って設定すると、最適なワークフローが `.github/workflows/` に自動追加されます。
 
-これだけで、CLIが対話形式で必要な設定を案内し、最適なワークフローファイル（`.github/workflows/`配下）を自動でリポジトリに追加してくれます [2, 3]。
+### Step 3：AIを動かしてみる
+- **PRレビューを試す**：新規PRを作成／更新すると、数分後にAIコメントが届きます。  
+- **手動レビュー依頼**：既存のPR／Issueに `@gemini-cli /review` とコメントするだけ。
 
-### Step 3: AIの力を体験する
+---
 
-セットアップが完了したら、実際にAIを動かしてみましょう。
+## AIを育てる：`GEMINI.md`で「プロジェクトの流儀」を伝える
 
-- **PRレビューを試す**: 新しいPRを作成するか、既存のPRを更新してみてください。数分後、AIによるコードレビューがコメントとして投稿されます [3]。
-- **手動で呼び出す**: 既存のPRやIssueでレビューを依頼したい場合は、コメント欄に `@gemini-cli /review` と入力して送信するだけです [3]。
+リポジトリ直下に `GEMINI.md` を置くと、AIは常にこれを読み込み、背景知識として活用します。**暗黙知の教科書**にしましょう。
 
-## AIを育てる：`GEMINI.md`でプロジェクトのルールを教える
+**記載例：**
+- **コーディング規約**：例「Google Java Style。publicメソッドにはJSDoc必須」
+- **コミット規約**：例「Conventional Commitsに準拠」
+- **アーキテクチャ原則**：例「サービス間通信はgRPC。外部ライブラリは原則追加禁止」
+- **ドキュメントのトーン**：例「ユーザー向けは専門用語を避け、親しみやすく」
 
-Gemini CLI GitHub Actionsの真価は、プロジェクト固有の文脈を学習させられる点にあります。リポジトリのルートに `GEMINI.md` というファイルを作成すると、AIはこのファイルの内容を常に読み込み、指示の背景として理解してくれます [3]。
+`GEMINI.md`が充実するほど、AIは**汎用アシスタント**から**あなたの流儀を理解する相棒**へ進化します。
 
-これは、チームの「暗黙のルール」をAIに教えるための教科書のようなものです。
+---
 
-**`GEMINI.md`に書く内容の例:**
+## 補足：Gemini Code Assist for GitHubとの違い
 
-- **コーディング規約**: 「このプロジェクトはGoogle Java Style Guideに従います。publicメソッドには必ずJSDoc形式のコメントを付けてください。」
-- **コミットメッセージのルール**: 「コミットメッセージはConventional Commits仕様に準拠してください。」
-- **アーキテクチャの原則**: 「サービス間通信はgRPCで行います。新しい外部ライブラリの追加は原則禁止です。」
-- **コミュニケーションのトーン**: 「ユーザー向けのドキュメントを生成する際は、専門用語を避け、親しみやすい言葉遣いを心がけてください。」
+似た名前のGitHub App「**Gemini Code Assist for GitHub**」もあります。用途で使い分けましょう。
 
-このファイルを充実させることで、AIは単なる汎用アシスタントから、あなたのプロジェクトを深く理解した真の「チームメイト」へと成長していきます。
+- **Gemini Code Assist for GitHub（App）**  
+  インストールするだけで高品質なAIコードレビューを即利用できる**製品**。手軽に始めたい人向け。
 
-## （補足）Gemini Code Assist for GitHubとの違いは？
+- **run-gemini-cli（GitHub Action）**  
+  コードレビューだけでなく、Issue運用やカスタム自動化など**ワークフロー全体**をAIで拡張できる**プラットフォーム**。柔軟に攻めたい人向け。
 
-GitHub上には、よく似た名前の「**Gemini Code Assist for GitHub**」というGitHub Appも存在します [2, 5]。どちらを選べばよいか迷うかもしれません。
+---
 
-- **Gemini Code Assist for GitHub App**: インストールするだけで、すぐに高品質なAIコードレビュー機能が使える**製品**です。手軽に始めたい場合に最適です [5]。
-- **run-gemini-cli GitHub Action**（本記事で紹介）: コードレビューだけでなく、Issue管理やカスタム自動化など、ワークフロー全体をAIで強化できる、より柔軟で強力な**プラットフォーム**です [1, 2]。
+## まとめ：AIと共に、開発を次のステージへ
 
-まずは手軽なAppから試すのも良いですし、開発プロセス全体を自動化したいならActionの導入を検討すると良いでしょう。
-
-## まとめ：AIと共に進化する開発スタイルへ
-
-Gemini CLI GitHub Actionsは、開発の自動化を新たなステージへと引き上げる画期的なツールです。開発者は、面倒な反復作業をAIに「**委任**」し、より創造的で本質的な作業に集中できるようになります。
-
-AIがコードを書き、レビューし、Issueを整理してくれる。そんな未来が、もうあなたのGitHubリポジトリで始まっています。ぜひこの新しいAIチームメイトを、あなたのプロジェクトに迎えてみてください。
+**Gemini CLI GitHub Actions**は、自動化を一段引き上げます。反復作業はAIに**委任**し、開発者は創造的で本質的な課題に集中する。  
+AIがコードを書き、レビューし、Issueを整理する――その未来は、もうあなたのリポジトリで始められます。  
+**新しいAIチームメイトを迎え、開発スタイルを更新しましょう。**
