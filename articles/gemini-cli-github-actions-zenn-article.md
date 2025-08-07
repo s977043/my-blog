@@ -18,13 +18,13 @@ published: true
 ## ワークフロー全体像 🗺️
 
 ```mermaid
-flowchart LR
-  A[Dev pushes branch] --> B(GitHub PR / Issue)
-  B --> C(run-gemini-cli Action)
-  C --> D{タスク判定}
-  D -->|/review| E[AIコメント(PR)]
-  D -->|/triage| F[ラベル付与]
-  D -->|@gemini-cli| G[オンデマンド回答]
+graph LR
+    A[Dev pushes branch] --> B[GitHub PR / Issue]
+    B --> C[run-gemini-cli Action]
+    C --> D{Task Type?}
+    D -->|/review| E[AI comment (PR)]
+    D -->|/triage| F[Labeling]
+    D -->|@gemini-cli| G[On-demand reply]
 ```
 
 > **図のポイント** — PR・Issue・コメントの3系統トリガーが一本化される。
