@@ -25,6 +25,7 @@ graph LR;
     task -->|"/review"| review["AI comment (PR)"];
     task -->|"/triage"| label["Label added"];
     task -->|@gemini-cli| ondemand["On-demand reply"];
+```
 
 > **図のポイント** — PR・Issue・コメントの3系統トリガーが一本化される。
 
