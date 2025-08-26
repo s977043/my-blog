@@ -3,7 +3,7 @@ title: "Next.js App Router時代のAI-driven TDD：実践的な最小ループ�
 emoji: "🧪"
 type: "tech"
 topics: ["nextjs", "typescript", "jest", "playwright", "tdd", "ai", "testing"]
-published: false
+published: true
 ---
 
 :::message
@@ -101,7 +101,7 @@ const createJestConfig = nextJest({
 const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testEnvironment: 'jsdom',
-  moduleNameMapping: {
+  moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
   },
 }
@@ -235,10 +235,7 @@ export const formatCurrency = (
 
 ```typescript
 // app/lib/formatCurrency.ts（App Router最適化版）
-import { cache } from 'react'
-
-// Server Componentsでのキャッシュ活用
-export const formatCurrency = cache((
+export const formatCurrency = (
   value: number, 
   currency: string, 
   locale: string
@@ -252,23 +249,17 @@ export const formatCurrency = cache((
     style: 'currency',
     currency: currency,
   }).format(value)
-})
-
-// Client Component用のラッパー
-export const formatCurrencyClient = (
-  value: number, 
-  currency: string, 
-  locale: string
-): string => {
-  return formatCurrency(value, currency, locale)
 }
+
+// Client Component用の型安全なラッパー（必要に応じて）
+export const formatCurrencyClient = formatCurrency
 ```
 
 :::message
 **App Router固有のポイント**
-- `cache` を使用してServer Componentsでのパフォーマンス最適化
-- Client/Server Components両対応のエクスポート
 - TypeScriptの型安全性を活用した入力検証
+- Client/Server Components両方で使用可能なシンプルな設計
+- `Intl.NumberFormat`によるブラウザネイティブな最適化
 :::
 
 ---
@@ -283,44 +274,50 @@ export const formatCurrencyClient = (
 // __tests__/components/SearchBox.test.tsx
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useRouter, useSearchParams } from 'next/navigation'
 import SearchBox from '@/app/components/SearchBox'
 
 // Mock useRouter for App Router
 jest.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: jest.fn(),
-    replace: jest.fn(),
-  }),
-  useSearchParams: () => new URLSearchParams(),
+  useRouter: jest.fn(),
+  useSearchParams: jest.fn(),
 }))
+
+const mockPush = jest.fn()
+const mockReplace = jest.fn()
 
 describe('SearchBox', () => {
   beforeEach(() => {
     jest.useFakeTimers()
+    ;(useRouter as jest.Mock).mockReturnValue({
+      push: mockPush,
+      replace: mockReplace,
+    })
+    ;(useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams())
   })
   
   afterEach(() => {
     jest.useRealTimers()
+    jest.clearAllMocks()
   })
 
-  test('検索語入力から400ms後にonSearchが呼ばれる', async () => {
+  test('検索語入力から400ms後にURLが更新される', async () => {
     const user = userEvent.setup({ 
       advanceTimers: jest.advanceTimersByTime 
     })
-    const mockOnSearch = jest.fn()
     
-    render(<SearchBox onSearch={mockOnSearch} />)
+    render(<SearchBox />)
     
     const input = screen.getByPlaceholderText('商品を検索...')
     await user.type(input, 'iPhone')
     
     // 400ms経過前は呼ばれない
-    expect(mockOnSearch).not.toHaveBeenCalled()
+    expect(mockReplace).not.toHaveBeenCalled()
     
     jest.advanceTimersByTime(400)
     
     await waitFor(() => {
-      expect(mockOnSearch).toHaveBeenCalledWith('iPhone')
+      expect(mockReplace).toHaveBeenCalledWith('/search?q=iPhone')
     })
   })
 
@@ -328,25 +325,23 @@ describe('SearchBox', () => {
     const user = userEvent.setup({ 
       advanceTimers: jest.advanceTimersByTime 
     })
-    const mockOnSearch = jest.fn()
     
-    render(<SearchBox onSearch={mockOnSearch} />)
+    render(<SearchBox />)
     
     const input = screen.getByPlaceholderText('商品を検索...')
     await user.type(input, '   ')
     
     jest.advanceTimersByTime(400)
     
-    expect(mockOnSearch).not.toHaveBeenCalled()
+    expect(mockReplace).not.toHaveBeenCalled()
   })
 
-  test('連続入力時は最後の値のみでonSearchが呼ばれる', async () => {
+  test('連続入力時は最後の値のみでURL更新される', async () => {
     const user = userEvent.setup({ 
       advanceTimers: jest.advanceTimersByTime 
     })
-    const mockOnSearch = jest.fn()
     
-    render(<SearchBox onSearch={mockOnSearch} />)
+    render(<SearchBox />)
     
     const input = screen.getByPlaceholderText('商品を検索...')
     
@@ -357,8 +352,8 @@ describe('SearchBox', () => {
     jest.advanceTimersByTime(400)
     
     await waitFor(() => {
-      expect(mockOnSearch).toHaveBeenCalledTimes(1)
-      expect(mockOnSearch).toHaveBeenCalledWith('iPhone')
+      expect(mockReplace).toHaveBeenCalledTimes(1)
+      expect(mockReplace).toHaveBeenCalledWith('/search?q=iPhone')
     })
   })
 })
@@ -374,13 +369,11 @@ import { useState, useEffect, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 interface SearchBoxProps {
-  onSearch: (query: string) => void
   placeholder?: string
   className?: string
 }
 
 export default function SearchBox({ 
-  onSearch, 
   placeholder = '商品を検索...',
   className = ''
 }: SearchBoxProps) {
@@ -393,17 +386,20 @@ export default function SearchBox({
     const timeoutId = setTimeout(() => {
       const trimmedQuery = query.trim()
       if (trimmedQuery) {
-        onSearch(trimmedQuery)
+        // URLを更新してServer Componentでの検索をトリガー
+        const params = new URLSearchParams(searchParams)
+        params.set('q', trimmedQuery)
+        router.replace(`/search?${params.toString()}`)
       }
     }, 400)
 
     return () => clearTimeout(timeoutId)
-  }, [query, onSearch])
+  }, [query, router, searchParams])
 
   // URL同期（App Router対応）
   useEffect(() => {
     const currentQuery = searchParams.get('q') || ''
-    if (currentQuery !== query) {
+    if (currentQuery !== query.trim()) {
       setQuery(currentQuery)
     }
   }, [searchParams])
@@ -449,27 +445,62 @@ interface SearchPageProps {
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const query = searchParams.q || ''
 
-  const handleSearch = async (searchQuery: string) => {
-    'use server'
-    // Server Actionsでの検索処理
-    // この部分は別途実装
-  }
-
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">商品検索</h1>
       
       <SearchBox 
-        onSearch={(query) => {
-          // Client側からのクエリ更新
-          window.location.href = `/search?q=${encodeURIComponent(query)}`
-        }}
+        placeholder="商品を検索..."
         className="mb-8"
       />
       
       <Suspense fallback={<div>検索中...</div>}>
         <SearchResults query={query} />
       </Suspense>
+    </div>
+  )
+}
+```
+
+**Server Actions連携例**:
+```tsx
+// app/actions/search.ts
+'use server'
+
+export async function searchProducts(query: string) {
+  // データベース検索やAPI呼び出し
+  return {
+    products: [
+      { id: 1, name: `${query}関連商品1`, price: 1000 },
+      { id: 2, name: `${query}関連商品2`, price: 2000 },
+    ],
+    total: 2
+  }
+}
+
+// app/components/SearchResults.tsx
+import { searchProducts } from '@/app/actions/search'
+
+interface SearchResultsProps {
+  query: string
+}
+
+export default async function SearchResults({ query }: SearchResultsProps) {
+  if (!query) return <div>検索キーワードを入力してください</div>
+  
+  const results = await searchProducts(query)
+  
+  return (
+    <div data-testid="search-results">
+      <p data-testid="result-count">{results.total}件の商品が見つかりました</p>
+      <div className="grid gap-4">
+        {results.products.map(product => (
+          <div key={product.id} data-testid="product-card" className="border p-4">
+            <h3 data-testid="product-title">{product.name}</h3>
+            <p data-testid="product-price">¥{product.price}</p>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
@@ -681,10 +712,10 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'npm run build && npm start',
+    command: process.env.CI ? 'npm run build && npm start' : 'npm run dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
-    timeout: 120000,
+    timeout: process.env.CI ? 120000 : 60000,
   },
 })
 ```
@@ -741,21 +772,22 @@ React Testing Library + App Router専門のコンポーネントテスト設計�
 `'use client'` ディレクティブ付きの SearchBox コンポーネント
 
 ### 要件
-- プロップス: onSearch: (query: string) => void
 - 機能: 400msデバウンス、空文字除外、Enter送信対応
 - App Router: useRouter, useSearchParams使用
+- URL統合: 検索クエリをURLパラメータとして管理
 
 ### 出力要件
 1. **完全なテストファイル**（setup/teardown含む）
 2. **Next.js 14 App Router対応のモック設定**
 3. **非同期処理（デバウンス）の安定したテスト手法**
 4. **アクセシビリティテスト**（aria-label等）
-5. **パフォーマンステスト**のヒント（1行）
+5. **URL更新の検証**方法
 
 ### 重視ポイント
 - useFakeTimers の適切な使用
 - userEvent の最新API活用  
 - App Routerフック対応
+- useRouter.replace の呼び出し検証
 ```
 
 ### 6-3. E2Eシナリオ生成プロンプト
@@ -1090,8 +1122,11 @@ npm run type-check
 # リント・フォーマット
 npx lint-staged
 
-# テスト実行（変更ファイル関連のみ）
-npm run test -- --bail --findRelatedTests $(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx)$' | tr '\n' ' ')
+# 変更されたファイルに関連するテストを実行
+CHANGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx)$' | tr '\n' ' ')
+if [ -n "$CHANGED_FILES" ]; then
+  npm run test -- --bail --findRelatedTests $CHANGED_FILES
+fi
 ```
 
 ### 7-4. モニタリング・アラート設定
