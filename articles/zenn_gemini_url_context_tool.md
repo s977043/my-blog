@@ -1,9 +1,9 @@
 ---
-title: "GeminiのURL context tool 実務導入ガイド：スクレイピング不要で公式ページを読ませる（Gemini API）"
+title: "URL contextで技術Docsを要約・抽出する実装パターン"
 emoji: "🔗"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["gemini", "ai", "python", "github-actions", "notion"]
-published: false
+published: true
 # publication_name: your-publication
 ---
 
@@ -15,8 +15,11 @@ AI に技術情報を読ませるときの“あるある”は、だいたい�
 - **誤りが混ざる**（個人ブログやフォーラムの断片が正解として混入）
 - **一次情報に辿りつけない**（公式Docsを直接参照してくれない）
 
-**URL context tool** は、この根本原因（検索結果の間接参照）を外し、**「このURLを読め」** と明示できる公式機能です。  
+**URL context tool** は、この根本原因（検索結果の間接参照）を外し、**「このURLを読め」** と明示できる公式機能です。
+
 特定URLを追加コンテキストとして渡すだけで、モデルがそのページ内容を取得して回答の根拠に使います。スクレイピング用コードは不要。正確性が最優先の場面（フレームワークの最新仕様、公的情報、製品仕様など）で効果を発揮します。
+
+ **「探させる」より「読ませるURLを示す」** コレです。 
 
 ---
 
