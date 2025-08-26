@@ -164,12 +164,12 @@ L267-L270 （複数URL例）
 実際の動作確認ができないURL例を使用している。記事の信頼性向上のため、執筆時点での有効なURLを使用すべき。
 
 ### 提案
-URLの有効性を確認するか、より汎用的な例を使用：
+記事の信頼性向上のため、執筆時点で有効な公式ドキュメントURL（例：Next.js公式ドキュメント）を使用する：
 ```text
 対象URL:
-- https://example.com/docs/main
-- https://example.com/docs/section1  
-- https://example.com/docs/section2
+- https://nextjs.org/docs/app
+- https://nextjs.org/docs/app/building-your-application/routing
+- https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts
 ```
 
 ---
