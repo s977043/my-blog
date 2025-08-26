@@ -96,9 +96,9 @@ Search（検索）だけだと他サイトや古い情報を拾うことがあ�
 ```mermaid
 flowchart LR
   A[cron/GitHub Actions] --> B[run.py]
-  B --> C[Should Fetch? (ETag/Hash)]
-  C -- No --> Z[Skip & Report]
-  C -- Yes --> D[Gemini API (URL context)]
+  B --> C[Should Fetch ]
+  C -- No --> Z[Report]
+  C -- Yes --> D[URL context]
   D --> E[Summary/JSON抽出]
   E --> F[Notion保存]
   F --> G[Slack通知]
