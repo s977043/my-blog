@@ -402,7 +402,7 @@ export default function SearchBox({
     if (currentQuery !== query) {
       setQuery(currentQuery)
     }
-  }, [searchParams, query])
+  }, [searchParams])
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault()
