@@ -957,21 +957,19 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit
-        
       - name: Install Playwright browsers
         run: npx playwright install --with-deps ${{ matrix.browser }}
-        
-      - name: Build Next.js application
-        run: npm run build
-        
+      - name: Download Next.js build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: next-build
+          path: .next
       - name: Run E2E tests
         run: npx playwright test --project=${{ matrix.browser }}
         env:
           CI: true
-          
       - name: Upload Playwright report
         uses: actions/upload-artifact@v3
         if: failure()
