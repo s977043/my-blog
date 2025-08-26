@@ -399,10 +399,7 @@ export default function SearchBox({
   // URL同期（App Router対応）
   useEffect(() => {
     const currentQuery = searchParams.get('q') || ''
-    if (currentQuery !== query.trim()) {
-      setQuery(currentQuery)
-    }
-  }, [searchParams])
+  }, [searchParams, query])
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault()
