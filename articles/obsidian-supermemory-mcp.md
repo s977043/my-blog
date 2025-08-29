@@ -1,8 +1,8 @@
 ---
-title: "個人開発で輝く！Obsidian × Supermemory MCP 併用ワークフロー"
+title: "ObsidianとSupermemory MCPをつなぐ知識管理ワークフロー"
 emoji: "🧠"
 type: "idea"
-topics: ["個人開発", "MCP", "Obsidian", "AI", "Supermemory"]
+topics: ["MCP", "Obsidian", "AI", "Supermemory"]
 published: true
 ---
 
