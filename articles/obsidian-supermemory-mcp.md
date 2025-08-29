@@ -41,8 +41,6 @@ published: false
 
 ## ワークフロー全体像
 
-![Obsidian × Supermemory MCP ワークフロー](/images/obsidian-supermemory-workflow.png)
-
 1. **Obsidian**: 仕様メモ、テスト設計、実装ノートをMarkdownで保存  
 2. **Supermemory MCP**: 即席メモリとしてClaude/Cursorから参照  
 3. **Claude / Cursor**: コーディング・レビューで利用  
