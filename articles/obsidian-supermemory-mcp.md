@@ -3,7 +3,7 @@ title: "個人開発で輝く！Obsidian × Supermemory MCP 併用ワークフ�
 emoji: "🧠"
 type: "idea"
 topics: ["個人開発", "MCP", "Obsidian", "AI", "Supermemory"]
-published: false
+published: true
 ---
 
 ## はじめに
