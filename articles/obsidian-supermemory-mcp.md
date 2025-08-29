@@ -136,5 +136,5 @@ supermemory に保存した設計ノートを呼び出して
 - [Supermemory MCP 公式](https://mcp.supermemory.ai/)  
 - [Cipher GitHub](https://github.com/byterover/cipher)  
 - [Serena 解説記事](https://zenn.dev/aki_think/articles/c4f5b2a75ff4d4)  
-- [Serena vs Cipher 比較記事（Zenn: minewo さん）](https://zenn.dev/minewo/articles/serena-vs-cipher-comparison)  
+- [Serena vs Cipher 比較記事 ](https://zenn.dev/minewo/articles/serena-vs-cipher-comparison)  
 - [Obsidian](https://obsidian.md/)  
