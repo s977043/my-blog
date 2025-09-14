@@ -2,7 +2,7 @@
 title: "2分で決まる：Serena vs Cipher　思想とアーキテクチャ——CLIオンデマンドか常駐メモリか"
 emoji: "🧭"
 type: "tech"
-topics: ["MCP", "AI", "開発環境", "VSCode", "CLI", "OSS"]
+topics: ["MCP", "AI", "開発環境", "VSCode", "zennfes2025ai", "OSS"]
 published: true
 ---
 
