@@ -4,7 +4,7 @@ emoji: "🤖"
 type: "tech"
 topics:
   [
-    "ai",
+    "zennfes2025ai",
     "multi-agent",
     "tdd",
     "sdd",
@@ -18,9 +18,10 @@ published: true
 # マルチエージェント開発の 3 原則：SDD・TDD・ノンブロッキングで自律性を実現する
 
 > TL;DR
+
 - 対象: マルチエージェント開発で解釈のブレや人間のブロッキングに悩む開発/運用チーム。
 - 課題: 曖昧な要件共有とレビュー待ちが連携破綻と手戻りを招く。
-- アプローチ: SDDで共通言語化→TDDで到達基準を固定→ノンブロッキング運用（ログ・CI合格・相互レビュー）。
+- アプローチ: SDD で共通言語化 →TDD で到達基準を固定 → ノンブロッキング運用（ログ・CI 合格・相互レビュー）。
 - 結果: 仕様の揺れを抑え、自律性と透明性を両立（レビュー負荷と手戻りを削減）。
 
 ## はじめに
@@ -397,14 +398,6 @@ Serena を導入することで、今回紹介した 3 原則がより確実に�
 マルチエージェント開発はまだ発展途上の技術です。私の経験が少しでも参考になれば幸いです。
 
 もしあなたも試してみた結果や、別のアプローチを発見したら、ぜひ教えてください。一緒にマルチエージェント開発の可能性を探っていきましょう！
-
-## 関連ポスト
-
-<blockquote class="twitter-tweet"><p lang="ja" dir="ltr">二層ドキュメントが良い感じ！<br><br>仕様.mdで決定クリア、対話ログ.mdでAIのやり取り完璧管理！<br><br>Claude＆Geminiの連携で迷い激減、効率爆UP！<br><br>複数AI試すならコレが良い感じです！ <a href="https://twitter.com/hashtag/AI?src=hash&amp;ref_src=twsrc%5Etfw">#AI</a> <a href="https://twitter.com/hashtag/%E7%94%9F%E6%88%90AI?src=hash&amp;ref_src=twsrc%5Etfw">#生成AI</a> <a href="https://twitter.com/hashtag/AI%E9%A7%86%E5%8B%95%E9%96%8B%E7%99%BA?src=hash&amp;ref_src=twsrc%5Etfw">#AI駆動開発</a><a href="https://t.co/xpHjt7YjM2">https://t.co/xpHjt7YjM2</a></p>&mdash; 小峯将威@プロダクト開発している人 (@mine_take) <a href="https://twitter.com/mine_take/status/1960099050180727267?ref_src=twsrc%5Etfw">August 25, 2025</a></blockquote>
-
-<blockquote class="twitter-tweet"><a href="https://twitter.com/mine_take/status/1952752143087308984"></a></blockquote>
-
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 ## 参考記事
 
