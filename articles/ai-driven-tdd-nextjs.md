@@ -2,7 +2,7 @@
 title: "Next.js App Router時代のAI-driven TDD：実践的な最小ループと具体的な実装パターン"
 emoji: "🧪"
 type: "tech"
-topics: ["nextjs", "typescript", "jest", "playwright", "tdd", "ai", "testing"]
+topics: ["nextjs", "typescript", "jest", "playwright", "tdd", "zennfes2025ai", "testing"]
 published: true
 ---
 
