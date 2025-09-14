@@ -3,7 +3,7 @@ title: "マルチエージェント開発の3原則：SDD・TDD・ノンブロ�
 emoji: "🤖"
 type: "tech"
 topics: ["ai", "multi-agent", "tdd", "sdd", "software-design"]
-published: fales
+published: false
 ---
 
 # マルチエージェント開発の3原則：SDD・TDD・ノンブロッキング
