@@ -2,7 +2,7 @@
 title: "ObsidianとSupermemory MCPをつなぐ知識管理ワークフロー"
 emoji: "🧠"
 type: "idea"
-topics: ["MCP", "Obsidian", "AI", "Supermemory"]
+topics: ["MCP", "Obsidian", "AI", "Supermemory","zennfes2025ai"]
 published: true
 ---
 
