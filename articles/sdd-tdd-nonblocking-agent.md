@@ -1,5 +1,5 @@
 ---
-title: "マルチエージェント開発の3原則：SDD・TDD・ノンブロッキング"
+title: "AIエージェントが勝手に進む開発の3原則：なぜSDD・TDD・ノンブロッキングが必要か"
 emoji: "🤖"
 type: "tech"
 topics: ["ai", "multi-agent", "tdd", "sdd", "software-design"]
