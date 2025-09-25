@@ -1,5 +1,5 @@
 ---
-title: "仕様を[データ化]して止めない：SDD/TDD/ノンブロッキングで作るAI開発"
+title: "仕様を[データ化]して止めない：SDD/TDD/ノンブロッキングで作るAI駆動開発"
 emoji: "🤖"
 type: "tech"
 topics:
