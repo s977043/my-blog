@@ -1,5 +1,5 @@
 ---
-title: "マルチエージェント開発の3原則：SDD・TDD・ノンブロッキングで自律性を実現する"
+title: "仕様を[データ化]して止めない：SDD/TDD/ノンブロッキングで作るAI開発"
 emoji: "🤖"
 type: "tech"
 topics:
