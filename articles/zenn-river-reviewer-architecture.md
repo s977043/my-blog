@@ -2,7 +2,8 @@
 title: 'AIエージェントを"投げっぱなし"にしない：Agent Skillsと自由度の設計で実現する「評価駆動の開発エコシステム」'
 emoji: "🌊"
 type: "tech"
-topics: ["ai","codereview", "AgentSkills","暗黙知","2025年の最も大きなチャレンジ"]
+topics:
+  ["ai", "codereview", "AgentSkills", "暗黙知", "2025年の最も大きなチャレンジ"]
 published: true
 ---
 
@@ -106,11 +107,44 @@ export const DatabaseMigrationSkills: AgentSkills = {
 
 ## 5. ワークフロー：Plan / Validate / Verify
 
-「いきなりコードを書かせない」のが River Reviewer の鉄則です。
+**「いきなりコードを書かせない」**。これは、多くのエージェント運用から得られた **Agent Skills における最も重要な知見**です。
+
+River Reviewer では、この知見に基づきワークフローを 3 つのステップに分離します。
 
 1.  **Plan (計画)**: 差分と `Agent Skills` を照らし合わせ、実行計画を JSON で生成。ここで `riskLevel` を自己判定させ、承認フローを分岐させます。
-2.  **Validate (検閲)**: 人間（EM やテックリード）が計画を検閲。`Cliff` ならば手動承認、`Hill` ならば CI による自動判定へ。
+
+    ```json
+    {
+      "riskLevel": "Hill",
+      "files": [{ "path": "src/db/migrate.ts", "reason": "migration changes" }],
+      "skills": [{ "id": "db-schema-audit", "reason": "migrations touched" }],
+      "proposedActions": [
+        "Add index for users.email",
+        "Avoid type change; use shadow column + backfill"
+      ],
+      "verify": [
+        {
+          "type": "shell",
+          "command": "npm run test:migration-dry-run",
+          "blocking": true
+        }
+      ],
+      "questions": []
+    }
+    ```
+
+2.  **Validate (ゲート)**: 人間（EM やテックリード）が計画を検閲。`Cliff` ならば手動承認、`Hill` ならば CI による自動判定へ。
 3.  **Verify (検証)**: スキルに紐づく `verify` コマンドを実行。失敗時はリトライさせず、**「なぜ失敗したか（期待値との差分等）」を共有メモリ（Dynamic Layer）に書き込んで即時停止**させます。
+
+    ```yaml
+    - date: 2025-12-27
+      pr: 123
+      skillId: db-schema-audit
+      event: verify_failed
+      observed: "migration dry-run failed: missing backfill"
+      action: "Add backfill script + rerun dry-run"
+      promoteToStatic: true
+    ```
 
 ## 6. 核心：評価駆動（Evaluation-Driven）でスキルを育てる
 
