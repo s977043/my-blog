@@ -9,21 +9,21 @@ published: true
 :::message
 **この記事で得られること**
 
-- **Next.js App Router環境でのAI-driven TDD**の具体的な実装手順
+- **Next.js App Router 環境での AI-driven TDD**の具体的な実装手順
 - **実際に動くコード例**を通じた実践的な学習
-- **AIとの効果的な協働方法**とプロンプトテンプレート集
-- **CI/CD環境での自動テスト**の最小構成
+- **AI との効果的な協働方法**とプロンプトテンプレート集
+- **CI/CD 環境での自動テスト**の最小構成
 
-**対象読者**: Next.js App Routerでの開発経験があり、テスト駆動開発とAI活用に興味がある方
+**対象読者**: Next.js App Router での開発経験があり、テスト駆動開発と AI 活用に興味がある方
 :::
 
 ## はじめに
 
-**AI時代のテスト駆動開発**は、従来のTDDとは違ったアプローチが求められます。
+**AI 時代のテスト駆動開発**は、従来の TDD とは違ったアプローチが求められます。
 
-AIは優秀なペアプログラマーですが、**文脈の理解**と**意図の継続**に課題があります。だからこそ、テストファーストの思想がより重要になります。テストに残された意図が、AIとの対話品質を決定的に左右するのです。
+AI は優秀なペアプログラマーですが、**文脈の理解**と**意図の継続**に課題があります。だからこそ、テストファーストの思想がより重要になります。テストに残された意図が、AI との対話品質を決定的に左右するのです。
 
-本記事では、**Next.js App Router**を前提とした**AI-driven TDD（AITDD）**の実践的な手法を、実際に動くコード例とともに解説します。大切なのは**小さく確実なサイクル**を回すこと。まずは10分で完結する最小ループから始めましょう。
+本記事では、**Next.js App Router**を前提とした**AI-driven TDD（AITDD）**の実践的な手法を、実際に動くコード例とともに解説します。大切なのは**小さく確実なサイクル**を回すこと。まずは 10 分で完結する最小ループから始めましょう。
 
 ---
 
@@ -31,38 +31,41 @@ AIは優秀なペアプログラマーですが、**文脈の理解**と**意図
 
 ### 1-1. Red（失敗テスト）: 意図を明確に記述する
 
-AIとの協働では、**テストが仕様書**の役割を果たします。曖昧な要求ではなく、具体的な期待値を含むテストを先に書きます。
+AI との協働では、**テストが仕様書**の役割を果たします。曖昧な要求ではなく、具体的な期待値を含むテストを先に書きます。
 
 **原則**:
-- **1機能につき1テスト**から開始（複雑化を避ける）
+
+- **1 機能につき 1 テスト**から開始（複雑化を避ける）
 - **明確な失敗理由**を確認（実装の指針となる）
-- **AIへの依頼は具体的に**（対象・前提・期待値を明示）
+- **AI への依頼は具体的に**（対象・前提・期待値を明示）
 
 ```typescript
 // ❌ 曖昧なテスト
 expect(formatPrice(1000)).toBeTruthy();
 
 // ✅ 明確なテスト
-expect(formatPrice(1000)).toBe('¥1,000');
-expect(formatPrice(-500)).toBe('-¥500');
+expect(formatPrice(1000)).toBe("¥1,000");
+expect(formatPrice(-500)).toBe("-¥500");
 ```
 
-### 1-2. Green（最小実装）: AIと協働で最短パスを見つける
+### 1-2. Green（最小実装）: AI と協働で最短パスを見つける
 
 テストを通すための**最小限のコード**を実装します。この段階では完璧さより速度を重視。
 
 **原則**:
-- **過度な抽象化は避ける**（YAGNI原則の厳守）
+
+- **過度な抽象化は避ける**（YAGNI 原則の厳守）
 - **ハードコードも辞さない**（リファクタで改善）
 - **テスト実行で緑確認**は必須
 
 ### 1-3. Refactor（継続的改善）: 次の変更を楽にする
 
-機能追加や修正が**楽になる**設計に整えます。AIに複数の改善案を提案してもらい、トレードオフを比較検討します。
+機能追加や修正が**楽になる**設計に整えます。AI に複数の改善案を提案してもらい、トレードオフを比較検討します。
 
 **原則**:
+
 - **テストは常に緑**を維持
-- **1回に1つの改善**（複数同時は混乱の元）
+- **1 回に 1 つの改善**（複数同時は混乱の元）
 - **命名・分割・依存関係**の見直し
 
 ---
@@ -92,93 +95,93 @@ expect(formatPrice(-500)).toBe('-¥500');
 
 ```javascript
 // jest.config.js
-const nextJest = require('next/jest')
+const nextJest = require("next/jest");
 
 const createJestConfig = nextJest({
-  dir: './',
-})
+  dir: "./",
+});
 
 const customJestConfig = {
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  testEnvironment: 'jsdom',
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+  testEnvironment: "jsdom",
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/$1',
+    "^@/(.*)$": "<rootDir>/$1",
   },
-}
+};
 
-module.exports = createJestConfig(customJestConfig)
+module.exports = createJestConfig(customJestConfig);
 ```
 
 ```javascript
 // jest.setup.js
-import '@testing-library/jest-dom'
+import "@testing-library/jest-dom";
 ```
 
 ```typescript
 // playwright.config.ts
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
-  testDir: './e2e',
+  testDir: "./e2e",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
+  reporter: "html",
   use: {
-    baseURL: 'http://localhost:3000',
-    trace: 'on-first-retry',
+    baseURL: "http://localhost:3000",
+    trace: "on-first-retry",
   },
-  projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-  ],
+  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
+    command: "npm run dev",
+    url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
   },
 });
 ```
 
 :::message alert
-**App Router特有の注意点**
+**App Router 特有の注意点**
+
 - Server Components のテストは従来とは異なるアプローチが必要
 - `use client` ディレクティブの有無でテスト戦略が変わる
 - App Router の新しいディレクトリ構造を考慮したモジュール解決設定が重要
-:::
+  :::
 
 ---
 
-## 3. 実践例1: ユニットテスト（formatCurrency 関数）
+## 3. 実践例 1: ユニットテスト（formatCurrency 関数）
 
-**ユースケース**: App Routerで多言語対応ECサイトの価格表示機能
+**ユースケース**: App Router で多言語対応 EC サイトの価格表示機能
 
 ### Step 1: Red - 失敗するテストを作成
 
 ```typescript
 // __tests__/utils/formatCurrency.test.ts
-import { formatCurrency } from '@/app/lib/formatCurrency'
+import { formatCurrency } from "@/app/lib/formatCurrency";
 
-describe('formatCurrency', () => {
-  test('日本円を正しく表示する', () => {
-    expect(formatCurrency(1000, 'JPY', 'ja')).toBe('¥1,000')
-  })
-  
-  test('米ドルを正しく表示する', () => {
-    expect(formatCurrency(1000, 'USD', 'en')).toBe('$1,000.00')
-  })
-  
-  test('負の金額を正しく処理する', () => {
-    expect(formatCurrency(-500, 'JPY', 'ja')).toBe('-¥500')
-  })
-  
-  test('小数点を含む金額を適切に処理する', () => {
-    expect(formatCurrency(1234.56, 'USD', 'en')).toBe('$1,234.56')
-  })
-})
+describe("formatCurrency", () => {
+  test("日本円を正しく表示する", () => {
+    expect(formatCurrency(1000, "JPY", "ja")).toBe("¥1,000");
+  });
+
+  test("米ドルを正しく表示する", () => {
+    expect(formatCurrency(1000, "USD", "en")).toBe("$1,000.00");
+  });
+
+  test("負の金額を正しく処理する", () => {
+    expect(formatCurrency(-500, "JPY", "ja")).toBe("-¥500");
+  });
+
+  test("小数点を含む金額を適切に処理する", () => {
+    expect(formatCurrency(1234.56, "USD", "en")).toBe("$1,234.56");
+  });
+});
 ```
 
-**AIプロンプト例**:
+**AI プロンプト例**:
+
 ```
 Next.js App Routerで多言語ECサイトを開発中です。
 以下のテスト仕様を満たす formatCurrency 関数の最小実装を提案してください。
@@ -196,13 +199,13 @@ Next.js App Routerで多言語ECサイトを開発中です。
 ```typescript
 // app/lib/formatCurrency.ts（最初の失敗実装）
 export const formatCurrency = (
-  value: number, 
-  currency: string, 
+  value: number,
+  currency: string,
   locale: string
 ): string => {
   // まず意図的に失敗させる
-  return value.toString()
-}
+  return value.toString();
+};
 ```
 
 **テスト実行**: `npm run test formatCurrency.test.ts`
@@ -220,200 +223,204 @@ FAIL __tests__/utils/formatCurrency.test.ts
 ```typescript
 // app/lib/formatCurrency.ts（正しい実装）
 export const formatCurrency = (
-  value: number, 
-  currency: string, 
+  value: number,
+  currency: string,
   locale: string
 ): string => {
   return new Intl.NumberFormat(locale, {
-    style: 'currency',
+    style: "currency",
     currency: currency,
-  }).format(value)
-}
+  }).format(value);
+};
 ```
 
-### Step 4: Refactor - App Router特有の改善
+### Step 4: Refactor - App Router 特有の改善
 
 ```typescript
 // app/lib/formatCurrency.ts（App Router最適化版）
 export const formatCurrency = (
-  value: number, 
-  currency: string, 
+  value: number,
+  currency: string,
   locale: string
 ): string => {
   // 入力検証の追加
-  if (typeof value !== 'number' || !isFinite(value)) {
-    throw new Error('Invalid number value')
+  if (typeof value !== "number" || !isFinite(value)) {
+    throw new Error("Invalid number value");
   }
-  
+
   return new Intl.NumberFormat(locale, {
-    style: 'currency',
+    style: "currency",
     currency: currency,
-  }).format(value)
-}
+  }).format(value);
+};
 
 // Client Component用の型安全なラッパー（必要に応じて）
-export const formatCurrencyClient = formatCurrency
+export const formatCurrencyClient = formatCurrency;
 ```
 
 :::message
-**App Router固有のポイント**
-- TypeScriptの型安全性を活用した入力検証
-- Client/Server Components両方で使用可能なシンプルな設計
+**App Router 固有のポイント**
+
+- TypeScript の型安全性を活用した入力検証
+- Client/Server Components 両方で使用可能なシンプルな設計
 - `Intl.NumberFormat`によるブラウザネイティブな最適化
-:::
+  :::
 
 ---
 
-## 4. 実践例2: App Router コンポーネントテスト（SearchBox）
+## 4. 実践例 2: App Router コンポーネントテスト（SearchBox）
 
-**ユースケース**: Next.js App Routerの商品検索機能
+**ユースケース**: Next.js App Router の商品検索機能
 
-### Step 1: Red - Client Componentのテスト設計
+### Step 1: Red - Client Component のテスト設計
 
 ```tsx
 // __tests__/components/SearchBox.test.tsx
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { useRouter, useSearchParams } from 'next/navigation'
-import SearchBox from '@/app/components/SearchBox'
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { useRouter, useSearchParams } from "next/navigation";
+import SearchBox from "@/app/components/SearchBox";
 
 // Mock useRouter for App Router
-jest.mock('next/navigation', () => ({
+jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
   useSearchParams: jest.fn(),
-}))
+}));
 
-const mockPush = jest.fn()
-const mockReplace = jest.fn()
+const mockPush = jest.fn();
+const mockReplace = jest.fn();
 
-describe('SearchBox', () => {
+describe("SearchBox", () => {
   beforeEach(() => {
-    jest.useFakeTimers()
-    ;(useRouter as jest.Mock).mockReturnValue({
+    jest.useFakeTimers();
+    (useRouter as jest.Mock).mockReturnValue({
       push: mockPush,
       replace: mockReplace,
-    })
-    ;(useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams())
-  })
-  
+    });
+    (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams());
+  });
+
   afterEach(() => {
-    jest.useRealTimers()
-    jest.clearAllMocks()
-  })
+    jest.useRealTimers();
+    jest.clearAllMocks();
+  });
 
-  test('検索語入力から400ms後にURLが更新される', async () => {
-    const user = userEvent.setup({ 
-      advanceTimers: jest.advanceTimersByTime 
-    })
-    
-    render(<SearchBox />)
-    
-    const input = screen.getByPlaceholderText('商品を検索...')
-    await user.type(input, 'iPhone')
-    
+  test("検索語入力から400ms後にURLが更新される", async () => {
+    const user = userEvent.setup({
+      advanceTimers: jest.advanceTimersByTime,
+    });
+
+    render(<SearchBox />);
+
+    const input = screen.getByPlaceholderText("商品を検索...");
+    await user.type(input, "iPhone");
+
     // 400ms経過前は呼ばれない
-    expect(mockReplace).not.toHaveBeenCalled()
-    
-    jest.advanceTimersByTime(400)
-    
-    await waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith('/search?q=iPhone')
-    })
-  })
+    expect(mockReplace).not.toHaveBeenCalled();
 
-  test('空文字検索は実行されない', async () => {
-    const user = userEvent.setup({ 
-      advanceTimers: jest.advanceTimersByTime 
-    })
-    
-    render(<SearchBox />)
-    
-    const input = screen.getByPlaceholderText('商品を検索...')
-    await user.type(input, '   ')
-    
-    jest.advanceTimersByTime(400)
-    
-    expect(mockReplace).not.toHaveBeenCalled()
-  })
+    jest.advanceTimersByTime(400);
 
-  test('連続入力時は最後の値のみでURL更新される', async () => {
-    const user = userEvent.setup({ 
-      advanceTimers: jest.advanceTimersByTime 
-    })
-    
-    render(<SearchBox />)
-    
-    const input = screen.getByPlaceholderText('商品を検索...')
-    
-    await user.type(input, 'iP')
-    jest.advanceTimersByTime(200)
-    
-    await user.type(input, 'hone')
-    jest.advanceTimersByTime(400)
-    
     await waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledTimes(1)
-      expect(mockReplace).toHaveBeenCalledWith('/search?q=iPhone')
-    })
-  })
-})
+      expect(mockReplace).toHaveBeenCalledWith("/search?q=iPhone");
+    });
+  });
+
+  test("空文字検索は実行されない", async () => {
+    const user = userEvent.setup({
+      advanceTimers: jest.advanceTimersByTime,
+    });
+
+    render(<SearchBox />);
+
+    const input = screen.getByPlaceholderText("商品を検索...");
+    await user.type(input, "   ");
+
+    jest.advanceTimersByTime(400);
+
+    expect(mockReplace).not.toHaveBeenCalled();
+  });
+
+  test("連続入力時は最後の値のみでURL更新される", async () => {
+    const user = userEvent.setup({
+      advanceTimers: jest.advanceTimersByTime,
+    });
+
+    render(<SearchBox />);
+
+    const input = screen.getByPlaceholderText("商品を検索...");
+
+    await user.type(input, "iP");
+    jest.advanceTimersByTime(200);
+
+    await user.type(input, "hone");
+    jest.advanceTimersByTime(400);
+
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalledTimes(1);
+      expect(mockReplace).toHaveBeenCalledWith("/search?q=iPhone");
+    });
+  });
+});
 ```
 
-### Step 2: Green - Client Component実装
+### Step 2: Green - Client Component 実装
 
 ```tsx
 // app/components/SearchBox.tsx
-'use client'
+"use client";
 
-import { useState, useEffect, useCallback } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useState, useEffect, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface SearchBoxProps {
-  placeholder?: string
-  className?: string
+  placeholder?: string;
+  className?: string;
 }
 
-export default function SearchBox({ 
-  placeholder = '商品を検索...',
-  className = ''
+export default function SearchBox({
+  placeholder = "商品を検索...",
+  className = "",
 }: SearchBoxProps) {
-  const [query, setQuery] = useState('')
-  const router = useRouter()
-  const searchParams = useSearchParams()
+  const [query, setQuery] = useState("");
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   // デバウンス処理
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      const trimmedQuery = query.trim()
+      const trimmedQuery = query.trim();
       if (trimmedQuery) {
         // URLを更新してServer Componentでの検索をトリガー
-        const params = new URLSearchParams(searchParams)
-        params.set('q', trimmedQuery)
-        router.replace(`/search?${params.toString()}`)
+        const params = new URLSearchParams(searchParams);
+        params.set("q", trimmedQuery);
+        router.replace(`/search?${params.toString()}`);
       }
-    }, 400)
+    }, 400);
 
-    return () => clearTimeout(timeoutId)
-  }, [query, router, searchParams])
+    return () => clearTimeout(timeoutId);
+  }, [query, router, searchParams]);
 
   // URL同期（App Router対応）
   useEffect(() => {
-    const currentQuery = searchParams.get('q') || ''
+    const currentQuery = searchParams.get("q") || "";
     if (currentQuery !== query) {
-      setQuery(currentQuery)
+      setQuery(currentQuery);
     }
-  }, [searchParams])
+  }, [searchParams]);
 
-  const handleSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault()
-    const trimmedQuery = query.trim()
-    if (trimmedQuery) {
-      // URLを更新（App Router）
-      const params = new URLSearchParams(searchParams)
-      params.set('q', trimmedQuery)
-      router.replace(`?${params.toString()}`)
-    }
-  }, [query, router, searchParams])
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      const trimmedQuery = query.trim();
+      if (trimmedQuery) {
+        // URLを更新（App Router）
+        const params = new URLSearchParams(searchParams);
+        params.set("q", trimmedQuery);
+        router.replace(`?${params.toString()}`);
+      }
+    },
+    [query, router, searchParams]
+  );
 
   return (
     <form onSubmit={handleSubmit} className={className}>
@@ -426,46 +433,44 @@ export default function SearchBox({
         aria-label="検索"
       />
     </form>
-  )
+  );
 }
 ```
 
-### Step 3: Refactor - Server Component統合
+### Step 3: Refactor - Server Component 統合
 
 ```tsx
 // app/search/page.tsx（Server Component側）
-import { Suspense } from 'react'
-import SearchBox from '@/app/components/SearchBox'
-import SearchResults from '@/app/components/SearchResults'
+import { Suspense } from "react";
+import SearchBox from "@/app/components/SearchBox";
+import SearchResults from "@/app/components/SearchResults";
 
 interface SearchPageProps {
-  searchParams: { q?: string }
+  searchParams: { q?: string };
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const query = searchParams.q || ''
+  const query = searchParams.q || "";
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">商品検索</h1>
-      
-      <SearchBox 
-        placeholder="商品を検索..."
-        className="mb-8"
-      />
-      
+
+      <SearchBox placeholder="商品を検索..." className="mb-8" />
+
       <Suspense fallback={<div>検索中...</div>}>
         <SearchResults query={query} />
       </Suspense>
     </div>
-  )
+  );
 }
 ```
 
-**Server Actions連携例**:
+**Server Actions 連携例**:
+
 ```tsx
 // app/actions/search.ts
-'use server'
+"use server";
 
 export async function searchProducts(query: string) {
   // データベース検索やAPI呼び出し
@@ -474,227 +479,238 @@ export async function searchProducts(query: string) {
       { id: 1, name: `${query}関連商品1`, price: 1000 },
       { id: 2, name: `${query}関連商品2`, price: 2000 },
     ],
-    total: 2
-  }
+    total: 2,
+  };
 }
 
 // app/components/SearchResults.tsx
-import { searchProducts } from '@/app/actions/search'
+import { searchProducts } from "@/app/actions/search";
 
 interface SearchResultsProps {
-  query: string
+  query: string;
 }
 
 export default async function SearchResults({ query }: SearchResultsProps) {
-  if (!query) return <div>検索キーワードを入力してください</div>
-  
-  const results = await searchProducts(query)
-  
+  if (!query) return <div>検索キーワードを入力してください</div>;
+
+  const results = await searchProducts(query);
+
   return (
     <div data-testid="search-results">
       <p data-testid="result-count">{results.total}件の商品が見つかりました</p>
       <div className="grid gap-4">
-        {results.products.map(product => (
-          <div key={product.id} data-testid="product-card" className="border p-4">
+        {results.products.map((product) => (
+          <div
+            key={product.id}
+            data-testid="product-card"
+            className="border p-4"
+          >
             <h3 data-testid="product-title">{product.name}</h3>
             <p data-testid="product-price">¥{product.price}</p>
           </div>
         ))}
       </div>
     </div>
-  )
+  );
 }
 ```
 
 :::message
-**App Router特有のテストポイント**
+**App Router 特有のテストポイント**
+
 - `next/navigation` のモックが必須
-- Server/Client Componentsの境界を意識したテスト設計
-- URLSearchParamsとの連携テスト
-- Suspenseとの協調動作確認
-:::
+- Server/Client Components の境界を意識したテスト設計
+- URLSearchParams との連携テスト
+- Suspense との協調動作確認
+  :::
 
 ---
 
-## 5. 実践例3: App Router E2Eテスト（Playwright）
+## 5. 実践例 3: App Router E2E テスト（Playwright）
 
 **ユースケース**: 商品検索から詳細画面への遷移フロー
 
-### Step 1: E2Eテストの設計
+### Step 1: E2E テストの設計
 
 ```typescript
 // e2e/product-search.spec.ts
-import { test, expect } from '@playwright/test'
+import { test, expect } from "@playwright/test";
 
-test.describe('商品検索フロー', () => {
+test.describe("商品検索フロー", () => {
   test.beforeEach(async ({ page }) => {
     // App Routerのダイナミックルーティング対応
-    await page.goto('/search')
-    await expect(page).toHaveTitle(/商品検索/)
-  })
+    await page.goto("/search");
+    await expect(page).toHaveTitle(/商品検索/);
+  });
 
-  test('検索→結果表示→詳細画面遷移の一連フロー', async ({ page }) => {
+  test("検索→結果表示→詳細画面遷移の一連フロー", async ({ page }) => {
     // 検索実行
-    const searchInput = page.getByPlaceholder('商品を検索...')
-    await searchInput.fill('iPhone')
-    await searchInput.press('Enter')
+    const searchInput = page.getByPlaceholder("商品を検索...");
+    await searchInput.fill("iPhone");
+    await searchInput.press("Enter");
 
     // URL更新確認（App Router）
-    await expect(page).toHaveURL(/\/search\?q=iPhone/)
+    await expect(page).toHaveURL(/\/search\?q=iPhone/);
 
     // 検索結果の表示確認
-    await expect(page.getByTestId('search-results')).toBeVisible()
-    await expect(page.getByTestId('result-count')).toHaveText(/\d+件の商品が見つかりました/)
+    await expect(page.getByTestId("search-results")).toBeVisible();
+    await expect(page.getByTestId("result-count")).toHaveText(
+      /\d+件の商品が見つかりました/
+    );
 
     // 商品カードの存在確認
-    const firstProduct = page.getByTestId('product-card').first()
-    await expect(firstProduct).toBeVisible()
+    const firstProduct = page.getByTestId("product-card").first();
+    await expect(firstProduct).toBeVisible();
 
     // 商品詳細への遷移
-    await firstProduct.click()
+    await firstProduct.click();
 
     // 詳細ページの確認（App Routerのダイナミックルーティング）
-    await expect(page).toHaveURL(/\/products\/\d+/)
-    await expect(page.getByTestId('product-title')).toBeVisible()
-    await expect(page.getByTestId('product-price')).toBeVisible()
-  })
+    await expect(page).toHaveURL(/\/products\/\d+/);
+    await expect(page.getByTestId("product-title")).toBeVisible();
+    await expect(page.getByTestId("product-price")).toBeVisible();
+  });
 
-  test('検索結果が0件の場合の表示', async ({ page }) => {
-    const searchInput = page.getByPlaceholder('商品を検索...')
-    await searchInput.fill('存在しない商品XYZ123')
-    await searchInput.press('Enter')
+  test("検索結果が0件の場合の表示", async ({ page }) => {
+    const searchInput = page.getByPlaceholder("商品を検索...");
+    await searchInput.fill("存在しない商品XYZ123");
+    await searchInput.press("Enter");
 
-    await expect(page.getByTestId('no-results')).toBeVisible()
-    await expect(page.getByTestId('no-results')).toHaveText(/該当する商品が見つかりませんでした/)
-  })
+    await expect(page.getByTestId("no-results")).toBeVisible();
+    await expect(page.getByTestId("no-results")).toHaveText(
+      /該当する商品が見つかりませんでした/
+    );
+  });
 
-  test('ページネーション機能', async ({ page }) => {
-    const searchInput = page.getByPlaceholder('商品を検索...')
-    await searchInput.fill('スマートフォン')
-    await searchInput.press('Enter')
+  test("ページネーション機能", async ({ page }) => {
+    const searchInput = page.getByPlaceholder("商品を検索...");
+    await searchInput.fill("スマートフォン");
+    await searchInput.press("Enter");
 
     // 複数ページある場合のテスト
-    const paginationNext = page.getByTestId('pagination-next')
+    const paginationNext = page.getByTestId("pagination-next");
     if (await paginationNext.isVisible()) {
-      await paginationNext.click()
-      
+      await paginationNext.click();
+
       // URLクエリパラメータの確認
-      await expect(page).toHaveURL(/page=2/)
-      await expect(page.getByTestId('search-results')).toBeVisible()
+      await expect(page).toHaveURL(/page=2/);
+      await expect(page.getByTestId("search-results")).toBeVisible();
     }
-  })
-})
+  });
+});
 
-test.describe('レスポンシブ対応', () => {
-  test('モバイル表示での検索機能', async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 667 })
-    await page.goto('/search')
+test.describe("レスポンシブ対応", () => {
+  test("モバイル表示での検索機能", async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto("/search");
 
-    const searchInput = page.getByPlaceholder('商品を検索...')
-    await expect(searchInput).toBeVisible()
-    
-    await searchInput.fill('iPad')
-    await searchInput.press('Enter')
+    const searchInput = page.getByPlaceholder("商品を検索...");
+    await expect(searchInput).toBeVisible();
+
+    await searchInput.fill("iPad");
+    await searchInput.press("Enter");
 
     // モバイルレイアウトでの結果表示確認
-    await expect(page.getByTestId('search-results')).toBeVisible()
-    const productCards = page.getByTestId('product-card')
-    
+    await expect(page.getByTestId("search-results")).toBeVisible();
+    const productCards = page.getByTestId("product-card");
+
     // モバイルでは縦並び表示
-    const firstCard = productCards.first()
-    const secondCard = productCards.nth(1)
-    
+    const firstCard = productCards.first();
+    const secondCard = productCards.nth(1);
+
     if (await secondCard.isVisible()) {
-      const firstBox = await firstCard.boundingBox()
-      const secondBox = await secondCard.boundingBox()
-      
+      const firstBox = await firstCard.boundingBox();
+      const secondBox = await secondCard.boundingBox();
+
       // Y座標を比較して縦並びを確認
-      expect(secondBox?.y).toBeGreaterThan(firstBox?.y || 0)
+      expect(secondBox?.y).toBeGreaterThan(firstBox?.y || 0);
     }
-  })
-})
+  });
+});
 ```
 
-### Step 2: App Router対応のPage Objectパターン
+### Step 2: App Router 対応の Page Object パターン
 
 ```typescript
 // e2e/pages/SearchPage.ts
-import { Page, Locator, expect } from '@playwright/test'
+import { Page, Locator, expect } from "@playwright/test";
 
 export class SearchPage {
-  readonly page: Page
-  readonly searchInput: Locator
-  readonly searchResults: Locator
-  readonly resultCount: Locator
-  readonly noResults: Locator
-  readonly productCards: Locator
-  readonly pagination: Locator
+  readonly page: Page;
+  readonly searchInput: Locator;
+  readonly searchResults: Locator;
+  readonly resultCount: Locator;
+  readonly noResults: Locator;
+  readonly productCards: Locator;
+  readonly pagination: Locator;
 
   constructor(page: Page) {
-    this.page = page
-    this.searchInput = page.getByPlaceholder('商品を検索...')
-    this.searchResults = page.getByTestId('search-results')
-    this.resultCount = page.getByTestId('result-count')
-    this.noResults = page.getByTestId('no-results')
-    this.productCards = page.getByTestId('product-card')
-    this.pagination = page.getByTestId('pagination')
+    this.page = page;
+    this.searchInput = page.getByPlaceholder("商品を検索...");
+    this.searchResults = page.getByTestId("search-results");
+    this.resultCount = page.getByTestId("result-count");
+    this.noResults = page.getByTestId("no-results");
+    this.productCards = page.getByTestId("product-card");
+    this.pagination = page.getByTestId("pagination");
   }
 
   async goto() {
-    await this.page.goto('/search')
-    await expect(this.page).toHaveTitle(/商品検索/)
+    await this.page.goto("/search");
+    await expect(this.page).toHaveTitle(/商品検索/);
   }
 
   async search(query: string) {
-    await this.searchInput.fill(query)
-    await this.searchInput.press('Enter')
-    
+    await this.searchInput.fill(query);
+    await this.searchInput.press("Enter");
+
     // App RouterのURL更新を待機
-    await expect(this.page).toHaveURL(new RegExp(`q=${encodeURIComponent(query)}`))
+    await expect(this.page).toHaveURL(
+      new RegExp(`q=${encodeURIComponent(query)}`)
+    );
   }
 
   async expectResultsVisible() {
-    await expect(this.searchResults).toBeVisible()
+    await expect(this.searchResults).toBeVisible();
   }
 
   async expectResultCount(pattern: RegExp) {
-    await expect(this.resultCount).toHaveText(pattern)
+    await expect(this.resultCount).toHaveText(pattern);
   }
 
   async expectNoResults() {
-    await expect(this.noResults).toBeVisible()
+    await expect(this.noResults).toBeVisible();
   }
 
   async clickFirstProduct() {
-    await this.productCards.first().click()
+    await this.productCards.first().click();
   }
 
   async goToPage(pageNumber: number) {
-    await this.page.getByTestId(`pagination-page-${pageNumber}`).click()
-    await expect(this.page).toHaveURL(new RegExp(`page=${pageNumber}`))
+    await this.page.getByTestId(`pagination-page-${pageNumber}`).click();
+    await expect(this.page).toHaveURL(new RegExp(`page=${pageNumber}`));
   }
 }
 ```
 
-### Step 3: CI/CD環境での安定実行
+### Step 3: CI/CD 環境での安定実行
 
 ```typescript
 // playwright.config.ts（CI最適化版）
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
-  testDir: './e2e',
+  testDir: "./e2e",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 3 : 1, // CI環境では多めにリトライ
   workers: process.env.CI ? 2 : undefined,
-  reporter: process.env.CI ? 'github' : 'html',
-  
+  reporter: process.env.CI ? "github" : "html",
+
   use: {
-    baseURL: process.env.BASE_URL || 'http://localhost:3000',
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    baseURL: process.env.BASE_URL || "http://localhost:3000",
+    trace: "on-first-retry",
+    screenshot: "only-on-failure",
+    video: "retain-on-failure",
     // App Routerでのナビゲーション待機時間
     navigationTimeout: 30000,
     actionTimeout: 15000,
@@ -702,35 +718,36 @@ export default defineConfig({
 
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
     },
     {
-      name: 'mobile-chrome',
-      use: { ...devices['Pixel 5'] },
+      name: "mobile-chrome",
+      use: { ...devices["Pixel 5"] },
     },
   ],
 
   webServer: {
-    command: process.env.CI ? 'npm run build && npm start' : 'npm run dev',
-    url: 'http://localhost:3000',
+    command: process.env.CI ? "npm run build && npm start" : "npm run dev",
+    url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
     timeout: process.env.CI ? 120000 : 60000,
   },
-})
+});
 ```
 
 :::message
-**App Router E2Eテストの重要ポイント**
-- **ダイナミックルーティング**のURL検証
+**App Router E2E テストの重要ポイント**
+
+- **ダイナミックルーティング**の URL 検証
 - **Server/Client Components**の描画タイミング
-- **Suspense境界**での読み込み状態管理
+- **Suspense 境界**での読み込み状態管理
 - **モバイルファースト**のレスポンシブテスト
-:::
+  :::
 
 ---
 
-## 6. AIとの効果的な協働: 実践的プロンプトテンプレート集
+## 6. AI との効果的な協働: 実践的プロンプトテンプレート集
 
 ### 6-1. ユニットテスト生成プロンプト
 
@@ -751,7 +768,7 @@ Next.js App Router + TypeScript専門のTDDアシスタント
 
 ### 出力要件
 1. **テストファイル全文**（Jest + @testing-library）
-2. **最初に失敗する実装**（1-2行のコメント付き）  
+2. **最初に失敗する実装**（1-2行のコメント付き）
 3. **テストを通す最小実装**
 4. **エッジケース提案**（3つまで）
 5. **App Router固有の考慮点**があれば1行で
@@ -762,10 +779,10 @@ Next.js App Router + TypeScript専門のTDDアシスタント
 - モック使用は最小限
 ```
 
-### 6-2. Client Componentテスト生成プロンプト
+### 6-2. Client Component テスト生成プロンプト
 
 ```plaintext
-## 役割  
+## 役割
 React Testing Library + App Router専門のコンポーネントテスト設計者
 
 ## 対象コンポーネント
@@ -785,12 +802,12 @@ React Testing Library + App Router専門のコンポーネントテスト設計�
 
 ### 重視ポイント
 - useFakeTimers の適切な使用
-- userEvent の最新API活用  
+- userEvent の最新API活用
 - App Routerフック対応
 - useRouter.replace の呼び出し検証
 ```
 
-### 6-3. E2Eシナリオ生成プロンプト
+### 6-3. E2E シナリオ生成プロンプト
 
 ```plaintext
 ## 役割
@@ -801,7 +818,7 @@ Playwright + Next.js App Router専門のE2Eテスト設計者
 
 ### 対象フロー
 1. `/search` ページでの検索実行
-2. 結果表示とページネーション  
+2. 結果表示とページネーション
 3. 商品詳細画面 `/products/[id]` への遷移
 4. モバイル表示での動作確認
 
@@ -861,7 +878,7 @@ Next.js App Routerのテスト失敗分析専門家
 ### 失敗テスト
 [テストコードと実行結果を貼り付け]
 
-### 実装コード  
+### 実装コード
 [関連する実装コードを貼り付け]
 
 ### 分析依頼
@@ -883,16 +900,17 @@ Next.js App Routerのテスト失敗分析専門家
 ```
 
 :::message
-**AIプロンプト設計のコツ**
+**AI プロンプト設計のコツ**
+
 - **役割定義**で専門性を明確化
-- **出力要件**を具体的に指定  
+- **出力要件**を具体的に指定
 - **制約条件**でスコープを限定
-- **App Router固有の観点**を必ず含める
-:::
+- **App Router 固有の観点**を必ず含める
+  :::
 
 ---
 
-## 7. App Router対応CI/CD: GitHub Actions実装例
+## 7. App Router 対応 CI/CD: GitHub Actions 実装例
 
 ### 7-1. 完全なワークフロー設定
 
@@ -902,12 +920,12 @@ name: CI/CD Pipeline for Next.js App Router
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: "20"
   NEXT_TELEMETRY_DISABLED: 1
 
 jobs:
@@ -917,16 +935,16 @@ jobs:
       cache-key: ${{ steps.cache-keys.outputs.cache-key }}
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          
+          cache: "npm"
+
       - id: cache-keys
         run: echo "cache-key=node-modules-${{ hashFiles('package-lock.json') }}" >> $GITHUB_OUTPUT
-        
+
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit
 
@@ -938,17 +956,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit
-        
+
       - name: Run ESLint
         run: npm run lint
-        
+
       - name: TypeScript type check
         run: npm run type-check
-        
+
       - name: Check Next.js build
         run: npm run build
 
@@ -960,16 +978,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit
-        
+
       - name: Run unit and component tests
         run: npm run test -- --coverage --passWithNoTests
         env:
           CI: true
-          
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
@@ -988,7 +1006,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit
       - name: Install Playwright browsers
@@ -1019,20 +1037,20 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit
-        
+
       - name: Install Playwright
         run: npx playwright install chromium
-        
+
       - name: Build application
         run: npm run build
-        
+
       - name: Run visual regression tests
         run: npx playwright test visual/ --project=chromium
-        
+
       - name: Upload visual diff artifacts
         uses: actions/upload-artifact@v3
         if: failure()
@@ -1050,16 +1068,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit
-        
+
       - name: Build for preview
         run: npm run build
         env:
           NEXT_PUBLIC_ENVIRONMENT: preview
-          
+
       - name: Deploy to Vercel Preview
         uses: amondnet/vercel-action@v25
         with:
@@ -1069,7 +1087,7 @@ jobs:
           scope: ${{ secrets.VERCEL_ORG_ID }}
 ```
 
-### 7-2. パッケージ.jsonスクリプト設定
+### 7-2. パッケージ.json スクリプト設定
 
 ```json
 {
@@ -1097,16 +1115,9 @@ jobs:
 // package.json（追加設定）
 {
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md,yml,yaml}": [
-      "prettier --write"
-    ],
-    "*.{ts,tsx}": [
-      "bash -c 'npm run type-check'"
-    ]
+    "*.{js,jsx,ts,tsx}": ["eslint --fix", "prettier --write"],
+    "*.{json,md,yml,yaml}": ["prettier --write"],
+    "*.{ts,tsx}": ["bash -c 'npm run type-check'"]
   }
 }
 ```
@@ -1137,7 +1148,7 @@ name: Performance Monitoring
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # 毎日午前2時実行
+    - cron: "0 2 * * *" # 毎日午前2時実行
   workflow_dispatch:
 
 jobs:
@@ -1147,68 +1158,69 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
-          
+          node-version: "20"
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Build application
         run: npm run build
-        
+
       - name: Run Lighthouse CI
         run: |
           npm install -g @lhci/cli@0.12.x
           lhci autorun
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-          
+
       - name: Comment PR with Lighthouse results
         if: github.event_name == 'pull_request'
         uses: foo-software/lighthouse-check-action@master
         with:
           accessToken: ${{ secrets.GITHUB_TOKEN }}
           gitHubApiUrl: https://api.github.com
-          urls: 'https://your-preview-url.vercel.app'
+          urls: "https://your-preview-url.vercel.app"
 ```
 
 :::message
-**CI/CD最適化のポイント**
+**CI/CD 最適化のポイント**
+
 - **並列実行**でビルド時間短縮
-- **キャッシュ戦略**で依存関係インストール高速化  
+- **キャッシュ戦略**で依存関係インストール高速化
 - **段階的デプロイ**でリスク軽減
 - **自動品質チェック**で手動レビュー負荷削減
-:::
+  :::
 
 ---
 
 ## 8. よくあるつまずき
 
-- **AI が先に実装を書き始める**  
+- **AI が先に実装を書き始める**
   → プロンプトで「まずテスト。実装は赤確認の後」と明記。
 
-- **巨大な一括差分**  
+- **巨大な一括差分**
   → 1 テスト = 1 変更。PR は ±300 行以内を目安に。
 
-- **E2E が不安定**  
+- **E2E が不安定**
   → `data-testid` を固定、遷移待ちは `expect` 側で吸収、`retry` を併用。
 
-- **“正しさ”が曖昧**  
+- **“正しさ”が曖昧**
   → 期待値を **具体例** で渡す（入出力を 2〜3 個）。
 
 ---
 
 ## おわりに
 
-AI を“使う”だけでなく、**育てる**。  
+AI を“使う”だけでなく、**育てる**。
 テストとプロンプトは、そのための型だ。
 
-- **今日やる 3 手**  
-  1) 10〜30 分で終わる小粒な機能を選ぶ  
-  2) テストを 1 本だけ書き、まず **赤** を出す  
-  3) 緑に通し、軽いリファクタを 1 つ
+- **今日やる 3 手**
+  1. 10〜30 分で終わる小粒な機能を選ぶ
+  2. テストを 1 本だけ書き、まず **赤** を出す
+  3. 緑に通し、軽いリファクタを 1 つ
 
-あとは繰り返し。ループが小さいほど、速くなる。  
+あとは繰り返し。ループが小さいほど、速くなる。
 
 ---
 

@@ -5,10 +5,10 @@ type: "tech"
 topics:
   [
     "zennfes2025ai",
-    "multi-agent",
+    "multiagent",
     "tdd",
     "sdd",
-    "software-design",
+    "softwaredesign",
     "automation",
     "development-methodology",
   ]
