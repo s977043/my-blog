@@ -1,5 +1,5 @@
 ---
-title: "【River Reviewer】AIコードレビューを\"運河\"にする —— 暗黙知を「Agent Skills」として実装し、評価駆動で育てる技術"
+title: "【River Reviewer】AIレビューを\"運河\"にする —— 暗黙知を「Agent Skills」で資産化し評価駆動で育てる"
 emoji: "🌊"
 type: "tech"
 topics: ["ai", "typescript", "codereview", "architecture", "llm"]
