@@ -3,7 +3,7 @@ title: "AIエージェントを"投げっぱなし"にしない：Agent Skills�
 emoji: "🌊"
 type: "tech"
 topics: ["ai","codereview", "AgentSkills","暗黙知","2025年の最も大きなチャレンジ"]
-published: published: true
+published: true
 ---
 
 :::message
