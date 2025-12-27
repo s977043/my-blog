@@ -36,11 +36,13 @@ River Reviewerは、開発プロセスを3つのフェーズに分けるスト�
 
 AIの「賢さ」に期待して丸投げするのではなく、失敗したときのリスクと検証のしやすさで**“自由度（＝裁量の幅）”**を先に決めます。
 
-| 自由度 | 概要 | 推奨 Temp | 承認プロセス (HITL) | 適用領域 |
-| :--- | :--- | :--- | :--- | :--- |
-| **Cliff (崖)** | 失敗＝致命傷。厳格な検証。 | 0.0 | **事前承認必須** | 認証、決済、セキュリティ、DB移行 |
-| **Hill (丘)** | 修正可能なミス。定型作業。 | 0.3 | 事後レビュー (PR) | リファクタリング、命名規則、テスト記述 |
-| **Plain (平原)** | 探索的な思考。自由な発想。 | 0.8 | 承認不要 | ブレスト、モック作成、リスク洗い出し |
+### 開発シーン別の自由度分類案
+
+| 自由度 | カテゴリ | 推奨 Temp | 承認 (HITL) | ユースケース例 | 失敗時のインパクト |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Cliff (崖)** | **セキュリティ・基盤** | 0.0 - 0.1 | **事前承認必須** | 認証ロジックの変更、DBマイグレーション、権限変更 | サービス停止、情報漏洩 |
+| **Hill (丘)** | **リファクタリング** | 0.3 - 0.5 | 事後レビュー | 重複コード共通化、型の厳格化、コンポーネント分割 | バグ混入、表示崩れ |
+| **Plain (平原)** | **新規機能・案** | 0.7 - 0.9 | 不要 | 新機能のロジック案、README作成、正規表現列挙 | 案が不採用（低リスク） |
 
 **低自由度（Cliff）**領域では、情報が足りないなら**推測せず質問に切り替える（Stop Conditions）**ことで、SRE的な安全性を担保します。
 
@@ -48,22 +50,50 @@ AIの「賢さ」に期待して丸投げするのではなく、失敗したと
 
 AIへの指示を「Agent Skills」という小さな単位に分割します。
 
-### Agent Skill の実装例
-一つのスキルにつき、以下の項目を簡潔に記述します。指示を絞ることでLLMの遵守率を最大化します。
+### 堅牢な AgentSkill インターフェース定義
+AIへの制約をプログラムレベルで表現するために、検証設定を強制する型定義を行います。
 
 ```typescript
-export const SecurityAuditSkill: AgentSkill = {
-  name: "SQL Injection Guardian",
+type RiskLevel = "Cliff" | "Hill" | "Plain";
+
+interface VerificationConfig {
+  type: "shell" | "unit-test" | "e2e";
+  command: string;
+  blocking: boolean; // Cliffの場合は常にtrueを推奨
+}
+
+interface AgentSkill {
+  name: string;
+  riskLevel: RiskLevel;
+  rule: {
+    priorities: string[];
+    prohibited: string[];
+    /**
+     * Stop Conditions: AIが「これ以上進めてはいけない」と判断する境界線
+     */
+    stopConditions: string[];
+    /**
+     * Cliffレベルの場合、verifyの定義を必須とする運用を推奨
+     */
+    verify?: VerificationConfig;
+  };
+}
+
+// 具体的なスキル定義の例
+export const DatabaseMigrationSkill: AgentSkill = {
+  name: "DB Schema Auditor",
   riskLevel: "Cliff",
   rule: {
-    priorities: ["SQLインジェクションの検知", "ORMの適切な使用"],
-    prohibited: ["raw queryの直接使用", "サニタイズされていない入力の利用"],
-    exceptions: ["分析用読み取り専用クエリ（要相談）"],
-    stopConditions: ["コンテキスト不足により推測が必要な場合、即座に質問すること"],
+    priorities: ["インデックスの貼り忘れ確認", "破壊的変更の検知"],
+    prohibited: ["テーブルの直接削除（DROP）", "ダウンタイムが発生するカラム変更"],
+    stopConditions: [
+      "既存データの移行手順が仕様書に記載されていない場合",
+      "影響を受けるクエリの実行計画が不明な場合"
+    ],
     verify: {
       type: "shell",
-      command: "npm run test:security",
-      blocking: true // 失敗時にプロセスを停止
+      command: "npm run test:migration-dry-run",
+      blocking: true
     }
   }
 };
@@ -71,44 +101,27 @@ export const SecurityAuditSkill: AgentSkill = {
 
 ## 5. ワークフロー：Plan / Validate / Verify
 
-「いきなりコードを書かせない」ことで、AIの暴走を上流で食い止めます。
+「いきなりコードを書かせない」のがRiver Reviewerの鉄則です。
 
-### Step 1: Plan (JSON Schema)
-AIはまず、以下の構造を持つ「計画書」を出力します。
-```json
-{
-  "taskId": "AUTH-456",
-  "riskLevel": "Cliff",
-  "rationale": "認証ロジックの変更に伴うセキュリティリスクの確認",
-  "skills": ["SecurityAuditSkill"],
-  "affectedFiles": ["src/auth/service.ts"],
-  "checks": ["OWASP SQL Injection points"]
-}
-```
-
-### Step 2: Validate (Go/No-Go 判断基準)
-人間（EMやテックリード）は以下の観点で計画を検閲します。
-- **Cliff**: 計画が具体的か？ 停止条件は定義されているか？
-- **Hill**: 影響範囲に漏れはないか？
-- **Plain**: アイデアが発散しすぎていないか？
-
-### Step 3: Verify (CI実行)
-実装後、スキルに定義された `verify` コマンドを実行します。失敗時は自動的にリトライせず、**「なぜ失敗したか」のログを共有メモリに記録して停止**させます。
+1.  **Plan (計画)**: 差分と `Agent Skills` を照らし合わせ、実行計画をJSONで生成。ここで `riskLevel` を自己判定させ、承認フローを分岐させます。
+2.  **Validate (検閲)**: 人間（EMやテックリード）が計画を検閲。`Cliff` ならば手動承認、`Hill` ならばCIによる自動判定へ。
+3.  **Verify (検証)**: スキルに紐づく `verify` コマンドを実行。失敗時はリトライさせず、**「なぜ失敗したか（期待値との差分等）」を共有メモリ（Dynamic Layer）に書き込んで即時停止**させます。
 
 ## 6. 核心：評価駆動（Evaluation-Driven）でスキルを育てる
 
-「育てる」運用を実現するために、以下のKPIを設定し、計測します。
+Agent Skillsを「資産」として維持するために、共有メモリをメンテナンスする運用ステップを組み込みます。
 
+*   **定期的な要約（Compression）**: `Dynamic Layer`（学習ログ）が一定量を超えたら、過去の「失敗の共通項」をAIに抽出させ、`Static Layer`（組織憲法）へ昇格させます。
+*   **負債のパージ**: ライブラリの更新等により不要になった過去の「禁止事項」を削除するPRを定期的に作成します。
+
+### 評価指標（KPI）の例
 - **指摘の妥当率（Precision）**: AIの指摘のうち、人間が「修正が必要」と認めた割合
 - **誤検知率（False Positive Rate）**: 規約に沿っているのにAIがエラーとした割合
-- **PRリードタイムの短縮**: 人間による一次レビューがAIに代わることによる速度向上
+- **PRリードタイムの短縮**: 一次レビューの自動化による速度向上
 
-### ゴールドデータの蓄積
-「過去の良いレビューコメント」や「NG実装例」をコーパスとして蓄積し、スキルの `prohibitedItems` を更新し続けます。スキルの更新自体もPRで行い、**Policy as Code** として変更理由を記録します。
+## おわりに：暗黙知を「資産」に変える
 
-## おわりに：暗黙知を「技術資産」に変える
-
-River Reviewerは、単純なプロンプト運用やRAGとは異なります。それは、組織の暗黙知を **Agent Skills** として言語化し、リスクに応じた**自由度を設計**し、評価を通じて成長させる「生きたガバナンス」です。
+River Reviewerは、単なるOSSツールではなく、**「開発文化をコード化するフレームワーク」**です。組織の暗黙知を **Agent Skills** として言語化し、リスクに応じた**自由度を設計**し、評価を通じて成長させる。
 
 あなたのチームの「秘伝のタレ」を、今日から実装してみませんか？
 
