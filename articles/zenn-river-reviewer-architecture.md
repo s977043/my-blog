@@ -2,7 +2,7 @@
 title: "AIエージェントを"投げっぱなし"にしない：Agent Skillsと自由度の設計で実現する「評価駆動の開発エコシステム」"
 emoji: "🌊"
 type: "tech"
-topics: ["ai", "typescript", "codereview", "architecture", "AgentSkills","暗黙知"]
+topics: ["ai", "typescript", "codereview", "architecture", "AgentSkills","暗黙知","2025年の最も大きなチャレンジ"]
 published: false
 ---
 
