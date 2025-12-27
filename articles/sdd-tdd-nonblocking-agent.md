@@ -3,15 +3,7 @@ title: "仕様を[データ化]して止めない：SDD/TDD/ノンブロッキ�
 emoji: "🤖"
 type: "tech"
 topics:
-  [
-    "zennfes2025ai",
-    "multiagent",
-    "tdd",
-    "sdd",
-    "softwaredesign",
-    "automation",
-    "development-methodology",
-  ]
+  ["zennfes2025ai", "tdd", "sdd", "softwaredesign", "development-methodology"]
 published: true
 ---
 
