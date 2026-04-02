@@ -1230,3 +1230,17 @@ AI を“使う”だけでなく、**育てる**。
 - Testing Library（公式）: https://testing-library.com/docs/
 - Playwright（公式）: https://playwright.dev/
 - GitHub Actions（公式）: https://docs.github.com/actions
+
+## 自社メディア
+
+:::message
+- [Growth Lab](https://the3396.com/) - AIエージェント開発、SEO最適化、仕様駆動開発の検証ログを、代表記事からすぐ読み進められる形で整理しています。
+:::
+
+## 関連記事
+
+:::message
+- [仕様を揃えて止めない：マルチエージェント開発の3原則（SDD・TDD・ノンブロッキング）](https://zenn.dev/minewo/articles/sdd-tdd-nonblocking-agent) - AI-driven TDD を支える仕様駆動と非ブロッキング運用の土台です。
+- [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow) - テスト前に計画と受入基準を固めるAI開発フローです。
+- [GitHubにAI開発チームメイトを迎えよう — Gemini CLIでレビュー時間を1/3に短縮する方法](https://zenn.dev/minewo/articles/gemini-cli-github-actions-zenn-article) - CI、レビュー、品質チェックを自動化する実践例です。
+:::

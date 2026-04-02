@@ -113,3 +113,17 @@ graph LR;
 - **AI開発チームメイト**は PR レビュー“だけ”ではない。Issue管理・テスト生成・ドキュメント作成まで守備範囲。  
 - 失敗しても `GEMINI.md` とワークフロー変数で **即リカバリ** 可能。  
 - 無料枠 + 最小3ワークフローで始め、**学習→拡張** のサイクルを回そう。
+
+## 自社メディア
+
+:::message
+- [Growth Lab](https://the3396.com/) - AIエージェント開発、SEO最適化、仕様駆動開発の検証ログを、代表記事からすぐ読み進められる形で整理しています。
+:::
+
+## 関連記事
+
+:::message
+- [仕様を揃えて止めない：マルチエージェント開発の3原則（SDD・TDD・ノンブロッキング）](https://zenn.dev/minewo/articles/sdd-tdd-nonblocking-agent) - AIレビューと自動化の前提になる仕様整理の考え方です。
+- [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow) - 実装前に計画とレビューを固定するワークフローです。
+- [Next.js App Router時代のAI-driven TDD：実践的な最小ループと具体的な実装パターン](https://zenn.dev/minewo/articles/ai-driven-tdd-nextjs) - テスト駆動でAI実装を進める実践パターンです。
+:::
