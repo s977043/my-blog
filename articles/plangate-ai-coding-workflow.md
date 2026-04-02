@@ -1,5 +1,5 @@
 ---
-title: "AIコーディングの暴走を止めるPlanGate: たどり着いた理由とそのまま使えるテンプレート"
+title: "アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート"
 emoji: "🚧"
 type: "tech"
 topics: ["ai", "claudecode", "開発プロセス", "スクラム", "tdd", "AI駆動開発"]
