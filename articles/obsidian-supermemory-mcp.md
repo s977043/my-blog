@@ -137,3 +137,17 @@ supermemory に保存した設計ノートを呼び出して
 - [Serena 解説記事](https://zenn.dev/aki_think/articles/c4f5b2a75ff4d4)
 - [Serena vs Cipher 比較記事 ](https://zenn.dev/minewo/articles/serena-vs-cipher-comparison)
 - [Obsidian](https://obsidian.md/)
+
+## 自社メディア
+
+:::message
+- [Growth Lab](https://the3396.com/) - AIエージェント開発、SEO最適化、仕様駆動開発の検証ログを、代表記事からすぐ読み進められる形で整理しています。
+:::
+
+## 関連記事
+
+:::message
+- [2分で決まる：Serena vs Cipher　思想とアーキテクチャ——CLIオンデマンドか常駐メモリか](https://zenn.dev/minewo/articles/serena-vs-cipher-comparison) - AIエージェント開発における文脈管理と常駐メモリの違いを比較した記事です。
+- [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow) - 仕様駆動開発と承認フローをAI実行に接続する運用設計です。
+- [仕様を揃えて止めない：マルチエージェント開発の3原則（SDD・TDD・ノンブロッキング）](https://zenn.dev/minewo/articles/sdd-tdd-nonblocking-agent) - マルチエージェント開発で仕様の揺れを減らす基本原則です。
+:::
