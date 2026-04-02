@@ -2,7 +2,7 @@
 title: "アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート"
 emoji: "🚧"
 type: "tech"
-topics: ["ai", "claudecode", "開発プロセス", "スクラム", "tdd", "AI駆動開発"]
+topics: ["AI駆動開発", "アジャイル開発", "スクラム", "claudecode", "tdd"]
 published: false
 ---
 
