@@ -1,6 +1,6 @@
 # 写したいのは火ではない
 
-![孤独な炎](../images/image_05.jpg)
+![孤独な炎](../../images/books/flame-portrait-essay/image_05.jpg)
 
 火は、何かを失わせながらしか存在できない。
 そのあり方に、私は人間の生を重ねている。

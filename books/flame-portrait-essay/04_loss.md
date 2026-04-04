@@ -1,6 +1,6 @@
 # 喪失の気配 — 揺らぎゆく時間
 
-![揺らぎゆく炎](../images/image_02.jpg)
+![揺らぎゆく炎](../../images/books/flame-portrait-essay/image_02.jpg)
 
 燃え上がる瞬間から、衰えへと移っていく時間のなかに、
 情熱、喪失、そして悲しみが滲む。

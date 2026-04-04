@@ -1,6 +1,6 @@
 # 光と闇 — 浮かび上がる孤独
 
-![闇の中の複雑な炎](../images/image_06.jpg)
+![闇の中の複雑な炎](../../images/books/flame-portrait-essay/image_06.jpg)
 
 光が強いほど闇は深くなり、炎はその中心で孤独を浮かび上がらせる。
 
