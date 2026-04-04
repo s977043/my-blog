@@ -149,6 +149,23 @@ Figma や Penpot のようなデザインツールはもちろん必要です。
 
 Growth Lab は記事メディア中心のため `public/admin` 分割ではなく、`tokens -> primitives -> components -> article patterns -> page templates` の 5 層モデルで整理しています。この考え方は公開側のみのプロダクトにも応用しやすいです。
 
+<<<<<<< HEAD
+```mermaid
+graph TD
+    A[Tokens] --> B[Primitives]
+    B --> C[Components]
+    C --> D[Article Patterns]
+    D --> E[Page Templates]
+    
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style C fill:#bfb,stroke:#333,stroke-width:2px
+    style D fill:#fdb,stroke:#333,stroke-width:2px
+    style E fill:#ddd,stroke:#333,stroke-width:2px
+```
+
+=======
+>>>>>>> origin/main
 ## 実際の導入手順
 
 自分たちが実際に取った流れを、別リポジトリでも再利用しやすい形でまとめると次の順番になります。
@@ -297,10 +314,17 @@ Penpot 側の名前と React 実装の対応がファイルに集約されたこ
 
 別の言い方をすると、導入によって増えたのはルールの量ではなく、判断の順番です。
 
+<<<<<<< HEAD
+1. **まず `DESIGN.md` を見る**
+2. **正本は token JSON と component mapping だと分かる**
+3. **外部語彙は UI パターンの正規化ルールで内部語彙へ直す**
+4. **実装後は `pnpm penpot:verify` で drift を確認する**
+=======
 1. まず `DESIGN.md` を見る
 2. 正本は token JSON と component mapping だと分かる
 3. 外部語彙は UI パターンの正規化ルールで内部語彙へ直す
 4. 実装後は `pnpm penpot:verify` で drift を確認する
+>>>>>>> origin/main
 
 少なくとも、参照順が明示されているぶん、レビューと追加実装の論点は整理しやすくなります。
 
@@ -412,20 +436,20 @@ Growth Lab では、`DESIGN.md` を軽量な入口に絞り、詳細を関連ド
 
 ### Q. DESIGN.md の導入はどのタイミングが最適？
 
-プロジェクト初期でなくても問題ありません。既存プロダクトでも「判断基準が曖昧」「AIや人のレビュー観点が揃わない」と感じた時点で導入効果があります。
+A. プロジェクト初期でなくても問題ありません。既存プロダクトでも「判断基準が曖昧」「AIや人のレビュー観点が揃わない」と感じた時点で導入効果があります。
 
 ### Q. どのくらい軽量に始めてよい？
 
-最初は「参照順」と「正本の場所」だけでも十分です。詳細ルールや運用は後から積み増せます。
+A. 最初は「参照順」と「正本の場所」だけでも十分です。詳細ルールや運用は後から積み増せます。
 
 ### Q. DESIGN.md の内容が増えすぎたら？
 
-詳細は別ファイル化し、DESIGN.md には入口・参照順・正本の場所だけを残すのが運用しやすいです。
+A. 詳細は別ファイル化し、DESIGN.md には入口・参照順・正本の場所だけを残すのが運用しやすいです。
 
 ### Q. AI 向けの記述と人間向けの記述は分けるべき？
 
-基本は同じでOKですが、AI向けには「どのファイルを最初に読むか」「どのルールを必ず守るか」を明記すると効果的です。
+A. 基本は同じでOKですが、AI向けには「どのファイルを最初に読むか」「どのルールを必ず守るか」を明記すると効果的です。
 
 ### Q. 導入効果をどう測る？
 
-レビュー観点の揃い方、AIプロンプトの短縮、実装とデザインのズレ検出頻度など、定性的な変化を記録しておくと良いです。
+A. レビュー観点の揃い方、AIプロンプトの短縮、実装とデザインのズレ検出頻度など、定性的な変化を記録しておくと良いです。
