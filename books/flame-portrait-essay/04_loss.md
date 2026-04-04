@@ -1,4 +1,7 @@
-# 喪失の気配 — 揺らぎゆく時間
+---
+title: "喪失の気配 — 揺らぎゆく時間"
+---
+
 
 ![揺らぎゆく炎](../../images/books/flame-portrait-essay/image_02.jpg)
 

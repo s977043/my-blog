@@ -1,4 +1,7 @@
-# 意志の温度 — 熾火の深淵
+---
+title: "意志の温度 — 熾火の深淵"
+---
+
 
 ![熾火の熱量](../../images/books/flame-portrait-essay/image_01.jpg)
 

@@ -1,4 +1,7 @@
-# 写したいのは火ではない
+---
+title: "写したいのは火ではない"
+---
+
 
 ![孤独な炎](../../images/books/flame-portrait-essay/image_05.jpg)
 

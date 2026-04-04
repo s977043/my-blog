@@ -1,4 +1,7 @@
-# 光と闇 — 浮かび上がる孤独
+---
+title: "光と闇 — 浮かび上がる孤独"
+---
+
 
 ![闇の中の複雑な炎](../../images/books/flame-portrait-essay/image_06.jpg)
 

@@ -1,4 +1,7 @@
-# 激しさと美しさ — 生の衝動
+---
+title: "激しさと美しさ — 生の衝動"
+---
+
 
 ![激しく燃える炎](../../images/books/flame-portrait-essay/image_07.jpg)
 
