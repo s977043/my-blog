@@ -149,6 +149,7 @@ Figma や Penpot のようなデザインツールはもちろん必要です。
 
 Growth Lab は記事メディア中心のため `public/admin` 分割ではなく、`tokens -> primitives -> components -> article patterns -> page templates` の 5 層モデルで整理しています。この考え方は公開側のみのプロダクトにも応用しやすいです。
 
+<<<<<<< HEAD
 ```mermaid
 graph TD
     A[Tokens] --> B[Primitives]
@@ -163,6 +164,8 @@ graph TD
     style E fill:#ddd,stroke:#333,stroke-width:2px
 ```
 
+=======
+>>>>>>> origin/main
 ## 実際の導入手順
 
 自分たちが実際に取った流れを、別リポジトリでも再利用しやすい形でまとめると次の順番になります。
@@ -311,10 +314,17 @@ Penpot 側の名前と React 実装の対応がファイルに集約されたこ
 
 別の言い方をすると、導入によって増えたのはルールの量ではなく、判断の順番です。
 
+<<<<<<< HEAD
 1. **まず `DESIGN.md` を見る**
 2. **正本は token JSON と component mapping だと分かる**
 3. **外部語彙は UI パターンの正規化ルールで内部語彙へ直す**
 4. **実装後は `pnpm penpot:verify` で drift を確認する**
+=======
+1. まず `DESIGN.md` を見る
+2. 正本は token JSON と component mapping だと分かる
+3. 外部語彙は UI パターンの正規化ルールで内部語彙へ直す
+4. 実装後は `pnpm penpot:verify` で drift を確認する
+>>>>>>> origin/main
 
 少なくとも、参照順が明示されているぶん、レビューと追加実装の論点は整理しやすくなります。
 
