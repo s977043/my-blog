@@ -3,7 +3,7 @@ title: "激しさと美しさ — 生の衝動"
 ---
 
 
-![激しく燃える炎](../../images/books/flame-portrait-essay/image_07.jpg)
+![激しく燃える炎](/images/books/flame-portrait-essay/image_07.jpg)
 
 立ち昇る炎には激しさがある。
 鋭く裂ける先端、絶えず変わり続ける輪郭、散る火花。
