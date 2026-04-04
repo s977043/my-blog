@@ -3,7 +3,7 @@ title: "意志の温度 — 熾火の深淵"
 ---
 
 
-![熾火の熱量](../../images/books/flame-portrait-essay/image_01.jpg)
+![熾火の熱量](/images/books/flame-portrait-essay/image_01.jpg)
 
 私が惹かれるのは、燃え上がる瞬間だけではない。
 むしろ、炎が去ったあとに残る熱、熾火の赤さ、沈黙のなかに持続する温度である。
