@@ -146,21 +146,13 @@ Figma や Penpot のようなデザインツールはもちろん必要です。
 
 Growth Lab は記事メディア中心のため `public/admin` 分割ではなく、`tokens -> primitives -> components -> article patterns -> page templates` の 5 層モデルで整理しています。この考え方は公開側のみのプロダクトにも応用しやすいです。
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> f4f0a5d (docs: sync frontmatter with Zenn format and set to published)
 ```mermaid
 graph TD
     A[Tokens] --> B[Primitives]
     B --> C[Components]
     C --> D[Article Patterns]
     D --> E[Page Templates]
-<<<<<<< HEAD
     
-=======
-
->>>>>>> f4f0a5d (docs: sync frontmatter with Zenn format and set to published)
     style A fill:#f9f,stroke:#333,stroke-width:2px
     style B fill:#bbf,stroke:#333,stroke-width:2px
     style C fill:#bfb,stroke:#333,stroke-width:2px
@@ -321,23 +313,10 @@ Penpot 側の名前と React 実装の対応がファイルに集約されたこ
 
 別の言い方をすると、導入によって増えたのはルールの量ではなく、判断の順番です。
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> f4f0a5d (docs: sync frontmatter with Zenn format and set to published)
 1. **まず `DESIGN.md` を見る**
 2. **正本は token JSON と component mapping だと分かる**
 3. **外部語彙は UI パターンの正規化ルールで内部語彙へ直す**
 4. **実装後は `pnpm penpot:verify` で drift を確認する**
-<<<<<<< HEAD
-=======
-1. まず `DESIGN.md` を見る
-2. 正本は token JSON と component mapping だと分かる
-3. 外部語彙は UI パターンの正規化ルールで内部語彙へ直す
-4. 実装後は `pnpm penpot:verify` で drift を確認する
->>>>>>> origin/main
-=======
->>>>>>> f4f0a5d (docs: sync frontmatter with Zenn format and set to published)
 
 少なくとも、参照順が明示されているぶん、レビューと追加実装の論点は整理しやすくなります。
 
