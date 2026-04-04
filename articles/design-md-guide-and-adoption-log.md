@@ -152,7 +152,7 @@ graph TD
     B --> C[Components]
     C --> D[Article Patterns]
     D --> E[Page Templates]
-    
+
     style A fill:#f9f,stroke:#333,stroke-width:2px
     style B fill:#bbf,stroke:#333,stroke-width:2px
     style C fill:#bfb,stroke:#333,stroke-width:2px
@@ -160,11 +160,6 @@ graph TD
     style E fill:#ddd,stroke:#333,stroke-width:2px
 ```
 
-<<<<<<< HEAD
-=======
->>>>>>> origin/main
-=======
->>>>>>> f4f0a5d (docs: sync frontmatter with Zenn format and set to published)
 ## 実際の導入手順
 
 自分たちが実際に取った流れを、別リポジトリでも再利用しやすい形でまとめると次の順番になります。
