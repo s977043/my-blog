@@ -1,0 +1,6 @@
+blank_issues_enabled: true
+
+contact_links:
+  - name: Zenn CLI guide
+    url: https://zenn.dev/zenn/articles/zenn-cli-guide
+    about: Zenn CLI の基本的な使い方を確認する

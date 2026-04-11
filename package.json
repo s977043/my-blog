@@ -1,4 +1,12 @@
 {
+  "name": "my-blog",
+  "private": true,
+  "scripts": {
+    "preview": "zenn preview",
+    "list:articles": "zenn list:articles",
+    "list:books": "zenn list:books",
+    "check": "npm run list:articles && npm run list:books"
+  },
   "dependencies": {
     "zenn-cli": "^0.2.1"
   }
