@@ -3,11 +3,20 @@
   "private": true,
   "scripts": {
     "preview": "zenn preview",
+    "preview:qiita": "qiita preview",
     "list:articles": "zenn list:articles",
     "list:books": "zenn list:books",
-    "check": "npm run list:articles && npm run list:books"
+    "new:qiita": "qiita new",
+    "pull:qiita": "qiita pull",
+    "publish:qiita": "qiita publish",
+    "publish:qiita:all": "qiita publish --all",
+    "check:qiita": "qiita version",
+    "check": "npm run list:articles && npm run list:books && npm run check:qiita"
   },
   "dependencies": {
     "zenn-cli": "^0.4.7"
+  },
+  "devDependencies": {
+    "@qiita/qiita-cli": "^1.8.0"
   }
 }
