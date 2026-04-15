@@ -144,7 +144,7 @@ Figma や Penpot のようなデザインツールはもちろん必要です。
 
 共通の color、typography、spacing、radius は `common` に置き、公開側と管理画面側の差分だけを分離する構成です。
 
-Growth Lab は記事メディア中心のため `public/admin` 分割ではなく、`tokens -> primitives -> components -> article patterns -> page templates` の 5 層モデルで整理しています。この考え方は公開側のみのプロダクトにも応用しやすいです。
+Growth Lab は記事メディア中心のため `public/admin` 分割ではなく、**Tokens → Primitives → Components → Article Patterns → Page Templates** の 5 層モデルで整理しています。この考え方は公開側のみのプロダクトにも応用しやすいです。
 
 ```mermaid
 graph TD
@@ -363,15 +363,11 @@ Growth Lab の構成から見ても、つまずきやすい点はあります。
 
 ### 追記テンプレート
 
-- リポジトリ名:
-- 対象:
-- 導入時期:
-- 導入範囲:
-- 期待していた効果:
-- 実際の変化:
-- うまくいった点:
-- つまずいた点:
-- 次に直したい点:
+- Repository:
+- Scope:
+- Stage: (considering / adopting / adopted)
+- Outcome:
+- Notes:
 
 ## 最小導入の3ステップ
 
@@ -419,7 +415,7 @@ Growth Lab では、`DESIGN.md` を軽量な入口に絞り、詳細を関連ド
 
 ---
 
-## 【追加】DESIGN.md 導入のFAQ（2026-04-05追記）
+## DESIGN.md 導入のFAQ
 
 ### Q. DESIGN.md の導入はどのタイミングが最適？
 
