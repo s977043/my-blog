@@ -61,18 +61,18 @@ published: true
 | **ChatGPT Memory**  | ◎                     | ChatGPT 専用の記憶                           | ChatGPT 中心なら自然に利用可能             | 他クライアントと共有不可           |
 | **Mem.ai**          | ○                     | メモアプリ＋ AI                              | 個人メモ重視、UX に優れる                  | 開発ツール連携は弱め               |
 
-### 関連記事紹介
+### 関連記事
 
-「Serena と Cipher の比較」については、こちらの記事がとても参考になります。
-👉 [Serena vs Cipher 比較記事（Zenn: minewo さん）](https://zenn.dev/minewo/articles/serena-vs-cipher-comparison)
+Serena と Cipher の詳細比較は、別記事で整理しています。
 
-この記事では、
+👉 [2分で決まる：Serena vs Cipher　思想とアーキテクチャ](https://zenn.dev/minewo/articles/serena-vs-cipher-comparison)
+
+要点:
 
 - **Serena** は「Claude Code に特化した効率化」
 - **Cipher** は「OSS MCP サーバとしての永続メモリ」
 
-という住み分けが丁寧に解説されています。
-今回紹介する Supermemory MCP は、この 2 つの中間に位置する「手軽さ＋横断利用」が強みです。
+本記事の Supermemory MCP は、この 2 つの中間に位置する「手軽さ＋横断利用」が強みです。
 
 ---
 
