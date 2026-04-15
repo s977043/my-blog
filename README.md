@@ -13,6 +13,13 @@ Zenn と Qiita の記事をこのリポジトリで管理します。
 
 ## Qiita
 
+### 初期セットアップ
+
+- `npm install` で CLI を導入
+- `npx qiita login` でアクセストークンを発行・認証（認証情報は `~/.config/qiita-cli/` に保存、リポジトリには含めない）
+
+### よく使うコマンド
+
 - 記事: `Qiita/public/*.md`
 - プレビュー: `npm run preview:qiita`
 - 新規作成: `npm run new:qiita -- article-base-name`
@@ -20,18 +27,25 @@ Zenn と Qiita の記事をこのリポジトリで管理します。
 - 1記事を投稿・更新: `npm run publish:qiita -- article-base-name`
 - 全記事を投稿・更新: `npm run publish:qiita:all`
 
-Qiita CLI は `<root>/public/` 配下の Markdown を記事として扱います。本リポジトリでは `--root Qiita` を指定しているため、実体は `Qiita/public/` です。
-公開前の下書きは Front Matter の `ignorePublish: true` を維持してください。
+Qiita CLI は `<root>/public/` を強制するため、本リポジトリでは全スクリプトで `--root Qiita` を指定しています。
+
+### 下書き・公開の状態
+
+Front Matter で次の2軸を使い分けます。
+
+- ローカルのみの下書き（Qiita に送らない）: `ignorePublish: true`
+- Qiita 上の限定共有（URL を知る人だけ閲覧可）: `private: true` + `ignorePublish: false`
+- 一般公開: `private: false` + `ignorePublish: false`
 
 ## Qiita イベントメモ
 
-次の3本は、Qiita 公式イベント「2025年、生成AIを使ってみてどうだった？」向けに検討を始めたドラフトです。
+次の3本は、Qiita 公式イベント「2025年、生成AIを使ってみてどうだった？」向けに着手したもので、現在は限定共有記事として投稿済みです。
 
 - `Qiita/public/ai-dev-team-2025-retrospective.md`
 - `Qiita/public/ai-dev-team-reviewable-ai-changes.md`
 - `Qiita/public/ai-dev-team-test-first-agent-workflow.md`
 
-2026-04-13 時点で募集期間 `2026-01-19` から `2026-02-27` は終了しているため、いま投稿してもキャンペーン選考対象にはなりません。通常記事として公開する場合は、`ignorePublish: false` に変更する前に、キャンペーンタグを付けない方針で内容とタグを確認してください。
+募集期間 `2026-01-19` から `2026-02-27` は終了済みでキャンペーン選考対象外のため、一般公開へ切り替える場合はキャンペーンタグ（`FindyTeamPlus_AI_2025` 等）を付けない方針で内容とタグを確認し、`private: false` にしてから再投稿してください。
 
 ## Zenn / Qiita の書き分け
 
