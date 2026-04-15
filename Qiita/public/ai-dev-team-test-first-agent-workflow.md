@@ -1,16 +1,16 @@
 ---
-title: "AIに実装させる前にテスト観点を書くと、チーム開発がかなり安定した"
+title: AIに実装させる前にテスト観点を書くと、チーム開発がかなり安定した
 tags:
-  - AI駆動開発
-  - 生成AI
-  - テスト
   - TDD
-private: false
-updated_at: ""
-id: null
+  - テスト
+  - 生成AI
+  - AI駆動開発
+private: true
+updated_at: '2026-04-16T06:37:15+09:00'
+id: fd5e5642efb40bfe4198
 organization_url_name: null
 slide: false
-ignorePublish: true
+ignorePublish: false
 ---
 
 <!--
