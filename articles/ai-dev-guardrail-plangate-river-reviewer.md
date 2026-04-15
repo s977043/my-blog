@@ -2,7 +2,7 @@
 title: "AI駆動開発の2層ガード設計：PlanGateとRiver Reviewerで実装前後を守る"
 emoji: "🛡️"
 type: "tech"
-topics: ["AI駆動開発", "githubactions", "codereview", "claudecode", "automation"]
+topics: ["AI駆動開発", "github-actions", "codereview", "claudecode", "automation"]
 published: false
 ---
 
