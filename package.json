@@ -3,13 +3,13 @@
   "private": true,
   "scripts": {
     "preview": "zenn preview",
-    "preview:qiita": "qiita preview",
+    "preview:qiita": "qiita preview --root Qiita",
     "list:articles": "zenn list:articles",
     "list:books": "zenn list:books",
-    "new:qiita": "qiita new",
-    "pull:qiita": "qiita pull",
-    "publish:qiita": "qiita publish",
-    "publish:qiita:all": "qiita publish --all",
+    "new:qiita": "qiita new --root Qiita",
+    "pull:qiita": "qiita pull --root Qiita",
+    "publish:qiita": "qiita publish --root Qiita",
+    "publish:qiita:all": "qiita publish --all --root Qiita",
     "check:qiita": "qiita version",
     "check": "npm run list:articles && npm run list:books && npm run check:qiita"
   },

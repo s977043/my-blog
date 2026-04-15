@@ -13,23 +13,23 @@ Zenn と Qiita の記事をこのリポジトリで管理します。
 
 ## Qiita
 
-- 記事: `public/*.md`
+- 記事: `Qiita/public/*.md`
 - プレビュー: `npm run preview:qiita`
 - 新規作成: `npm run new:qiita -- article-base-name`
 - Qiita から取得: `npm run pull:qiita`
 - 1記事を投稿・更新: `npm run publish:qiita -- article-base-name`
 - 全記事を投稿・更新: `npm run publish:qiita:all`
 
-Qiita CLI は `public` ディレクトリ配下の Markdown を記事として扱います。
+Qiita CLI は `<root>/public/` 配下の Markdown を記事として扱います。本リポジトリでは `--root Qiita` を指定しているため、実体は `Qiita/public/` です。
 公開前の下書きは Front Matter の `ignorePublish: true` を維持してください。
 
 ## Qiita イベントメモ
 
 次の3本は、Qiita 公式イベント「2025年、生成AIを使ってみてどうだった？」向けに検討を始めたドラフトです。
 
-- `public/ai-dev-team-2025-retrospective.md`
-- `public/ai-dev-team-reviewable-ai-changes.md`
-- `public/ai-dev-team-test-first-agent-workflow.md`
+- `Qiita/public/ai-dev-team-2025-retrospective.md`
+- `Qiita/public/ai-dev-team-reviewable-ai-changes.md`
+- `Qiita/public/ai-dev-team-test-first-agent-workflow.md`
 
 2026-04-13 時点で募集期間 `2026-01-19` から `2026-02-27` は終了しているため、いま投稿してもキャンペーン選考対象にはなりません。通常記事として公開する場合は、`ignorePublish: false` に変更する前に、キャンペーンタグを付けない方針で内容とタグを確認してください。
 
