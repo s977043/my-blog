@@ -19,12 +19,12 @@ published: true
 
 ```mermaid
 graph LR;
-    dev["Dev pushes branch"] --> pr["GitHub PR / Issue"];
+    dev["開発者がpush"] --> pr["GitHub PR / Issue"];
     pr --> act["run-gemini-cli Action"];
-    act --> task{Task type?};
-    task -->|"/review"| review["AI comment (PR)"];
-    task -->|"/triage"| label["Label added"];
-    task -->|@gemini-cli| ondemand["On-demand reply"];
+    act --> task{タスク種別};
+    task -->|"/review"| review["PRへのAIコメント"];
+    task -->|"/triage"| label["ラベル付与"];
+    task -->|"@gemini-cli"| ondemand["オンデマンド応答"];
 ```
 
 > **図のポイント** — PR・Issue・コメントの3系統トリガーが一本化される。
@@ -34,8 +34,8 @@ graph LR;
 > **Gemini CLI Review (自動投稿例)**  
 > ```
 > ❌  N+1 クエリの可能性を検出:
->     Order.find({ include: 'items' })
->     ↳ 改善案: `Order.preload('items')`
+>     注文を1件ずつ取得したあと、各注文の items を個別にロードしています
+>     ↳ 改善案: 事前にプリロード（ORM のイーガーロード API を使用）
 >
 > 💡  変数名が抽象的です: `data`
 >     ↳ 目的に合わせて `orderSummary` など具体名へ
