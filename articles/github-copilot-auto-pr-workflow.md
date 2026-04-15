@@ -101,7 +101,7 @@ jobs:
 
 ```markdown
 # Issue タイトル
-feature/auto-pr-20260405 ブランチの内容を main へマージする PR を作成してください。
+feature/auto-pr-20260405 ブランチを作成し、main へのマージ PR を用意してください。
 
 # Issue 本文
 以下の手順で自動 PR を作成してください:
