@@ -55,20 +55,25 @@ noteインポートでは**上書き更新できない**ため、以下のどれ
 - **B. 新下書き作成 → 差し替え** — インポートで新下書きを作って、note上で既存本文に上書きコピペ
 - **C. 削除 → 新規インポート** — URL変化・スキ・コメント喪失するため**非推奨**
 
-## 再生成スクリプト（参考）
+## スキル・エージェント・スクリプト
 
-ZIPを展開後、以下でMDを再生成できる（パスは適宜変更）:
+- **スキル**: `.claude/skills/note-export-import/SKILL.md` — ワークフロー全体の正本
+- **エージェント**: `.claude/agents/note-export-importer.md` — 取り込み/WXR生成を代行
+- **スクリプト**:
+  - `scripts/wxr_to_md.py` — ZIP/WXR → `published/ drafts/ assets/` 再生成（日時アーカイブも実施）
+  - `scripts/md_to_wxr.py` — `new/<slug>.md` → インポート用WXR生成
 
-```python
-# /tmp/wxr_to_md_split.py と同様のロジック
-# - WXR を XML.etree でパース
-# - <item>ごとに wp:status で振り分け
-# - content:encoded を markdownify で Markdown 化
-# - /assets/FILE → ../assets/FILE にパス書き換え
-# - published/<guid>.md または drafts/<guid>.md に出力
+依存: `pip install --break-system-packages markdownify markdown`
+
+### よく使うコマンド
+
+```bash
+# エクスポート取り込み
+python3 .claude/skills/note-export-import/scripts/wxr_to_md.py <zip> --out articles_note
+
+# 新規記事をインポート用WXRに変換
+python3 .claude/skills/note-export-import/scripts/md_to_wxr.py articles_note/new/<slug>.md
 ```
-
-`pip install --break-system-packages markdownify` が必要。
 
 ## 記事分類のヒント
 
