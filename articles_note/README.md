@@ -42,10 +42,12 @@ articles_note/
 ### ② 新規記事の作成・投稿
 
 1. `new/<slug>.md` に執筆
-2. `.claude/skills/note-export-import/scripts/md_to_wxr.py` で単一記事WXRを `articles_note/build/<slug>.xml` に変換
-3. noteインポート → 下書きとして作成される
-4. noteエディタで確認・画像差し替え → 公開
-5. 公開後は次回バックアップ時に `published/` に反映される
+2. 記事で使う画像が `articles_note/assets/` にある場合は、**先に GitHub `main` に公開**
+3. `.claude/skills/note-export-import/scripts/md_to_wxr.py` で単一記事WXRを `articles_note/build/<slug>.xml` に変換
+   - 画像を note に自動取り込みさせる場合は `--base-url https://raw.githubusercontent.com/s977043/my-blog/main/articles_note/assets` を付ける
+4. noteインポート → 下書きとして作成される
+5. noteエディタで確認・画像差し替え → 公開
+6. 公開後は次回バックアップ時に `published/` に反映される
 
 ### ③ 既存記事の更新
 
@@ -73,7 +75,19 @@ python3 .claude/skills/note-export-import/scripts/wxr_to_md.py <zip> --out artic
 
 # 新規記事をインポート用WXRに変換
 python3 .claude/skills/note-export-import/scripts/md_to_wxr.py articles_note/new/<slug>.md
+
+# 画像をGitHub公開URLに書き換えてWXR生成
+python3 .claude/skills/note-export-import/scripts/md_to_wxr.py \
+  articles_note/new/<slug>.md \
+  --base-url https://raw.githubusercontent.com/s977043/my-blog/main/articles_note/assets
 ```
+
+## 画像公開ルール
+
+- `articles_note/assets/` の画像を note インポートで使う場合、本文の `../assets/...` は**ローカル編集用**
+- note 取り込み時は `md_to_wxr.py --base-url ...` で **GitHub Raw の絶対URL** に変換する
+- 変換先は **`main` ブランチ固定**。PR branch の raw URL は merge 後に消えるため使わない
+- 画像追加後にまだ GitHub `main` へ出ていない場合は、先に PR を作成・merge して公開してから WXR を作る
 
 ## 記事分類のヒント
 
