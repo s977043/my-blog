@@ -105,7 +105,7 @@ Generate review with persona mapping and JTF-style checks:
 - Type: <記事タイプ>
 - Findings: <件数>件
 
-Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>"
+Co-Authored-By: <利用中モデル名> <noreply@anthropic.com>"
 ```
 
 ### 8. push & PR作成

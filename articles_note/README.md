@@ -42,7 +42,7 @@ articles_note/
 ### ② 新規記事の作成・投稿
 
 1. `new/<slug>.md` に執筆
-2. MD → 単一記事WXR へ変換（変換スクリプトは別途用意予定）
+2. `.claude/skills/note-export-import/scripts/md_to_wxr.py` で単一記事WXRを `articles_note/build/<slug>.xml` に変換
 3. noteインポート → 下書きとして作成される
 4. noteエディタで確認・画像差し替え → 公開
 5. 公開後は次回バックアップ時に `published/` に反映される
