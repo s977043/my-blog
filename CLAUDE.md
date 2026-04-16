@@ -16,8 +16,10 @@ Claude Code 向けのツールガイド。規約（何が正しいか）は `@AG
 |---------|------|------|
 | `/review-article <slug>` | Zenn記事の3ペルソナレビューを生成 | `articles/<slug>.md` |
 | `/apply-review <slug>` | Zennレビューを本文に選別反映（PR作成） | `articles/<slug>.md` |
-| `/article-pipeline <slug>` | レビュー生成→反映を2PR分割で実行 | Zenn記事 |
+| `/article-pipeline <slug>` | Zennレビュー生成→反映を2PR分割で実行 | Zenn記事 |
 | `/review-note-article <state>/<slug>` | note記事の3ペルソナレビューを生成 | `articles_note/<state>/<slug>.md` |
+| `/apply-review-note <state>/<slug>` | noteレビューを本文に選別反映（PR作成） | `articles_note/<state>/<slug>.md` |
+| `/article-pipeline-note <state>/<slug>` | noteレビュー生成→反映を2PR分割で実行 | note記事 |
 
 ## Subagents（`.claude/agents/`）
 

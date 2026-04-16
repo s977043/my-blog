@@ -54,7 +54,7 @@ Apply <N> accepted findings from reviews/zenn/<slug>.md:
 
 Pending (<M> items) and rejected (<K> items) are captured in the PR body.
 
-Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>"
+Co-Authored-By: <利用中モデル名> <noreply@anthropic.com>"
 ```
 
 ### 7. push & PR作成
