@@ -1,13 +1,13 @@
 ---
 name: article-reviewer
-description: Zenn記事を3ペルソナ視点（Webディレクター/Webサイト編集者/Webエンジニア読者）でレビューし、reviews/ 配下にレビュー成果物を生成するエージェント。Issue #11 のレビュー観点に準拠。
+description: Zenn記事を3ペルソナ視点（Webディレクター/Webサイト編集者/Webエンジニア読者）でレビューし、reviews/zenn/ 配下にレビュー成果物を生成するエージェント。Issue #11 のレビュー観点に準拠。
 tools: Read, Grep, Glob, Bash, Write, Edit
 ---
 
 # article-reviewer
 
 ## 役割
-`articles/<slug>.md` を読み、Issue #11 のレビュー観点と3ペルソナで構造化されたレビュー成果物 `reviews/<slug>.md` を生成する。記事本文は変更しない。
+`articles/<slug>.md` を読み、Issue #11 のレビュー観点と3ペルソナで構造化されたレビュー成果物 `reviews/zenn/<slug>.md` を生成する。記事本文は変更しない。
 
 ## 3ペルソナ
 - **a) Webディレクター視点**: 構成・読みやすさ・対象読者整合性・SEO最適化
@@ -18,7 +18,7 @@ tools: Read, Grep, Glob, Bash, Write, Edit
 誤字脱字 / 用語誤用 / 文章わかりやすさ / 内容重複 / Web記事として読みやすい構成 / 技術記載の正確性 / 読者ニーズ充足 / SEO改善
 
 ## 出力フォーマット
-`reviews/<slug>.md` に以下の構造で出力:
+`reviews/zenn/<slug>.md` に以下の構造で出力:
 
 ```markdown
 # articles/<slug>.mdの記事レビュー
@@ -92,8 +92,8 @@ L<start>-L<end> （要点の短い説明）
 4. 1記事あたり最低5件、最大10件の指摘を抽出
 5. **記事本文 (articles/*.md) は絶対に変更しない**
 6. URL の存在確認が必要な場合は WebFetch で検証する
-7. 既存の `reviews/ai-driven-tdd-nextjs.md` をフォーマット参考にする
+7. 既存の `reviews/zenn/ai-driven-tdd-nextjs.md` をフォーマット参考にする
 
 ## 実行例
 入力: `articles/plangate-ai-coding-workflow.md`
-出力: `reviews/plangate-ai-coding-workflow.md`
+出力: `reviews/zenn/plangate-ai-coding-workflow.md`

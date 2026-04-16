@@ -12,7 +12,7 @@ description: Zenn記事のレビュー成果物を記事本文に反映するワ
 - または `review-applier` エージェントから参照
 
 ## 前提条件
-- `reviews/<slug>.md` が既に存在すること
+- `reviews/zenn/<slug>.md` が既に存在すること
 - `articles/<slug>.md` が存在すること
 - main ブランチが最新 (`git pull origin main`)
 - git identity がリポジトリ規約どおり (`mine_take <s977043@users.noreply.github.com>`)
@@ -27,7 +27,7 @@ git checkout -b chore/apply-review-<slug>
 ```
 
 ### 2. 入力読み込み
-- `reviews/<slug>.md` をRead
+- `reviews/zenn/<slug>.md` をRead
 - `articles/<slug>.md` をRead
 - 記事の `published` フラグを確認
 
@@ -49,7 +49,7 @@ git checkout -b chore/apply-review-<slug>
 git add articles/<slug>.md
 git commit -m "docs(articles): apply review feedback to <slug>
 
-Apply <N> accepted findings from reviews/<slug>.md:
+Apply <N> accepted findings from reviews/zenn/<slug>.md:
 - <簡潔なサマリ>
 
 Pending (<M> items) and rejected (<K> items) are captured in the PR body.
@@ -70,7 +70,7 @@ PR本文は `review-applier` エージェントの採否テンプレートを使
 - 保留・却下項目でユーザー判断後に採用へ変わった場合は追加コミット
 
 ## ガードレール
-- [ ] 記事本文以外のファイルを触らない（reviews/ は不変）
+- [ ] 記事本文以外のファイルを触らない（reviews/zenn/ は不変）
 - [ ] Front Matter の `published` フラグを勝手に変更しない
 - [ ] `published: true` の場合、PR本文に ⚠️ バナー必須
 - [ ] 採否一覧が空の場合はPRを作らず報告で終える
@@ -88,5 +88,5 @@ PR本文は `review-applier` エージェントの採否テンプレートを使
 
 ## 参考
 - `.claude/agents/review-applier.md` (エージェント定義)
-- `reviews/ai-driven-tdd-nextjs.md` (レビュー成果物フォーマット)
+- `reviews/zenn/ai-driven-tdd-nextjs.md` (レビュー成果物フォーマット)
 - Issue #11 (レビュー観点)

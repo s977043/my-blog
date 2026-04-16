@@ -1,6 +1,6 @@
 ---
-description: reviews/<slug>.md の指摘を articles/<slug>.md に選別反映してPRを作成する
-argument-hint: <article-slug> (reviews/ 配下のファイル名 .md 抜き)
+description: reviews/zenn/<slug>.md の指摘を articles/<slug>.md に選別反映してPRを作成する
+argument-hint: <article-slug> (reviews/zenn/ 配下のファイル名 .md 抜き)
 ---
 
 # /apply-review
@@ -14,12 +14,12 @@ argument-hint: <article-slug> (reviews/ 配下のファイル名 .md 抜き)
 
 1. 引数検証
    ```bash
-   test -f reviews/$1.md || { echo "レビューが存在しません: reviews/$1.md"; exit 1; }
+   test -f reviews/zenn/$1.md || { echo "レビューが存在しません: reviews/zenn/$1.md"; exit 1; }
    test -f articles/$1.md || { echo "記事が存在しません: articles/$1.md"; exit 1; }
    ```
 
 2. `review-applier` エージェントを起動
-   - 入力: `reviews/$1.md`, `articles/$1.md`
+   - 入力: `reviews/zenn/$1.md`, `articles/$1.md`
    - スキル `.claude/skills/article-review-apply/SKILL.md` を遵守
    - 採用/保留/却下を分類し、採用分のみ Edit
    - PR本文用の採否一覧 Markdown を返す

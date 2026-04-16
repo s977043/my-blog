@@ -9,3 +9,6 @@ pnpm-debug.log*
 
 # Qiita CLI internal cache of remote state
 Qiita/public/.remote/
+
+# note.com raw export archives (大容量zip, 再現可能なので管理対象外)
+articles_note/export/
