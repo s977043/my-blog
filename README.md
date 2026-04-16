@@ -7,18 +7,18 @@ Zenn・Qiita・noteの記事をこの1つのリポジトリで並行管理する
 
 ```text
 my-blog/
-├── articles/               Zenn 記事本体 (.md)          → articles/README.md
-├── Qiita/                  Qiita 記事本体 (public/*.md) → Qiita/README.md
-├── articles_note/          note 記事のローカル管理       → articles_note/README.md
-├── books/                  Zenn の本 (chapters を含む)
-├── images/                 Zenn 記事用画像（<slug>/ ごと）
+├── articles/               Zenn記事本体 (.md)           → articles/README.md
+├── Qiita/                  Qiita記事本体 (public/*.md)  → Qiita/README.md
+├── articles_note/          note記事のローカル管理        → articles_note/README.md
+├── books/                  Zennの本（chaptersを含む）
+├── images/                 Zenn記事用画像（<slug>/ごと）
 ├── reviews/
-│   ├── zenn/               Zenn 記事のレビュー成果物
-│   ├── qiita/              Qiita 記事のレビュー成果物
-│   └── note/               note 記事のレビュー成果物（published/drafts/new に分割）
-├── .claude/                Claude Code の Skill / Agent / Slash Command / 設定
-├── package.json            Zenn CLI / Qiita CLI のスクリプト集約
-├── qiita.config.json       Qiita CLI 設定（--root Qiita 前提）
+│   ├── zenn/               Zenn記事のレビュー成果物
+│   ├── qiita/              Qiita記事のレビュー成果物
+│   └── note/               note記事のレビュー成果物（published/drafts/newに分割）
+├── .claude/                Claude CodeのSkill / Agent / Slash Command / 設定
+├── package.json            Zenn CLI / Qiita CLIのスクリプト集約
+├── qiita.config.json       Qiita CLI設定（--root Qiita前提）
 └── README.md               このファイル
 ```
 
