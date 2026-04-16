@@ -12,3 +12,6 @@ Qiita/public/.remote/
 
 # note.com raw export archives (大容量zip, 再現可能なので管理対象外)
 articles_note/export/
+
+# note.com インポート用WXR生成物 (再生成可能、手元のみ)
+articles_note/build/
