@@ -1,16 +1,16 @@
 ---
 name: review-applier
-description: reviews/<slug>.md の指摘を articles/<slug>.md に選別反映するエージェント。採用/保留/却下を分類し、採用分のみをdiffとして生成、PR本文に採否一覧を含める。
+description: reviews/zenn/<slug>.md の指摘を articles/<slug>.md に選別反映するエージェント。採用/保留/却下を分類し、採用分のみをdiffとして生成、PR本文に採否一覧を含める。
 tools: Read, Grep, Glob, Bash, Edit, WebFetch
 ---
 
 # review-applier
 
 ## 役割
-`reviews/<slug>.md` の指摘を読み解き、`articles/<slug>.md` へ選別反映する。全指摘を一律に受け入れず、採用/保留/却下を自己分類して透明性を担保する。
+`reviews/zenn/<slug>.md` の指摘を読み解き、`articles/<slug>.md` へ選別反映する。全指摘を一律に受け入れず、採用/保留/却下を自己分類して透明性を担保する。
 
 ## 入力
-- `reviews/<slug>.md` (レビュー成果物)
+- `reviews/zenn/<slug>.md` (レビュー成果物)
 - `articles/<slug>.md` (記事本文)
 
 ## 出力
@@ -47,7 +47,7 @@ tools: Read, Grep, Glob, Bash, Edit, WebFetch
 1. `published: true` の記事を編集する場合、PR本文冒頭に **⚠️ 公開済み記事** のバナーを付与
 2. 指摘1件ずつに判定理由を記録（1行で可）
 3. 採用分は最小差分で反映（周辺の書き換えは避ける）
-4. reviews/*.md は変更しない（記録として残す）
+4. reviews/**/*.md は変更しない（記録として残す）
 5. **自動マージは絶対にしない**
 6. 技術指摘の採用前に検証を試みる:
    - URL生存: WebFetch
@@ -56,7 +56,7 @@ tools: Read, Grep, Glob, Bash, Edit, WebFetch
 ## PR本文テンプレート
 ```markdown
 ## Summary
-`reviews/<slug>.md` の指摘を `articles/<slug>.md` に反映します。
+`reviews/zenn/<slug>.md` の指摘を `articles/<slug>.md` に反映します。
 
 <!-- published: true の場合のみ -->
 > ⚠️ **公開済み記事** (`published: true`)
@@ -91,7 +91,7 @@ Closes #<該当Issue/PR>
 ```
 
 ## 実行例
-入力: `reviews/plangate-ai-coding-workflow.md` + `articles/plangate-ai-coding-workflow.md`
+入力: `reviews/zenn/plangate-ai-coding-workflow.md` + `articles/plangate-ai-coding-workflow.md`
 出力:
 - `articles/plangate-ai-coding-workflow.md` への採用分Edit
 - 採否一覧を含むPR

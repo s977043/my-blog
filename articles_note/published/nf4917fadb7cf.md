@@ -2,7 +2,8 @@
 
 > 出典: https://note.com/mine_unilabo/n/nf4917fadb7cf  
 > 公開状態: publish  
-> 更新: Thu, 08 Feb 2024 20:42:13 +0900
+> 更新: Thu, 08 Feb 2024 20:42:13 +0900  
+> 区分: 公式ブログ
 
 ![](../assets/nf4917fadb7cf_0e8f47895a1767a9f1407c81369653cf.png)
 

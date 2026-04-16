@@ -13,7 +13,7 @@ argument-hint: <article-slug>
 ## 手順
 
 1. `/review-article $1` を実行
-   - `reviews/$1.md` を生成
+   - `reviews/zenn/$1.md` を生成
    - PR A (`docs/review-$1`) を作成
 
 2. ユーザー確認待ち
