@@ -95,11 +95,7 @@ python3 .claude/skills/note-export-import/scripts/md_to_wxr.py articles_note/new
 
 ## Co-Authored-By
 
-コミット作成時は以下を付与:
-
-```
-Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
-```
+規約は `@AGENTS.md` の「Commit Attribution」を参照。**利用中のモデル名で `Co-Authored-By` を付与**すること（現行: `Claude Opus 4.7 (1M context) <noreply@anthropic.com>`）。モデル切替時はハードコードを残さず実モデル名に更新する。
 
 ## 学びの追記
 
