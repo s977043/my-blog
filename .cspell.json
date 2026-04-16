@@ -1,0 +1,20 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "Qiita",
+    "Zenn",
+    "Findy",
+    "FindyTeamPlus",
+    "unilabo",
+    "PRONI"
+  ],
+  "ignorePaths": [
+    "node_modules/**",
+    ".git/**",
+    "Qiita/public/.remote/**",
+    "articles_note/export/**",
+    "package-lock.json"
+  ],
+  "caseSensitive": false
+}
