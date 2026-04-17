@@ -43,7 +43,7 @@ articles_note/
 
 1. `new/<slug>.md` に執筆
 2. 記事で使う画像が `articles_note/assets/` にある場合は、**先に GitHub `main` に公開**
-3. `.claude/skills/note-export-import/scripts/md_to_wxr.py` で単一記事WXRを `articles_note/build/<slug>.xml` に変換
+3. `.claude/skills/note-export-import/scripts/md_to_wxr.py` で単一記事WXRを `articles_note/build/import-<slug>-YYYYMMDD-HHMM.xml` に変換（`--out` 省略時は日時自動付与）
    - 画像を note に自動取り込みさせる場合は `--base-url https://raw.githubusercontent.com/s977043/my-blog/main/articles_note/assets` を付ける
 4. noteインポート → 下書きとして作成される
 5. noteエディタで確認・画像差し替え → 公開
