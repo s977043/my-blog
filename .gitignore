@@ -15,3 +15,6 @@ articles_note/export/
 
 # note.com インポート用WXR生成物 (再生成可能、手元のみ)
 articles_note/build/
+
+# ローカルエージェントツールのミラーキャッシュ (再生成可能)
+.agents/
