@@ -24,7 +24,7 @@ import argparse
 import re
 import sys
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from xml.sax.saxutils import escape
 
@@ -34,7 +34,7 @@ except ImportError:
     sys.stderr.write("pip install --break-system-packages markdown\n")
     sys.exit(1)
 
-META_LINE_RE = re.compile(r"^>\s*(?:出典|公開状態|更新|区分)\s*[:：]", re.MULTILINE)
+META_LINE_RE = re.compile(r"^>\s*(?:出典|公開状態|更新|区分)\s*[:：][^\n]*\n?", re.MULTILINE)
 LOCAL_IMG_RE = re.compile(r'!\[[^\]]*\]\((?!https?://|data:)[^)]+\)')
 ASSET_IMG_RE = re.compile(r'(!\[[^\]]*\]\()(?:\.\./)?assets/([^)]+)\)')
 
@@ -74,6 +74,7 @@ def rewrite_assets_to_url(body: str, base_url: str) -> tuple[str, int]:
 
 
 def render_item(md_path: Path, base_url: str | None = None) -> str:
+    """note公式エクスポートと同形式の<item>を出力。余計なwp:*要素は付けない。"""
     text = md_path.read_text()
     title, body_md = split_front(text)
     if not title:
@@ -83,30 +84,18 @@ def render_item(md_path: Path, base_url: str | None = None) -> str:
         if rewritten:
             sys.stderr.write(f"[ok] {md_path.name}: {rewritten}件の画像パスを {base_url} に書き換え\n")
     warn_local_images(md_path, body_md)
-    html = md.markdown(body_md, extensions=["fenced_code", "tables", "sane_lists"])
-    now = datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S +0000")
-    guid = f"local-{uuid.uuid4().hex[:12]}"
+    # CDATA衝突防止: ]]> を分割
+    html = md.markdown(body_md, extensions=["fenced_code", "tables", "sane_lists"]).replace("]]>", "]]]]><![CDATA[>")
+    guid = f"l{uuid.uuid4().hex[:12]}"
+    link = f"https://note.com/mine_unilabo/n/{guid}"
     return (
         "<item>"
         f"<title><![CDATA[{title}]]></title>"
-        f"<link>https://example.invalid/{guid}</link>"
-        f"<pubDate>{now}</pubDate>"
-        f"<dc:creator><![CDATA[mine_unilabo]]></dc:creator>"
+        f"<link>{link}</link>"
+        f"<dc:creator><![CDATA[みね]]></dc:creator>"
         f'<guid isPermaLink="false">{guid}</guid>'
         "<description></description>"
         f"<content:encoded><![CDATA[{html}]]></content:encoded>"
-        "<excerpt:encoded><![CDATA[]]></excerpt:encoded>"
-        "<wp:post_date><![CDATA[]]></wp:post_date>"
-        "<wp:post_date_gmt><![CDATA[]]></wp:post_date_gmt>"
-        "<wp:comment_status><![CDATA[open]]></wp:comment_status>"
-        "<wp:ping_status><![CDATA[open]]></wp:ping_status>"
-        f"<wp:post_name><![CDATA[{guid}]]></wp:post_name>"
-        "<wp:status><![CDATA[draft]]></wp:status>"
-        "<wp:post_parent>0</wp:post_parent>"
-        "<wp:menu_order>0</wp:menu_order>"
-        "<wp:post_type><![CDATA[post]]></wp:post_type>"
-        "<wp:post_password><![CDATA[]]></wp:post_password>"
-        "<wp:is_sticky>0</wp:is_sticky>"
         "</item>"
     )
 
@@ -120,13 +109,23 @@ WRAPPER_HEAD = (
     ' xmlns:dc="http://purl.org/dc/elements/1.1/"'
     ' xmlns:wp="http://wordpress.org/export/1.2/">'
     '<channel>'
-    '<title>mine_unilabo (local drafts)</title>'
+    '<title>みね</title>'
     '<link>https://note.com/mine_unilabo</link>'
-    '<description>Local drafts to be imported as note drafts.</description>'
+    '<description></description>'
+    '<pubDate>{pubdate}</pubDate>'
     '<language>ja</language>'
     '<wp:wxr_version>1.2</wp:wxr_version>'
     '<wp:base_site_url>https://note.com/mine_unilabo</wp:base_site_url>'
     '<wp:base_blog_url>https://note.com/mine_unilabo</wp:base_blog_url>'
+    '<wp:author>'
+    '<wp:author_id>1</wp:author_id>'
+    '<wp:author_login><![CDATA[mine_unilabo]]></wp:author_login>'
+    '<wp:author_email><![CDATA[note-export@example.com]]></wp:author_email>'
+    '<wp:author_display_name><![CDATA[mine_unilabo]]></wp:author_display_name>'
+    '<wp:author_first_name><![CDATA[]]></wp:author_first_name>'
+    '<wp:author_last_name><![CDATA[]]></wp:author_last_name>'
+    '</wp:author>'
+    '<generator>note.com</generator>'
 )
 WRAPPER_TAIL = "</channel></rss>"
 
@@ -140,7 +139,7 @@ def collect_inputs(src: Path) -> list[Path]:
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("src", type=Path, help="MDファイルまたはディレクトリ")
-    ap.add_argument("--out", type=Path, help="出力先WXR (省略時: articles_note/build/<name>.xml)")
+    ap.add_argument("--out", type=Path, help="出力先WXR (省略時: articles_note/build/import-<slug>-YYYYMMDD-HHMM.xml)")
     ap.add_argument("--base-url", help="assets/ 参照を絶対URLに書き換える (例: https://raw.githubusercontent.com/OWNER/REPO/main/articles_note/assets)")
     args = ap.parse_args()
 
@@ -149,13 +148,15 @@ def main():
         raise SystemExit(f"No .md found under {args.src}")
 
     items = "".join(render_item(p, args.base_url) for p in inputs)
-    xml = WRAPPER_HEAD + items + WRAPPER_TAIL
+    pubdate = datetime.now(timezone(timedelta(hours=9))).strftime("%a, %d %b %Y %H:%M:%S +0900")
+    xml = WRAPPER_HEAD.format(pubdate=pubdate) + items + WRAPPER_TAIL
 
     if args.out:
         out = args.out
     else:
-        base_name = args.src.stem if args.src.is_file() else "new-batch"
-        out = Path("articles_note/build") / f"{base_name}.xml"
+        slug = args.src.stem if args.src.is_file() else args.src.name.strip("/") or "batch"
+        ts = datetime.now().strftime("%Y%m%d-%H%M")
+        out = Path("articles_note/build") / f"import-{slug}-{ts}.xml"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(xml)
     print(f"wrote {out}  ({len(inputs)} item(s))")

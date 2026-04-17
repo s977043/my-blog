@@ -54,9 +54,9 @@ articles_note/
 ### B. 新規記事インポート（下書き作成）
 
 1. `new/<slug>.md` を用意（著者が執筆）
-2. `scripts/md_to_wxr.py new/<slug>.md` で `build/<slug>.xml` を生成
+2. `scripts/md_to_wxr.py new/<slug>.md` で `build/import-<slug>-YYYYMMDD-HHMM.xml` を生成
 3. note管理画面: プロフィール → 自分の記事 → インポート → WXR選択
-4. `build/<slug>.xml` をアップロード → インポート開始
+4. `build/import-<slug>-YYYYMMDD-HHMM.xml` をアップロード → インポート開始
 5. 3日以内にメール通知 → 下書きが作成される
 6. noteエディタで画像差し替え・最終調整 → 公開
 7. 公開後は次回バックアップ取り込みで `published/` に反映される
@@ -78,7 +78,7 @@ articles_note/
 ## スクリプト
 
 - `scripts/wxr_to_md.py` — WXR + assets → `published/ drafts/ assets/` を再生成
-- `scripts/md_to_wxr.py` — `new/<slug>.md` → 単一記事WXR を `build/<slug>.xml` に出力
+- `scripts/md_to_wxr.py` — `new/<slug>.md` → 単一記事WXR を `build/import-<slug>-YYYYMMDD-HHMM.xml` に出力
 
 いずれも `pip install --break-system-packages markdownify markdown` が必要。
 
