@@ -84,15 +84,17 @@ def render_item(md_path: Path, base_url: str | None = None) -> str:
         if rewritten:
             sys.stderr.write(f"[ok] {md_path.name}: {rewritten}件の画像パスを {base_url} に書き換え\n")
     warn_local_images(md_path, body_md)
-    # CDATA衝突防止: ]]> を分割
-    html = md.markdown(body_md, extensions=["fenced_code", "tables", "sane_lists"]).replace("]]>", "]]]]><![CDATA[>")
+    # CDATA衝突防止: ]]> を分割 (title/html 双方)
+    cdata_guard = lambda s: s.replace("]]>", "]]]]><![CDATA[>")
+    html = cdata_guard(md.markdown(body_md, extensions=["fenced_code", "tables", "sane_lists"]))
+    title_xml = cdata_guard(title)
     guid = f"l{uuid.uuid4().hex[:12]}"
     link = f"https://note.com/mine_unilabo/n/{guid}"
     return (
         "<item>"
-        f"<title><![CDATA[{title}]]></title>"
+        f"<title><![CDATA[{title_xml}]]></title>"
         f"<link>{link}</link>"
-        f"<dc:creator><![CDATA[みね]]></dc:creator>"
+        f"<dc:creator><![CDATA[mine_unilabo]]></dc:creator>"
         f'<guid isPermaLink="false">{guid}</guid>'
         "<description></description>"
         f"<content:encoded><![CDATA[{html}]]></content:encoded>"
@@ -121,7 +123,7 @@ WRAPPER_HEAD = (
     '<wp:author_id>1</wp:author_id>'
     '<wp:author_login><![CDATA[mine_unilabo]]></wp:author_login>'
     '<wp:author_email><![CDATA[note-export@example.com]]></wp:author_email>'
-    '<wp:author_display_name><![CDATA[mine_unilabo]]></wp:author_display_name>'
+    '<wp:author_display_name><![CDATA[みね]]></wp:author_display_name>'
     '<wp:author_first_name><![CDATA[]]></wp:author_first_name>'
     '<wp:author_last_name><![CDATA[]]></wp:author_last_name>'
     '</wp:author>'
@@ -155,7 +157,7 @@ def main():
         out = args.out
     else:
         slug = args.src.stem if args.src.is_file() else args.src.name.strip("/") or "batch"
-        ts = datetime.now().strftime("%Y%m%d-%H%M")
+        ts = datetime.now(timezone(timedelta(hours=9))).strftime("%Y%m%d-%H%M")
         out = Path("articles_note/build") / f"import-{slug}-{ts}.xml"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(xml)
