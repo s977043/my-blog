@@ -26,7 +26,11 @@ import sys
 import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from urllib.parse import quote
 from xml.sax.saxutils import escape
+
+DISPLAY_NAME = "みね"
+LOGIN_ID = "mine_unilabo"
 
 try:
     import markdown as md
@@ -73,8 +77,17 @@ def rewrite_assets_to_url(body: str, base_url: str) -> tuple[str, int]:
     return ASSET_IMG_RE.sub(sub, body), count[0]
 
 
-def render_item(md_path: Path, base_url: str | None = None) -> str:
-    """note公式エクスポートと同形式の<item>を出力。余計なwp:*要素は付けない。"""
+def render_item(md_path: Path, post_id: int, base_url: str | None = None) -> str:
+    """note公式エクスポート形式に準拠した<item>を出力。
+
+    note importer は WordPress WXR の post メタデータを必要とするため、
+    `wp:post_id` `wp:post_type` `wp:status` を含む item 側 wp:* 群を揃える。
+    これらが欠落すると note 側インポートが失敗する（実測: 2026-04-18）。
+
+    author フィールドの対応:
+    - `<dc:creator>` (item) = 表示名 (`みね`) — 公式エクスポートに合わせる
+    - `<wp:author_display_name>` (channel) = login ID — こちらも公式に合わせる
+    """
     text = md_path.read_text()
     title, body_md = split_front(text)
     if not title:
@@ -89,15 +102,35 @@ def render_item(md_path: Path, base_url: str | None = None) -> str:
     html = cdata_guard(md.markdown(body_md, extensions=["fenced_code", "tables", "sane_lists"]))
     title_xml = cdata_guard(title)
     guid = f"l{uuid.uuid4().hex[:12]}"
-    link = f"https://note.com/mine_unilabo/n/{guid}"
+    link = f"https://note.com/{LOGIN_ID}/n/{guid}"
+    now_jst = datetime.now(timezone(timedelta(hours=9)))
+    now_utc = now_jst.astimezone(timezone.utc)
+    post_date = now_jst.strftime("%Y-%m-%d %H:%M:%S")
+    post_date_gmt = now_utc.strftime("%Y-%m-%d %H:%M:%S")
+    post_name = quote(title, safe="")
     return (
         "<item>"
         f"<title><![CDATA[{title_xml}]]></title>"
         f"<link>{link}</link>"
-        f"<dc:creator><![CDATA[mine_unilabo]]></dc:creator>"
+        f"<dc:creator><![CDATA[{DISPLAY_NAME}]]></dc:creator>"
         f'<guid isPermaLink="false">{guid}</guid>'
         "<description></description>"
         f"<content:encoded><![CDATA[{html}]]></content:encoded>"
+        "<excerpt:encoded><![CDATA[]]></excerpt:encoded>"
+        f"<wp:post_id>{post_id}</wp:post_id>"
+        f"<wp:post_date>{post_date}</wp:post_date>"
+        f"<wp:post_date_gmt>{post_date_gmt}</wp:post_date_gmt>"
+        f"<wp:post_modified>{post_date}</wp:post_modified>"
+        f"<wp:post_modified_gmt>{post_date_gmt}</wp:post_modified_gmt>"
+        "<wp:comment_status><![CDATA[open]]></wp:comment_status>"
+        "<wp:ping_status><![CDATA[open]]></wp:ping_status>"
+        f"<wp:post_name><![CDATA[{post_name}]]></wp:post_name>"
+        "<wp:status><![CDATA[publish]]></wp:status>"
+        "<wp:post_parent>0</wp:post_parent>"
+        "<wp:menu_order>0</wp:menu_order>"
+        "<wp:post_type><![CDATA[post]]></wp:post_type>"
+        "<wp:post_password><![CDATA[]]></wp:post_password>"
+        "<wp:is_sticky>0</wp:is_sticky>"
         "</item>"
     )
 
@@ -111,19 +144,21 @@ WRAPPER_HEAD = (
     ' xmlns:dc="http://purl.org/dc/elements/1.1/"'
     ' xmlns:wp="http://wordpress.org/export/1.2/">'
     '<channel>'
-    '<title>みね</title>'
-    '<link>https://note.com/mine_unilabo</link>'
+    f'<title>{DISPLAY_NAME}</title>'
+    f'<link>https://note.com/{LOGIN_ID}</link>'
     '<description></description>'
     '<pubDate>{pubdate}</pubDate>'
     '<language>ja</language>'
     '<wp:wxr_version>1.2</wp:wxr_version>'
-    '<wp:base_site_url>https://note.com/mine_unilabo</wp:base_site_url>'
-    '<wp:base_blog_url>https://note.com/mine_unilabo</wp:base_blog_url>'
+    f'<wp:base_site_url>https://note.com/{LOGIN_ID}</wp:base_site_url>'
+    f'<wp:base_blog_url>https://note.com/{LOGIN_ID}</wp:base_blog_url>'
     '<wp:author>'
     '<wp:author_id>1</wp:author_id>'
-    '<wp:author_login><![CDATA[mine_unilabo]]></wp:author_login>'
+    f'<wp:author_login><![CDATA[{LOGIN_ID}]]></wp:author_login>'
     '<wp:author_email><![CDATA[note-export@example.com]]></wp:author_email>'
-    '<wp:author_display_name><![CDATA[みね]]></wp:author_display_name>'
+    # note公式では wp:author_display_name に login ID が入る（表示名ではない）。
+    # 2026-04-18 のインポート失敗で判明。AGENT_LEARNINGS.md 2026-04-18 エントリ参照。
+    f'<wp:author_display_name><![CDATA[{LOGIN_ID}]]></wp:author_display_name>'
     '<wp:author_first_name><![CDATA[]]></wp:author_first_name>'
     '<wp:author_last_name><![CDATA[]]></wp:author_last_name>'
     '</wp:author>'
@@ -149,7 +184,7 @@ def main():
     if not inputs:
         raise SystemExit(f"No .md found under {args.src}")
 
-    items = "".join(render_item(p, args.base_url) for p in inputs)
+    items = "".join(render_item(p, i + 1, args.base_url) for i, p in enumerate(inputs))
     pubdate = datetime.now(timezone(timedelta(hours=9))).strftime("%a, %d %b %Y %H:%M:%S +0900")
     xml = WRAPPER_HEAD.format(pubdate=pubdate) + items + WRAPPER_TAIL
 
