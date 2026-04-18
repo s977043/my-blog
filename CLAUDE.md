@@ -59,9 +59,12 @@ python3 .claude/skills/note-export-import/scripts/wxr_to_md.py <zip> --out artic
 
 # 新規記事 → インポート用WXR
 python3 .claude/skills/note-export-import/scripts/md_to_wxr.py articles_note/new/<slug>.md
+
+# 生成WXRの構造検証（note公式エクスポート形式との差分チェック。必須）
+python3 .claude/skills/note-export-import/scripts/verify_wxr.py articles_note/build/import-*.xml
 ```
 
-依存: `pip install --break-system-packages markdownify markdown`
+依存: `pip install --break-system-packages markdownify markdown`（`verify_wxr.py` は標準ライブラリのみ）
 
 ## 作業開始時のチェックリスト
 
