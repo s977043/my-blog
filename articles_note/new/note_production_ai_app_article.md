@@ -4,7 +4,7 @@
 
 <!-- TODO: カバー画像を articles_note/assets/ に配置 → `![](../assets/note_production_ai_app_article_cover.png)` を追加 -->
 
-Xで見かけた `production-ai-app` の構成図（<!-- TODO: 原典 URL を追記（Xポスト or GitHub リポジトリ） -->）がとてもよかったので、この記事では本番運用向けAIアプリの責務分離という観点から、図を自分なりに読み解いてみます。
+Xで見かけた [`production-ai-app` の構成図](https://x.com/techNmak/status/2042951175071502513) がとてもよかったので、この記事では本番運用向けAIアプリの責務分離という観点から、図を自分なりに読み解いてみます。
 
 一見するとフォルダ構成のサンプルに見えますが、実際には生成AIアプリを本番運用するための責務分離がかなりうまく整理されています。
 
