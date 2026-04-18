@@ -54,12 +54,15 @@ articles_note/
 ### B. 新規記事インポート（下書き作成）
 
 1. `new/<slug>.md` を用意（著者が執筆）
-2. `scripts/md_to_wxr.py new/<slug>.md` で `build/import-<slug>-YYYYMMDD-HHMM.xml` を生成
-3. note管理画面: プロフィール → 自分の記事 → インポート → WXR選択
-4. `build/import-<slug>-YYYYMMDD-HHMM.xml` をアップロード → インポート開始
-5. 3日以内にメール通知 → 下書きが作成される
-6. noteエディタで画像差し替え・最終調整 → 公開
-7. 公開後は次回バックアップ取り込みで `published/` に反映される
+2. `scripts/md_to_wxr.py new/<slug>.md --base-url <公開Raw URL>` で `build/import-<slug>-YYYYMMDD-HHMM.xml` を生成
+3. **`scripts/verify_wxr.py build/import-*.xml` で構造検証**（必須 wp:* の欠落と著者フィールドの対応を公式エクスポートと突き合わせ）
+4. note管理画面: プロフィール → 自分の記事 → インポート → WXR選択
+5. `build/import-<slug>-YYYYMMDD-HHMM.xml` をアップロード → インポート開始
+6. 3日以内にメール通知 → 下書きが作成される
+7. noteエディタで画像差し替え・最終調整 → 公開
+8. 公開後は次回バックアップ取り込みで `published/` に反映される
+
+**注意**: `xmllint --noout` でwell-formedでも note importer が弾くことがある（`<item>` の wp:* 欠落など）。必ず `verify_wxr.py` を通す（2026-04-18 にこの罠で実インポート失敗）。
 
 ### C. 既存記事更新（上書き不可の回避）
 
@@ -79,8 +82,9 @@ articles_note/
 
 - `scripts/wxr_to_md.py` — WXR + assets → `published/ drafts/ assets/` を再生成
 - `scripts/md_to_wxr.py` — `new/<slug>.md` → 単一記事WXR を `build/import-<slug>-YYYYMMDD-HHMM.xml` に出力
+- `scripts/verify_wxr.py` — 生成WXRを公式エクスポート形式と突き合わせ、note importerが必要な `<item>` 配下 `wp:*` の欠落や著者フィールドの対応違いを検出
 
-いずれも `pip install --break-system-packages markdownify markdown` が必要。
+`wxr_to_md.py` / `md_to_wxr.py` は `pip install --break-system-packages markdownify markdown` が必要。`verify_wxr.py` は標準ライブラリのみ。
 
 ## 区分メタの扱い（任意）
 
