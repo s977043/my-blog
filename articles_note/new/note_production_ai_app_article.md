@@ -2,7 +2,7 @@
 
 > 区分: 個人
 
-<!-- TODO: カバー画像を articles_note/assets/ に配置 → `![](../assets/note_production_ai_app_article_cover.png)` を追加 -->
+![](../assets/note_production_ai_app_article_cover.png)
 
 Xで見かけた [`production-ai-app` の構成図](https://x.com/techNmak/status/2042951175071502513) がとてもよかったので、この記事では本番運用向けAIアプリの責務分離という観点から、図を自分なりに読み解いてみます。
 
