@@ -48,7 +48,6 @@ PlanGateを一文で言うと、こうです。
 自由に任せる前に、どこで止まり、どこで確認し、どこまで自動で進めてよいかを先に設計します。
 
 この記事では、PlanGateの考え方を短く共有した上で、`PBI → 計画 → レビュー → 実行` の流れをどう設計するか、そのまま使えるテンプレートと運用手順をまとめます。
-背景や問題意識をもう少し長く読みたい場合は、[note の本編](https://note.com/mine_unilabo/n/n3aae6b5467b9) も参考になります。
 
 ## この記事で扱うもの
 
@@ -234,8 +233,8 @@ Zenn向けには、まずこの最小版で十分です。
 
 ## 参考
 
-- [note の本編](https://note.com/mine_unilabo/n/n3aae6b5467b9)
 - [PlanGate GitHub](https://github.com/s977043/plangate)
+- [note: PlanGate の背景 / 問題意識](https://note.com/mine_unilabo/n/n3aae6b5467b9)
 
 ## 自社メディア
 
