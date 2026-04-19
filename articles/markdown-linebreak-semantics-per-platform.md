@@ -3,7 +3,7 @@ title: "Markdownの2スペース改行がnoteで余白事故を生む — プラ
 emoji: "↵"
 type: "tech"
 topics: ["markdown", "note", "zenn", "qiita", "python"]
-published: false
+published: true
 ---
 
 :::message

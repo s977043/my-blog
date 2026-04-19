@@ -3,7 +3,7 @@ title: "ChatGPTレビューを仕組み化する — 3ペルソナreviewer agent
 emoji: "🧪"
 type: "tech"
 topics: ["ai駆動開発", "claudecode", "記事レビュー", "エージェント設計", "markdown"]
-published: false
+published: true
 ---
 
 :::message

@@ -3,7 +3,7 @@ title: "推測で書いた学びが次の罠になった — AGENT_LEARNINGS.md 
 emoji: "📉"
 type: "tech"
 topics: ["ai駆動開発", "claudecode", "ドキュメント", "ナレッジマネジメント", "チーム開発"]
-published: false
+published: true
 ---
 
 :::message
