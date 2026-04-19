@@ -234,6 +234,7 @@ Zenn向けには、まずこの最小版で十分です。
 ## 参考
 
 - [PlanGate GitHub](https://github.com/s977043/plangate)
+- [note: PlanGate の背景 / 問題意識](https://note.com/mine_unilabo/n/n3aae6b5467b9)
 
 ## 自社メディア
 
