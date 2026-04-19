@@ -7,7 +7,15 @@ published: false
 ---
 
 :::message
-この記事は、[Growth Lab](https://the3396.com/articles) の記事制作フローをもとに、AIで記事を書くときの品質管理をZenn向けに整理した下書きです。
+**この記事で得られること**
+
+- AI記事制作を「本文生成の速さ」ではなく「編集フロー全体の品質」で捉える3層モデル
+- 書く前に固定すべき4項目（なぜ書くか／誰に届けるか／読者への約束／完了条件）とBriefテンプレ
+- 一次レビューをAIに任せ、人間は「判断基準の設計」に寄せる分担の組み方
+:::
+
+:::message
+この記事は、[Growth Lab](https://the3396.com/articles) の記事制作フローをもとに、AIで記事を書くときの品質管理をZenn向けに整理したものです。
 :::
 
 AIで記事制作を始めると、最初は「本文生成が速くなった」と感じます。
@@ -23,20 +31,20 @@ AIで記事制作を始めると、最初は「本文生成が速くなった」
 
 ## TL;DR
 
-- AI記事制作では、本文生成より前に `Why / 読者 / 完了条件` を固定する
+- AI記事制作では、本文生成より前に「なぜ書くか／誰に届けるか／読者への約束／完了条件」の4点を固定する
 - レビューは人間が全文を見る前に、AIで一次チェックを通す
 - 品質改善は単発の赤入れではなく、ルールと評価基準に戻す
 - 編集者の役割は「文章の修正」から「判断基準の設計」へ寄せる
 
-## 3層で考える
+## 3層で考える：Governance / Execution / Improvement
 
-私は、AI記事制作の品質管理を次の3層で見るのが扱いやすいと考えています。
+AI記事制作の品質管理は、「書く前の基準（Governance）」「生成と一次レビュー（Execution）」「失敗を次回に戻す（Improvement）」の3層に分けると扱いやすくなります。
 
 | 層 | 役割 | 具体例 |
 | --- | --- | --- |
-| Governance | 書く前の基準を決める | Why、読者、DoD、禁止表現 |
-| Execution | 生成とレビューの流れを分ける | 構成案、本文、4視点レビュー |
-| Improvement | 失敗を次回のルールへ戻す | 評価ログ、NG例、テンプレ更新 |
+| Governance（書く前のルール） | 書く前の基準を決める | なぜ書くか、読者、DoD（完了条件）、禁止表現 |
+| Execution（書く流れ） | 生成とレビューの流れを分ける | 構成案、本文、AI一次レビュー |
+| Improvement（書いた後の改善） | 失敗を次回のルールへ戻す | 評価ログ、NG例、テンプレ更新 |
 
 この分け方のポイントは、AIに「いい感じに書いて」と頼まないことです。
 先に基準を置き、その基準に対して出力を評価します。
@@ -54,18 +62,18 @@ AIで記事制作を始めると、最初は「本文生成が速くなった」
 たとえば、記事制作前にこのくらいの入力を作ります。
 
 ```markdown
-# Article Brief
+# Article Brief（記事設計メモ）
 
-## Why
+## Why（なぜ書くか）
 この記事を書く理由
 
-## Reader
+## Reader（誰に届けるか）
 想定読者と、いま困っていること
 
-## Promise
+## Promise（読者への約束）
 この記事で読者に約束すること
 
-## Definition of Done
+## Definition of Done（完了条件）
 - 必ず含める論点
 - 触れない論点
 - 関連記事への導線
@@ -85,7 +93,7 @@ AI記事制作の品質は、本文よりも前段の設計でかなり決まり
 1. Brief作成
 2. 構成案レビュー
 3. 本文生成
-4. AIによる一次レビュー
+4. AIによる一次レビュー（4視点：ディレクター／編集者／読者／SEO）
 5. 人間の最終レビュー
 
 特に効くのは、**構成案の段階で止める**ことです。
@@ -103,12 +111,14 @@ AI記事制作の品質は、本文よりも前段の設計でかなり決まり
 こうした指摘は、次回のプロンプトやチェックリストに戻します。
 
 ```markdown
-# Review Learnings
+# Review Learnings（次回から守りたいルール）
 
 - 導入では読者の具体的な困りごとを3つ以上書く
-- CTAは「次に読む記事」か「試す手順」に寄せる
+- CTA（読後の次アクション）は「次に読む記事」か「試す手順」に寄せる
 - 一般論だけの段落が2つ続いたら、具体例を追加する
 ```
+
+これを次の記事のBrief作成時に読み返すと、同じ失敗を踏みにくくなります。
 
 品質管理は、毎回の赤入れを頑張ることではありません。
 **同じ失敗を次回から起きにくくすること**です。
@@ -119,13 +129,13 @@ AI記事制作の品質は、本文よりも前段の設計でかなり決まり
 
 ```text
 article-work/
-├── brief.md
-├── outline.md
-├── draft.md
-└── review.md
+├── brief.md      # Governance：読者と完了条件を固定
+├── outline.md    # Execution：本文前の承認ポイント
+├── draft.md      # Execution：本文
+└── review.md     # Improvement：AIと人間のレビュー結果、次回ルール候補
 ```
 
-`brief.md` が正本、`outline.md` が承認ポイント、`draft.md` が本文、`review.md` が改善ログです。
+`brief.md` を判断の起点（Single Source of Truth）にします。
 会話ログではなくファイルに残すと、別のAIや別セッションでも再開しやすくなります。
 
 ## まとめ
@@ -140,8 +150,12 @@ AI記事制作で品質を落とさないために必要なのは、魔法のプ
 
 AIを執筆者として使うほど、人間は「全文の修正者」ではなく「判断基準の設計者」に寄っていくのが自然です。
 
+## 関連記事
+
+- [開発セッション直後の振り返りを改善フローにつなげる方法](https://zenn.dev/minewo/articles/engineering-process-improvement-skill) — 本記事の3層モデルを「コード開発セッション」に適用した姉妹記事
+- [AI駆動開発の2層ガード設計：PlanGateとRiver Reviewerで実装前後を守る](https://zenn.dev/minewo/articles/ai-dev-guardrail-plangate-river-reviewer) — 実装前後のガード設計
+- [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow) — 書く前に計画を固定する思想の原典
+
 ## 参考
 
 - [Growth Lab](https://the3396.com/articles)
-- [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow)
-- [AI駆動開発の2層ガード設計：PlanGateとRiver Reviewerで実装前後を守る](https://zenn.dev/minewo/articles/ai-dev-guardrail-plangate-river-reviewer)
