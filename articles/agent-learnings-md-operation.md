@@ -149,4 +149,3 @@ AI エージェント用の lessons-learned ファイルは、以下 3 点を守
 
 - AI が迷わないリポジトリ設計: [AI が迷わないリポジトリ設計：長いプロンプトより先に整える 4 つの置き場所](/articles/ai-legible-repository-design)
 - 振り返りを改善 PR に落とす運用: [開発セッション直後の振り返りを改善フローにつなげる方法](/articles/engineering-process-improvement-skill)
-- 本記事の題材となった WXR import エラー: [note WXR インポート失敗から学んだ構造検証](/articles/note-wxr-import-structural-validation)
