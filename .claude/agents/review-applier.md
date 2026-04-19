@@ -53,6 +53,16 @@ tools: Read, Grep, Glob, Bash, Edit, WebFetch
    - URL生存: WebFetch
    - API/設定名: 公式Docsへの参照コメントをPR本文に含める
 
+## 作業開始時の確認（並列セッション耐性）
+呼び出し元が main 上にいることを期待していても、並列セッションで意図せずブランチが切り替わる事例が観測されている。Edit 実行前に以下を Bash で確認し、採否一覧の末尾に実行ログを残す:
+
+```bash
+git branch --show-current   # 期待ブランチ（通常 main または指定済みの chore/apply-review-...）
+ls -1 <target-article-path> <target-review-path>  # 対象ファイルの実在確認
+```
+
+期待と異なるブランチにいる場合は **Edit を実行せず**、呼び出し元へ「ブランチ不一致のため停止」を報告して終了する（git 操作は行わない）。
+
 ## PR本文テンプレート
 ```markdown
 ## Summary

@@ -26,7 +26,17 @@ argument-hint: <state>/<slug> （例: published/n3aae6b5467b9、drafts/n17c899de
    git checkout -b chore/apply-review-note-$SLUG
    ```
 
-3. `review-applier` エージェントを起動（note向け挙動を指定）
+3. 直近反映履歴の確認（ムダ起動の回避）
+   ```bash
+   # 過去 48 時間以内に該当記事が触られていれば、既対応の可能性が高い
+   git log -p --since='48 hours ago' -- "articles_note/$1.md" | head -80
+   # レビュー生成時点以降に #67 / #71 のような linebreaks fix 等が入っていないか確認
+   git log --oneline --since='48 hours ago' -- "articles_note/$1.md"
+   ```
+   - 直近に反映コミットが存在する場合、レビューの指摘が既に解消されている可能性があるため、review-applier 起動前に人間側で採否目星をつける
+   - 特に note 系は `2 スペース改行除去` や `エクスポート再同期` が別 PR で反映されることが多い
+
+4. `review-applier` エージェントを起動（note向け挙動を指定）
    - 入力: `reviews/note/$1.md`, `articles_note/$1.md`
    - スキル `.claude/skills/note-article-review/SKILL.md` の反映フェーズ（手順 9〜12）に準拠
    - 採用/保留/却下を分類し、採用分のみ Edit
@@ -34,11 +44,11 @@ argument-hint: <state>/<slug> （例: published/n3aae6b5467b9、drafts/n17c899de
    - Zenn固有観点の誤混入指摘は却下
    - PR本文用の採否一覧 Markdown を返す
 
-4. 採用件数が0の場合
+5. 採用件数が0の場合
    - PRは作らず、結果を報告して終了
    - 保留/却下の一覧はこの会話に表示
 
-5. 採用件数が1以上の場合
+6. 採用件数が1以上の場合
    - PR作成まで自動進行（マージはしない）
    - ブランチ: `chore/apply-review-note-$SLUG`
    - PR本文にエージェント生成の採否一覧を含める
@@ -49,7 +59,7 @@ argument-hint: <state>/<slug> （例: published/n3aae6b5467b9、drafts/n17c899de
      > note はインポートで既存記事を上書き更新できないため、マージ後はnote管理画面で手動反映が必要です。
      ```
 
-6. 結果報告
+7. 結果報告
    - PR URL
    - 採用/保留/却下件数
    - `$STATE` ごとの追加注意（published の場合は手動反映必要、drafts は note 側との整合確認、new は自由反映）
