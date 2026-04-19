@@ -3,7 +3,7 @@ title: "Codex と Claude Code を同じリポジトリで回す — AGENTS.md / 
 emoji: "🤝"
 type: "idea"
 topics: ["ai駆動開発", "claudecode", "codex", "リポジトリ設計", "agents-md"]
-published: false
+published: true
 ---
 
 :::message
