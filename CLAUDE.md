@@ -93,6 +93,26 @@ python3 .claude/skills/note-export-import/scripts/verify_wxr.py articles_note/bu
 - `reflog` を併用して誤配置 commit の救出が可能（`git cherry-pick <sha>` で目的ブランチに移動）
 - 詳細事例: `@AGENT_LEARNINGS.md` の「並列セッションによるブランチ干渉」エントリ
 
+#### `gh pr create` 直前チェックリスト
+
+push 直後に並列セッションが別ブランチへ切り替えると、`gh pr create` が「must first push the current branch to a remote」で失敗する。以下 3 行を直前に走らせると、ブランチ名ズレ / upstream 未同期 / head 不一致を検知できる。
+
+```bash
+git branch --show-current                             # 期待ブランチか
+git rev-parse HEAD                                    # ローカル head
+git rev-parse "@{u}" 2>/dev/null || echo "NO_UPSTREAM" # 上流 head（未 track なら NO_UPSTREAM）
+```
+
+失敗時の復旧パターン:
+
+| 症状 | 対処 |
+|---|---|
+| 現在ブランチが意図と違う | `gh pr create --head <intended-branch> ...`（切替不要で PR 作成） |
+| upstream 未 track | `git push -u origin <branch>` してから `gh pr create` |
+| head が origin より進んでいる | そのまま `--head` で PR 作成可（origin が新しい分は自動取込） |
+
+**原則**: 並列セッション干渉を検知したら **ブランチ切替ではなく `--head` フラグで指名する** ほうが副作用が少ない。
+
 ## 新規 Agent / Skill / Command 作成時の注意
 
 作成直後はハーネスが未リロードで `Agent type not found` エラーが出る。
