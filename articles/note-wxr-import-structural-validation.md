@@ -54,6 +54,7 @@ tree = ET.parse("import-ai_agent_operations_opinion_note.xml")
 
 ```xml
 <item>
+  <!-- 共通タグ（WordPress 非依存 / RSS + Dublin Core + content / excerpt 拡張） -->
   <title>...</title>
   <link>...</link>
   <dc:creator>みね</dc:creator>
@@ -61,6 +62,8 @@ tree = ET.parse("import-ai_agent_operations_opinion_note.xml")
   <description></description>
   <content:encoded>...</content:encoded>
   <excerpt:encoded></excerpt:encoded>
+
+  <!-- ここから wp:* の 14 フィールド。これが無いと note importer は post として認識しない -->
   <wp:post_id>1</wp:post_id>
   <wp:post_date>2026-04-18 09:15:18</wp:post_date>
   <wp:post_date_gmt>2026-04-18 00:15:18</wp:post_date_gmt>
@@ -99,8 +102,15 @@ tree = ET.parse("import-ai_agent_operations_opinion_note.xml")
 
 ### 入力と出力
 
+実リポジトリでは `.claude/skills/note-export-import/scripts/verify_wxr.py` に配置しています。
+
 ```bash
-python3 scripts/verify_wxr.py articles_note/build/import-*.xml
+python3 .claude/skills/note-export-import/scripts/verify_wxr.py \
+  articles_note/build/import-*.xml
+
+# よく使うなら alias を張っておく
+alias verify-wxr='python3 .claude/skills/note-export-import/scripts/verify_wxr.py'
+verify-wxr articles_note/build/import-*.xml
 ```
 
 - 自動検出: `articles_note/export/<date>/*.zip` から公式エクスポートを取り出して参照
@@ -110,10 +120,10 @@ python3 scripts/verify_wxr.py articles_note/build/import-*.xml
 ### チェック項目
 
 1. XML well-formed（`ElementTree.parse` できる）
-2. `<channel>` 直下タグ集合が公式と一致
-3. 各 `<item>` 直下の `wp:*` タグ集合が公式と一致
-4. `<dc:creator>` が login ID 形式なら警告（`AGENT_LEARNINGS.md` の罠エントリを明示引用）
-5. `<img src>` が https で始まる（note は相対パス・http では画像を取り込めない）
+2. `<channel>` 直下タグ集合（`<item>` を除く）に、公式側にあって生成側に無いタグが無いか
+3. 各 `<item>` 直下の `wp:*` タグ集合に、公式側にあって生成側に無いタグが無いか
+4. `<dc:creator>` が小文字英数 + アンダースコアのみ（= login ID っぽい）なら警告
+5. `<img src>` が `https://` で始まっているか（note は相対パス / `http://` いずれも取り込み不可）
 
 ### 実装のポイント
 
@@ -140,7 +150,7 @@ if missing_wp:
 修正前の `md_to_wxr.py` で生成した WXR に対して `verify_wxr.py` を実行すると、以下の出力が得られました。
 
 ```
-$ python3 scripts/verify_wxr.py /tmp/regression-demo.xml
+$ python3 .claude/skills/note-export-import/scripts/verify_wxr.py /tmp/regression-demo.xml
 
 [ERROR] <item> に必須 wp:* タグが欠落:
   ['comment_status', 'is_sticky', 'menu_order', 'ping_status',
