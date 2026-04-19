@@ -82,6 +82,17 @@ python3 .claude/skills/note-export-import/scripts/verify_wxr.py articles_note/bu
 - 出力先ディレクトリは事前に `mkdir -p`（並列 mkdir レースを回避）
 - `TaskCreate` で各ジョブを事前登録すると進捗管理が容易
 
+### 並列セッション耐性
+
+同一ワーキングツリーで複数の Claude Code セッションが走ると、ブランチが自作業外で切り替わる事例がある（本プロジェクトでは復旧コスト最大 10 分程度が観測）。対策:
+
+- **branch-impacting 操作の前に毎回 `git branch --show-current` で現在地確認**
+  - 対象: `git add` / `git commit` / `git push` / `git reset` / `git switch` / `gh pr create` 直前
+- commit 前に `git status --short` も併用（未意図のファイルが staging に混入していないか確認）
+- ブランチが期待と異なる場合は `git stash push -u -m "<sentinel>"` で退避 → `git switch main` → `git pull --ff-only` で復旧
+- `reflog` を併用して誤配置 commit の救出が可能（`git cherry-pick <sha>` で目的ブランチに移動）
+- 詳細事例: `@AGENT_LEARNINGS.md` の「並列セッションによるブランチ干渉」エントリ
+
 ## 新規 Agent / Skill / Command 作成時の注意
 
 作成直後はハーネスが未リロードで `Agent type not found` エラーが出る。
