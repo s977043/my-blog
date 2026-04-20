@@ -113,6 +113,20 @@ git rev-parse "@{u}" 2>/dev/null || echo "NO_UPSTREAM" # 上流 head（未 track
 
 **原則**: 並列セッション干渉を検知したら **ブランチ切替ではなく `--head` フラグで指名する** ほうが副作用が少ない。
 
+#### `gh pr merge` 直前チェックリスト
+
+並列セッションが先にマージを完了させていたり、ブランチが main に対して stale でリグレッションを含んでいる事例がある。マージ前に以下 2 点を確認する。
+
+```bash
+gh pr view <n> --json state,mergeStateStatus --jq .   # state=OPEN か
+git fetch origin main <branch>
+git diff origin/main..origin/<branch> --stat          # tree-to-tree 差分（想定範囲内か）
+```
+
+- `state != OPEN` の場合は何もしない（並列セッションが先行マージ済み）
+- tree-to-tree diff が PR 本文の想定範囲を超える場合は stale の疑い。ブランチで `git merge origin/main --no-ff` して追従してから再確認
+- 詳細事例: `@AGENT_LEARNINGS.md` の「Stale PR は `git diff main..branch` で事前にリグレッション検出する」エントリ
+
 ## 新規 Agent / Skill / Command 作成時の注意
 
 作成直後はハーネスが未リロードで `Agent type not found` エラーが出る。

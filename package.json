@@ -11,7 +11,8 @@
     "publish:qiita": "qiita publish --root Qiita",
     "publish:qiita:all": "qiita publish --all --root Qiita",
     "check:qiita": "qiita version",
-    "check": "npm run list:articles && npm run list:books && npm run check:qiita"
+    "check:note-ref": "node scripts/check-note-reference.js",
+    "check": "npm run list:articles && npm run list:books && npm run check:qiita && npm run check:note-ref"
   },
   "dependencies": {
     "zenn-cli": "^0.4.7"
