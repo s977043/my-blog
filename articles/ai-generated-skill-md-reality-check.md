@@ -110,9 +110,10 @@ ls engineer_profiles/some_user/
 
 ```bash
 # LLM 呼び出しの痕跡を幅広く探す（Claude CLI / Anthropic SDK / OpenAI SDK / Gemini）
-grep -rEi \
+# スキルのルート直下すべてを走査する（SKILL.md 内の埋め込みスクリプトも拾う）
+grep -rEi --exclude-dir=.git --exclude-dir=node_modules \
   "claude +(-p|--print)|curl.*(anthropic|openai|generativelanguage)|anthropic-ai/sdk|import +Anthropic|from +anthropic|import +openai|from +openai|google-generativeai" \
-  scripts/
+  .
 ```
 
 ## ズレが見つかったときの 3 つの対応策
