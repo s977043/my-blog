@@ -71,7 +71,7 @@ AI に「このスキルを説明して」と頼むと、機能の **理想像**
 
 ### 仮説 3: 設計者も SKILL.md と実装が一致しているか確認していない
 
-AI が生成した SKILL.md を読み、AI が生成したスクリプトを採用して、誰もシンクさせていない。
+AI が生成した SKILL.md を読み、AI が生成したスクリプトを採用して、誰も両者の整合を取っていない。
 
 ## ズレを検知する方法
 
@@ -111,7 +111,7 @@ ls engineer_profiles/some_user/
 ```bash
 # LLM 呼び出しの痕跡を幅広く探す（Claude CLI / Anthropic SDK / OpenAI SDK / Gemini）
 grep -rEi \
-  "claude +-p|curl.*(anthropic|openai|generativelanguage)|anthropic-ai/sdk|import +Anthropic|from +anthropic|import +openai|from +openai|google-generativeai" \
+  "claude +(-p|--print)|curl.*(anthropic|openai|generativelanguage)|anthropic-ai/sdk|import +Anthropic|from +anthropic|import +openai|from +openai|google-generativeai" \
   scripts/
 ```
 
@@ -138,7 +138,7 @@ grep -rEi \
 - メリット: 実装と claim が一致する、運用として現実的
 - デメリット: 毎回手動で LLM を呼ぶ必要がある
 
-採用したのは **C** でした。SKILL.md を書き換えて「raw data 取得はスクリプト、分析はLLM側で行う」と明示。運用時は `raw_data/*.json` を Claude に読み込ませて、観点別に抽出プロンプトを投げる流れに。
+採用したのは **C** でした。SKILL.md を書き換えて「raw data 取得はスクリプト、分析は LLM 側で行う」と明示。運用時は `raw_data/*.json` を Claude に読み込ませて、観点別に抽出プロンプトを投げる流れに。
 
 ## AI 生成ドキュメントとの付き合い方
 
