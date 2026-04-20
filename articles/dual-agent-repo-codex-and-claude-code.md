@@ -54,12 +54,12 @@ repo/
 │   ├── skills/               # Claude Code のスキル
 │   ├── agents/               # サブエージェント定義
 │   └── commands/             # Slash Commands
-├── .agents/                  # Codex 用（drift 管理は後述）
-│   └── skills/
+├── .agents/                  # AGENTS.md 標準のエージェント用（Codex など、drift 管理は後述）
+│   └── skills/               # 現状は .claude/skills と drift 管理中
 └── articles/
 ```
 
-`AGENTS.md` の冒頭で「Codex や Claude Code など AI エージェントはまずこのファイルを読む」と明示しておくと、新しいエージェントを導入したときも、既存の規約が自動で引き継がれます。
+`AGENTS.md` の冒頭で「Codex や Claude Code など AI エージェントはまずこのファイルを読む」と明示しておくと、AGENTS.md 標準に準拠する新しいエージェントを導入したときも、追加設定なしで同じ規約を読ませられます。
 
 ## drift（同期ズレ）管理の罠
 
@@ -79,7 +79,7 @@ repo/
    - メリット: シンプル
    - デメリット: Codex 固有のスキルを置きたい場合に困る
 
-今は 3 の方針を検討中です。`AGENTS.md` に全規約を寄せて、各エージェントの固有配下はツール索引に特化する、という整理。
+今は 3 の方針を検討中です。`AGENTS.md` に全規約を寄せて、各エージェントの固有配下はツール索引に特化する、という整理に向かっています。
 
 ## どちらで何を管理するか
 
