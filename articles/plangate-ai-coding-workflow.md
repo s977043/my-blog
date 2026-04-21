@@ -52,7 +52,7 @@ PlanGateを一文で言うと、こうです。
 ## この記事で扱うもの
 
 - `PBI INPUT PACKAGE` の最小テンプレート
-- `plan.md / todo.md / test-cases.md / status.md` のひな形
+- `plan.md / todo.md / test-cases.md / review-self.md / review-external.md / status.md` のひな形
 - 3コマンド運用の使い方
 - レビュー時に見るチェックリスト
 
