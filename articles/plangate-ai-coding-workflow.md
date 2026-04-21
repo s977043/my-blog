@@ -199,7 +199,7 @@ Zenn向けには、まずこの最小版で十分です。
 ## 3コマンド運用
 
 実際の操作はこの3つに絞ると運用しやすいです。
-`plan` の中で `plan.md / todo.md / test-cases.md / review-self.md` まで作り、人間レビューの前に `review-external.md` を追加してから `exec` に進みます。
+`plan` の中で `plan.md / todo.md / test-cases.md / review-self.md / status.md` まで作り、人間レビューの前に `review-external.md` を追加してから `exec` に進みます。
 
 ```text
 # 1. 作業コンテキスト作成
