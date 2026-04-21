@@ -68,7 +68,7 @@ graph LR;
 |---|---|
 | 1 | 誤検知コメントを確認（`similarity < 0.5` 多発） |
 | 2 | `GEMINI.md` に「言語が異なる場合は `needs-translation` のみ付与」と追記 |
-| 3 | `/rollback-labels last 20` で直近 20 Issue のラベル一括削除 |
+| 3 | `/rollback-labels last 20` で直近 20 Issue のラベル一括削除（この例ではカスタムコマンドの想定名） |
 | 4 | `confidence_threshold` を 0.7 に引き上げ |
 | 5 | 再テスト → 過剰付与ゼロを確認 |
 
@@ -82,7 +82,17 @@ graph LR;
 - **Issueトリアージ** `/triage`  
 - **オンデマンド依頼** `@gemini-cli ...`  
 
-*(具体的 YAML はリポジトリに同梱)*
+```yaml
+# 最小例
+name: Gemini CLI workflow
+on:
+  issues:
+    types: [opened, edited]
+  pull_request:
+    types: [opened, synchronize]
+```
+
+*(以下は最小構成の例です。実運用では権限やトリガーに合わせて調整してください)*
 
 ---
 
