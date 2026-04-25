@@ -2,8 +2,7 @@
 
 > 出典: https://note.com/mine_unilabo/n/n23ec87da4cdb  
 > 公開状態: publish  
-> 更新: Thu, 09 Dec 2021 08:15:14 +0900  
-> 区分: 個人
+> 更新: Thu, 09 Dec 2021 08:15:14 +0900
 
 ![](../assets/n23ec87da4cdb_4cd81135fda8974c8eb9bd6c98382d2d.png)
 
