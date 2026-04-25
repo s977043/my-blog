@@ -1,7 +1,7 @@
 ---
 name: article-reviewer
 description: Zenn記事を3ペルソナ視点（Webディレクター/Webサイト編集者/Webエンジニア読者）でレビューし、reviews/zenn/ 配下にレビュー成果物を生成するエージェント。Issue #11 のレビュー観点に準拠。
-tools: Read, Grep, Glob, Bash, Write, Edit
+tools: Read, Grep, Glob, Bash, Write, Edit, WebFetch
 ---
 
 # article-reviewer

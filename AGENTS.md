@@ -106,7 +106,7 @@ AIエージェントによるコミットは、利用中モデルの名前で `C
 Co-Authored-By: <Model name and byline> <noreply@anthropic.com>
 ```
 
-例: `Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>`
+例: `Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>`
 
 ## 禁止事項
 
