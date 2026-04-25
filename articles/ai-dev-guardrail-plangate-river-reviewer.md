@@ -6,9 +6,7 @@ topics: ["AI駆動開発", "githubactions", "codereview", "claudecode", "automat
 published: false
 ---
 
-:::message
-この記事は、私が運営している [Growth Lab](https://the3396.com/articles) の検証ログと、[PlanGate](https://github.com/s977043/plangate/) / [River Reviewer](https://github.com/s977043/river-reviewer/) の公開リポジトリをもとに、AI駆動開発を実務で回すための設計を整理したものです。
-:::
+> 本記事は、[Growth Lab](https://the3396.com/articles) の検証ログと、[PlanGate](https://github.com/s977043/plangate/) / [River Reviewer](https://github.com/s977043/river-reviewer/) の公開リポジトリをもとに、AI 駆動開発を実務で回すための設計を整理したものです。
 
 :::message
 **この記事で得られること**
