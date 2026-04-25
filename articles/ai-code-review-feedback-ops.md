@@ -160,30 +160,37 @@ AIに一般論だけを渡すと、レビューはどうしても一般論に寄
 
 レビュー本文の前に、まず PR のコンフリクト有無と CI の失敗状況を確認させます。
 
-- `gh pr view --json mergeable,mergeStateStatus` でコンフリクト確認
-- `gh pr checks` で CI 状態を確認
+```bash
+# コンフリクト確認（mergeable: CONFLICTING なら人間が対処してからレビュー）
+gh pr view --json mergeable,mergeStateStatus
+
+# CI 状態確認（failed があればコードレビュー前に対処）
+gh pr checks
+```
 
 これを最初にやるだけで、「コード以前に止まっている問題」と「コードレビューで見る問題」が混ざりにくくなります。
 
-### 変更内容に応じて review focus を切り替える
+### 変更内容に応じて review_focus（重点観点）を切り替える
 
-変更コンテキストから `review_focus` を渡して、重点観点を切り替えます。
+変更コンテキストから `review_focus`（「この変更で特に見るべき観点」を prompt に渡すパラメータ）を切り替えます。
 
-- migration を含むなら後方互換性を見る
-- API変更を含むならスキーマ互換性を見る
-- shared-components 変更を含むなら cross-site impact を見る
-- 認証変更なら auth / security を見る
-- フロント変更なら stale state / hydration / responsive を見る
+| 変更種別 | review_focus の重点観点 |
+| -------- | ----------------------- |
+| migration を含む | 後方互換性 |
+| API変更を含む | スキーマ互換性 |
+| shared-components 変更 | cross-site impact |
+| 認証変更 | auth / security |
+| フロント変更 | stale state / hydration / responsive |
 
 毎回同じ総花的レビューをさせるのではなく、**変更の種類に応じて注視点を増やす** ほうがノイズが減ります。
 
 ### レビューを三相に分ける
 
-自分たちの prompt では、レビューを `Upstream / Midstream / Downstream` の3段階に分けています。
+自分たちの prompt では、レビューを `Upstream / Midstream / Downstream`（設計・実装・テストの上流から下流）の3フェーズに分けています。
 
-- `Upstream`: 設計と依存方向
-- `Midstream`: 実装、バグ、性能、セキュリティ
-- `Downstream`: テストの有無と品質
+- `Upstream`（上流）: 設計と依存方向
+- `Midstream`（中流）: 実装、バグ、性能、セキュリティ
+- `Downstream`（下流）: テストの有無と品質
 
 こうしておくと、AIの指摘が命名や軽いスタイルに寄りすぎず、「設計」「実装」「テスト」のどこで問題が起きているかを整理しやすくなります。
 
