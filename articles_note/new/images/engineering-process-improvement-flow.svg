@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+<title id="title">振り返りを仕組みに変える全体フロー</title>
+<desc id="desc">開発セッション終了から振り返り、課題抽出、A/B/C分類、実装、PR化、次回反映までの流れ</desc>
+<style>
+  .bg{fill:#f8fafc}.card{fill:#fff;stroke:#cbd5e1;stroke-width:2}.accent{fill:#0f766e}.text{font-family:'Noto Sans JP','Hiragino Sans','Yu Gothic',sans-serif;fill:#0f172a}.muted{fill:#475569}.num{fill:#fff;font-weight:700}.arrow{stroke:#0f766e;stroke-width:4;fill:none;marker-end:url(#arrow)}.small{font-size:24px}.label{font-size:30px;font-weight:700}.title{font-size:42px;font-weight:800}
+</style>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#0f766e"/></marker></defs>
+<rect class="bg" width="1200" height="630" rx="32"/>
+<text class="text title" x="600" y="72" text-anchor="middle">「次は気をつけよう」を仕組みに変える</text>
+<text class="text muted small" x="600" y="112" text-anchor="middle">振り返りの出口を、記憶ではなく再発防止の設計にする</text>
+<g transform="translate(70 180)">
+  <rect class="card" x="0" y="0" width="220" height="120" rx="22"/><circle class="accent" cx="36" cy="36" r="20"/><text class="num small" x="36" y="45" text-anchor="middle">1</text><text class="text label" x="110" y="62" text-anchor="middle">振り返り</text><text class="text muted small" x="110" y="96" text-anchor="middle">事実を残す</text>
+  <path class="arrow" d="M235 60 H315"/>
+  <rect class="card" x="330" y="0" width="220" height="120" rx="22"/><circle class="accent" cx="366" cy="36" r="20"/><text class="num small" x="366" y="45" text-anchor="middle">2</text><text class="text label" x="440" y="62" text-anchor="middle">課題抽出</text><text class="text muted small" x="440" y="96" text-anchor="middle">構造で見る</text>
+  <path class="arrow" d="M565 60 H645"/>
+  <rect class="card" x="660" y="0" width="220" height="120" rx="22"/><circle class="accent" cx="696" cy="36" r="20"/><text class="num small" x="696" y="45" text-anchor="middle">3</text><text class="text label" x="770" y="62" text-anchor="middle">A/B/C分類</text><text class="text muted small" x="770" y="96" text-anchor="middle">出口を決める</text>
+</g>
+<g transform="translate(120 390)">
+  <rect class="card" x="0" y="0" width="240" height="120" rx="22"/><circle class="accent" cx="38" cy="36" r="20"/><text class="num small" x="38" y="45" text-anchor="middle">4</text><text class="text label" x="120" y="62" text-anchor="middle">実装</text><text class="text muted small" x="120" y="96" text-anchor="middle">仕組みに落とす</text>
+  <path class="arrow" d="M255 60 H355"/>
+  <rect class="card" x="370" y="0" width="240" height="120" rx="22"/><circle class="accent" cx="408" cy="36" r="20"/><text class="num small" x="408" y="45" text-anchor="middle">5</text><text class="text label" x="490" y="62" text-anchor="middle">PR化</text><text class="text muted small" x="490" y="96" text-anchor="middle">履歴にする</text>
+  <path class="arrow" d="M625 60 H725"/>
+  <rect class="card" x="740" y="0" width="240" height="120" rx="22"/><circle class="accent" cx="778" cy="36" r="20"/><text class="num small" x="778" y="45" text-anchor="middle">6</text><text class="text label" x="860" y="62" text-anchor="middle">次回反映</text><text class="text muted small" x="860" y="96" text-anchor="middle">失敗率を下げる</text>
+</g>
+</svg>
