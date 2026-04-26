@@ -1,6 +1,6 @@
 # 「次は気をつけよう」で終わる振り返りを、仕組みに変える考え方
 
-![](images/engineering-process-improvement-before-after.svg)
+![](../assets/engineering-process-improvement-before-after.png)
 
 > 区分: 個人
 
@@ -66,7 +66,7 @@ A だけで済ませるのは弱いです。ドキュメントに書いたから
 なので、改善項目の最低1件は B（自動ガード）に落とすように決めています。
 「気合い」ではなく「仕組み」で事故率を下げる、というのが大事です。
 
-![](images/engineering-process-improvement-abc.svg)
+![](../assets/engineering-process-improvement-abc.png)
 
 ---
 
@@ -118,7 +118,7 @@ A だけで済ませるのは弱いです。ドキュメントに書いたから
 並行作業で見えた違和感、外部要因の変化、自分が手を入れなかった領域で起きた事象。
 こうした「持ち越し観察」を書いておくと、次のセッションの振り返りで回収できます。
 
-![](images/engineering-process-improvement-flow.svg)
+![](../assets/engineering-process-improvement-flow.png)
 
 ---
 
