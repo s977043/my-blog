@@ -54,13 +54,14 @@ articles_note/
 ### B. 新規記事インポート（下書き作成）
 
 1. `new/<slug>.md` を用意（著者が執筆）
-2. `scripts/md_to_wxr.py new/<slug>.md --base-url <公開Raw URL>` で `build/import-<slug>-YYYYMMDD-HHMM.xml` を生成
-3. **`scripts/verify_wxr.py build/import-*.xml` で構造検証**（必須 wp:* の欠落と著者フィールドの対応を公式エクスポートと突き合わせ）
-4. note管理画面: プロフィール → 自分の記事 → インポート → WXR選択
-5. `build/import-<slug>-YYYYMMDD-HHMM.xml` をアップロード → インポート開始
-6. 3日以内にメール通知 → 下書きが作成される
-7. noteエディタで画像差し替え・最終調整 → 公開
-8. 公開後は次回バックアップ取り込みで `published/` に反映される
+2. 記事に SVG 画像がある場合: 先に Chrome headless で PNG 変換し `articles_note/assets/` に配置する（上記「SVG→PNG 変換」参照）
+3. `scripts/md_to_wxr.py new/<slug>.md --base-url <公開Raw URL>` で `build/import-<slug>-YYYYMMDD-HHMM.xml` を生成
+4. **`scripts/verify_wxr.py build/import-*.xml` で構造検証**（必須 wp:* の欠落と著者フィールドの対応を公式エクスポートと突き合わせ）
+5. note管理画面: プロフィール → 自分の記事 → インポート → WXR選択
+6. `build/import-<slug>-YYYYMMDD-HHMM.xml` をアップロード → インポート開始
+7. 3日以内にメール通知 → 下書きが作成される
+8. noteエディタで画像差し替え・最終調整 → 公開
+9. 公開後は次回バックアップ取り込みで `published/` に反映される
 
 **注意**: `xmllint --noout` でwell-formedでも note importer が弾くことがある（`<item>` の wp:* 欠落など）。必ず `verify_wxr.py` を通す（2026-04-18 にこの罠で実インポート失敗）。
 
@@ -73,10 +74,37 @@ articles_note/
 ## 画像の扱い
 
 - **ローカル画像** (`../assets/foo.png`) は note にインポートされない
-- 自動取り込みは `<img src="https://...">` (JPEG/PNG/GIF) のみ
+- 自動取り込みは `<img src="https://...">` (JPEG/PNG/GIF) のみ。**SVG は非対応**
+- WXR 内の画像タグは `<figure name="uuid"><img src="..."><figcaption></figcaption></figure>` 形式が必須。`<p><img /></p>` では note インポーターに無視される（`md_to_wxr.py` が自動変換）
 - 対応:
-  - a) 画像をGitHub Raw等でhttps配信 → WXR生成時に絶対URLへ書き換え
+  - a) 画像をGitHub Raw等でhttps配信 → `md_to_wxr.py --base-url <raw-url>` で絶対URLへ書き換え
   - b) インポート後 note エディタで手動貼り直し（実用的）
+
+### SVG→PNG 変換（日本語テキストを含む場合）
+
+**macOS では `cairosvg` は日本語フォントを正常レンダリングできない**（Hiragino/.ttc 未解決 → □□□）。
+Chrome headless を使うこと:
+
+```bash
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
+  --headless=new \
+  --screenshot="articles_note/assets/output.png" \
+  --window-size=1200,630 \
+  --hide-scrollbars \
+  "file:///$(pwd)/articles_note/new/images/input.svg" 2>/dev/null
+```
+
+複数ファイルを一括変換する例:
+```bash
+for svg in foo bar baz; do
+  /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
+    --headless=new --screenshot="articles_note/assets/${svg}.png" \
+    --window-size=1200,630 --hide-scrollbars \
+    "file:///$(pwd)/articles_note/new/images/${svg}.svg" 2>/dev/null
+done
+```
+
+変換後は PNG が `articles_note/assets/` に配置されていること・ファイルサイズが妥当（>50KB）であることを確認してから WXR を生成する。
 
 ## スクリプト
 
