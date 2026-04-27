@@ -41,6 +41,9 @@ except ImportError:
 META_LINE_RE = re.compile(r"^>\s*(?:出典|公開状態|更新|区分)\s*[:：][^\n]*\n?", re.MULTILINE)
 LOCAL_IMG_RE = re.compile(r'!\[[^\]]*\]\((?!https?://|data:)[^)]+\)')
 ASSET_IMG_RE = re.compile(r'(!\[[^\]]*\]\()(?:\.\./)?assets/([^)]+)\)')
+# note公式は <figure name="uuid"><img src="..."><figcaption></figcaption></figure> 形式
+# python-markdown は <p><img alt="..." src="..." /></p> を生成するため後処理で変換する
+IMG_IN_P_RE = re.compile(r'<p><img\s+alt="[^"]*"\s+src="([^"]+)"\s*/></p>')
 
 
 def split_front(text: str) -> tuple[str, str]:
@@ -66,6 +69,15 @@ def warn_local_images(path: Path, body: str) -> None:
             sys.stderr.write(f"   - {h}\n")
         if len(hits) > 5:
             sys.stderr.write(f"   ...他 {len(hits)-5} 件\n")
+
+
+def wrap_images_in_figure(html: str) -> str:
+    """<p><img .../></p> を note公式形式 <figure name="uuid"><img src="..."><figcaption></figcaption></figure> に変換する。"""
+    def replace(m):
+        src = m.group(1)
+        name = str(uuid.uuid4())
+        return f'<figure name="{name}"><img src="{src}"><figcaption></figcaption></figure>'
+    return IMG_IN_P_RE.sub(replace, html)
 
 
 def rewrite_assets_to_url(body: str, base_url: str) -> tuple[str, int]:
@@ -99,7 +111,8 @@ def render_item(md_path: Path, post_id: int, base_url: str | None = None) -> str
     warn_local_images(md_path, body_md)
     # CDATA衝突防止: ]]> を分割 (title/html 双方)
     cdata_guard = lambda s: s.replace("]]>", "]]]]><![CDATA[>")
-    html = cdata_guard(md.markdown(body_md, extensions=["fenced_code", "tables", "sane_lists"]))
+    raw_html = md.markdown(body_md, extensions=["fenced_code", "tables", "sane_lists"])
+    html = cdata_guard(wrap_images_in_figure(raw_html))
     title_xml = cdata_guard(title)
     guid = f"l{uuid.uuid4().hex[:12]}"
     link = f"https://note.com/{LOGIN_ID}/n/{guid}"
