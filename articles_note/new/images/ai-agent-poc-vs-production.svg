@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title">
+<title id="title">PoCと本番の評価軸の違い</title>
+<style>
+.t{font-family:'Noto Sans JP','Hiragino Sans','Yu Gothic',sans-serif;fill:#0f172a}
+.h{font-size:36px;font-weight:800}
+.col{font-size:24px;font-weight:800}
+.item{font-size:20px}
+.sub{font-size:17px;fill:#475569}
+.badge{font-size:16px;font-weight:700}
+</style>
+<rect width="1200" height="630" rx="32" fill="#f8fafc"/>
+<text class="t h" x="600" y="60" text-anchor="middle">1回うまく動くことと、業務で回り続けることは別物</text>
+
+<!-- PoC column -->
+<rect x="50" y="88" width="500" height="500" rx="20" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+<rect x="50" y="88" width="500" height="70" rx="20" fill="#475569"/>
+<rect x="50" y="128" width="500" height="30" fill="#475569"/>
+<text class="t col" x="300" y="133" text-anchor="middle" fill="#fff">PoC の評価軸</text>
+<text class="t sub" x="300" y="160" text-anchor="middle" fill="#cbd5e1">「一度うまく動いた」が評価される</text>
+
+<text class="t item" x="300" y="220" text-anchor="middle">✓ 成功デモで可能性を示す</text>
+<text class="t item" x="300" y="265" text-anchor="middle">✓ モデルの回答精度</text>
+<text class="t item" x="300" y="310" text-anchor="middle">✓ 処理スピード</text>
+<text class="t item" x="300" y="355" text-anchor="middle">✓ 特定シナリオでの動作確認</text>
+
+<rect x="90" y="430" width="420" height="116" rx="14" fill="#e2e8f0"/>
+<text class="t sub" x="300" y="462" text-anchor="middle" fill="#334155">新技術はまず可能性を示す必要がある</text>
+<text class="t sub" x="300" y="490" text-anchor="middle" fill="#334155">最初は成功デモが強い</text>
+<text class="t sub" x="300" y="518" text-anchor="middle" fill="#64748b">これ自体は正しい評価軸</text>
+
+<!-- Arrow -->
+<text x="590" y="348" text-anchor="middle" font-size="48" fill="#0f766e">→</text>
+
+<!-- Production column -->
+<rect x="650" y="88" width="500" height="500" rx="20" fill="#ecfdf5" stroke="#86efac" stroke-width="2"/>
+<rect x="650" y="88" width="500" height="70" rx="20" fill="#059669"/>
+<rect x="650" y="128" width="500" height="30" fill="#059669"/>
+<text class="t col" x="900" y="133" text-anchor="middle" fill="#fff">本番の評価軸</text>
+<text class="t sub" x="900" y="160" text-anchor="middle" fill="#d1fae5">「壊れず回り続けられるか」が問われる</text>
+
+<text class="t item" x="900" y="220" text-anchor="middle">✓ 処理中断後に再開できるか</text>
+<text class="t item" x="900" y="258" text-anchor="middle">✓ 状態を安全に保持できるか</text>
+<text class="t item" x="900" y="296" text-anchor="middle">✓ どこで人間が介入すべきか</text>
+<text class="t item" x="900" y="334" text-anchor="middle">✓ 判断の理由を後から追えるか</text>
+<text class="t item" x="900" y="372" text-anchor="middle">✓ 権限境界を守れるか</text>
+
+<rect x="690" y="420" width="420" height="126" rx="14" fill="#d1fae5"/>
+<text class="t sub" x="900" y="454" text-anchor="middle" fill="#065f46">賢さだけでは足りない</text>
+<text class="t sub" x="900" y="482" text-anchor="middle" fill="#065f46">停止・再開・監査・介入・復旧に耐える</text>
+<text class="t sub" x="900" y="510" text-anchor="middle" fill="#065f46">実行基盤まで含めて成立しているか</text>
+</svg>

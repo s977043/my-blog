@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title">
+<title id="title">Memoryの再定義：記憶装置から参照制御へ</title>
+<style>
+.t{font-family:'Noto Sans JP','Hiragino Sans','Yu Gothic',sans-serif;fill:#0f172a}
+.h{font-size:34px;font-weight:800}
+.col{font-size:22px;font-weight:800}
+.item{font-size:19px}
+.sub{font-size:16px;fill:#475569}
+.arrow{stroke:#0f766e;stroke-width:5;fill:none;marker-end:url(#a)}
+</style>
+<defs>
+<marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+  <path d="M0 0 L10 5 L0 10 z" fill="#0f766e"/>
+</marker>
+</defs>
+<rect width="1200" height="630" rx="32" fill="#f8fafc"/>
+<text class="t h" x="600" y="56" text-anchor="middle">Memory は「覚える機能」ではなく「参照を制御する仕組み」</text>
+
+<!-- Before: 記憶装置 -->
+<rect x="42" y="80" width="480" height="500" rx="20" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+<rect x="42" y="80" width="480" height="60" rx="20" fill="#64748b"/>
+<rect x="42" y="116" width="480" height="24" fill="#64748b"/>
+<text class="t col" x="282" y="118" text-anchor="middle" fill="#fff">よくある理解</text>
+<text class="t sub" x="282" y="154" text-anchor="middle" fill="#94a3b8">「記憶装置」として捉える</text>
+
+<text class="t item" x="282" y="200" text-anchor="middle">短期メモリ（会話コンテキスト）</text>
+<text class="t item" x="282" y="238" text-anchor="middle">長期メモリ（ベクトルストア）</text>
+<text class="t sub" x="282" y="274" text-anchor="middle">「何を覚えているか」が論点</text>
+
+<line x1="82" y1="296" x2="482" y2="296" stroke="#cbd5e1" stroke-width="1.5"/>
+
+<text class="t sub" x="282" y="328" text-anchor="middle" fill="#dc2626">⚠ この理解の落とし穴</text>
+<text class="t item" x="282" y="366" text-anchor="middle">古い情報を引いて判断ズレ</text>
+<text class="t sub" x="282" y="398" text-anchor="middle">（品質劣化）</text>
+<text class="t item" x="282" y="432" text-anchor="middle">他部門の情報を誤参照</text>
+<text class="t sub" x="282" y="464" text-anchor="middle">（権限境界の侵害）</text>
+<text class="t item" x="282" y="498" text-anchor="middle">履歴の無差別流し込み</text>
+<text class="t sub" x="282" y="530" text-anchor="middle">（情報漏えいリスク）</text>
+
+<!-- Arrow -->
+<path class="arrow" d="M526 330 H674"/>
+
+<!-- After: 参照制御 -->
+<rect x="678" y="80" width="480" height="500" rx="20" fill="#ecfdf5" stroke="#86efac" stroke-width="2"/>
+<rect x="678" y="80" width="480" height="60" rx="20" fill="#059669"/>
+<rect x="678" y="116" width="480" height="24" fill="#059669"/>
+<text class="t col" x="918" y="118" text-anchor="middle" fill="#fff">再定義した理解</text>
+<text class="t sub" x="918" y="154" text-anchor="middle" fill="#d1fae5">「参照を制御する仕組み」として捉える</text>
+
+<text class="t item" x="918" y="200" text-anchor="middle">どの情報を参照させるか</text>
+<text class="t item" x="918" y="238" text-anchor="middle">いつ・どの文脈で参照させるか</text>
+<text class="t item" x="918" y="276" text-anchor="middle">どの権限のもとで参照させるか</text>
+<text class="t sub" x="918" y="312" text-anchor="middle" fill="#065f46">「参照の設計」が論点</text>
+
+<line x1="718" y1="334" x2="1118" y2="334" stroke="#86efac" stroke-width="1.5"/>
+
+<text class="t sub" x="918" y="366" text-anchor="middle" fill="#065f46">問うべきこと</text>
+<text class="t item" x="918" y="402" text-anchor="middle">情報の鮮度をどう担保するか</text>
+<text class="t item" x="918" y="438" text-anchor="middle">機密へのアクセス境界をどう切るか</text>
+<text class="t item" x="918" y="474" text-anchor="middle">どの判断がどの情報に依存したか</text>
+<text class="t sub" x="918" y="510" text-anchor="middle" fill="#065f46">→ 情報設計・権限設計・監査設計の話</text>
+</svg>
