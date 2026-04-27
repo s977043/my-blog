@@ -45,7 +45,7 @@ Claude Code 向けのツールガイド。規約（何が正しいか）は `@AG
 ```bash
 npm run preview            # Zenn プレビュー
 npm run preview:qiita      # Qiita プレビュー
-npm run check              # Zenn + Qiita 構造チェック
+npm run check              # Zenn + Qiita 構造チェック + note参照lint
 npm run new:qiita -- <slug>
 npm run pull:qiita
 npm run publish:qiita -- <slug>
@@ -68,10 +68,12 @@ python3 .claude/skills/note-export-import/scripts/verify_wxr.py articles_note/bu
 
 ## 作業開始時のチェックリスト
 
-1. 対象ファイルがどのプラットフォームか確認（`@AGENTS.md` の配置規約表）
-2. `articles_note/published/` を触る場合は ⚠️ 規約を確認（`@AGENTS.md` 禁止事項）
-3. 既存 Skill / Agent / Command で対応できないか確認（上記表）
-4. `@AGENT_LEARNINGS.md` で類似タスクの落とし穴を確認
+1. 並列セッション衝突を回避するため `gh pr list --state open` で重複 PR がないか確認
+2. 対象ファイルがどのプラットフォームか確認（`@AGENTS.md` の配置規約表）
+3. `articles_note/published/` を触る場合は ⚠️ 規約を確認（`@AGENTS.md` 禁止事項）
+4. note 記事に画像を追加する場合: SVG → PNG 変換 → `articles_note/assets/` 配置 → main に先にマージ → WXR 生成の順序を守る
+5. 既存 Skill / Agent / Command で対応できないか確認（上記表）
+6. `@AGENT_LEARNINGS.md` で類似タスクの落とし穴を確認
 
 ## 並列実行の指針
 

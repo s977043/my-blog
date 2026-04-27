@@ -34,6 +34,6 @@ argument-hint: <state>/<slug> （例: published/n3aae6b5467b9、new/ai_agent_ope
 
 ## ガードレール
 - 既定は手動ゲート（2PR分割、両方ユーザー承認）
-- `--auto-apply` は明示指定時のみ
+- `--auto-apply` はユーザーのメッセージに含まれる場合のみ有効（正式な CLI フラグではなく、Claude がユーザー意図を読む運用）
 - レビュー成果物のマージ前に本文を触らない
 - `published/` 記事は自動マージ・自動反映を絶対に行わない
