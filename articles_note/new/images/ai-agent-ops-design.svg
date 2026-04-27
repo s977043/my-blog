@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title">
+<title id="title">AIエージェントの競争軸の変化</title>
+<style>
+.t{font-family:'Noto Sans JP','Hiragino Sans','Yu Gothic',sans-serif;fill:#0f172a}
+.h{font-size:34px;font-weight:800}
+.label{font-size:22px;font-weight:800}
+.item{font-size:19px}
+.sub{font-size:16px;fill:#475569}
+.arrow{stroke:#0f766e;stroke-width:5;fill:none;marker-end:url(#a)}
+</style>
+<defs>
+<marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+  <path d="M0 0 L10 5 L0 10 z" fill="#0f766e"/>
+</marker>
+</defs>
+<rect width="1200" height="630" rx="32" fill="#f8fafc"/>
+<text class="t h" x="600" y="58" text-anchor="middle">競争の中心は「賢さ」から「運用可能性の設計」へ移った</text>
+
+<!-- Before box -->
+<rect x="42" y="82" width="430" height="240" rx="20" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+<rect x="42" y="82" width="430" height="56" rx="20" fill="#64748b"/>
+<rect x="42" y="116" width="430" height="22" fill="#64748b"/>
+<text class="t label" x="257" y="118" text-anchor="middle" fill="#fff">これまでの競争軸</text>
+<text class="t item" x="257" y="172" text-anchor="middle">モデルが賢いか</text>
+<text class="t item" x="257" y="210" text-anchor="middle">回答精度が高いか</text>
+<text class="t item" x="257" y="248" text-anchor="middle">どのモデルが一番優秀か</text>
+<text class="t sub" x="257" y="300" text-anchor="middle">「どう賢く答えさせるか」</text>
+
+<!-- Arrow -->
+<path class="arrow" d="M476 202 H724"/>
+
+<!-- After box -->
+<rect x="728" y="82" width="430" height="240" rx="20" fill="#ecfdf5" stroke="#86efac" stroke-width="2"/>
+<rect x="728" y="82" width="430" height="56" rx="20" fill="#059669"/>
+<rect x="728" y="116" width="430" height="22" fill="#059669"/>
+<text class="t label" x="943" y="118" text-anchor="middle" fill="#fff">いまの競争軸</text>
+<text class="t item" x="943" y="172" text-anchor="middle">壊れず動かし続けられるか</text>
+<text class="t item" x="943" y="210" text-anchor="middle">判断過程を追えるか</text>
+<text class="t item" x="943" y="248" text-anchor="middle">改善し続けられるか</text>
+<text class="t sub" x="943" y="300" text-anchor="middle">「どう安全に動かし続けるか」</text>
+
+<!-- 6 design elements at bottom -->
+<rect x="42" y="348" width="168" height="240" rx="16" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+<text class="t item" x="126" y="388" text-anchor="middle" fill="#1d4ed8">停止・再開</text>
+<text class="t sub" x="126" y="416" text-anchor="middle">中断後も</text>
+<text class="t sub" x="126" y="440" text-anchor="middle">続けられる</text>
+
+<rect x="222" y="348" width="168" height="240" rx="16" fill="#faf5ff" stroke="#d8b4fe" stroke-width="1.5"/>
+<text class="t item" x="306" y="388" text-anchor="middle" fill="#7e22ce">権限制御</text>
+<text class="t sub" x="306" y="416" text-anchor="middle">情報アクセスを</text>
+<text class="t sub" x="306" y="440" text-anchor="middle">限定できる</text>
+
+<rect x="402" y="348" width="168" height="240" rx="16" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5"/>
+<text class="t item" x="486" y="388" text-anchor="middle" fill="#ea580c">監査ログ</text>
+<text class="t sub" x="486" y="416" text-anchor="middle">判断理由を</text>
+<text class="t sub" x="486" y="440" text-anchor="middle">後から追える</text>
+
+<rect x="582" y="348" width="168" height="240" rx="16" fill="#fef2f2" stroke="#fecaca" stroke-width="1.5"/>
+<text class="t item" x="666" y="388" text-anchor="middle" fill="#dc2626">人間の介入</text>
+<text class="t sub" x="666" y="416" text-anchor="middle">承認・修正を</text>
+<text class="t sub" x="666" y="440" text-anchor="middle">差し込める</text>
+
+<rect x="762" y="348" width="168" height="240" rx="16" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.5"/>
+<text class="t item" x="846" y="388" text-anchor="middle" fill="#166534">復旧機構</text>
+<text class="t sub" x="846" y="416" text-anchor="middle">異常時に</text>
+<text class="t sub" x="846" y="440" text-anchor="middle">安全に止まれる</text>
+
+<rect x="942" y="348" width="216" height="240" rx="16" fill="#f0f9ff" stroke="#7dd3fc" stroke-width="1.5"/>
+<text class="t item" x="1050" y="388" text-anchor="middle" fill="#075985">評価基盤</text>
+<text class="t sub" x="1050" y="416" text-anchor="middle">変化による</text>
+<text class="t sub" x="1050" y="440" text-anchor="middle">劣化を検知できる</text>
+</svg>
