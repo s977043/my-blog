@@ -43,7 +43,7 @@ LOCAL_IMG_RE = re.compile(r'!\[[^\]]*\]\((?!https?://|data:)[^)]+\)')
 ASSET_IMG_RE = re.compile(r'(!\[[^\]]*\]\()(?:\.\./)?assets/([^)]+)\)')
 # note公式は <figure name="uuid"><img src="..."><figcaption></figcaption></figure> 形式
 # python-markdown は <p><img alt="..." src="..." /></p> を生成するため後処理で変換する
-IMG_IN_P_RE = re.compile(r'<p><img\s+alt="[^"]*"\s+src="([^"]+)"\s*/></p>')
+IMG_IN_P_RE = re.compile(r'<p><img\s+(?:alt="[^"]*"\s+)?src="([^"]+)"\s*/></p>')
 
 
 def split_front(text: str) -> tuple[str, str]:
