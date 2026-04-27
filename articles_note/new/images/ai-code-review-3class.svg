@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title">
+<title id="title">指摘の3分類</title>
+<style>
+.t{font-family:'Noto Sans JP','Hiragino Sans','Yu Gothic',sans-serif;fill:#0f172a}
+.h{font-size:40px;font-weight:800}
+.cat{font-size:30px;font-weight:800}
+.badge{font-size:20px;font-weight:700}
+.item{font-size:24px}
+.sub{fill:#475569}
+</style>
+<rect width="1200" height="630" rx="32" fill="#f8fafc"/>
+<text class="t h" x="600" y="70" text-anchor="middle">指摘を3分類して、判断コストを下げる</text>
+
+<!-- Must Fix -->
+<rect x="50" y="100" width="340" height="480" rx="24" fill="#fef2f2" stroke="#fecaca" stroke-width="2"/>
+<text class="t cat" x="220" y="158" text-anchor="middle" fill="#991b1b">Must Fix</text>
+<rect x="80" y="170" width="280" height="36" rx="10" fill="#fee2e2"/>
+<text class="t badge" x="220" y="194" text-anchor="middle" fill="#991b1b">マージを止める</text>
+<line x1="80" y1="220" x2="360" y2="220" stroke="#fecaca" stroke-width="1.5"/>
+<text class="t item sub" x="220" y="262" text-anchor="middle">明確なバグ</text>
+<text class="t item sub" x="220" y="310" text-anchor="middle">権限・認可の穴</text>
+<text class="t item sub" x="220" y="358" text-anchor="middle">例外処理漏れ</text>
+<text class="t item sub" x="220" y="406" text-anchor="middle">仕様と違う振る舞い</text>
+<text class="t item sub" x="220" y="454" text-anchor="middle">セキュリティリスク</text>
+<rect x="80" y="510" width="280" height="44" rx="12" fill="#fecaca"/>
+<text class="t badge" x="220" y="538" text-anchor="middle" fill="#7f1d1d">放置 → 事故・仕様逸脱</text>
+
+<!-- Should Fix -->
+<rect x="430" y="100" width="340" height="480" rx="24" fill="#fefce8" stroke="#fde68a" stroke-width="2"/>
+<text class="t cat" x="600" y="158" text-anchor="middle" fill="#854d0e">Should Fix</text>
+<rect x="460" y="170" width="280" height="36" rx="10" fill="#fef9c3"/>
+<text class="t badge" x="600" y="194" text-anchor="middle" fill="#854d0e">参考として扱う</text>
+<line x1="460" y1="220" x2="740" y2="220" stroke="#fde68a" stroke-width="1.5"/>
+<text class="t item sub" x="600" y="262" text-anchor="middle">責務分離の崩れ</text>
+<text class="t item sub" x="600" y="310" text-anchor="middle">テストしづらい設計</text>
+<text class="t item sub" x="600" y="358" text-anchor="middle">保守コストが高い実装</text>
+<text class="t item sub" x="600" y="406" text-anchor="middle">将来の変更コストが高い</text>
+<text class="t item sub" x="600" y="454" text-anchor="middle">拡張性を落とす構造</text>
+<rect x="460" y="510" width="280" height="44" rx="12" fill="#fde68a"/>
+<text class="t badge" x="600" y="538" text-anchor="middle" fill="#78350f">今すぐ壊れないが将来問題</text>
+
+<!-- Nice to Have -->
+<rect x="810" y="100" width="340" height="480" rx="24" fill="#ecfdf5" stroke="#99f6e4" stroke-width="2"/>
+<text class="t cat" x="980" y="158" text-anchor="middle" fill="#065f46">Nice to Have</text>
+<rect x="840" y="170" width="280" height="36" rx="10" fill="#d1fae5"/>
+<text class="t badge" x="980" y="194" text-anchor="middle" fill="#065f46">流してよい</text>
+<line x1="840" y1="220" x2="1120" y2="220" stroke="#99f6e4" stroke-width="1.5"/>
+<text class="t item sub" x="980" y="262" text-anchor="middle">書き換え候補</text>
+<text class="t item sub" x="980" y="310" text-anchor="middle">別実装の提案</text>
+<text class="t item sub" x="980" y="358" text-anchor="middle">命名の軽微な改善</text>
+<text class="t item sub" x="980" y="406" text-anchor="middle">完全に好みの話</text>
+<text class="t item sub" x="980" y="454" text-anchor="middle">現在許容している書き方</text>
+<rect x="840" y="510" width="280" height="44" rx="12" fill="#99f6e4"/>
+<text class="t badge" x="980" y="538" text-anchor="middle" fill="#134e4a">今回止める理由が弱い</text>
+</svg>

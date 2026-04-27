@@ -140,7 +140,7 @@ git commit -m "docs(articles_note): apply review feedback to <state>/<slug>
 
 Apply <N> accepted findings from reviews/note/<state>/<slug>.md.
 
-Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>"
+Co-Authored-By: <利用中モデル名> <noreply@anthropic.com>"
 
 gh pr create --title "docs(articles_note): apply note review feedback to <state>/<slug>" --body "$(採否一覧テンプレート)"
 ```

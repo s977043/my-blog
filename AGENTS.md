@@ -60,7 +60,8 @@ Zenn 記事の場合、`note.com/mine_unilabo` へのリンクは `npm run check
 - 三点リーダーは `……`（2つ並べる）
 - カッコは全角 `（）「」『』`
 - 敬体／常体の混在は章単位のみ許容
-- note インポート用の画像は **公開HTTPS URL必須**。`../assets/...` のままでは取り込まれない
+- note インポート用の画像は **公開HTTPS URL必須**。`../assets/...` のままでは取り込まれない（本文には残るが note 上で非表示）
+- **SVG は note インポート非対応**。必ず PNG に変換してから `articles_note/assets/` に配置する（変換は Chrome headless を使用。macOS では cairosvg は日本語フォント非対応）
 - note 用に新規画像を追加した場合、**先に GitHub `main` へ公開**してから WXR を生成する
 - WXR生成時の `--base-url` は `https://raw.githubusercontent.com/s977043/my-blog/main/articles_note/assets` を使う
 - PR branch の raw URL は一時確認用。**note 本番取り込みには使わない**
