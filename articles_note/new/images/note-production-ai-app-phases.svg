@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title">
+<title id="title">AIアプリの段階的構成</title>
+<style>
+.t{font-family:'Noto Sans JP','Hiragino Sans','Yu Gothic',sans-serif;fill:#0f172a}
+.h{font-size:38px;font-weight:800}
+.phase{font-size:26px;font-weight:800}
+.sub{font-size:18px;fill:#475569}
+.item{font-size:20px}
+.itemg{font-size:20px;fill:#059669;font-weight:700}
+.arrow{stroke:#0f766e;stroke-width:5;fill:none;marker-end:url(#a)}
+</style>
+<defs>
+<marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+  <path d="M0 0 L10 5 L0 10 z" fill="#0f766e"/>
+</marker>
+</defs>
+<rect width="1200" height="630" rx="32" fill="#f8fafc"/>
+<text class="t h" x="600" y="62" text-anchor="middle">段階的に積み上げる — 最初から全部作らなくていい</text>
+
+<!-- Phase 1 -->
+<rect x="42" y="90" width="330" height="490" rx="24" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<rect x="42" y="90" width="330" height="64" rx="24" fill="#334155"/>
+<rect x="42" y="130" width="330" height="24" fill="#334155"/>
+<text class="t phase" x="207" y="132" text-anchor="middle" fill="#fff">Phase 1</text>
+<text class="t sub" x="207" y="158" text-anchor="middle" fill="#94a3b8">まず動かす</text>
+<text class="t item" x="207" y="212" text-anchor="middle">app/</text>
+<text class="t item" x="207" y="250" text-anchor="middle">components/</text>
+<text class="t item" x="207" y="288" text-anchor="middle">services/</text>
+<text class="t item" x="207" y="326" text-anchor="middle">prompts/</text>
+<text class="t item" x="207" y="364" text-anchor="middle">security/</text>
+<text class="t item" x="207" y="402" text-anchor="middle">tests/</text>
+<rect x="72" y="440" width="270" height="52" rx="12" fill="#e2e8f0"/>
+<text class="t sub" x="207" y="458" text-anchor="middle" fill="#334155">PoC として動く RAG</text>
+<text class="t sub" x="207" y="480" text-anchor="middle" fill="#334155">security は最初から入れる</text>
+
+<!-- Arrow 1→2 -->
+<path class="arrow" d="M376 335 H432"/>
+
+<!-- Phase 2 -->
+<rect x="436" y="90" width="330" height="490" rx="24" fill="#ecfdf5" stroke="#86efac" stroke-width="2"/>
+<rect x="436" y="90" width="330" height="64" rx="24" fill="#059669"/>
+<rect x="436" y="130" width="330" height="24" fill="#059669"/>
+<text class="t phase" x="601" y="132" text-anchor="middle" fill="#fff">Phase 2</text>
+<text class="t sub" x="601" y="158" text-anchor="middle" fill="#d1fae5">品質を上げる</text>
+<text class="t item" x="601" y="212" text-anchor="middle">↑ Phase 1 の全て</text>
+<line x1="476" y1="228" x2="726" y2="228" stroke="#86efac" stroke-width="1.5"/>
+<text class="t itemg" x="601" y="268" text-anchor="middle">+ query_rewriter.py</text>
+<text class="t itemg" x="601" y="306" text-anchor="middle">+ query_router.py</text>
+<text class="t itemg" x="601" y="344" text-anchor="middle">+ semantic_cache.py</text>
+<text class="t itemg" x="601" y="382" text-anchor="middle">+ observability/</text>
+<rect x="466" y="440" width="270" height="52" rx="12" fill="#d1fae5"/>
+<text class="t sub" x="601" y="458" text-anchor="middle" fill="#065f46">トレース・コスト追跡で</text>
+<text class="t sub" x="601" y="480" text-anchor="middle" fill="#065f46">壊れ方が見えるようになる</text>
+
+<!-- Arrow 2→3 -->
+<path class="arrow" d="M770 335 H826"/>
+
+<!-- Phase 3 -->
+<rect x="830" y="90" width="330" height="490" rx="24" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<rect x="830" y="90" width="330" height="64" rx="24" fill="#1d4ed8"/>
+<rect x="830" y="130" width="330" height="24" fill="#1d4ed8"/>
+<text class="t phase" x="995" y="132" text-anchor="middle" fill="#fff">Phase 3</text>
+<text class="t sub" x="995" y="158" text-anchor="middle" fill="#bfdbfe">本番運用へ</text>
+<text class="t item" x="995" y="212" text-anchor="middle">↑ Phase 2 の全て</text>
+<line x1="870" y1="228" x2="1120" y2="228" stroke="#93c5fd" stroke-width="1.5"/>
+<text class="t itemg" x="995" y="268" text-anchor="middle" fill="#1d4ed8">+ evaluation/</text>
+<text class="t sub" x="995" y="296" text-anchor="middle">変更前後を比較・改善可能に</text>
+<text class="t itemg" x="995" y="338" text-anchor="middle" fill="#1d4ed8">+ agents/</text>
+<text class="t sub" x="995" y="366" text-anchor="middle">フィードバックが</text>
+<text class="t sub" x="995" y="390" text-anchor="middle">溜まってから追加</text>
+<rect x="860" y="440" width="270" height="52" rx="12" fill="#dbeafe"/>
+<text class="t sub" x="995" y="458" text-anchor="middle" fill="#1e40af">高度化より評価・観測が先</text>
+<text class="t sub" x="995" y="480" text-anchor="middle" fill="#1e40af">改善可能な状態を作ってから</text>
+</svg>
