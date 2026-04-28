@@ -1,5 +1,7 @@
 # 「次は気をつけよう」で終わる振り返りを、仕組みに変える考え方
 
+![](../assets/engineering-process-improvement-cover.png)
+
 ![](../assets/engineering-process-improvement-before-after.png)
 
 > 区分: 個人
