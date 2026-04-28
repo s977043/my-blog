@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title">
+<title id="title">AIレビューコメントを知識に変える反映先</title>
+<style>
+.t{font-family:'Noto Sans JP','Hiragino Sans','Yu Gothic',sans-serif;fill:#0f172a}
+.h{font-size:34px;font-weight:800}
+.box-h{font-size:22px;font-weight:800}
+.item{font-size:17px;fill:#334155}
+.item-strong{font-size:18px;font-weight:700}
+.label{font-size:16px;fill:#64748b}
+.center{font-size:24px;font-weight:800}
+.arrow{stroke:#0f766e;stroke-width:3;fill:none;marker-end:url(#a)}
+</style>
+<defs>
+<marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+  <path d="M0 0 L10 5 L0 10 z" fill="#0f766e"/>
+</marker>
+</defs>
+<rect width="1200" height="630" rx="32" fill="#f8fafc"/>
+
+<text class="t h" x="600" y="58" text-anchor="middle">AIレビューのコメントを「知識」に変える</text>
+<text class="t" x="600" y="90" text-anchor="middle" font-size="18" fill="#64748b">単発の指摘で終わらせず、4つの反映先に振り分ける</text>
+
+<!-- Center hub -->
+<circle cx="600" cy="315" r="100" fill="#059669"/>
+<text class="t center" x="600" y="305" text-anchor="middle" fill="#fff">AIレビュー</text>
+<text class="t center" x="600" y="338" text-anchor="middle" fill="#fff">コメント</text>
+
+<!-- 4 destinations -->
+<!-- Top-Left: AGENTS.md (普遍ルール) -->
+<rect x="80" y="130" width="380" height="140" rx="16" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+<text class="t box-h" x="270" y="166" text-anchor="middle" fill="#1d4ed8">① AGENTS.md（普遍ルール）</text>
+<text class="t item" x="270" y="198" text-anchor="middle">プロジェクト全体に効く規約</text>
+<text class="t item" x="270" y="222" text-anchor="middle">命名/設計指針/禁止事項</text>
+<text class="t label" x="270" y="252" text-anchor="middle">→ 何度も指摘されるなら明文化</text>
+<path class="arrow" d="M460 240 L515 280"/>
+
+<!-- Top-Right: 局所ルール -->
+<rect x="740" y="130" width="380" height="140" rx="16" fill="#faf5ff" stroke="#a855f7" stroke-width="2"/>
+<text class="t box-h" x="930" y="166" text-anchor="middle" fill="#7e22ce">② 局所ルール（コード内コメント）</text>
+<text class="t item" x="930" y="198" text-anchor="middle">この関数に固有の判断理由</text>
+<text class="t item" x="930" y="222" text-anchor="middle">「あえてこう書いた」記録</text>
+<text class="t label" x="930" y="252" text-anchor="middle">→ 1箇所だけのルールはコード横に</text>
+<path class="arrow" d="M740 240 L685 280"/>
+
+<!-- Bottom-Left: lint/CI -->
+<rect x="80" y="380" width="380" height="140" rx="16" fill="#fff7ed" stroke="#fb923c" stroke-width="2"/>
+<text class="t box-h" x="270" y="416" text-anchor="middle" fill="#c2410c">③ lint・CI ルール</text>
+<text class="t item" x="270" y="448" text-anchor="middle">機械的に検出できる違反</text>
+<text class="t item" x="270" y="472" text-anchor="middle">eslint / typecheck / pre-commit</text>
+<text class="t label" x="270" y="502" text-anchor="middle">→ 自動化できるなら自動化</text>
+<path class="arrow" d="M460 410 L515 370"/>
+
+<!-- Bottom-Right: チェックリスト -->
+<rect x="740" y="380" width="380" height="140" rx="16" fill="#f0fdf4" stroke="#22c55e" stroke-width="2"/>
+<text class="t box-h" x="930" y="416" text-anchor="middle" fill="#15803d">④ PR チェックリスト</text>
+<text class="t item" x="930" y="448" text-anchor="middle">人が確認したい観点</text>
+<text class="t item" x="930" y="472" text-anchor="middle">テンプレ化して PR に貼る</text>
+<text class="t label" x="930" y="502" text-anchor="middle">→ レビュアーの認知負荷を減らす</text>
+<path class="arrow" d="M740 410 L685 370"/>
+
+<!-- Bottom note -->
+<text class="t" x="600" y="585" text-anchor="middle" font-size="17" fill="#475569">同じ指摘が繰り返されたら、コメント欄ではなく ①〜④ のどこかに「移す」</text>
+</svg>

@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title">
+<title id="title">AIコードレビューを仕組みに変える</title>
+<style>
+.t{font-family:'Noto Sans JP','Hiragino Sans','Yu Gothic',sans-serif;fill:#0f172a}
+.h{font-size:44px;font-weight:800}
+.sub{font-size:24px;font-weight:600;fill:#475569}
+.complaint{font-size:24px;font-weight:700}
+.solution{font-size:22px;font-weight:700;fill:#fff}
+.label{font-size:18px;font-weight:700}
+.note{font-size:18px;fill:#64748b}
+</style>
+<rect width="1200" height="630" rx="32" fill="#f8fafc"/>
+
+<!-- Title -->
+<text class="t h" x="600" y="86" text-anchor="middle">AIコードレビューを「仕組み」に変える</text>
+<text class="t sub" x="600" y="128" text-anchor="middle">細かすぎる・ズレる・毎回違う、それでも続けたほうがいい</text>
+
+<!-- 3 complaints (top) -->
+<rect x="60" y="180" width="340" height="160" rx="18" fill="#fef2f2" stroke="#fecaca" stroke-width="2"/>
+<text class="t label" x="230" y="215" text-anchor="middle" fill="#b91c1c">不満①</text>
+<text class="t complaint" x="230" y="262" text-anchor="middle" fill="#7f1d1d">細かすぎる</text>
+<text class="t note" x="230" y="298" text-anchor="middle">瑣末な指摘で</text>
+<text class="t note" x="230" y="320" text-anchor="middle">疲弊しがち</text>
+
+<rect x="430" y="180" width="340" height="160" rx="18" fill="#fef2f2" stroke="#fecaca" stroke-width="2"/>
+<text class="t label" x="600" y="215" text-anchor="middle" fill="#b91c1c">不満②</text>
+<text class="t complaint" x="600" y="262" text-anchor="middle" fill="#7f1d1d">ルールとズレる</text>
+<text class="t note" x="600" y="298" text-anchor="middle">チームの方針と</text>
+<text class="t note" x="600" y="320" text-anchor="middle">合わないことがある</text>
+
+<rect x="800" y="180" width="340" height="160" rx="18" fill="#fef2f2" stroke="#fecaca" stroke-width="2"/>
+<text class="t label" x="970" y="215" text-anchor="middle" fill="#b91c1c">不満③</text>
+<text class="t complaint" x="970" y="262" text-anchor="middle" fill="#7f1d1d">毎回違う</text>
+<text class="t note" x="970" y="298" text-anchor="middle">同じコードでも</text>
+<text class="t note" x="970" y="320" text-anchor="middle">指摘内容が変わる</text>
+
+<!-- Down arrow -->
+<text x="600" y="402" text-anchor="middle" font-size="40" fill="#0f766e">↓</text>
+
+<!-- Solution box -->
+<rect x="60" y="430" width="1080" height="160" rx="20" fill="#059669"/>
+<text class="t solution" x="600" y="476" text-anchor="middle">単発のコメント生成ではなく、運用ループに組み込む</text>
+<text class="t" x="600" y="518" text-anchor="middle" fill="#d1fae5" font-size="20" font-weight="600">3分類で運用 ／ ズレを記録 ／ コメントを知識に変える</text>
+<text class="t" x="600" y="552" text-anchor="middle" fill="#a7f3d0" font-size="18">— だから AIレビューは「仕組み」にしたほうがいい —</text>
+</svg>

@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title">
+<title id="title">コメントを知識に変える改善ループ</title>
+<style>
+.t{font-family:'Noto Sans JP','Hiragino Sans','Yu Gothic',sans-serif;fill:#0f172a}
+.h{font-size:38px;font-weight:800}
+.step{font-size:22px;font-weight:800}
+.label{font-size:19px}
+.sub{fill:#475569}
+.num{font-size:28px;font-weight:900;fill:#fff}
+</style>
+<defs>
+<marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+  <path d="M0 0 L10 5 L0 10 z" fill="#0f766e"/>
+</marker>
+</defs>
+<rect width="1200" height="630" rx="32" fill="#f8fafc"/>
+<text class="t h" x="600" y="65" text-anchor="middle">コメントを知識に変える改善ループ</text>
+
+<!-- Step boxes: 5 steps, y=130 center, width=180, height=320 -->
+<!-- Step 1: AIレビュー実施 x=60 -->
+<rect x="58" y="130" width="180" height="320" rx="20" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+<circle cx="148" cy="170" r="26" fill="#0f766e"/>
+<text class="num" x="148" y="179" text-anchor="middle">1</text>
+<text class="t step" x="148" y="240" text-anchor="middle">AIレビュー</text>
+<text class="t step" x="148" y="270" text-anchor="middle">実施</text>
+<text class="t label sub" x="148" y="320" text-anchor="middle">差分を投入</text>
+<text class="t label sub" x="148" y="348" text-anchor="middle">指摘を受け取る</text>
+<text class="t label sub" x="148" y="376" text-anchor="middle">毎回揺れる</text>
+<text class="t label sub" x="148" y="404" text-anchor="middle">のは正常</text>
+
+<!-- Arrow 1→2 -->
+<line x1="242" y1="290" x2="268" y2="290" stroke="#0f766e" stroke-width="3" marker-end="url(#arr)"/>
+
+<!-- Step 2: 3分類 x=272 -->
+<rect x="272" y="130" width="180" height="320" rx="20" fill="#fef2f2" stroke="#fecaca" stroke-width="2"/>
+<circle cx="362" cy="170" r="26" fill="#dc2626"/>
+<text class="num" x="362" y="179" text-anchor="middle">2</text>
+<text class="t step" x="362" y="240" text-anchor="middle">3分類で</text>
+<text class="t step" x="362" y="270" text-anchor="middle">仕分ける</text>
+<text class="t label sub" x="362" y="320" text-anchor="middle">Must Fix</text>
+<text class="t label sub" x="362" y="348" text-anchor="middle">Should Fix</text>
+<text class="t label sub" x="362" y="376" text-anchor="middle">Nice to Have</text>
+<text class="t label sub" x="362" y="404" text-anchor="middle">に分類する</text>
+
+<!-- Arrow 2→3 -->
+<line x1="456" y1="290" x2="482" y2="290" stroke="#0f766e" stroke-width="3" marker-end="url(#arr)"/>
+
+<!-- Step 3: 採否+記録 x=486 -->
+<rect x="486" y="130" width="180" height="320" rx="20" fill="#eff6ff" stroke="#bfdbfe" stroke-width="2"/>
+<circle cx="576" cy="170" r="26" fill="#2563eb"/>
+<text class="num" x="576" y="179" text-anchor="middle">3</text>
+<text class="t step" x="576" y="240" text-anchor="middle">採否判断</text>
+<text class="t step" x="576" y="270" text-anchor="middle">+記録</text>
+<text class="t label sub" x="576" y="320" text-anchor="middle">採用/保留/却下</text>
+<text class="t label sub" x="576" y="348" text-anchor="middle">を判断する</text>
+<text class="t label sub" x="576" y="376" text-anchor="middle">判断理由を</text>
+<text class="t label sub" x="576" y="404" text-anchor="middle">残す</text>
+
+<!-- Arrow 3→4 -->
+<line x1="670" y1="290" x2="696" y2="290" stroke="#0f766e" stroke-width="3" marker-end="url(#arr)"/>
+
+<!-- Step 4: 反映先を決める x=700 -->
+<rect x="700" y="130" width="180" height="320" rx="20" fill="#fff7ed" stroke="#fed7aa" stroke-width="2"/>
+<circle cx="790" cy="170" r="26" fill="#ea580c"/>
+<text class="num" x="790" y="179" text-anchor="middle">4</text>
+<text class="t step" x="790" y="240" text-anchor="middle">反映先を</text>
+<text class="t step" x="790" y="270" text-anchor="middle">決める</text>
+<text class="t label sub" x="790" y="316" text-anchor="middle">ルール文書</text>
+<text class="t label sub" x="790" y="342" text-anchor="middle">lint / CI</text>
+<text class="t label sub" x="790" y="368" text-anchor="middle">チェックリスト</text>
+<text class="t label sub" x="790" y="394" text-anchor="middle">設計メモ</text>
+
+<!-- Arrow 4→5 -->
+<line x1="884" y1="290" x2="910" y2="290" stroke="#0f766e" stroke-width="3" marker-end="url(#arr)"/>
+
+<!-- Step 5: 次回改善 x=914 -->
+<rect x="914" y="130" width="228" height="320" rx="20" fill="#ecfdf5" stroke="#99f6e4" stroke-width="2"/>
+<circle cx="1028" cy="170" r="26" fill="#059669"/>
+<text class="num" x="1028" y="179" text-anchor="middle">5</text>
+<text class="t step" x="1028" y="240" text-anchor="middle">次回の</text>
+<text class="t step" x="1028" y="270" text-anchor="middle">レビューが改善</text>
+<text class="t label sub" x="1028" y="320" text-anchor="middle">ズレが減る</text>
+<text class="t label sub" x="1028" y="348" text-anchor="middle">基準が固まる</text>
+<text class="t label sub" x="1028" y="376" text-anchor="middle">チームの</text>
+<text class="t label sub" x="1028" y="404" text-anchor="middle">知識が育つ</text>
+
+<!-- Bottom note -->
+<rect x="100" y="490" width="1000" height="90" rx="16" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.5"/>
+<text class="t label" x="600" y="528" text-anchor="middle" fill="#166534">小さく回す目安：同じ系統の指摘が3回以上 ／ 毎回同じ理由で却下 ／ Should Fix が実質 Must Fix 扱い</text>
+<text class="t label" x="600" y="562" text-anchor="middle" fill="#166534">このあたりだけ拾って、週次か一定件数ごとに見直す。それだけで仕組み化の候補が見えてくる</text>
+</svg>
