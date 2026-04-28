@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title">
+<title id="title">指摘するだけか、マージを止めるか</title>
+<style>
+.t{font-family:'Noto Sans JP','Hiragino Sans','Yu Gothic',sans-serif;fill:#0f172a}
+.h{font-size:34px;font-weight:800}
+.axis{font-size:18px;font-weight:700;fill:#334155}
+.cell-h{font-size:22px;font-weight:800}
+.cell-b{font-size:17px;fill:#475569}
+.tag{font-size:15px;font-weight:700}
+</style>
+<rect width="1200" height="630" rx="32" fill="#f8fafc"/>
+
+<text class="t h" x="600" y="60" text-anchor="middle">「指摘する」と「マージを止める」を切り分ける</text>
+<text class="t" x="600" y="92" text-anchor="middle" font-size="18" fill="#64748b">PoC段階の混乱を、2軸マトリクスで運用に落とす</text>
+
+<!-- Y axis label -->
+<text class="t axis" x="50" y="280" text-anchor="middle" transform="rotate(-90 50 280)">影響度（高 ←→ 低）</text>
+
+<!-- X axis label -->
+<text class="t axis" x="690" y="610" text-anchor="middle">対応の強さ → 弱い ＝ 指摘のみ／強い ＝ マージブロック</text>
+
+<!-- Matrix grid -->
+<!-- Top-Left: 高影響 × 弱対応 (注意) -->
+<rect x="120" y="130" width="540" height="210" rx="14" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+<text class="t cell-h" x="390" y="170" text-anchor="middle" fill="#92400e">⚠ 注意ゾーン</text>
+<text class="t cell-b" x="390" y="206" text-anchor="middle">影響大なのに「指摘のみ」</text>
+<text class="t cell-b" x="390" y="234" text-anchor="middle">→ 見落とされやすい</text>
+<rect x="240" y="258" width="300" height="36" rx="8" fill="#fbbf24"/>
+<text class="t tag" x="390" y="282" text-anchor="middle" fill="#78350f">セキュリティ・破壊的変更</text>
+<text class="t cell-b" x="390" y="320" text-anchor="middle" fill="#92400e">本来は右上（ブロック）に移すべき</text>
+
+<!-- Top-Right: 高影響 × 強対応 (Must Fix) -->
+<rect x="680" y="130" width="540" height="210" rx="14" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text class="t cell-h" x="950" y="170" text-anchor="middle" fill="#15803d">✓ Must Fix</text>
+<text class="t cell-b" x="950" y="206" text-anchor="middle">影響大 × マージブロック</text>
+<text class="t cell-b" x="950" y="234" text-anchor="middle">→ 必ず直してから進める</text>
+<rect x="800" y="258" width="300" height="36" rx="8" fill="#22c55e"/>
+<text class="t tag" x="950" y="282" text-anchor="middle" fill="#fff">脆弱性・データ破損リスク・契約違反</text>
+<text class="t cell-b" x="950" y="320" text-anchor="middle" fill="#15803d">最も重要、ここを最優先で運用</text>
+
+<!-- Bottom-Left: 低影響 × 弱対応 (Nice to Have) -->
+<rect x="120" y="360" width="540" height="190" rx="14" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+<text class="t cell-h" x="390" y="400" text-anchor="middle" fill="#475569">○ Nice to Have</text>
+<text class="t cell-b" x="390" y="434" text-anchor="middle">影響小 × 指摘のみ</text>
+<text class="t cell-b" x="390" y="462" text-anchor="middle">→ 余裕があれば対応</text>
+<rect x="240" y="486" width="300" height="36" rx="8" fill="#94a3b8"/>
+<text class="t tag" x="390" y="510" text-anchor="middle" fill="#fff">コメント表記・微細な命名揺れ</text>
+
+<!-- Bottom-Right: 低影響 × 強対応 (過剰) -->
+<rect x="680" y="360" width="540" height="190" rx="14" fill="#fff7ed" stroke="#fb923c" stroke-width="2"/>
+<text class="t cell-h" x="950" y="400" text-anchor="middle" fill="#c2410c">△ 過剰反応</text>
+<text class="t cell-b" x="950" y="434" text-anchor="middle">影響小なのに「ブロック」</text>
+<text class="t cell-b" x="950" y="462" text-anchor="middle">→ 開発が止まり疲弊する</text>
+<rect x="800" y="486" width="300" height="36" rx="8" fill="#fb923c"/>
+<text class="t tag" x="950" y="510" text-anchor="middle" fill="#fff">スタイル違いだけでマージNG</text>
+
+<!-- Center label -->
+<text class="t" x="600" y="585" text-anchor="middle" font-size="16" fill="#64748b">→ 何を「止めるか」だけ決めれば、AIレビューはぐっと運用しやすくなる</text>
+</svg>
