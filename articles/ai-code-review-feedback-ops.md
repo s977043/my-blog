@@ -289,6 +289,11 @@ AIコードレビューが不安定に見えるのは、モデルが信用でき
 
 この流れを作ると、AIレビューは単発のコメント生成ではなく、チームの知識を育てる工程に変わります。
 
+## 参考
+
+- [River Reviewer GitHub](https://github.com/s977043/river-reviewer)
+- [River Reviewer Docs](https://river-reviewer.the3396.com/)
+
 ## 関連記事
 
 - [AI記事制作で品質を落とさない：編集フローを3層の品質ゲートで設計する](https://zenn.dev/minewo/articles/ai-article-quality-gate-workflow)
