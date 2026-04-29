@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">OpenAI Symphony article cover</title>
+  <desc id="desc">AI時代の開発組織は、コードを書くから仕事を流すへ変わるという記事のカバー画像</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="55%" stop-color="#eef2ff"/>
+      <stop offset="100%" stop-color="#e0f2fe"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#0f172a" flood-opacity="0.14"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" rx="0" fill="url(#bg)"/>
+  <circle cx="1020" cy="80" r="170" fill="#bfdbfe" opacity="0.45"/>
+  <circle cx="100" cy="560" r="220" fill="#c7d2fe" opacity="0.38"/>
+
+  <g font-family="'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif">
+    <rect x="78" y="76" width="1044" height="478" rx="36" fill="#ffffff" opacity="0.88" filter="url(#shadow)"/>
+
+    <text x="120" y="145" font-size="26" font-weight="700" fill="#2563eb" letter-spacing="1.5">OpenAI Symphony から考える</text>
+
+    <text x="120" y="235" font-size="58" font-weight="800" fill="#0f172a">AI時代の開発組織は</text>
+    <text x="120" y="318" font-size="62" font-weight="800" fill="#0f172a">「コードを書く」から</text>
+    <text x="120" y="402" font-size="62" font-weight="800" fill="#0f172a">「仕事を流す」へ</text>
+
+    <text x="123" y="476" font-size="27" font-weight="500" fill="#475569">AIコーディングエージェントを個人利用から組織運用へ進めるための視点</text>
+
+    <g transform="translate(780 165)">
+      <rect x="0" y="0" width="250" height="58" rx="16" fill="#dbeafe" stroke="#60a5fa" stroke-width="2"/>
+      <text x="125" y="38" text-anchor="middle" font-size="21" font-weight="700" fill="#1e3a8a">Issue</text>
+      <path d="M125 64 L125 106" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
+      <path d="M113 94 L125 110 L137 94" fill="none" stroke="#64748b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="0" y="112" width="250" height="58" rx="16" fill="#e0e7ff" stroke="#818cf8" stroke-width="2"/>
+      <text x="125" y="150" text-anchor="middle" font-size="21" font-weight="700" fill="#312e81">Agent Run</text>
+      <path d="M125 176 L125 218" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
+      <path d="M113 206 L125 222 L137 206" fill="none" stroke="#64748b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="0" y="224" width="250" height="58" rx="16" fill="#dcfce7" stroke="#4ade80" stroke-width="2"/>
+      <text x="125" y="262" text-anchor="middle" font-size="21" font-weight="700" fill="#14532d">Review / PR</text>
+    </g>
+  </g>
+</svg>
