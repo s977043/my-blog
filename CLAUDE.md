@@ -69,11 +69,13 @@ python3 .claude/skills/note-export-import/scripts/verify_wxr.py articles_note/bu
 ## 作業開始時のチェックリスト
 
 1. 並列セッション衝突を回避するため `gh pr list --state open` で重複 PR がないか確認
-2. 対象ファイルがどのプラットフォームか確認（`@AGENTS.md` の配置規約表）
-3. `articles_note/published/` を触る場合は ⚠️ 規約を確認（`@AGENTS.md` 禁止事項）
-4. note 記事に画像を追加する場合: SVG → PNG 変換 → `articles_note/assets/` 配置 → main に先にマージ → WXR 生成の順序を守る
-5. 既存 Skill / Agent / Command で対応できないか確認（上記表）
-6. `@AGENT_LEARNINGS.md` で類似タスクの落とし穴を確認
+2. **DRAFT PR の存在確認** — `gh pr list --state open --search "is:draft"` で未完了の Codex / 並列セッション PR を把握（旧 PR の影響範囲を見落とさない）
+3. **`gh auth status` で active account を確認** — `git push` 直前は s977043 で push する必要あり（kominem-unilabo のままだと push 失敗 → 切替 → 再 push の手戻り）
+4. 対象ファイルがどのプラットフォームか確認（`@AGENTS.md` の配置規約表）
+5. `articles_note/published/` を触る場合は ⚠️ 規約を確認（`@AGENTS.md` 禁止事項）
+6. note 記事に画像を追加する場合: SVG → PNG 変換 → `articles_note/assets/` 配置 → **`file` でサイズ・寸法を確認**（プレースホルダ画像 <10KB を弾く） → main に先にマージ → WXR 生成の順序を守る
+7. 既存 Skill / Agent / Command で対応できないか確認（上記表）
+8. `@AGENT_LEARNINGS.md` で類似タスクの落とし穴を確認
 
 ## 並列実行の指針
 
