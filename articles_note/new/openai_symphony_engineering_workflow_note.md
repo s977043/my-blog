@@ -2,7 +2,7 @@
 
 > 区分: 個人
 
-![](../assets/openai-symphony-workflow-cover.png)
+![](../assets/openai-symphony-workflow-cover-v2.png)
 
 Xで見かけた [OpenAI Symphony](https://x.com/kawai_design/status/2048960396233470151) の話が、とても興味深かったです。
 
