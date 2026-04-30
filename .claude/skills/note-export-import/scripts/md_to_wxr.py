@@ -67,7 +67,7 @@ def split_front(text: str) -> tuple[str, str]:
     return title, body
 
 
-def warn_local_images(path: Path, body: str) -> None:
+def warn_local_images(path: Path, body: str) -> int:
     hits = LOCAL_IMG_RE.findall(body)
     if hits:
         sys.stderr.write(f"[warn] {path.name}: ローカル画像 {len(hits)}件あり。--base-url で絶対URLに書き換えるか、インポート後にnoteエディタで貼り直してください:\n")
@@ -75,6 +75,7 @@ def warn_local_images(path: Path, body: str) -> None:
             sys.stderr.write(f"   - {h}\n")
         if len(hits) > 5:
             sys.stderr.write(f"   ...他 {len(hits)-5} 件\n")
+    return len(hits)
 
 
 def rewrite_assets_to_url(body: str, base_url: str) -> tuple[str, int]:
@@ -184,7 +185,7 @@ def transform_html_to_note_format(raw_html: str) -> str:
     return html
 
 
-def render_item(md_path: Path, post_id: int, base_url: str | None = None) -> str:
+def render_item(md_path: Path, post_id: int, base_url: str | None = None) -> tuple[str, int]:
     """note公式エクスポート形式に準拠した<item>を出力。
 
     note importer は WordPress WXR の post メタデータを必要とするため、
@@ -211,7 +212,7 @@ def render_item(md_path: Path, post_id: int, base_url: str | None = None) -> str
         body_md, rewritten = rewrite_assets_to_url(body_md, base_url)
         if rewritten:
             sys.stderr.write(f"[ok] {md_path.name}: {rewritten}件の画像パスを {base_url} に書き換え\n")
-    warn_local_images(md_path, body_md)
+    local_image_count = warn_local_images(md_path, body_md)
     cdata_guard = lambda s: s.replace("]]>", "]]]]><![CDATA[>")
     # nl2br: \n を <br> に変換（段落内の改行を note 上で正しく表現）
     raw_html = md.markdown(body_md, extensions=["fenced_code", "tables", "sane_lists", "nl2br"])
@@ -224,7 +225,7 @@ def render_item(md_path: Path, post_id: int, base_url: str | None = None) -> str
     post_date = now_jst.strftime("%Y-%m-%d %H:%M:%S")
     post_date_gmt = now_utc.strftime("%Y-%m-%d %H:%M:%S")
     post_name = quote(title, safe="")
-    return (
+    item_xml = (
         "<item>"
         f"<title><![CDATA[{title_xml}]]></title>"
         f"<link>{link}</link>"
@@ -249,6 +250,7 @@ def render_item(md_path: Path, post_id: int, base_url: str | None = None) -> str
         "<wp:is_sticky>0</wp:is_sticky>"
         "</item>"
     )
+    return item_xml, local_image_count
 
 
 WRAPPER_HEAD = (
@@ -325,6 +327,7 @@ def main():
     )
     ap.add_argument("--out", type=Path, help="出力先WXR (省略時: articles_note/build/import-<slug>-YYYYMMDD-HHMM.xml)")
     ap.add_argument("--base-url", help="assets/ 参照を絶対URLに書き換える (例: https://raw.githubusercontent.com/OWNER/REPO/main/articles_note/assets)")
+    ap.add_argument("--allow-local-images", action="store_true", help="ローカル画像参照（../assets/...）が残っていてもエラー終了せず警告のみ")
     args = ap.parse_args()
 
     inputs = collect_inputs(args.src)
@@ -332,7 +335,9 @@ def main():
         srcs_str = ", ".join(str(s) for s in args.src)
         raise SystemExit(f"No .md found under {srcs_str}")
 
-    items = "".join(render_item(p, i + 1, args.base_url) for i, p in enumerate(inputs))
+    rendered = [render_item(p, i + 1, args.base_url) for i, p in enumerate(inputs)]
+    items = "".join(item for item, _ in rendered)
+    total_local = sum(c for _, c in rendered)
     pubdate = datetime.now(timezone(timedelta(hours=9))).strftime("%a, %d %b %Y %H:%M:%S +0900")
     xml = WRAPPER_HEAD.format(pubdate=pubdate) + items + WRAPPER_TAIL
 
@@ -345,6 +350,16 @@ def main():
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(xml)
     print(f"wrote {out}  ({len(inputs)} item(s))")
+
+    if total_local > 0 and not args.allow_local_images:
+        sys.stderr.write(
+            f"\n[error] {total_local}件のローカル画像参照が解決されないままWXRが生成されました。\n"
+            "        note インポート時に画像が反映されません。以下のいずれかで対処してください:\n"
+            "        - --base-url <公開Raw URL> で絶対URLに書き換え（推奨）\n"
+            "          例: --base-url https://raw.githubusercontent.com/s977043/my-blog/main/articles_note/assets\n"
+            "        - --allow-local-images でこのチェックを無効化（意図的に残す場合）\n"
+        )
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":
