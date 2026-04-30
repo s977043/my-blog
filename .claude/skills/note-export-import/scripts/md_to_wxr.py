@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Markdown(単一記事) → note インポート用WXR XML を生成する。
+"""Markdown(単一/複数記事) → note インポート用WXR XML を生成する。
 
 使い方:
     python3 md_to_wxr.py articles_note/new/<slug>.md [--out articles_note/build/<slug>.xml]
-    python3 md_to_wxr.py articles_note/new/                # ディレクトリを指定すると全MDを一括変換
+    python3 md_to_wxr.py articles_note/new/                # ディレクトリ指定で全MDを1本のWXRに束ねる
+    python3 md_to_wxr.py articles_note/new/ articles_note/drafts/n2ef833cbece8.md  # 複数ソースをまとめて1本に
     python3 md_to_wxr.py ... --base-url https://raw.githubusercontent.com/OWNER/REPO/main/articles_note/assets/
 
 処理内容:
@@ -282,22 +283,54 @@ WRAPPER_HEAD = (
 WRAPPER_TAIL = "</channel></rss>"
 
 
-def collect_inputs(src: Path) -> list[Path]:
-    if src.is_dir():
-        return sorted(src.glob("*.md"))
-    return [src]
+def collect_inputs(srcs: list[Path]) -> list[Path]:
+    """複数のソースパス（ファイル/ディレクトリ）から .md ファイルを収集して重複排除。"""
+    seen: set[Path] = set()
+    result: list[Path] = []
+    for src in srcs:
+        if src.is_dir():
+            for p in sorted(src.glob("*.md")):
+                rp = p.resolve()
+                if rp not in seen:
+                    seen.add(rp)
+                    result.append(p)
+        else:
+            rp = src.resolve()
+            if rp not in seen:
+                seen.add(rp)
+                result.append(src)
+    return result
+
+
+def derive_default_outname(srcs: list[Path]) -> str:
+    """出力ファイル名のスラッグを推定する。
+
+    - 単一ファイル: そのファイル名（stem）
+    - 単一ディレクトリ: ディレクトリ名（例: new, drafts）
+    - 複数: "bundle"
+    """
+    if len(srcs) == 1:
+        s = srcs[0]
+        return s.stem if s.is_file() else (s.name.strip("/") or "batch")
+    return "bundle"
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("src", type=Path, help="MDファイルまたはディレクトリ")
+    ap.add_argument(
+        "src",
+        type=Path,
+        nargs="+",
+        help="MDファイルまたはディレクトリ（複数指定可、すべて1本のWXRに束ねて出力）",
+    )
     ap.add_argument("--out", type=Path, help="出力先WXR (省略時: articles_note/build/import-<slug>-YYYYMMDD-HHMM.xml)")
     ap.add_argument("--base-url", help="assets/ 参照を絶対URLに書き換える (例: https://raw.githubusercontent.com/OWNER/REPO/main/articles_note/assets)")
     args = ap.parse_args()
 
     inputs = collect_inputs(args.src)
     if not inputs:
-        raise SystemExit(f"No .md found under {args.src}")
+        srcs_str = ", ".join(str(s) for s in args.src)
+        raise SystemExit(f"No .md found under {srcs_str}")
 
     items = "".join(render_item(p, i + 1, args.base_url) for i, p in enumerate(inputs))
     pubdate = datetime.now(timezone(timedelta(hours=9))).strftime("%a, %d %b %Y %H:%M:%S +0900")
@@ -306,7 +339,7 @@ def main():
     if args.out:
         out = args.out
     else:
-        slug = args.src.stem if args.src.is_file() else args.src.name.strip("/") or "batch"
+        slug = derive_default_outname(args.src)
         ts = datetime.now(timezone(timedelta(hours=9))).strftime("%Y%m%d-%H%M")
         out = Path("articles_note/build") / f"import-{slug}-{ts}.xml"
     out.parent.mkdir(parents=True, exist_ok=True)
