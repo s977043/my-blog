@@ -9,15 +9,18 @@
 処理内容:
     - 先頭 "# タイトル" を title に、それ以降を本文として扱う
     - "> 出典:" "> 公開状態:" 等のメタ行は本文から除外
-    - Markdown → HTML を python-markdown で変換
+    - Markdown → HTML を python-markdown で変換（nl2br拡張で改行を <br> に変換）
+    - すべてのブロック要素（p/h2/h3/ul/ol/figure/pre/blockquote）に UUID v4 の name/id を付与
+    - <li>タグの中身を <p name=UUID id=UUID> でラップ（note公式形式準拠）
+    - 外部リンクに target="_blank" rel="nofollow noopener" を付与
+    - <img/>, <br/>, <hr/> を HTML5 ボイド形式に統一
     - WXR 1ファイル=1記事 を出力（複数指定時はまとめたWXRを1本生成）
-    - --base-url 指定時: `../assets/<file>` `assets/<file>` の画像参照を
-      `<base_url>/<file>` に書き換えて note に自動取り込みできる形にする
-    - --base-url 未指定時: ローカル画像パスは残したまま警告のみ
+    - --base-url 指定時: `../assets/<file>` `assets/<file>` の画像参照を絶対URLに書き換え
 
 note制約:
     - インポートは新規下書きとして取り込まれる
     - 画像は <img src="https://..."> (JPEG/PNG/GIF) でないと自動取り込みされない
+    - 公式エクスポート WXR の HTML パターンに揃えないと改行・空行が崩れる
 """
 from __future__ import annotations
 import argparse
@@ -27,7 +30,6 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import quote
-from xml.sax.saxutils import escape
 
 DISPLAY_NAME = "みね"
 LOGIN_ID = "mine_unilabo"
@@ -41,9 +43,12 @@ except ImportError:
 META_LINE_RE = re.compile(r"^>\s*(?:出典|公開状態|更新|区分)\s*[:：][^\n]*\n?", re.MULTILINE)
 LOCAL_IMG_RE = re.compile(r'!\[[^\]]*\]\((?!https?://|data:)[^)]+\)')
 ASSET_IMG_RE = re.compile(r'(!\[[^\]]*\]\()(?:\.\./)?assets/([^)]+)\)')
-# note公式は <figure name="uuid"><img src="..."><figcaption></figcaption></figure> 形式
-# python-markdown は <p><img alt="..." src="..." /></p> を生成するため後処理で変換する
-IMG_IN_P_RE = re.compile(r'<p><img\s+(?:alt="[^"]*"\s+)?src="([^"]+)"\s*/></p>')
+
+# python-markdown は <p><img alt="..." src="..." /></p> を生成する
+IMG_IN_P_RE = re.compile(r'<p>\s*<img\s+(?:alt="[^"]*"\s+)?src="([^"]+)"\s*/?>\s*</p>')
+
+# HTML5 ボイド要素を自己終端 / なしに統一
+VOID_SELFCLOSE_RE = re.compile(r'<(br|hr|img)([^>]*?)\s*/>')
 
 
 def split_front(text: str) -> tuple[str, str]:
@@ -71,15 +76,6 @@ def warn_local_images(path: Path, body: str) -> None:
             sys.stderr.write(f"   ...他 {len(hits)-5} 件\n")
 
 
-def wrap_images_in_figure(html: str) -> str:
-    """<p><img .../></p> を note公式形式 <figure name="uuid"><img src="..."><figcaption></figcaption></figure> に変換する。"""
-    def replace(m):
-        src = m.group(1)
-        name = str(uuid.uuid4())
-        return f'<figure name="{name}"><img src="{src}"><figcaption></figcaption></figure>'
-    return IMG_IN_P_RE.sub(replace, html)
-
-
 def rewrite_assets_to_url(body: str, base_url: str) -> tuple[str, int]:
     base = base_url.rstrip("/") + "/"
     count = [0]
@@ -89,6 +85,104 @@ def rewrite_assets_to_url(body: str, base_url: str) -> tuple[str, int]:
     return ASSET_IMG_RE.sub(sub, body), count[0]
 
 
+def normalize_void_elements(html: str) -> str:
+    """<br/>, <hr/>, <img.../> を HTML5 ボイド形式 <br>, <hr>, <img...> に変換。"""
+    return VOID_SELFCLOSE_RE.sub(lambda m: f'<{m.group(1)}{m.group(2).rstrip()}>', html)
+
+
+def wrap_images_in_figure(html: str) -> str:
+    """<p><img .../></p> を note公式形式に変換。
+
+    <figure name="UUID" id="UUID"><img src="..."><figcaption></figcaption></figure>
+    """
+    def replace(m):
+        src = m.group(1)
+        u = str(uuid.uuid4())
+        return f'<figure name="{u}" id="{u}"><img src="{src}"><figcaption></figcaption></figure>'
+    return IMG_IN_P_RE.sub(replace, html)
+
+
+def add_uuid_to_blocks(html: str) -> str:
+    """ブロック要素 (p, h2, h3, ul, ol, pre, blockquote) に name/id (UUID v4) を付与。
+
+    既に name 属性を持つ要素はスキップ（figure は wrap_images_in_figure で付与済み）。
+    """
+    pattern = re.compile(r'<(p|h2|h3|ul|ol|pre|blockquote)(\s[^>]*)?>')
+    def add(m):
+        tag = m.group(1)
+        attrs = m.group(2) or ''
+        # 既に name 属性を持つ場合はスキップ
+        if re.search(r'\bname\s*=', attrs):
+            return m.group(0)
+        u = str(uuid.uuid4())
+        return f'<{tag} name="{u}" id="{u}"{attrs}>'
+    return pattern.sub(add, html)
+
+
+def wrap_li_content(html: str) -> str:
+    """<li>テキスト</li> を <li><p name=UUID id=UUID>テキスト</p></li> に変換（note公式形式）。
+
+    既に <p> でラップされている <li><p>...</p></li> はスキップ。
+    ネストリスト (<li><ul>...</ul></li>) は中身がブロック要素なのでスキップ。
+    """
+    li_pattern = re.compile(r'<li>(.*?)</li>', re.DOTALL)
+    def wrap(m):
+        inner = m.group(1).strip()
+        # 既に <p> でラップ済み or ネストリスト or 空 → スキップ
+        if not inner or inner.startswith('<p ') or inner.startswith('<p>') or inner.startswith('<ul') or inner.startswith('<ol'):
+            return m.group(0)
+        u = str(uuid.uuid4())
+        return f'<li><p name="{u}" id="{u}">{inner}</p></li>'
+    return li_pattern.sub(wrap, html)
+
+
+def add_external_link_attrs(html: str) -> str:
+    """外部リンク <a href="https://..."> に target="_blank" rel="nofollow noopener" を付与。
+
+    既に target/rel を持つリンクはスキップ。
+    """
+    a_pattern = re.compile(r'<a\s+href="(https?://[^"]+)"([^>]*)>')
+    def add(m):
+        url = m.group(1)
+        rest = m.group(2)
+        if 'target=' in rest or 'rel=' in rest:
+            return m.group(0)
+        return f'<a href="{url}"{rest} target="_blank" rel="nofollow noopener">'
+    return a_pattern.sub(add, html)
+
+
+def strip_code_class(html: str) -> str:
+    """<code class="language-X"> から class 属性を削除（note公式は無属性）。"""
+    return re.sub(r'<code\s+class="[^"]*">', '<code>', html)
+
+
+def collapse_block_whitespace(html: str) -> str:
+    """ブロック要素間の改行・余分な空白を除去（note公式形式: ブロックは密結合）。"""
+    # ブロックタグ間の \n を削除
+    block_tags = r'(?:p|h2|h3|h4|h5|ul|ol|li|pre|figure|blockquote|hr|table|thead|tbody|tr)'
+    # </X>\n<Y> → </X><Y>
+    html = re.sub(rf'(</{block_tags}>)\s*\n\s*(<{block_tags}\b)', r'\1\2', html)
+    # <X>\n<Y> （開始タグ間: <ul>\n<li> など） → <X><Y>
+    html = re.sub(rf'(<{block_tags}\b[^>]*>)\s*\n\s*(<{block_tags}\b)', r'\1\2', html)
+    # </X>\n<hr> や <hr>\n<Y> も処理
+    html = re.sub(r'(</[a-z]+>)\s*\n\s*(<hr\b)', r'\1\2', html)
+    html = re.sub(r'(<hr\b[^>]*>)\s*\n\s*(<)', r'\1\2', html)
+    return html
+
+
+def transform_html_to_note_format(raw_html: str) -> str:
+    """python-markdown 出力 HTML を note 公式形式に変換するパイプライン。"""
+    html = raw_html
+    html = wrap_images_in_figure(html)         # <p><img/></p> → <figure>
+    html = normalize_void_elements(html)       # <br/> → <br>, <img/> → <img>
+    html = strip_code_class(html)              # <code class="language-X"> → <code>
+    html = wrap_li_content(html)               # <li>X</li> → <li><p>X</p></li>
+    html = add_uuid_to_blocks(html)            # p/h2/h3/ul/ol/pre/blockquote に UUID
+    html = add_external_link_attrs(html)       # 外部 <a> に target/rel
+    html = collapse_block_whitespace(html)     # ブロック間改行を除去
+    return html
+
+
 def render_item(md_path: Path, post_id: int, base_url: str | None = None) -> str:
     """note公式エクスポート形式に準拠した<item>を出力。
 
@@ -96,9 +190,17 @@ def render_item(md_path: Path, post_id: int, base_url: str | None = None) -> str
     `wp:post_id` `wp:post_type` `wp:status` を含む item 側 wp:* 群を揃える。
     これらが欠落すると note 側インポートが失敗する（実測: 2026-04-18）。
 
+    HTML 部分は note 公式エクスポートの形式に準拠（2026-04-30 解析）:
+    - すべてのブロック要素に UUID v4 の name/id 属性
+    - 段落内の改行は <br>（python-markdown nl2br 拡張）
+    - <li>X</li> は <li><p name=UUID id=UUID>X</p></li> で二重ラップ
+    - 外部リンクは target="_blank" rel="nofollow noopener"
+    - ボイド要素は HTML5 形式（<br>, <img>, <hr>）
+    - ブロック間に改行・空白なし
+
     author フィールドの対応:
-    - `<dc:creator>` (item) = 表示名 (`みね`) — 公式エクスポートに合わせる
-    - `<wp:author_display_name>` (channel) = login ID — こちらも公式に合わせる
+    - `<dc:creator>` (item) = 表示名 (`みね`)
+    - `<wp:author_display_name>` (channel) = login ID
     """
     text = md_path.read_text()
     title, body_md = split_front(text)
@@ -109,10 +211,10 @@ def render_item(md_path: Path, post_id: int, base_url: str | None = None) -> str
         if rewritten:
             sys.stderr.write(f"[ok] {md_path.name}: {rewritten}件の画像パスを {base_url} に書き換え\n")
     warn_local_images(md_path, body_md)
-    # CDATA衝突防止: ]]> を分割 (title/html 双方)
     cdata_guard = lambda s: s.replace("]]>", "]]]]><![CDATA[>")
-    raw_html = md.markdown(body_md, extensions=["fenced_code", "tables", "sane_lists"])
-    html = cdata_guard(wrap_images_in_figure(raw_html))
+    # nl2br: \n を <br> に変換（段落内の改行を note 上で正しく表現）
+    raw_html = md.markdown(body_md, extensions=["fenced_code", "tables", "sane_lists", "nl2br"])
+    html = cdata_guard(transform_html_to_note_format(raw_html))
     title_xml = cdata_guard(title)
     guid = f"l{uuid.uuid4().hex[:12]}"
     link = f"https://note.com/{LOGIN_ID}/n/{guid}"
