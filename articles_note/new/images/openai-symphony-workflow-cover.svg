@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title">
+<title id="title">AI時代の開発組織はコードを書くから仕事を流すへ変わる</title>
+<style>
+.t{font-family:'Noto Sans JP','Hiragino Sans','Yu Gothic',sans-serif;fill:#0f172a}
+.h{font-size:38px;font-weight:800}
+.col{font-size:32px;font-weight:800}
+.sub{font-size:20px;fill:#475569}
+.note{font-size:17px;fill:#64748b}
+.tag{font-size:18px;font-weight:700;fill:#fff}
+.shift{font-size:54px;font-weight:800;fill:#0f766e}
+</style>
+<rect width="1200" height="630" rx="32" fill="#f8fafc"/>
+
+<!-- Top tag (OpenAI Symphony) -->
+<rect x="430" y="40" width="340" height="44" rx="22" fill="#1e293b"/>
+<text class="t tag" x="600" y="70" text-anchor="middle">OpenAI Symphony を見て</text>
+
+<!-- Title -->
+<text class="t h" x="600" y="135" text-anchor="middle">AI時代の開発組織は</text>
+
+<!-- Before column -->
+<rect x="60" y="180" width="500" height="290" rx="20" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+<rect x="60" y="180" width="500" height="64" rx="20" fill="#64748b"/>
+<rect x="60" y="220" width="500" height="24" fill="#64748b"/>
+<text class="t col" x="310" y="225" text-anchor="middle" fill="#fff">これまで</text>
+
+<text class="t" x="310" y="290" text-anchor="middle" font-size="36" font-weight="800" fill="#1e293b">コードを書く</text>
+
+<text class="t sub" x="310" y="340" text-anchor="middle">チャットで対話しながら</text>
+<text class="t sub" x="310" y="368" text-anchor="middle">AIに実装させる</text>
+<text class="t note" x="310" y="410" text-anchor="middle">→ 個人作業の延長</text>
+<text class="t note" x="310" y="436" text-anchor="middle">→ 「速く書ける」が価値</text>
+
+<!-- Arrow -->
+<text x="600" y="335" text-anchor="middle" class="shift">→</text>
+
+<!-- After column -->
+<rect x="640" y="180" width="500" height="290" rx="20" fill="#ecfdf5" stroke="#86efac" stroke-width="2"/>
+<rect x="640" y="180" width="500" height="64" rx="20" fill="#059669"/>
+<rect x="640" y="220" width="500" height="24" fill="#059669"/>
+<text class="t col" x="890" y="225" text-anchor="middle" fill="#fff">これから</text>
+
+<text class="t" x="890" y="290" text-anchor="middle" font-size="36" font-weight="800" fill="#065f46">仕事を流す</text>
+
+<text class="t sub" x="890" y="340" text-anchor="middle" fill="#065f46">チケットで構造化して</text>
+<text class="t sub" x="890" y="368" text-anchor="middle" fill="#065f46">AIに自律実行させる</text>
+<text class="t note" x="890" y="410" text-anchor="middle" fill="#047857">→ 組織運用の問題</text>
+<text class="t note" x="890" y="436" text-anchor="middle" fill="#047857">→ 「迷わず流せる」が価値</text>
+
+<!-- Bottom message -->
+<rect x="60" y="500" width="1080" height="100" rx="16" fill="#0f172a"/>
+<text class="t" x="600" y="540" text-anchor="middle" fill="#fff" font-size="22" font-weight="700">問われるのはモデル選択ではなく、仕事の構造化</text>
+<text class="t" x="600" y="572" text-anchor="middle" fill="#cbd5e1" font-size="17">AIが迷わず動けるレールを、どこまで先に置けるか</text>
+</svg>
