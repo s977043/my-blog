@@ -1,6 +1,6 @@
 # AIコードレビューが細かすぎる、ズレる、毎回違う。それでも仕組みにしたほうがいい理由
 
-![](./images/ai-code-review-cover.svg)
+![](../assets/ai-code-review-cover.png)
 
 > 区分: 個人
 
@@ -51,7 +51,7 @@ AIレビューを使う前に、チーム側で最低限そろえておいたほ
 
 「指摘する」と「マージを止める」は別です。この境界を切り分けるだけでも、レビューのノイズはかなり減ります。
 
-![](./images/ai-code-review-matrix.svg)
+![](../assets/ai-code-review-matrix.png)
 
 ## 指摘は3分類くらいがちょうどいい
 
@@ -84,7 +84,7 @@ AIレビューを使う前に、チーム側で最低限そろえておいたほ
 
 この3分類を入れるだけで、「細かすぎる」問題はかなり扱いやすくなります。大事なのは、低優先度の指摘を消すことではなく、**止めるべきものと、参考意見として流すものを分けること**です。
 
-![](./images/ai-code-review-3class.svg)
+![](../assets/ai-code-review-3class.png)
 
 ## チームのルールとズレるなら、ズレを記録したほうがいい
 
@@ -120,11 +120,11 @@ AIレビューをその場のコメント生成で終わらせると、次回ま
 
 自然言語でお願いするだけでは弱い。必要に応じて、文書化、自動化、レビュー観点化に分けて戻すほうが安定します。
 
-![](./images/ai-code-review-knowledge-flow.svg)
+![](../assets/ai-code-review-knowledge-flow.png)
 
 ## 改善ループは、小さく回したほうが続きます
 
-![](./images/ai-code-review-improvement-loop.svg)
+![](../assets/ai-code-review-improvement-loop.png)
 
 最初から完璧な分類表やダッシュボードを作る必要はありません。むしろ、重く作りすぎると続きません。自分なら、まずはこう始めます。
 
