@@ -21,3 +21,7 @@ articles_note/build/
 
 # Claude Code スケジュール実行の排他ロック (ランタイム生成)
 .claude/scheduled_tasks.lock
+
+# Python バイトコードキャッシュ (note-export-import スクリプト実行で生成)
+__pycache__/
+*.pyc
