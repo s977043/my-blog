@@ -2,7 +2,7 @@
 
 > 区分: 個人
 
-![](../assets/openai-symphony-workflow-cover-v2.png)
+![](../assets/openai-symphony-agent-loop-hitl-cover.png)
 
 Xで見かけた [OpenAI Symphony](https://x.com/kawai_design/status/2048960396233470151) の話が、とても興味深かったです。
 
@@ -127,6 +127,8 @@ Agent Loop のリスクは、モデルの賢さだけでは解けません。
 
 ## Human-in-the-Loop は「最後に人が見る」だけではない
 
+![](../assets/openai-symphony-agent-loop-human-in-the-loop.png)
+
 ここで重要になるのが Human-in-the-Loop です。
 
 Human-in-the-Loop というと、「最後に人間がレビューすること」と捉えられがちです。
@@ -170,6 +172,8 @@ AIに任せる範囲を広げるほど、人間の役割は減るのではなく
 ---
 
 ## Symphony は Agent Loop をチケット単位で束ねる仕組み
+
+![](../assets/openai-symphony-agent-loop-orchestration.png)
 
 ここで Symphony に戻ります。
 
