@@ -1,5 +1,5 @@
 ---
-title: "AIコーディングを承認なしに走らせない：PlanGate v8.5のHook enforcement入門"
+title: "AIコーディングを承認なしに走らせない：PlanGate v8.5.0のHook enforcement入門"
 emoji: "🚦"
 type: "tech"
 topics: ["ai", "claudecode", "githubactions", "oss", "automation"]
