@@ -25,6 +25,40 @@ const TARGET_DIRS = [
 const ASSETS_DIR = path.join(REPO_ROOT, 'articles_note', 'assets');
 
 const PLACEHOLDER_THRESHOLD_BYTES = 10 * 1024; // 10KB
+const KNOWN_SMALL_IMAGE_ALLOWLIST = new Map([
+  [
+    'n40f2574d87dd_1667319411397-qcBZVCr3h6.png',
+    'note公式エクスポート由来の8-bit colormap PNG。1008x78 の横長画像でプレースホルダではない',
+  ],
+  [
+    'n40f2574d87dd_1667319577877-rGQU9yQIAL.png',
+    'note公式エクスポート由来の8-bit colormap PNG。256x78 の小型画像でプレースホルダではない',
+  ],
+  [
+    'n40f2574d87dd_1667319623725-hXYLUtYMLQ.png',
+    'note公式エクスポート由来の8-bit colormap PNG。263x78 の小型画像でプレースホルダではない',
+  ],
+  [
+    'n40f2574d87dd_1667319660478-qqvDmHmzRq.png',
+    'note公式エクスポート由来の8-bit colormap PNG。255x78 の小型画像でプレースホルダではない',
+  ],
+  [
+    'n40f2574d87dd_1667319710460-J11DU7Efrf.png',
+    'note公式エクスポート由来の8-bit colormap PNG。263x78 の小型画像でプレースホルダではない',
+  ],
+  [
+    'n40f2574d87dd_1673434419505-br9qojMB89.png',
+    'note公式エクスポート由来の8-bit colormap PNG。273x409 の画像でプレースホルダではない',
+  ],
+  [
+    'n40f2574d87dd_1673436710546-5Xnp5DrvLd.png',
+    'note公式エクスポート由来の8-bit colormap PNG。230x201 の画像でプレースホルダではない',
+  ],
+  [
+    'nb068316a12ec_picture_pc_ff61930fdd92bcdb206e6b425e44eb84.png',
+    'note公式エクスポート由来の8-bit colormap PNG。600x160 のバナー画像でプレースホルダではない',
+  ],
+]);
 
 // note インポート可能な画像参照: ../assets/<name>.<png|jpg|jpeg|gif>
 // または絶対 URL (http(s)://...)
@@ -97,6 +131,7 @@ function findSmallImages() {
     if (!/\.(png|jpg|jpeg|gif)$/i.test(f)) continue;
     const fp = path.join(ASSETS_DIR, f);
     const stat = fs.statSync(fp);
+    if (KNOWN_SMALL_IMAGE_ALLOWLIST.has(f)) continue;
     if (stat.size < PLACEHOLDER_THRESHOLD_BYTES) {
       small.push({ file: path.relative(process.cwd(), fp), size: stat.size });
     }
