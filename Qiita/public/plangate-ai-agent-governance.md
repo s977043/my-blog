@@ -222,9 +222,9 @@ test-cases.md の各項目について、どの変更で満たしたか説明し
 
 ただ、運用していると、プロンプトだけでは弱いと感じます。
 
-そこで、PlanGate v8.5.0 では Hook enforcement を整えました。
+そこで、PlanGate v8.6.0 では Hook enforcement を土台に、Metrics v1 と Issue governance まで整えました。
 
-たとえば、次のような条件を hook や CLI で検査できます。
+たとえば、次のような条件を hook や CLI で検査し、運用イベントとして後から集計できます。
 
 - `plan.md` がない状態で production code を編集していないか
 - C-3承認なしで実装に進んでいないか
