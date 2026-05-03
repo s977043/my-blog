@@ -86,6 +86,7 @@
 2. `Custom agents` の例は便利だが、正確なスキーマの断定に見えると危険。
 3. Zennのslug規約上、ファイル名は半角英小文字とハイフンで維持したい。
 4. 記事の最後は、読者が次にやることを明確にした方が強い。
+5. Hooksの承認イベントは実装状況の差分があり得るため、同名移植できる前提を避けるべき。
 
 ### 反映
 
@@ -93,6 +94,7 @@
 - Custom agents例に `Example only` コメントを追加。
 - slugを `claude-code-to-codex-app-migration` に固定。
 - まとめを5ステップの実行順に変更。
+- Hooks章の承認要求まわりを `PermissionRequest系` 断定から、approval / sandbox / permissionsで再設計する表現へ修正。
 - `published: false` の下書き状態でPR化。
 
 ## 最終判断
