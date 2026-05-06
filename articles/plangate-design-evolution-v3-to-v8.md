@@ -3,7 +3,7 @@ title: "PlanGate v3 から v8.6 までの設計変遷：AI コーディング統
 emoji: "🗺️"
 type: "tech"
 topics: ["ai", "claudecode", "oss", "automation", "harness"]
-published: false
+published: true
 ---
 
 PlanGate は AI コーディングエージェントを「承認してから動かす」ためのハーネスです。
