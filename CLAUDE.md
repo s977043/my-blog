@@ -74,8 +74,9 @@ python3 .claude/skills/note-export-import/scripts/verify_wxr.py articles_note/bu
 4. 対象ファイルがどのプラットフォームか確認（`@AGENTS.md` の配置規約表）
 5. `articles_note/published/` を触る場合は ⚠️ 規約を確認（`@AGENTS.md` 禁止事項）
 6. note 記事に画像を追加する場合: SVG → PNG 変換 → `articles_note/assets/` 配置 → **`file` でサイズ・寸法を確認**（プレースホルダ画像 <10KB を弾く） → main に先にマージ → WXR 生成の順序を守る。**WXR 生成は必ず `--base-url https://raw.githubusercontent.com/s977043/my-blog/main/articles_note/assets` を付ける**（未指定で画像参照が残ると `md_to_wxr.py` が exit 1 で失敗、意図的にローカル参照を残すなら `--allow-local-images`）
-7. 既存 Skill / Agent / Command で対応できないか確認（上記表）
-8. `@AGENT_LEARNINGS.md` で類似タスクの落とし穴を確認
+7. **Zenn 公開系の作業を進める前に**、`@AGENTS.md` の「Zenn 公開フロー（release/zenn ブランチ経由）」を確認。`articles/*.md` の `published: true` 切替や本文修正は **`release/zenn` ブランチへの merge をもって公開**となる。`main` への push は Zenn deploy をトリガーしない（rate-limit 対策）。1 PR 最大 3 本 / 24 時間あけてマージ / 既存 update と新規 publish は別 PR、を厳守
+8. 既存 Skill / Agent / Command で対応できないか確認（上記表）
+9. `@AGENT_LEARNINGS.md` で類似タスクの落とし穴を確認
 
 ## 並列実行の指針
 
