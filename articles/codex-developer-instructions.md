@@ -3,7 +3,7 @@ title: "Codexはプロンプトではなくルールで制御する"
 emoji: "🧠"
 type: "tech"
 topics: ["codex", "ai駆動開発", "llm", "agents-md", "プロンプト"]
-published: false
+published: true
 ---
 
 ## はじめに
