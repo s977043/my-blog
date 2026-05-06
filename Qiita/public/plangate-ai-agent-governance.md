@@ -1,14 +1,14 @@
 ---
 title: AIの止まり方を「数字で見る」ようにした体験：PlanGate v8.6.0でMetrics v1とGovernanceを入れた話
 tags:
+  - チーム開発
+  - コードレビュー
   - 生成AI
   - AI駆動開発
-  - チーム開発
   - ClaudeCode
-  - コードレビュー
 private: false
-updated_at: '2026-05-06T17:30:00+09:00'
-id: null
+updated_at: '2026-05-06T17:40:44+09:00'
+id: 5ebff79112ecf1af872c
 organization_url_name: null
 slide: false
 ignorePublish: false
