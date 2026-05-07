@@ -1,5 +1,5 @@
 ---
-title: 'River Reviewer v0.30.0 → v0.33.0：Skill Improvement Loop と applyTo Scoping を整備した半月の記録'
+title: 'River Reviewer v0.30→v0.33：Improvement Loop と applyTo Scoping 整備の半月'
 emoji: '🌊'
 type: 'tech'
 topics: ['ai', 'codereview', 'AgentSkills', 'AI駆動開発', 'oss']
