@@ -35,9 +35,11 @@ published: false          # trueにすると公開
 | 状態 | `published` | 挙動 |
 | ---- | ----------- | ---- |
 | ローカル下書き | `false` | ローカルプレビューのみ |
-| 一般公開 | `true` | `git push`でZennに反映 |
+| 一般公開 | `true` | `release/zenn` ブランチへの merge で Zenn に反映 |
 
-ZennはGitHub連携方式のため、`publish`用のコマンドは不要。`main`へのpushで自動デプロイされる。
+ZennはGitHub連携方式のため、`publish`用のコマンドは不要。**デプロイ対象ブランチは `release/zenn`**（rate-limit 対策で 2026-05-07 切替、PR #199）。`main` への push は Zenn deploy をトリガーしない。
+
+公開フロー全体（1 PR 最大 3 本 / 24h あけてマージ / 既存 update と新規 publish は別 PR）は `AGENTS.md` §「Zenn 公開フロー（release/zenn ブランチ経由）」を参照。rate-limit 仕様と緩和申請手順は `memory/reference_zenn_rate_limit_spec.md` にある。
 
 ## よく使うコマンド
 
