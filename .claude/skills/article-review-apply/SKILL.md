@@ -16,6 +16,18 @@ description: Zenn記事のレビュー成果物を記事本文に反映するワ
 - `articles/<slug>.md` が存在すること
 - main ブランチが最新 (`git pull origin main`)
 - git identity がリポジトリ規約どおり (`mine_take <s977043@users.noreply.github.com>`)
+- `gh` active account が **s977043** であること（`memory/feedback_github_account_s977043.md`）
+
+## Zenn 公開フロー上の位置づけ（2026-05-07 以降）
+
+本スキルは **記事本文修正の PR を `main` ブランチに作成**するもので、Zenn deploy のトリガーではない。`main` への PR マージ後、**Zenn 上に反映するには別途 `release/zenn` ブランチへ流す**必要がある（`AGENTS.md` §「Zenn 公開フロー」、`docs/zenn-release-rollout-plan.md`）。
+
+| シナリオ | 本スキルの動作 | 後段で必要な操作 |
+|---|---|---|
+| `published: false` 記事の修正 | main に PR、マージ | release/zenn は触らない（公開時に published: true 切替と一緒に流す） |
+| `published: true` 記事の修正 | main に PR、PR 本文に ⚠️ バナー | rate-limit 解放後、release/zenn に別 PR で取り込み |
+
+**rate-limit 注意**: 24h 以内に Zenn publish 系 PR を 5 本以上 release/zenn にマージすると Zenn rate-limit に hit する（`memory/reference_zenn_rate_limit_spec.md`）。本スキルが連続実行されても main 段階では deploy 発火しないため安全だが、release/zenn への取り込みは別途ペーシング必要。
 
 ## 手順
 
@@ -108,3 +120,16 @@ PR本文は `review-applier` エージェントの採否テンプレートを使
 - `.claude/agents/review-applier.md` (エージェント定義)
 - `reviews/zenn/ai-driven-tdd-nextjs.md` (レビュー成果物フォーマット)
 - Issue #11 (レビュー観点)
+
+## 関連 Memory / Learnings
+- `memory/feedback_github_account_s977043.md` — gh active account 確認
+- `memory/feedback_zenn_publish_rate_pacing.md` — 24h あたり 3 本までの分散ルール
+- `memory/reference_zenn_rate_limit_spec.md` — rate-limit 仕様、Inquiry 申請手順
+- `AGENT_LEARNINGS.md` 2026-05-07「Zenn rate-limit はアカウント単位...」
+- `AGENTS.md` §「Zenn 公開フロー（release/zenn ブランチ経由）」
+- `docs/zenn-release-rollout-plan.md` — 段階公開計画書
+
+## 拡張オプション
+
+### Codex によるセカンドレビュー委譲
+レビューの妥当性に疑問がある場合、`codex:codex-rescue` agent に「reviews/zenn/<slug>.md の指摘の事実整合性を確認」を依頼する。一次情報（外部リポジトリの README / CHANGELOG など）と照合する用途で有効。本スキルから直接起動する仕組みはなく、呼び出し元 Claude が判断する（参考実装: PR #197 / #203）。

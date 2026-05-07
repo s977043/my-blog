@@ -99,6 +99,42 @@ Zenn 記事の場合、`note.com/mine_unilabo` へのリンクは `npm run check
   - 個別改訂が必要になった場合は個別 PR で対応する前提も明記
   - 理由不在のバンドル PR は、将来の読者・エージェントが粒度判断を追跡できなくなる
 
+## Zenn 公開フロー（release/zenn ブランチ経由）
+
+Zenn は **`release/zenn` ブランチ** をデプロイ対象とする運用に変更（rate-limit 対策）。`main` への push は Zenn deploy をトリガーしない。
+
+```
+main                      ← 通常運用（記事執筆、レビュー反映、修正、note/Qiita 編集すべて）
+  └─ release/zenn         ← Zenn deploy 対象。このブランチへの push のみ deploy 発火
+       ← cherry-pick / merge       ← 公開準備が整った記事だけ意図的に流す
+```
+
+### 公開ルール
+
+- **1 PR で `release/zenn` にマージする記事数は最大 3 本**まで（24h/5本 rate-limit に対する安全マージン）
+- **`release/zenn` への merge は 24 時間あけて** 実施（連続バッチを避ける）
+- **既存公開記事の update は単独 PR で `release/zenn` に流す**（新規 publish と分離。update が rate-limit に巻き込まれて公開済記事が古いままになる事故を防ぐ）
+- main → release/zenn の merge は **squash 推奨**（記事単位での切り戻しを容易に）
+- 緊急時の escape: `release/zenn` への直接 push（事後で main に必ず取り込む）
+
+### 公開フロー例
+
+```
+[新規記事公開]
+1. PR1: docs/foo → main（記事執筆・レビュー反映、Zenn deploy 発火しない）
+2. PR2: release/zenn-publish-YYYY-MM-DD → release/zenn（公開対象記事だけを cherry-pick or filtered merge）
+
+[既存公開記事の update]
+1. PR1: docs/fix-typo → main（修正反映、Zenn deploy 発火しない）
+2. PR2: release/zenn-update-<slug> → release/zenn（単独 PR で update を流す。新規 publish と同 PR にしない）
+```
+
+### rate-limit hit 時の対処
+
+- リポジトリ側に追加 commit を **作らない**（被害拡大を防ぐ）
+- [Zenn お問い合わせフォーム](https://zenn.dev/inquiry) で緩和申請（公式が「移行・特殊用途では緩和可」と明言している正規ルート）
+- 詳細仕様と緩和申請文案テンプレ: `memory/reference_zenn_rate_limit_spec.md`
+
 ## Commit Attribution
 
 AIエージェントによるコミットは、利用中モデルの名前で `Co-Authored-By` を付与する。モデルが切り替わった場合は実際に使用したモデル名を反映すること（ハードコードを古いまま残さない）。

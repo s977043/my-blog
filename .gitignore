@@ -25,3 +25,6 @@ articles_note/build/
 # Python バイトコードキャッシュ (note-export-import スクリプト実行で生成)
 __pycache__/
 *.pyc
+
+# VS Code Local History 拡張等の IDE 生成物 (ワークツリー状態を汚さない)
+.vscode/
