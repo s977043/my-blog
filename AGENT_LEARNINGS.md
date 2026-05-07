@@ -627,6 +627,52 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 
 ---
 
+### 2026-05-07 — Zenn rate-limit はアカウント単位、ブランチ切替・手動デプロイ・追加 commit のいずれでも解放されない [Incident] [Convention] [Workflow]
+
+**観察**: 2026-05-06〜07 に Codex によるレビュー反映を集中マージし、24 時間以内に Zenn publish 系 PR を 5 本連続マージ → **7 記事すべてが rate-limit でデプロイされず**、既公開記事 `plangate-v86-hook-enforcement` の更新まで巻き添えで未反映状態になった。リポジトリ側で複数の解消策を試したが、**いずれもキューを解放できなかった**:
+
+- 追加 commit を 5 件 push（12 時間以上経過） → リスト不変
+- Zenn ダッシュボード「手動デプロイ」 → リスト不変
+- デプロイ対象ブランチ切替（main → release/zenn） → リスト不変
+
+ブランチ切替後の release/zenn deploy 試行で **完全に同じ 7 記事リスト**が表示されたことから、rate-limit キューは **アカウント単位で維持** されており、ブランチ単位ではないと結論。
+
+**対策/学び**:
+- **Zenn デプロイ対象ブランチを `main` から `release/zenn` に分離**する（rate-limit 再発防止の構造的対策、PR #199 で AGENTS.md/CLAUDE.md に正本化）
+  - main = 通常運用（記事執筆・レビュー反映・修正すべて、Zenn deploy 発火しない）
+  - release/zenn = Zenn deploy 対象（このブランチへの push のみ deploy 発火）
+- **release/zenn への merge は 24h あけて 1 PR 最大 3 本まで**（5 本上限に対する安全マージン）
+- **既存公開記事の update PR と新規 publish PR は分離**（update が rate-limit に巻き込まれる事故を防ぐ）
+- **rate-limit hit を検知したら追加 commit を作らない**（被害拡大を防ぐ）
+- 解消手段は **時間経過による Zenn 側自動解放を待つ** または [Zenn お問い合わせフォーム](https://zenn.dev/inquiry) から緩和申請（Zenn 公式が「移行・特殊用途では緩和可」と明言）
+- ⚠️ **派生時点の状態に注意**: `release/zenn` を `main` から派生する際、派生元 main の `published: true` が release/zenn にも引き継がれる。派生時点で複数記事が published であれば、それらは release/zenn 上でも published 扱い → 切替直後に rate-limit 対象になる可能性。事前に該当記事の published 状態を確認してから派生する
+
+**根拠**: 2026-05-06〜07 セッション。PR #193〜#198 で rate-limit hit、PR #199（ブランチ分離ポリシー）/ PR #200（rollout plan）で構造的対策を反映。詳細仕様: `memory/reference_zenn_rate_limit_spec.md`、運用ルール: `memory/feedback_zenn_publish_rate_pacing.md`
+
+---
+
+### 2026-05-07 — Zenn ダッシュボード設定切替後は既存ブランチを派生元の状態と整合させる [Workflow] [Pattern]
+
+**観察**: Zenn デプロイ対象ブランチを main → release/zenn に切り替えた直後、release/zenn は派生元 main の `published: true` をすべて引き継いでいた。「Phase 1 で plangate-v86 だけを段階公開する」と計画していたが、**既に release/zenn 上に 7 記事すべてが published で乗っている**ため、段階公開そのものが不可能と判明。
+
+**対策/学び**:
+- **新規ブランチを Zenn deploy 対象にする前に、派生元の `published: true` 記事一覧を grep で確認**:
+  ```bash
+  for f in articles/*.md; do
+    v=$(awk '/^published:/{print $2; exit}' "$f")
+    [ "$v" = "true" ] && echo "$(basename "$f")"
+  done
+  ```
+- 段階公開を実装する場合の選択肢:
+  - **A.** 派生時に `published: true` 記事を `false` に一括書き戻して push し、段階的に true に切り替える（手数大、main との整合性管理が複雑）
+  - **B.** 派生は通常通り行い、待機戦略（自然解放）に切り替える（実用的、本セッションで採用）
+  - **C.** 公開対象が少数なら、派生元 main 上で `published: false` に戻してから派生 → release/zenn 切替（段階公開向き、ただし main の履歴が複雑化）
+- **計画を立てる前に、対象ブランチの実際の状態を grep / git show で必ず確認**（前提を確認せずに計画を作ると、後から書き直しになる）
+
+**根拠**: 2026-05-07 セッション。PR #200（誤った Phase 1〜3 計画書）→ 同日に PR で全面修正。`docs/zenn-release-rollout-plan.md` の改訂履歴
+
+---
+
 <!--
 ## 追加時のテンプレート
 
