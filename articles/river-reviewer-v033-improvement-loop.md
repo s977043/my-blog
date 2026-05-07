@@ -1,19 +1,17 @@
 ---
-title: 'River Reviewer v0.30.0 → v0.33.0：Skill Improvement Loop と applyTo Scoping を整備した半月の記録'
+title: 'River Reviewer v0.30→v0.33：Improvement Loop と applyTo Scoping 整備の半月'
 emoji: '🌊'
 type: 'tech'
 topics: ['ai', 'codereview', 'AgentSkills', 'AI駆動開発', 'oss']
 published: false
 ---
 
-> ⚠️ 本記事は **下書き** です。`river-reviewer` v0.30.0〜v0.33.0 のアップデート整備の記録として、`s977043/river-reviewer` のセッションログから AI が起こしたドラフトです。著者レビュー後に文体・主張の重み付けを調整してから公開してください。
-
 ## TL;DR
 
-- v0.30.0〜v0.33.0 の半月で、River Reviewer は **「レビューを実行するだけのエージェント」から「レビューを検証 → フィードバックを fixture / suppression / reference に降ろす Improvement Loop OS」** に再定義された。
-- Epic #743 (P1+P2) で、エントリスキル `river-reviewer` が orchestration / verification / feedback classification / improvement-loop handoff を担うことが明文化された。
-- `applyTo` の scoping ルール（`docs/development/skill-applyto-scoping.md`）が新設され、planner false-positive routing が起こる over-broad な glob を 2 バッチ計 13 skill で整理した。
-- planner-dataset eval (`coverage=1.0 / top1Match=1.0` / 23 cases) は全期間を通して green を保ったまま、ルーティング回帰の検出力を上げる方向にしか動かしていない。
+- v0.30.0〜v0.33.0 の半月で、River Reviewer は「レビューを実行するだけのエージェント」から「レビュー結果を検証してフィードバックを仕組み（テストケース / 抑制ルール / リファレンス）に還元するループ（Improvement Loop OS）」へ再定義された。
+- Epic #743 (P1+P2) で、エントリスキル `river-reviewer` の責務（入力分類 / 専門スキル選定 / 検証 / フィードバック分類 / ループ引き継ぎ）が明文化された。
+- `applyTo` の scoping ルール（`docs/development/skill-applyto-scoping.md`）が新設され、planner false-positive routing（誤ルーティング）を誘発していた広すぎる glob を 2 バッチ計 13 skill で整理した。
+- planner-dataset eval（routing 用の評価セット、`coverage=1.0 / top1Match=1.0` / 23 cases）は全期間を通して green を保ったまま、ルーティング回帰の検出力を上げる方向にしか動かしていない。
 
 ## 何が変わったか（high-level）
 
@@ -24,7 +22,7 @@ published: false
 | v0.30.0 | `rr-upstream-context-budget-tuning-001` skill 追加 (#736) |
 | v0.31.0 | **Epic #743 P1**: `river-reviewer` を improvement-loop orchestrator として再定義 + 3 references (VERIFICATION / FEEDBACK / IMPROVEMENT_LOOP) (#744 #745) |
 | v0.32.0 | **Epic #743 P2**: routing/planner eval cases (#746) + feedback-to-fixture conversion workflow (#747) + suppression-feedback fixtures (#739) + eval-driven-skill-design skill (#737) |
-| v0.33.0 | `applyTo` scoping rules + 13 skills 整理 (#762 batch 1+2) |
+| v0.33.0 | `applyTo` scoping rules + 13 skills 整理（Epic #762 / 実装 PR #766 #767） |
 
 並行で `dependabot` 4 本 / `docusaurus` バージョン整列 / 翻訳 `#733` `#734` / `code_search` dependency 追加 (#738 PR-2) も完了している。
 
@@ -104,8 +102,10 @@ phase 別の推奨 applyTo を:
 
 ### 適用結果（13 skill）
 
-- **Batch 1** (#766): midstream 8 skill — `**/*.ts` / `**/*.tsx` を `src|app|lib|packages` の dir-bounded に置き換え
-- **Batch 2** (#767): upstream 5 skill — `**/*.md` / `**/*.{yaml,yml,json}` を `docs|pages|specs|design|architecture` の dir-bounded に置き換え
+Epic #762 の配下で、実装は 2 つの PR に分けて行った。
+
+- **Batch 1** (#766, midstream 8 skill) — `**/*.ts` / `**/*.tsx` を `src|app|lib|packages` の dir-bounded に置き換え
+- **Batch 2** (#767, upstream 5 skill) — `**/*.md` / `**/*.{yaml,yml,json}` を `docs|pages|specs|design|architecture` の dir-bounded に置き換え
 
 planner-dataset eval は **23 cases / coverage=1.0 / top1Match=1.0** を全期間で維持。
 
@@ -126,6 +126,3 @@ audit 当初の「50 over-broad」推定値は実測 13 件と乖離していた
 - [`skills/agent-skills/river-reviewer/references/IMPROVEMENT_LOOP.md`](https://github.com/s977043/river-reviewer/blob/main/skills/agent-skills/river-reviewer/references/IMPROVEMENT_LOOP.md) — 9-step loop
 - [`skills/agent-skills/river-reviewer/references/FEEDBACK_TO_FIXTURE.md`](https://github.com/s977043/river-reviewer/blob/main/skills/agent-skills/river-reviewer/references/FEEDBACK_TO_FIXTURE.md) — feedback type → 変更先の対応表
 
----
-
-> 本記事は AI ドラフトです。著者の文体・主張に合わせた手入れ、`reviews/zenn/<slug>.md` のレビュー反映、`published: true` 切替を経てから公開してください。
