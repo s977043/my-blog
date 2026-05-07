@@ -13,7 +13,9 @@
     "check:qiita": "qiita version",
     "check:note-ref": "node scripts/check-note-reference.js",
     "check:note-images": "node scripts/check-note-images.js",
-    "check": "npm run list:articles && npm run list:books && npm run check:qiita && npm run check:note-ref && npm run check:note-images"
+    "check:doc-freshness": "node scripts/check-doc-freshness.js",
+    "check:zenn-pace": "node scripts/check-zenn-publish-pace.js",
+    "check": "npm run list:articles && npm run list:books && npm run check:qiita && npm run check:note-ref && npm run check:note-images && npm run check:doc-freshness"
   },
   "dependencies": {
     "zenn-cli": "^0.4.7"
