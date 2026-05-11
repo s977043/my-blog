@@ -7,7 +7,7 @@ tags:
   - コードレビュー
   - GitHubActions
 private: false
-updated_at: '2026-05-11T15:28:53+09:00'
+updated_at: '2026-05-11T16:35:14+09:00'
 id: 5a4665e78c4bd1a5c1bc
 organization_url_name: null
 slide: false
@@ -383,6 +383,32 @@ AIで実装速度が上がるほど、レビューはボトルネックになり
 
 River Reviewer は、そのボトルネックを単に自動化するのではなく、レビューをチームの知識資産に変えることを目指しています。
 
-GitHub で公開しているので、興味があればぜひ見てみてください。
+## FAQ
 
-https://github.com/s977043/river-reviewer
+### River Reviewerは既存のAIコードレビューと何が違いますか？
+
+既存のAIコードレビューは、PR差分に対する指摘が中心になりやすいです。
+
+River Reviewerは、PR差分だけでなく、要件、設計、実装、テスト、運用までを開発の流れとして扱うことを重視しています。
+
+### 最初からUpstream、Midstream、Downstreamを全部入れる必要がありますか？
+
+ありません。
+
+最初は、テスト不足チェックやAPI変更チェックのように、効果が見えやすい観点から小さく始めるのがよいです。
+
+### PlanGateとはどう組み合わせますか？
+
+PlanGateは、AIが実装を始める前に計画を作り、人間が承認するための仕組みです。
+
+River Reviewerは、その前後を含めてレビュー観点をSkillとして育てる仕組みです。PlanGateで実装前に止め、River Reviewerでレビュー観点を継続的に改善する、という組み合わせを想定しています。
+
+## 参考リンク
+
+- [River Reviewer GitHub Repository](https://github.com/s977043/river-reviewer)
+
+## 関連記事
+
+- [AIコーディングエージェントをチームで使うために、PlanGateで「承認してから実装」を始めた](https://qiita.com/s977043/items/93027e02e962ec327c2f)
+- [AIエージェントを"投げっぱなし"にしない：Agent Skillsと自由度の設計で実現する「評価駆動の開発エコシステム」](https://zenn.dev/minewo/articles/zenn-river-reviewer-architecture)
+- [AI駆動開発の2層ガード設計：PlanGateとRiver Reviewerで実装前後を守る](https://zenn.dev/minewo/articles/ai-dev-guardrail-plangate-river-reviewer)
