@@ -66,6 +66,7 @@ Zenn 記事の場合、`note.com/mine_unilabo` へのリンクは `npm run check
 - WXR生成時の `--base-url` は `https://raw.githubusercontent.com/s977043/my-blog/main/articles_note/assets` を使う
 - PR branch の raw URL は一時確認用。**note 本番取り込みには使わない**
 - note記事の作成・レビュー時は `articles_note/checklists/note-article-quality-checklist.md` を参照し、テーマ設計 / サムネ・タイトル設計 / 本文構成 / 読者体験を確認する
+- 短時間レビューでは同チェックリストの「必須確認」を優先し、全項目を機械的に満たすことを目的にしない
 
 ### Zenn 固有
 
