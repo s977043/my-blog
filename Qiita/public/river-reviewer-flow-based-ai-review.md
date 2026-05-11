@@ -36,7 +36,7 @@ https://github.com/s977043/river-reviewer
 
 River Reviewer は、PR差分だけを見るのではなく、要件・設計・実装・テスト・運用という開発の流れ全体をレビュー対象にする OSS のAIレビューフレームワークです。
 
-![River Reviewer の流れ](https://raw.githubusercontent.com/s977043/my-blog/article/qiita-river-reviewer-flow/Qiita/public/river-reviewer-flow-diagram.svg)
+![River Reviewer の流れ](https://raw.githubusercontent.com/s977043/my-blog/main/Qiita/public/river-reviewer-flow-diagram.svg)
 
 ## この記事で伝えたいこと
 
