@@ -65,6 +65,7 @@ Zenn 記事の場合、`note.com/mine_unilabo` へのリンクは `npm run check
 - note 用に新規画像を追加した場合、**先に GitHub `main` へ公開**してから WXR を生成する
 - WXR生成時の `--base-url` は `https://raw.githubusercontent.com/s977043/my-blog/main/articles_note/assets` を使う
 - PR branch の raw URL は一時確認用。**note 本番取り込みには使わない**
+- note記事の作成・レビュー時は `articles_note/checklists/note-article-quality-checklist.md` を参照し、テーマ設計 / サムネ・タイトル設計 / 本文構成 / 読者体験を確認する
 
 ### Zenn 固有
 
@@ -161,4 +162,5 @@ Co-Authored-By: <Model name and byline> <noreply@anthropic.com>
 - **Claude Code ツール**: `CLAUDE.md`
 - **経験則ログ**: `AGENT_LEARNINGS.md`
 - **運用スクリプト**: `.claude/skills/note-export-import/scripts/*.py`
+- **note記事品質チェックリスト**: `articles_note/checklists/note-article-quality-checklist.md`
 - **Skill / Agent / Command定義**: `.claude/skills/*/SKILL.md`, `.claude/agents/*.md`, `.claude/commands/*.md`

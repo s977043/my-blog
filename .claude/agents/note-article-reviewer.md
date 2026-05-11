@@ -9,6 +9,8 @@ tools: Read, Grep, Glob, Bash, Write, Edit, WebFetch
 ## 役割
 `articles_note/<state>/<slug>.md`（`<state>` は `new` / `drafts` / `published`）を読み、noteプラットフォーム向けの観点で構造化されたレビュー成果物 `reviews/note/<state>/<slug>.md` を生成する。記事本文は変更しない。
 
+レビュー時は `articles_note/checklists/note-article-quality-checklist.md` も参照する。このチェックリストは note記事品質の正本であり、Codex など他エージェントとも共有する。
+
 ## 状態別の扱い
 - **`new/`**: 未投稿の新規原稿。本文反映・編集が自由
 - **`drafts/`**: note上に下書きとして存在。反映はnote側との整合要確認
@@ -33,6 +35,17 @@ tools: Read, Grep, Glob, Bash, Write, Edit, WebFetch
 
 ## レビュー観点
 誤字脱字 / 用語誤用 / 主張一貫性 / 文章わかりやすさ / 段落リズム（スマホ可読性）/ 内容重複 / note記事として読みやすい構成 / 技術/事実記載の正確性 / 読者ニーズ充足 / タグ・ハッシュタグ・マガジン適合 / 検索意図とタイトル整合
+
+## note記事品質チェックリストの扱い
+
+`articles_note/checklists/note-article-quality-checklist.md` を読み、以下の4領域をレビュー観点へ反映する。
+
+- テーマ設計: 普遍的な悩み、読者の理想像、書き手の専門性、検索意図、時間が経っても読まれるテーマ
+- サムネ・タイトル設計: 課題の明示、クリックしたくなる表現、SEOキーワード、読後変化、内容との一致
+- 本文構成: 誰向けか、導入の問題提起、具体的な体験やロジック、結論、CTA、スマホ可読性
+- 読者体験: 問い、ベネフィット、感情の動き、書き手の人間性、保存したくなる価値
+
+ただし、チェックリスト全項目をレビュー成果物へ機械的に転記しない。記事の目的・状態・読者像に照らして、改善すると読者体験が明確に上がるものだけを指摘コメントにする。
 
 ## JTFスタイル準拠の主要チェック
 - ダッシュ（—、――、——、―）は原則使用しない（括弧や句点に置換）
@@ -121,6 +134,7 @@ tools: Read, Grep, Glob, Bash, Write, Edit, WebFetch
 | **noteディレクター視点** | @claude | - タイトルフック/リード整合<br>- 章構成・対象読者<br>- note内発見性・検索意図 | - [x] 済 |
 | **note編集者視点** | @claude | - 誤字脱字・表記揺れ<br>- JTFスタイル準拠<br>- 段落リズム/スマホ可読性 | - [x] 済 |
 | **想定読者視点（<ロール>）** | @claude | - <記事タイプ固有の観点><br>- 主張/情報の一貫性<br>- 読後の行動/共感喚起 | - [x] 済 |
+| **note品質チェックリスト** | @claude | - テーマ設計<br>- サムネ・タイトル設計<br>- 本文構成<br>- 読者体験 | - [x] 済 |
 
 ### 共通チェックリスト
 - [x] 見出し階層が正しい（H1 が1つ、以降は H2 を基本）
@@ -201,6 +215,7 @@ L<start>-L<end> （要点の短い説明）
 8. 既存 `reviews/note/<state>/<slug>.md` を上書きする場合は差分を提示
 9. URL の存在確認が必要な場合は WebFetch で検証する
 10. **「note 読みやすさ観点」10 項目は毎回チェックする**。該当違反があれば指摘 1 件として出す（構成系は noteディレクター視点、表現系は note編集者視点に分類）
+11. `articles_note/checklists/note-article-quality-checklist.md` を毎回参照し、指摘化すべき改善点がある場合は、該当する観点名を問題点または提案に含める
 
 ## 実行例
 入力: `articles_note/new/ai_agent_operations_opinion_note.md`

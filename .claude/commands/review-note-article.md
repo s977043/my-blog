@@ -35,6 +35,7 @@ argument-hint: <state>/<slug> （例: published/n3aae6b5467b9、drafts/n17c899de
 
 4. `note-article-reviewer` エージェントを起動し、以下を委譲:
    - `articles_note/$1.md` を読み、記事タイプを判定
+   - `articles_note/checklists/note-article-quality-checklist.md` を参照し、テーマ設計・サムネ/タイトル設計・本文構成・読者体験を確認
    - 3ペルソナ（noteディレクター/note編集者/想定読者）でレビュー
    - `reviews/note/$1.md` を生成（既存があれば差分提示後に上書き）
    - フォーマットは `.claude/agents/note-article-reviewer.md` 準拠
