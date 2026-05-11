@@ -1,17 +1,17 @@
 ---
 title: AIコードレビューはPRだけ見ていていいのか？ 開発の流れ全体をレビューするOSS「River Reviewer」を作った
 tags:
-  - AI
-  - GitHubActions
-  - コードレビュー
   - 開発プロセス
+  - AI
   - OSS
-private: true
-updated_at: ""
-id: null
+  - コードレビュー
+  - GitHubActions
+private: false
+updated_at: '2026-05-11T15:28:53+09:00'
+id: 5a4665e78c4bd1a5c1bc
 organization_url_name: null
 slide: false
-ignorePublish: true
+ignorePublish: false
 ---
 
 # AIコードレビューはPRだけ見ていていいのか？ 開発の流れ全体をレビューするOSS「River Reviewer」を作った
