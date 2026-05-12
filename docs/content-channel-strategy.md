@@ -106,6 +106,10 @@ Channel mapping:
 
 ## Profile strategy
 
+Use the following text as the canonical source for external profile updates.
+The live profile fields on each platform are maintained outside this repository, so
+this document keeps the shared positioning, short bio copy, and link order aligned.
+
 Unify profiles so that readers immediately understand the theme.
 
 ### Zenn profile draft
@@ -141,6 +145,18 @@ Use note as the narrative hub.
 - Link to Qiita for short practical articles.
 - Link to Growth Lab for canonical guides.
 - Link to GitHub for OSS repositories.
+
+### Current entry-point candidates
+
+Use these as the visible first-step articles when updating pinned articles, pickup articles, or profile links.
+
+| Channel | Entry point |
+| --- | --- |
+| note | PlanGate-related article as the fixed entry article when the goal is access growth |
+| Zenn | `articles/plangate-v86-hook-enforcement.md` / `articles/ai-legible-repository-design.md` |
+| Qiita | `Qiita/public/93027e02e962ec327c2f.md` / `Qiita/public/river-reviewer-agent-skills.md` |
+| Growth Lab | canonical guides and validation logs for PlanGate and River Reviewer |
+| GitHub | PlanGate / River Reviewer / repository docs and issues |
 
 ## Existing article update priorities
 
@@ -257,11 +273,12 @@ Track the following signals.
 
 ## Immediate next actions
 
-1. Update profile text across Zenn, Qiita, and note.
+1. Update profile text across Zenn, Qiita, and note using the canonical copy above.
 2. Set current AI-development articles as visible entry points.
 3. Add cross-links to PlanGate, River Reviewer, Agent Skills, and AI-readable repository articles.
-4. Publish two Qiita search-entry articles.
-5. Publish one note hub article.
+4. Confirm note fixed entry article choice for the current growth goal.
+5. Publish two Qiita search-entry articles.
+6. Publish one note hub article.
 
 ## Editorial guardrails
 
