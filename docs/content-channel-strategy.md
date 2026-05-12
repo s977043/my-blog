@@ -154,7 +154,7 @@ Use these as the visible first-step articles when updating pinned articles, pick
 | --- | --- |
 | note | PlanGate-related article as the fixed entry article when the goal is access growth |
 | Zenn | `articles/plangate-v86-hook-enforcement.md` / `articles/ai-legible-repository-design.md` |
-| Qiita | `Qiita/public/93027e02e962ec327c2f.md` / `Qiita/public/river-reviewer-agent-skills.md` |
+| Qiita | `Qiita/public/93027e02e962ec327c2f.md` (PlanGate v8.6.0 metrics and governance) / `Qiita/public/river-reviewer-agent-skills.md` (River Reviewer and Agent Skills) |
 | Growth Lab | canonical guides and validation logs for PlanGate and River Reviewer |
 | GitHub | PlanGate / River Reviewer / repository docs and issues |
 
