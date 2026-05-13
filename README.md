@@ -28,6 +28,17 @@ my-blog/
 - [`Qiita/README.md`](./Qiita/README.md) — Qiita記事の構成・`public/.remote/`の役割
 - [`articles_note/README.md`](./articles_note/README.md) — noteエクスポートとインポートの運用フロー
 
+## 共通ポジショニング
+
+このリポジトリでは、Zenn / Qiita / note / Growth Lab / GitHub を1つの技術コンテンツ群として扱う。
+外部プロフィールや固定導線を更新するときは、[`docs/content-channel-strategy.md`](./docs/content-channel-strategy.md) を正本にする。
+
+共有テーマ:
+
+> AIコーディングをチーム開発に乗せる運用設計
+
+現在の入口に使う記事の目安については、正本である [`docs/content-channel-strategy.md`](./docs/content-channel-strategy.md#current-entry-point-candidates) を参照する。
+
 ## Zenn
 
 - 記事: `articles/*.md`
