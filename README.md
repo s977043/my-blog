@@ -37,13 +37,7 @@ my-blog/
 
 > AIコーディングをチーム開発に乗せる運用設計
 
-現在の入口に使う記事の目安:
-
-- note: PlanGate系の記事を固定入口にする
-- Zenn: `articles/plangate-v86-hook-enforcement.md` / `articles/ai-legible-repository-design.md`
-- Qiita: `Qiita/public/93027e02e962ec327c2f.md` / `Qiita/public/river-reviewer-agent-skills.md`
-- Growth Lab: PlanGate / River Reviewer の canonical guide と validation log
-- GitHub: README, docs, issues, implementation docs
+現在の入口に使う記事の目安については、正本である [`docs/content-channel-strategy.md`](./docs/content-channel-strategy.md#current-entry-point-candidates) を参照する。
 
 ## Zenn
 
