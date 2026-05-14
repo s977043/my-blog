@@ -146,17 +146,41 @@ Use note as the narrative hub.
 - Link to Growth Lab for canonical guides.
 - Link to GitHub for OSS repositories.
 
+### note profile draft
+
+```text
+AIコーディングをチーム開発に乗せる運用設計について書いています。
+PlanGate / River Reviewer / Agent Skills を中心に、
+AIエージェントを個人の便利ツールで終わらせず、チームの開発フローにどう組み込むかを考えています。
+
+技術深掘り: Zenn
+実践メモ: Qiita
+検証ログ: Growth Lab
+OSS: GitHub
+```
+
 ### Current entry-point candidates
 
 Use these as the visible first-step articles when updating pinned articles, pickup articles, or profile links.
 
 | Channel | Entry point |
 | --- | --- |
-| note | PlanGate-related article as the fixed entry article when the goal is access growth |
-| Zenn | `articles/plangate-v86-hook-enforcement.md` / `articles/ai-legible-repository-design.md` |
-| Qiita | `Qiita/public/93027e02e962ec327c2f.md` (PlanGate v8.6.0 metrics and governance) / `Qiita/public/river-reviewer-agent-skills.md` (River Reviewer and Agent Skills) |
+| note | [AIにコードを書かせる前に、人間が承認する場所を作る](https://note.com/mine_unilabo/n/n02992266d622) as the fixed entry article |
+| Zenn | [PlanGate v8.6.0 metrics and governance](https://zenn.dev/minewo/articles/plangate-v86-hook-enforcement) / [AI-readable repository design](https://zenn.dev/minewo/articles/ai-legible-repository-design) |
+| Qiita | [PlanGate v8.6.0 metrics and governance](https://qiita.com/s977043/items/93027e02e962ec327c2f) / `Qiita/public/river-reviewer-agent-skills.md` (River Reviewer and Agent Skills, publish candidate) |
 | Growth Lab | canonical guides and validation logs for PlanGate and River Reviewer |
 | GitHub | PlanGate / River Reviewer / repository docs and issues |
+
+### Manual update checklist
+
+Use this order when applying the strategy outside the repository.
+
+1. Update the Zenn profile with the Zenn profile draft.
+2. Update the Qiita profile with the Qiita profile draft.
+3. Update the note profile with the note profile draft and links to Zenn (https://zenn.dev/minewo), Qiita (https://qiita.com/s977043), Growth Lab (https://the3396.com/articles), and GitHub (https://github.com/s977043).
+4. Set Qiita Pickup Articles to the current AI-development entry points.
+5. Set the note fixed article to the PlanGate entry article above.
+6. Revisit this document after publishing the Qiita River Reviewer / Agent Skills candidate to update the entry-point URL in the table above.
 
 ## Existing article update priorities
 
