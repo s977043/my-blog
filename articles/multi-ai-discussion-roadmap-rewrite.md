@@ -3,7 +3,7 @@ title: "AIエージェント3種で戦略議論したら、OSSロードマップ
 emoji: "🗣️"
 type: "tech"
 topics: ["ai", "claudecode", "codex", "gemini", "oss"]
-published: false
+published: true
 ---
 
 私は PlanGate という、AI コーディングエージェント向けの軽量ガバナンスハーネスを個人 OSS として開発しています。
