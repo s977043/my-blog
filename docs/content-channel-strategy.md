@@ -275,6 +275,15 @@ Use a short block like this near the end of related articles.
 - OSS implementation: GitHub
 ```
 
+## Roadmap operating model（Rolling）
+
+四半期固定のロードマップは AI 分野の変化に対し遅すぎる（Gemini 検証）。**四半期で大枠、月次で具体を新陳代謝する Rolling 方式**で運用する。
+
+- **四半期（大枠）**: 注力する **1〜2 クラスタ × 媒体配分** を決める（Topic clusters から選ぶ。記事単位のガントは作らない）
+- **月次（具体）**: [`post-publish-review-cycle.md`](./post-publish-review-cycle.md) の月次振り返り（30〜45分）で、翌月の具体ネタを微調整。バックログは常に新陳代謝させ、陳腐化したテーマは落とす
+- **還流**: T+30 瞬発 / T+180 持続の結果で「次の1クラスタ」と「資産記事のリライト」をバックログへ。判断単位は記事案でなくクラスタ
+- 下記「30-day execution plan」は本モデルの**現サイクルの記入インスタンス**。サイクルごとに更新し、過去分は履歴として残してよい
+
 ## 30-day execution plan
 
 ### Week 1: Align visible entry points
