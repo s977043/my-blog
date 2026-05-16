@@ -1,6 +1,6 @@
 # Rollout Plan: AI実装境界シリーズ（Qiita 3記事）
 
-[`multichannel-rollout-template.md`](./multichannel-rollout-template.md) の記入インスタンス。来週公開する Qiita シリーズの実行計画。テンプレ初適用（提案 2/3・3/3 の実効性検証兼）。
+Qiita シリーズの実行計画（記入済み）。元テンプレは凍結（[`archive/multichannel-rollout-template.md`](./archive/multichannel-rollout-template.md)）。本ファイルは「次に出す2記事の公開手順」として live 維持。公開順・締切は [`publish-queue.md`](./publish-queue.md) が正。
 
 - 正本参照: [`content-channel-strategy.md`](./content-channel-strategy.md)
 - 作成: 2026-05-17 / 状態: 公開待ち（来週・各記事 `ignorePublish: true` 維持中）
@@ -36,7 +36,7 @@
 - 正本明示リンク文面: 各記事「関連記事」節に実装済み（相互参照済み）
 - 相互リンク確定: ②公開後に①へ②URLを差し込む手順を各記事内「公開当日チェックリスト」に記載済み
 
-## 4. レビュークラス（[review-gate-tiers](./review-gate-tiers.md) 準拠）
+## 4. レビュークラス（[review-gate-tiers](./archive/review-gate-tiers.md) 準拠・基準は凍結だが本シリーズは適用済み）
 
 | 記事 | クラス | 根拠 | 実施済みレビュー |
 |---|---|---|---|
