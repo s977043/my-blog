@@ -1,0 +1,45 @@
+name: Weekly Publish Notify
+
+# 前日（木 18:00 JST = 木 09:00 UTC）に、次の公開対象を承認 Issue として起票する。
+# 公開はしない。内容確認と承認の起点。
+
+on:
+  schedule:
+    - cron: '0 9 * * 4' # Thu 09:00 UTC = Thu 18:00 JST
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TZ: Asia/Tokyo
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: npm ci
+      - name: Build notify body
+        id: body
+        run: |
+          node scripts/weekly-publish.mjs notify > /tmp/notify.md
+          echo "has_target=$(grep -q 'QUEUE_EMPTY\|QUEUE_SKIP' /tmp/notify.md && echo false || echo true)" >> "$GITHUB_OUTPUT"
+          cat /tmp/notify.md
+      - name: Open approval issue
+        if: steps.body.outputs.has_target == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="週次公開 承認リクエスト $(date +%Y-%m-%d)（金 18:00 JST 予定）"
+          gh issue create --title "$title" --body-file /tmp/notify.md --label weekly-publish
+      - name: Notify queue empty/skip
+        if: steps.body.outputs.has_target == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create --title "週次公開: 今週は対象なし $(date +%Y-%m-%d)" --body-file /tmp/notify.md --label weekly-publish
