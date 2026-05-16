@@ -42,7 +42,8 @@
 
 1. **Secret `QIITA_TOKEN`** をリポジトリに追加（Qiita CLI 認証。Qiita > 設定 > アプリケーション > 個人用アクセストークン）
 2. **GitHub Environment `production-publish`** を作成し **Required reviewers** に自分を設定（承認ゲート）
-3. 初回サイクルは `workflow_dispatch` の `dry_run: true` で**ドライラン**し、想定どおり通知/差分が出ることを確認してから本番運用へ
+3. 初回サイクルは `workflow_dispatch` の `dry_run: true` で**ドライラン**し、想定どおり通知/差分が出ることを確認
+4. 上記 1〜3 完了後、**repo variable `WEEKLY_PUBLISH_ENABLED` を `true`** に設定（キルスイッチ）。これを設定するまで publish ジョブは cron でも一切起動しない（Environment 未作成のまま走る事故の二重安全弁）。停止したいときは `false` に戻すだけ
 
 ## キュー運用
 

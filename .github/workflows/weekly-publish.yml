@@ -22,6 +22,10 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # キルスイッチ: repo variable WEEKLY_PUBLISH_ENABLED == 'true' でのみ起動。
+    # 既定 OFF。Secret/Environment セットアップ完了後にユーザーが明示的に有効化する。
+    # （Environment 未作成のまま cron が保護なしで走る事故を防ぐ二重安全弁）
+    if: vars.WEEKLY_PUBLISH_ENABLED == 'true'
     # 承認ゲート: この Environment に Required reviewers を設定しておくこと（docs/weekly-publish-schedule.md）
     environment: production-publish
     env:
