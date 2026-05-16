@@ -1,0 +1,85 @@
+name: Weekly Publish
+
+# 金 18:00 JST（= 金 09:00 UTC）に公開。
+# environment: production-publish の Required reviewers 承認を通過するまで publish ステップは実行されない。
+# 初回は workflow_dispatch + dry_run=true で必ずドライラン。
+
+on:
+  schedule:
+    - cron: '0 9 * * 5' # Fri 09:00 UTC = Fri 18:00 JST
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'ドライラン（公開せず差分のみ表示）'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # 承認ゲート: この Environment に Required reviewers を設定しておくこと（docs/weekly-publish-schedule.md）
+    environment: production-publish
+    env:
+      TZ: Asia/Tokyo
+      QIITA_TOKEN: ${{ secrets.QIITA_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: npm ci
+
+      - name: Resolve mode
+        id: mode
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.dry_run }}" = "false" ]; then
+            echo "execute=--execute" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "execute=--execute" >> "$GITHUB_OUTPUT"
+          else
+            echo "execute=" >> "$GITHUB_OUTPUT"   # dispatch + dry_run(default true) → dry-run
+          fi
+
+      - name: Pre-flight (zenn pace)
+        run: npm run --silent check:zenn-pace || echo "zenn-pace WARN/FAIL — script 側で再判定"
+
+      - name: Run weekly publish
+        id: pub
+        run: node scripts/weekly-publish.mjs publish ${{ steps.mode.outputs.execute }}
+
+      - name: Commit queue advance & frontmatter (execute only)
+        if: steps.mode.outputs.execute == '--execute'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "no changes to commit"
+          else
+            git add docs/publish-queue.md Qiita/ articles/
+            git commit -m "chore(publish): weekly publish $(date +%Y-%m-%d) [skip ci]"
+            git push origin HEAD:main
+          fi
+
+      - name: Open release/zenn PR if Zenn published_at changed
+        if: steps.mode.outputs.execute == '--execute'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Zenn は release/zenn マージで deploy。published_at 設定済み記事があれば PR を作る（マージは人手＝最終ゲート）
+          if git log -1 --name-only --pretty=format: | grep -q '^articles/'; then
+            br="release/zenn-weekly-$(date +%Y%m%d)"
+            git switch -c "$br"
+            git push -u origin "$br" || true
+            gh pr create --base release/zenn --head "$br" \
+              --title "chore(release/zenn): weekly publish $(date +%Y-%m-%d)" \
+              --body "週次公開（Zenn）。published_at 設定済み。rate-limit を確認しマージで予約公開発火。" || true
+          else
+            echo "Zenn 対象なし（今週は Qiita のみ等）"
+          fi
