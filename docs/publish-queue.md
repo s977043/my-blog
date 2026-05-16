@@ -1,33 +1,24 @@
-# Publish Queue（週次公開キュー）
+# Publish Queue（手動公開・デッドラインリスト）
 
-週次公開スケジューラ（[`weekly-publish-schedule.md`](./weekly-publish-schedule.md)）が参照するキュー。**`## Queue` の先頭が次に公開する1本**。月次振り返りで Rolling roadmap（[`content-channel-strategy.md`](./content-channel-strategy.md)）から補充する。
+> 週次自動化スケジューラは凍結中（[`archive/README.md`](./archive/README.md)）。これは**人が手動で公開する順番＋締切**のリスト。Codex/Gemini 検証：リストだけでは停滞する→**デッドライン必須・不完全でも締切で公開**（相互リンク完成や2本同時を待たない）。
 
-## エントリ形式
+## 公開ルール（凍結期間中）
 
-```
-- platform: <qiita|zenn>
-  basename: <ファイル名（拡張子なし）>
-  path: <リポジトリ内パス>
-  review_class: <Full|Standard|Light>
-  goal_dod: <誰の・どの課題を解決し、読者は何ができるか 1行>
-```
+- 1 件ずつ手動公開。締切が来たら**内容が完璧でなくても publish する**（完璧主義の停滞回避＝Gemini 指摘）
+- 手順は各記事内「公開当日チェックリスト」に従う（ignorePublish→false / updated_at / コメント削除 / `npm run check` / `npm run publish:qiita`）
+- 公開したら下の Done へ移動し、公開日を記録
+- Zenn は `published_at` を締切日 18:00 JST に設定 → release/zenn へ反映（rate-limit 24h/3本厳守）
 
-`- [SKIP] <理由>` を先頭に置くとその週はスキップ（publish ジョブが消化）。
+## Queue（締切順）
 
-## Queue
+| # | 締切 | platform | path | レビュー | 状態 |
+|---|---|---|---|---|---|
+| 1 | **2026-05-22（金）18:00 JST** | qiita | `Qiita/public/claude-code-scope-creep-countermeasure.md` | Full（済 PR#246） | 未公開（ignorePublish:true）|
+| 2 | **2026-05-29（金）18:00 JST** | qiita | `Qiita/public/ai-coding-preflight-checklist.md` | Full（済 PR#247） | 未公開（ignorePublish:true）|
 
-- platform: qiita
-  basename: claude-code-scope-creep-countermeasure
-  path: Qiita/public/claude-code-scope-creep-countermeasure.md
-  review_class: Full
-  goal_dod: Claude Code 利用者の「AIが実装範囲を勝手に広げる」課題を解決し、読者は実装前の境界設定を実践できる
-
-- platform: qiita
-  basename: ai-coding-preflight-checklist
-  path: Qiita/public/ai-coding-preflight-checklist.md
-  review_class: Full
-  goal_dod: AIコーディング実務者の「計画が曖昧で実装後レビューが重い」課題を解決し、読者は5項目チェックを実践できる
+- #1 公開後、その実 Qiita URL を控え #2 公開時に「関連記事」へ差し込む（相互リンク確定は #2 公開時で可・#1 を遅らせない）
+- 補充は手動。次テーマが決まったら行を追加（Rolling/テンプレは凍結中のため使わない）
 
 ## Done
 
-（公開済みエントリを公開日とともにここへ移動）
+（公開済みを「YYYY-MM-DD platform basename URL」で記録）
