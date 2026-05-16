@@ -63,10 +63,17 @@ npm run check            # articles / books / Qiita CLIのまとめ確認
 
 Slash Commandの実体は`.claude/commands/`配下、反映ロジックのスキル本体は`.claude/skills/article-review-apply/`を参照。
 
-## 書き分け方針（Qiitaとの対比）
+## 書き分け方針
 
-- **Zenn**（本ディレクトリ）: 実装手順、テンプレート、コマンド、設定例を中心にした技術ガイド
-- **Qiita** (`Qiita/public/`): 体験談、チームでの気づき、失敗と運用改善の前後を中心にした振り返り
+媒体役割・書き分けの**正本は [`docs/content-channel-strategy.md`](../docs/content-channel-strategy.md)**（single source of truth）。ここでは定義を二重化しない。
+
+要点のみ（詳細・最新は正本を参照）:
+
+- **Zenn**（本ディレクトリ）: 体系化された技術知識（実装・設計・スキーマ／逆引きリファレンス資産）
+- **Qiita** (`Qiita/public/`): 検索入口＋実務 Tips・トラブルシュート（鮮度重視・AI生成ガイドライン遵守）
+- **note**: 一次体験・思想（E-E-A-T の Experience）
+
+> 旧記述（Qiita=体験談/振り返り中心）は正本の 2025-2026 版役割定義に合わせて更新。体験談・振り返りは note の役割。
 
 ## 参考
 

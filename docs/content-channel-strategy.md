@@ -6,6 +6,14 @@ This document defines the publishing strategy for note, Zenn, Qiita, and Growth 
 
 The goal is to grow access by treating the channels as one technical content portfolio, not as isolated article destinations.
 
+## Status: canonical（正本）
+
+**このドキュメントが媒体役割・書き分け方針の唯一の正本（single source of truth）。**
+
+- `README.md` / `articles/README.md` / `Qiita/README.md` / `AGENTS.md` 等で媒体役割に言及する場合は、ここを参照（`docs/content-channel-strategy.md` を見よ）に留め、定義を二重に書かない
+- 役割定義が他ファイルと食い違った場合、本ドキュメントが優先。他ファイルは追従修正する
+- 最終更新方針: 各媒体のアルゴリズム/読者特性は年単位で変わる。陳腐化したら「Channel roles」を改訂し、改訂日と根拠を残す（現行は 2025-2026 動向反映版）
+
 ## Core positioning
 
 Use the following positioning as the shared theme across all channels.
@@ -22,13 +30,15 @@ This positioning connects the existing topics into a single recognizable categor
 
 ## Channel roles
 
-| Channel | Role | Primary content |
-| --- | --- | --- |
-| note | Background, narrative, management perspective | Why the workflow matters, EM/TL/PdM implications, lessons learned |
-| Zenn | Technical deep dives | Architecture, implementation details, schemas, GitHub Actions, examples |
-| Qiita | Search entry points and practical tips | Short how-to articles, troubleshooting, first-step guides |
-| Growth Lab | Canonical long-form hub | Complete guides, validation logs, evergreen documentation |
-| GitHub | Source of truth for OSS | README, releases, issues, implementation docs |
+2025-2026 の各媒体動向（Codex 方針検討 + Gemini 検証で更新）を反映した役割定義。
+
+| Channel | Role（2025-2026版） | Primary content | 補足（媒体特性の現実） |
+| --- | --- | --- | --- |
+| note | 一次体験・思想の正本（E-E-A-T の Experience 核） | なぜ作ったか／どう苦労したか／意思決定の背景。AI で代替できない一次情報 | Helpful Content 以降、個人の実体験記事が強い。媒体横断展開の「思想の正本」候補 |
+| Zenn | 体系化された技術知識（ストック資産・逆引きリファレンス） | アーキテクチャ、実装詳細、スキーマ、設計判断。将来の自分と読者の資産 | 深掘りだけでなく逆引きリファレンス用途で SEO が強い |
+| Qiita | 検索入口＋議論の火種（鮮度・コミュニティ評価） | 短い実務 Tips、トラブルシュート、最初の一歩。最新トレンドへの即応 | 単なる Tips 置き場ではなく鮮度・正確性のアルゴリズム評価が厳格化。AI 生成コンテンツガイドライン遵守が必須 |
+| Growth Lab | Canonical long-form hub | Complete guides, validation logs, evergreen documentation | 体系ガイドの最終到達点 |
+| GitHub | Source of truth for OSS | README, releases, issues, implementation docs | OSS の実装真実 |
 
 ## Reader journey
 
@@ -41,6 +51,20 @@ Design articles so that readers can move through this path.
 5. GitHub: star, try, file an issue, or contribute.
 
 Do not publish the same body to every platform. Reframe the same topic for each reader intent.
+
+## Cross-posting rules（重複コンテンツ・カニバリ回避）
+
+1テーマ多媒体展開は露出最大化に有効だが、本文を微調整しただけの再投稿は検索エンジンに実質同一と判定され、ドメイン最強の1本以外がインデックス未登録になるリスクがある（Gemini 検証指摘）。
+
+- **正本を1つ決める**: テーマごとに「正本（canonical）媒体」を1つ決め、他媒体は再構成版と位置づける。デフォルトの正本方向は **note（一次体験・思想）→ Zenn/Qiita へ抽出**。技術仕様が主役のテーマは Zenn を正本にしてよい（テーマ単位で選択）
+- **冒頭に正本明示リンク**: 再構成版の冒頭に「本記事は〈正本媒体〉を正本とし、媒体特性に合わせて再構成したものです」と1文＋正本へのリンクを置く。スパム判定回避と読者の回遊を兼ねる
+- **本文を実質変える**: 媒体ごとに読者意図に合わせて再構成（同一段落の使い回しをしない）。note=体験/思想、Zenn=体系/実装、Qiita=実務 Tips/トラブルシュート
+- **カニバリ自己チェック**: 自分の既存記事と検索意図が被らないか公開前に確認（同テーマ複数記事はシリーズ化し相互リンクで束ねる）
+
+## AI 生成コンテンツの媒体ポリシー
+
+- **Qiita**: AI 生成コンテンツガイドラインに従い、AI を主として作成した記事は明示する。違反はシャドウバン級の不利益。多段 AI レビューを通した記事でも「付加価値のない AI 生成物」と見なされないよう、執筆者の一次体験・独自見解（I-message）を必ず含める
+- 全媒体共通: Google は AI 生成そのものを罰しないが「付加価値のない量産」は順位を大きく下げる。E-E-A-T の Experience（実体験）を各記事に1つは必ず入れる
 
 ## Topic clusters
 
