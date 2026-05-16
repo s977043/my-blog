@@ -99,6 +99,15 @@ python3 .claude/skills/note-export-import/scripts/verify_wxr.py articles_note/bu
 - `reflog` を併用して誤配置 commit の救出が可能（`git cherry-pick <sha>` で目的ブランチに移動）
 - 詳細事例: `@AGENT_LEARNINGS.md` の「並列セッションによるブランチ干渉」エントリ
 
+#### `M AGENTS.md`（claude-mem 自動注入ブロック）は WIP ではない
+
+`git status` に常駐する `M AGENTS.md` は、多くの場合 claude-mem プラグインが末尾へ自動追記する `<claude-mem-context>...</claude-mem-context>` ブロックである（毎セッション再生成される transient な記憶コンテキスト）。**ユーザー WIP や並列セッションの変更ではない**。
+
+- **絶対に commit しない**（リポジトリを記憶ログで汚染する）
+- ブランチ切替の度に `git stash push AGENTS.md` → `pop` を繰り返すのは非効率。**`git diff AGENTS.md` で `<claude-mem-context>` ブロックのみと確認できたら `git checkout -- AGENTS.md` で破棄**してから切替える（再生成されるので情報損失なし）
+- ただし破棄前に必ず `git diff AGENTS.md` を見る。規約本文（`<claude-mem-context>` より上）に実変更が混在していたら、その部分だけは別途扱う
+- commit 時は `git add -A` を使わず**対象ファイルを明示**して staging（AGENTS.md を巻き込まない）
+
 #### `gh pr create` 直前チェックリスト
 
 push 直後に並列セッションが別ブランチへ切り替えると、`gh pr create` が「must first push the current branch to a remote」で失敗する。以下 3 行を直前に走らせると、ブランチ名ズレ / upstream 未同期 / head 不一致を検知できる。
