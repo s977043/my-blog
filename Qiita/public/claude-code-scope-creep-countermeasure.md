@@ -1,14 +1,14 @@
 ---
-title: 'Claude CodeでAIが勝手に実装範囲を広げる（スコープクリープ）ときの対策'
+title: Claude CodeでAIが勝手に実装範囲を広げる（スコープクリープ）ときの対策
 tags:
-  - ClaudeCode
-  - 生成AI
-  - AI駆動開発
   - チーム開発
   - コードレビュー
+  - 生成AI
+  - AI駆動開発
+  - ClaudeCode
 private: false
-updated_at: '2026-05-18T00:00:00+09:00'
-id: null
+updated_at: '2026-05-18T07:42:15+09:00'
+id: a25ec91ea411f39bf340
 organization_url_name: null
 slide: false
 ignorePublish: false
