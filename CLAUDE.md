@@ -48,8 +48,10 @@ npm run preview:qiita      # Qiita プレビュー
 npm run check              # Zenn + Qiita 構造チェック + note参照lint
 npm run new:qiita -- <slug>
 npm run pull:qiita
-npm run publish:qiita -- <slug>
+npm run publish:qiita -- <slug>   # Qiita公開はこのproject標準scriptで叩く（生 npx qiita publish は安全機構でブロックされやすい）。実行前に必ず npm run check
 ```
+
+> Qiita 公開準備: `ignorePublish:false` 化・`updated_at` 更新・公開当日HTMLコメント削除を `npm run check`（`check:qiita-publish-hygiene` 含む）で検証してから `publish:qiita`。詳細は `@AGENT_LEARNINGS.md` 2026-05-18 エントリ群。
 
 ### note （Python）
 

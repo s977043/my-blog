@@ -14,10 +14,11 @@
     "check:note-ref": "node scripts/check-note-reference.js",
     "check:note-images": "node scripts/check-note-images.js",
     "check:note-tables": "node scripts/check-note-tables.js",
+    "check:qiita-publish-hygiene": "node scripts/check-qiita-publish-hygiene.js",
     "check:doc-freshness": "node scripts/check-doc-freshness.js",
     "check:zenn-pace": "node scripts/check-zenn-publish-pace.js",
     "check:zenn-title": "node scripts/check-zenn-title-length.js",
-    "check": "npm run list:articles && npm run list:books && npm run check:qiita && npm run check:note-ref && npm run check:note-images && npm run check:note-tables && npm run check:doc-freshness && npm run check:zenn-title"
+    "check": "npm run list:articles && npm run list:books && npm run check:qiita && npm run check:note-ref && npm run check:note-images && npm run check:note-tables && npm run check:qiita-publish-hygiene && npm run check:doc-freshness && npm run check:zenn-title"
   },
   "dependencies": {
     "zenn-cli": "^0.4.7"
