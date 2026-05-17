@@ -83,7 +83,24 @@ articles_note/
 ### SVG→PNG 変換（日本語テキストを含む場合）
 
 **macOS では `cairosvg` は日本語フォントを正常レンダリングできない**（Hiragino/.ttc 未解決 → □□□）。
-Chrome headless を使うこと:
+Chrome headless を使うこと。**さらに SVG の `font-family` が未指定/汎用名のままだと Chrome でも豆腐になり得る**ため、レンダリング前に SVG 内の全 `font-family` を明示的に Hiragino へ正規表現置換してから渡す:
+
+```bash
+python3 - <<'PY'
+import re
+s=open('in.svg',encoding='utf-8').read()
+JP='Hiragino Sans, Hiragino Kaku Gothic ProN, sans-serif'
+if 'font-family' not in s.split('>')[0]:
+    s=s.replace('<svg ', f'<svg font-family="{JP}" ',1)
+s=re.sub(r'font-family\s*=\s*"[^"]*"', f'font-family="{JP}"', s)
+s=re.sub(r'font-family\s*:\s*[^;"]+', f'font-family:{JP}', s)
+open('out.svg','w',encoding='utf-8').write(s)
+PY
+```
+
+置換済み SVG を HTML でラップし（`<body>` 直下に貼る）、`--force-device-scale-factor=2` と `viewBox` 比率に合わせた `--window-size` で Chrome headless に渡す。生成後は必ず目視で tofu / 見切れ / 文言を確認する（Gemini 設計の図・カバーは AGENT_LEARNINGS.md 2026-05-15 参照）。
+
+基本形は以下:
 
 ```bash
 /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \

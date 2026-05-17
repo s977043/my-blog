@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">PlanGate Metrics v1 の改善ループ</title>
+  <desc id="desc">Hook違反などのイベントを集計し、retrospectiveで改善アクションへつなげる流れ</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0f172a" flood-opacity="0.13"/>
+    </filter>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="10" refY="7" orient="auto">
+      <path d="M0,0 L14,7 L0,14 z" fill="#0f8f88"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" fill="#fbfcfd"/>
+  <text x="800" y="78" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="48" font-weight="800" fill="#142033">「止まった」を記録して、次の改善に戻す</text>
+  <text x="800" y="126" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="24" fill="#475569">Metrics v1 はダッシュボード目的ではなく、改善判断の材料として置く</text>
+
+  <g font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" filter="url(#shadow)">
+    <rect x="85" y="235" width="290" height="210" rx="26" fill="#eff6ff" stroke="#2563eb" stroke-width="3"/>
+    <text x="230" y="292" text-anchor="middle" font-size="32" font-weight="800" fill="#172033">Hookが止める</text>
+    <text x="230" y="342" text-anchor="middle" font-size="23" fill="#334155">例: forbidden_files</text>
+    <text x="230" y="376" text-anchor="middle" font-size="23" fill="#334155">plan_hash</text>
+    <text x="230" y="410" text-anchor="middle" font-size="23" fill="#334155">merge_approval</text>
+
+    <rect x="460" y="235" width="290" height="210" rx="26" fill="#eefdfb" stroke="#0f8f88" stroke-width="3"/>
+    <text x="605" y="292" text-anchor="middle" font-size="32" font-weight="800" fill="#172033">Event化する</text>
+    <text x="605" y="342" text-anchor="middle" font-size="23" fill="#334155">TASK ID</text>
+    <text x="605" y="376" text-anchor="middle" font-size="23" fill="#334155">hook名</text>
+    <text x="605" y="410" text-anchor="middle" font-size="23" fill="#334155">decision / result</text>
+
+    <rect x="835" y="235" width="290" height="210" rx="26" fill="#fff7ed" stroke="#ea580c" stroke-width="3"/>
+    <text x="980" y="292" text-anchor="middle" font-size="32" font-weight="800" fill="#172033">集計する</text>
+    <text x="980" y="342" text-anchor="middle" font-size="23" fill="#334155">TASK別</text>
+    <text x="980" y="376" text-anchor="middle" font-size="23" fill="#334155">Hook別</text>
+    <text x="980" y="410" text-anchor="middle" font-size="23" fill="#334155">週次推移</text>
+
+    <rect x="1210" y="235" width="290" height="210" rx="26" fill="#f1f5f9" stroke="#475569" stroke-width="3"/>
+    <text x="1355" y="292" text-anchor="middle" font-size="32" font-weight="800" fill="#172033">改善に戻す</text>
+    <text x="1355" y="342" text-anchor="middle" font-size="23" fill="#334155">allowed_files見直し</text>
+    <text x="1355" y="376" text-anchor="middle" font-size="23" fill="#334155">scope分割</text>
+    <text x="1355" y="410" text-anchor="middle" font-size="23" fill="#334155">Hook strict化</text>
+  </g>
+
+  <path d="M380 340 H445" stroke="#0f8f88" stroke-width="8" marker-end="url(#arrow)"/>
+  <path d="M755 340 H820" stroke="#0f8f88" stroke-width="8" marker-end="url(#arrow)"/>
+  <path d="M1130 340 H1195" stroke="#0f8f88" stroke-width="8" marker-end="url(#arrow)"/>
+  <path d="M1355 450 C1360 645, 260 645, 230 455" fill="none" stroke="#0f8f88" stroke-width="8" stroke-dasharray="18 16" marker-end="url(#arrow)"/>
+
+  <g font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif">
+    <rect x="190" y="585" width="1220" height="165" rx="30" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+    <text x="800" y="634" text-anchor="middle" font-size="30" font-weight="800" fill="#172033">Retrospective での会話が変わる</text>
+    <text x="800" y="684" text-anchor="middle" font-size="25" fill="#334155">「最近止まっている気がする」</text>
+    <text x="800" y="726" text-anchor="middle" font-size="25" font-weight="800" fill="#0f8f88">「hook_violation 12件。うち forbidden_files 8件、5件は TASK-0078 系」</text>
+  </g>
+</svg>
