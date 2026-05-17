@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">5ラウンドのマルチエージェント議論フロー</title>
+  <desc id="desc">Codex、Gemini、Codexの反証、外部OSS利用者視点を通じてロードマップが組み替わる流れ</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0f172a" flood-opacity="0.13"/>
+    </filter>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="10" refY="7" orient="auto">
+      <path d="M0,0 L14,7 L0,14 z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" fill="#fbfcfd"/>
+  <text x="800" y="78" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="46" font-weight="800" fill="#142033">合意ではなく、前提を壊しに行く5ラウンド</text>
+  <text x="800" y="124" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="24" fill="#475569">同じテーマを、深掘り・外部知見・反証・利用者視点で順番に検査する</text>
+
+  <g font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" filter="url(#shadow)">
+    <rect x="70" y="245" width="255" height="260" rx="24" fill="#eff6ff" stroke="#2563eb" stroke-width="3"/>
+    <circle cx="118" cy="296" r="28" fill="#2563eb"/>
+    <text x="118" y="306" text-anchor="middle" font-size="30" font-weight="800" fill="#fff">1</text>
+    <text x="198" y="300" text-anchor="middle" font-size="28" font-weight="800" fill="#172033">Codex</text>
+    <text x="198" y="356" text-anchor="middle" font-size="22" fill="#334155">Steering Loop</text>
+    <text x="198" y="389" text-anchor="middle" font-size="22" fill="#334155">強化方針を詰める</text>
+    <text x="198" y="455" text-anchor="middle" font-size="21" font-weight="700" fill="#1d4ed8">schema互換性を修正</text>
+
+    <rect x="365" y="245" width="255" height="260" rx="24" fill="#eefdfb" stroke="#0f8f88" stroke-width="3"/>
+    <circle cx="413" cy="296" r="28" fill="#0f8f88"/>
+    <text x="413" y="306" text-anchor="middle" font-size="30" font-weight="800" fill="#fff">2</text>
+    <text x="493" y="300" text-anchor="middle" font-size="28" font-weight="800" fill="#172033">Codex</text>
+    <text x="493" y="356" text-anchor="middle" font-size="22" fill="#334155">自己進化軸を</text>
+    <text x="493" y="389" text-anchor="middle" font-size="22" fill="#334155">15軸に分解</text>
+    <text x="493" y="455" text-anchor="middle" font-size="21" font-weight="700" fill="#0f766e">観測は基盤と判定</text>
+
+    <rect x="660" y="245" width="255" height="260" rx="24" fill="#fff7ed" stroke="#ea580c" stroke-width="3"/>
+    <circle cx="708" cy="296" r="28" fill="#ea580c"/>
+    <text x="708" y="306" text-anchor="middle" font-size="30" font-weight="800" fill="#fff">3</text>
+    <text x="788" y="300" text-anchor="middle" font-size="28" font-weight="800" fill="#172033">Gemini</text>
+    <text x="788" y="356" text-anchor="middle" font-size="22" fill="#334155">外部知見と</text>
+    <text x="788" y="389" text-anchor="middle" font-size="22" fill="#334155">業界事例に照合</text>
+    <text x="788" y="455" text-anchor="middle" font-size="21" font-weight="700" fill="#c2410c">全部のせ案が出る</text>
+
+    <rect x="955" y="245" width="255" height="260" rx="24" fill="#fef2f2" stroke="#dc2626" stroke-width="3"/>
+    <circle cx="1003" cy="296" r="28" fill="#dc2626"/>
+    <text x="1003" y="306" text-anchor="middle" font-size="30" font-weight="800" fill="#fff">4</text>
+    <text x="1083" y="300" text-anchor="middle" font-size="28" font-weight="800" fill="#172033">Codex</text>
+    <text x="1083" y="356" text-anchor="middle" font-size="22" fill="#334155">Devil's Advocateで</text>
+    <text x="1083" y="389" text-anchor="middle" font-size="22" fill="#334155">制約に照らす</text>
+    <text x="1083" y="455" text-anchor="middle" font-size="21" font-weight="700" fill="#b91c1c">撤回・延期を判定</text>
+
+    <rect x="1250" y="245" width="280" height="260" rx="24" fill="#f1f5f9" stroke="#475569" stroke-width="3"/>
+    <circle cx="1298" cy="296" r="28" fill="#475569"/>
+    <text x="1298" y="306" text-anchor="middle" font-size="30" font-weight="800" fill="#fff">5</text>
+    <text x="1390" y="300" text-anchor="middle" font-size="28" font-weight="800" fill="#172033">利用者視点</text>
+    <text x="1390" y="356" text-anchor="middle" font-size="22" fill="#334155">新規OSS利用者・</text>
+    <text x="1390" y="389" text-anchor="middle" font-size="22" fill="#334155">3〜10人チームで再評価</text>
+    <text x="1390" y="455" text-anchor="middle" font-size="21" font-weight="700" fill="#334155">主軸がOSS整備へ</text>
+  </g>
+
+  <path d="M330 375 H350" stroke="#64748b" stroke-width="8" marker-end="url(#arrow)"/>
+  <path d="M625 375 H645" stroke="#64748b" stroke-width="8" marker-end="url(#arrow)"/>
+  <path d="M920 375 H940" stroke="#64748b" stroke-width="8" marker-end="url(#arrow)"/>
+  <path d="M1215 375 H1235" stroke="#64748b" stroke-width="8" marker-end="url(#arrow)"/>
+
+  <g font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif">
+    <rect x="220" y="625" width="1160" height="120" rx="30" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+    <text x="800" y="675" text-anchor="middle" font-size="30" font-weight="800" fill="#172033">効いた設計</text>
+    <text x="800" y="718" text-anchor="middle" font-size="24" fill="#475569">同じ結論を増強するのではなく、役割を変えて「採用・撤回・延期」を判定させる</text>
+  </g>
+</svg>

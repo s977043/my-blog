@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Option B から Option D へのロードマップ組み替え</title>
+  <desc id="desc">自己進化中心の計画からOSS整備中心の計画へ主軸が移ったことを示す比較図</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0f172a" flood-opacity="0.13"/>
+    </filter>
+    <marker id="arrow" markerWidth="16" markerHeight="16" refX="12" refY="8" orient="auto">
+      <path d="M0,0 L16,8 L0,16 z" fill="#0f8f88"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" fill="#fbfcfd"/>
+  <text x="800" y="80" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="46" font-weight="800" fill="#142033">ロードマップの主軸が「自己進化」から「OSS整備」へ移った</text>
+  <text x="800" y="126" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="24" fill="#475569">外部利用者視点を入れた瞬間、価値の届け先が変わった</text>
+
+  <g font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" filter="url(#shadow)">
+    <rect x="110" y="215" width="560" height="470" rx="30" fill="#eff6ff" stroke="#2563eb" stroke-width="3"/>
+    <text x="390" y="275" text-anchor="middle" font-size="36" font-weight="800" fill="#172033">元計画 Option B</text>
+    <text x="390" y="316" text-anchor="middle" font-size="22" fill="#475569">作者の運用ログを高度化する方向</text>
+    <rect x="170" y="360" width="440" height="62" rx="16" fill="#dbeafe"/>
+    <text x="390" y="400" text-anchor="middle" font-size="25" font-weight="800" fill="#1e3a8a">主: Trace Timeline v1</text>
+    <rect x="170" y="445" width="440" height="62" rx="16" fill="#dbeafe"/>
+    <text x="390" y="485" text-anchor="middle" font-size="25" font-weight="800" fill="#1e3a8a">主: Run Outcome Review v1</text>
+    <rect x="170" y="530" width="440" height="62" rx="16" fill="#dbeafe"/>
+    <text x="390" y="570" text-anchor="middle" font-size="25" font-weight="800" fill="#1e3a8a">副: Gate Event Normalization</text>
+    <text x="390" y="637" text-anchor="middle" font-size="24" fill="#334155">観測・再現・自己改善が中心</text>
+
+    <rect x="930" y="215" width="560" height="470" rx="30" fill="#eefdfb" stroke="#0f8f88" stroke-width="3"/>
+    <text x="1210" y="275" text-anchor="middle" font-size="36" font-weight="800" fill="#172033">確定版 Option D</text>
+    <text x="1210" y="316" text-anchor="middle" font-size="22" fill="#475569">外部OSS利用者へ安全な型を配る方向</text>
+    <rect x="990" y="360" width="440" height="62" rx="16" fill="#ccfbf1"/>
+    <text x="1210" y="400" text-anchor="middle" font-size="25" font-weight="800" fill="#115e59">主: 段階的導入ガイド</text>
+    <rect x="990" y="445" width="440" height="62" rx="16" fill="#ccfbf1"/>
+    <text x="1210" y="485" text-anchor="middle" font-size="25" font-weight="800" fill="#115e59">主: Plugin 成熟化</text>
+    <rect x="990" y="530" width="440" height="62" rx="16" fill="#ccfbf1"/>
+    <text x="1210" y="570" text-anchor="middle" font-size="25" font-weight="800" fill="#115e59">主: バージョニング安定性</text>
+    <text x="1210" y="637" text-anchor="middle" font-size="24" fill="#334155">導入・継続利用・壊れにくさが中心</text>
+  </g>
+
+  <path d="M700 450 H900" stroke="#0f8f88" stroke-width="12" marker-end="url(#arrow)"/>
+  <text x="800" y="410" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="26" font-weight="800" fill="#0f8f88">Round 5 で前提が反転</text>
+
+  <g font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif">
+    <rect x="230" y="740" width="1140" height="82" rx="24" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+    <text x="800" y="792" text-anchor="middle" font-size="26" font-weight="800" fill="#172033">問いの変化: 「作者の運用をどう高度化するか」から「利用者が安全に始めるには何が必要か」へ</text>
+  </g>
+</svg>
