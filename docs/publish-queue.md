@@ -13,12 +13,11 @@
 
 | # | 締切 | platform | path | レビュー | 状態 |
 |---|---|---|---|---|---|
-| 1 | **2026-05-22（金）18:00 JST** | qiita | `Qiita/public/claude-code-scope-creep-countermeasure.md` | Full（済 PR#246） | 未公開（ignorePublish:true）|
 | 2 | **2026-05-29（金）18:00 JST** | qiita | `Qiita/public/ai-coding-preflight-checklist.md` | Full（済 PR#247） | 未公開（ignorePublish:true）|
 
-- #1 公開後、その実 Qiita URL を控え #2 公開時に「関連記事」へ差し込む（相互リンク確定は #2 公開時で可・#1 を遅らせない）
+- #2 公開時、本文「関連記事」の scope-creep 参照に下記 Done の実 Qiita URL を差し込む（相互リンク確定）
 - 補充は手動。次テーマが決まったら行を追加（Rolling/テンプレは凍結中のため使わない）
 
 ## Done
 
-（公開済みを「YYYY-MM-DD platform basename URL」で記録）
+- 2026-05-18 qiita claude-code-scope-creep-countermeasure https://qiita.com/s977043/items/a25ec91ea411f39bf340
