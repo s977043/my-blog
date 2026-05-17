@@ -201,7 +201,7 @@ Use these as the visible first-step articles when updating pinned articles, pick
 | --- | --- |
 | note | [AIにコードを書かせる前に、人間が承認する場所を作る](https://note.com/mine_unilabo/n/n02992266d622) as the fixed entry article |
 | Zenn | [PlanGate v8.6.0 metrics and governance](https://zenn.dev/minewo/articles/plangate-v86-hook-enforcement) / [AI-readable repository design](https://zenn.dev/minewo/articles/ai-legible-repository-design) |
-| Qiita | [PlanGate v8.6.0 metrics and governance](https://qiita.com/s977043/items/93027e02e962ec327c2f) / `Qiita/public/river-reviewer-agent-skills.md` (River Reviewer and Agent Skills, publish candidate) |
+| Qiita | [PlanGate v8.6.0 metrics and governance](https://qiita.com/s977043/items/5ebff79112ecf1af872c) / `Qiita/public/river-reviewer-agent-skills.md` (River Reviewer and Agent Skills, publish candidate) |
 | Growth Lab | canonical guides and validation logs for PlanGate and River Reviewer |
 | GitHub | PlanGate / River Reviewer / repository docs and issues |
 
