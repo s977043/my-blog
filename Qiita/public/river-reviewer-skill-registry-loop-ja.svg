@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">レビュー指摘を Skill Registry に戻す改善ループ</title>
+  <desc id="desc">レビュー指摘、人間の判断、Skill更新、次回レビューを循環させる図</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0f172a" flood-opacity="0.13"/>
+    </filter>
+    <marker id="arrowBlue" markerWidth="14" markerHeight="14" refX="10" refY="7" orient="auto">
+      <path d="M0,0 L14,7 L0,14 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="14" markerHeight="14" refX="10" refY="7" orient="auto">
+      <path d="M0,0 L14,7 L0,14 z" fill="#16a34a"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" fill="#fbfcfd"/>
+  <text x="800" y="75" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="46" font-weight="800" fill="#142033">レビュー指摘を、次回に使えるチームの知識へ戻す</text>
+  <text x="800" y="122" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="24" fill="#475569">Skill Registry は、その場限りのコメントを再利用可能なレビュー観点に変える</text>
+
+  <g font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" filter="url(#shadow)">
+    <rect x="100" y="190" width="360" height="190" rx="24" fill="#eef5ff" stroke="#2563eb" stroke-width="3"/>
+    <circle cx="145" cy="235" r="26" fill="#2563eb"/>
+    <text x="145" y="245" text-anchor="middle" font-size="28" font-weight="800" fill="#fff">1</text>
+    <text x="280" y="260" text-anchor="middle" font-size="32" font-weight="800" fill="#172033">レビュー指摘</text>
+    <text x="280" y="307" text-anchor="middle" font-size="22" fill="#334155">AIレビューが</text>
+    <text x="280" y="337" text-anchor="middle" font-size="22" fill="#334155">指摘とコメントを出す</text>
+
+    <rect x="1140" y="190" width="360" height="190" rx="24" fill="#eefdfb" stroke="#0f8f88" stroke-width="3"/>
+    <circle cx="1185" cy="235" r="26" fill="#0f8f88"/>
+    <text x="1185" y="245" text-anchor="middle" font-size="28" font-weight="800" fill="#fff">2</text>
+    <text x="1320" y="260" text-anchor="middle" font-size="32" font-weight="800" fill="#172033">人間の判断</text>
+    <text x="1320" y="307" text-anchor="middle" font-size="22" fill="#334155">採用・却下・改善を</text>
+    <text x="1320" y="337" text-anchor="middle" font-size="22" fill="#334155">理由つきで決める</text>
+
+    <rect x="1140" y="590" width="360" height="190" rx="24" fill="#f1faee" stroke="#16a34a" stroke-width="3"/>
+    <circle cx="1185" cy="635" r="26" fill="#16a34a"/>
+    <text x="1185" y="645" text-anchor="middle" font-size="28" font-weight="800" fill="#fff">3</text>
+    <text x="1320" y="660" text-anchor="middle" font-size="32" font-weight="800" fill="#172033">Skill更新</text>
+    <text x="1320" y="707" text-anchor="middle" font-size="22" fill="#334155">プロンプト・例・評価を</text>
+    <text x="1320" y="737" text-anchor="middle" font-size="22" fill="#334155">判断に合わせて直す</text>
+
+    <rect x="100" y="590" width="360" height="190" rx="24" fill="#fff8eb" stroke="#d97706" stroke-width="3"/>
+    <circle cx="145" cy="635" r="26" fill="#d97706"/>
+    <text x="145" y="645" text-anchor="middle" font-size="28" font-weight="800" fill="#fff">4</text>
+    <text x="280" y="660" text-anchor="middle" font-size="32" font-weight="800" fill="#172033">次回レビュー</text>
+    <text x="280" y="707" text-anchor="middle" font-size="22" fill="#334155">改善済みのSkillで</text>
+    <text x="280" y="737" text-anchor="middle" font-size="22" fill="#334155">より良いレビューを行う</text>
+  </g>
+
+  <g font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" filter="url(#shadow)">
+    <ellipse cx="800" cy="456" rx="250" ry="80" fill="#e8fbf7" stroke="#0f8f88" stroke-width="4"/>
+    <rect x="550" y="456" width="500" height="210" fill="#e8fbf7" stroke="#0f8f88" stroke-width="4"/>
+    <ellipse cx="800" cy="666" rx="250" ry="80" fill="#d6f5ee" stroke="#0f8f88" stroke-width="4"/>
+    <text x="800" y="463" text-anchor="middle" font-size="38" font-weight="800" fill="#172033">Skill Registry</text>
+    <g>
+      <rect x="600" y="510" width="170" height="60" rx="14" fill="#fff" stroke="#94a3b8" stroke-width="2"/>
+      <rect x="830" y="510" width="170" height="60" rx="14" fill="#fff" stroke="#94a3b8" stroke-width="2"/>
+      <rect x="600" y="600" width="170" height="60" rx="14" fill="#fff" stroke="#94a3b8" stroke-width="2"/>
+      <rect x="830" y="600" width="170" height="60" rx="14" fill="#fff" stroke="#94a3b8" stroke-width="2"/>
+      <text x="685" y="548" text-anchor="middle" font-size="23" font-weight="700" fill="#334155">プロンプト</text>
+      <text x="915" y="548" text-anchor="middle" font-size="23" font-weight="700" fill="#334155">入力例</text>
+      <text x="685" y="638" text-anchor="middle" font-size="23" font-weight="700" fill="#334155">期待結果</text>
+      <text x="915" y="638" text-anchor="middle" font-size="23" font-weight="700" fill="#334155">評価設定</text>
+    </g>
+  </g>
+
+  <path d="M460 280 C675 120, 930 120, 1140 280" fill="none" stroke="#2563eb" stroke-width="10" marker-end="url(#arrowBlue)"/>
+  <path d="M1320 380 C1380 450, 1380 530, 1320 590" fill="none" stroke="#0f8f88" stroke-width="10" marker-end="url(#arrowGreen)"/>
+  <path d="M1140 690 C900 850, 650 850, 460 690" fill="none" stroke="#16a34a" stroke-width="10" marker-end="url(#arrowGreen)"/>
+  <path d="M280 590 C205 510, 205 460, 280 380" fill="none" stroke="#d97706" stroke-width="10" marker-end="url(#arrowBlue)"/>
+
+  <g font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" fill="#334155">
+    <text x="800" y="205" text-anchor="middle" font-size="22">指摘を判断へ回す</text>
+    <text x="1415" y="490" text-anchor="middle" font-size="22">理由を反映する</text>
+    <text x="800" y="835" text-anchor="middle" font-size="22">改善済みSkillを再利用する</text>
+    <text x="185" y="490" text-anchor="middle" font-size="22">次のレビューで検証する</text>
+  </g>
+</svg>
