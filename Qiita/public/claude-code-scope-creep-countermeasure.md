@@ -21,7 +21,7 @@ ignorePublish: true
 3. このHTMLコメントブロックを削除（公開後も編集画面で閲覧可・社内運用語を含むため）
 4. シリーズ相互リンク確定:
    - 「AIコーディング前に確認する5項目」(ai-coding-preflight-checklist) を同日or先行公開し本文「関連記事」に実Qiita URLを差し込む
-   - PlanGate記事リンク https://qiita.com/s977043/items/93027e02e962ec327c2f は到達確認済み
+   - PlanGate記事リンク https://qiita.com/s977043/items/5ebff79112ecf1af872c は到達確認済み
 5. 関連リンクの実URL最終確認（PlanGate / Growth Lab は 200 確認済み 2026-05-16）
 6. npm run check パス確認 → npm run publish:qiita -- claude-code-scope-creep-countermeasure
 公開順: 本記事（症状と全体像）→ preflight（5項目の詳細）。問題提起を先に出す。
@@ -217,7 +217,7 @@ AIを止めることが目的ではありません。
 この記事は「症状（スコープクリープ）と対策の全体像」を扱いました。各論はシリーズで分けています。
 
 - 計画フォーマットの詳細（Goal / Scope / Non-goals / Test / Risks の書き方リファレンス）: 「AIコーディング前に確認する5項目」（別記事）
-- 「止めた回数を数字で見る」運用化の実例: [AIの止まり方を「数字で見る」ようにした体験：PlanGate v8.6.0](https://qiita.com/s977043/items/93027e02e962ec327c2f)
+- 「止めた回数を数字で見る」運用化の実例: [AIの止まり方を「数字で見る」ようにした体験：PlanGate v8.6.0](https://qiita.com/s977043/items/5ebff79112ecf1af872c)
 
 本記事は「まず症状に気づいて止める」、5項目記事は「止めるための計画の書き方」、PlanGate記事は「止めた結果を計測する」と役割を分けています。
 
