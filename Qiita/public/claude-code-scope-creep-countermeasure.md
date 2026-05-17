@@ -7,25 +7,12 @@ tags:
   - チーム開発
   - コードレビュー
 private: false
-updated_at: '2026-05-13T00:00:00+09:00'
+updated_at: '2026-05-18T00:00:00+09:00'
 id: null
 organization_url_name: null
 slide: false
-ignorePublish: true
+ignorePublish: false
 ---
-
-<!--
-公開当日チェックリスト（来週公開予定 / 3視点+Codexレビュー反映済み 2026-05-16）:
-1. frontmatter ignorePublish: true → false に変更（これをしないと publish されない）
-2. frontmatter updated_at を公開当日の日時に更新
-3. このHTMLコメントブロックを削除（公開後も編集画面で閲覧可・社内運用語を含むため）
-4. シリーズ相互リンク確定:
-   - 「AIコーディング前に確認する5項目」(ai-coding-preflight-checklist) を同日or先行公開し本文「関連記事」に実Qiita URLを差し込む
-   - PlanGate記事リンク https://qiita.com/s977043/items/5ebff79112ecf1af872c は到達確認済み
-5. 関連リンクの実URL最終確認（PlanGate / Growth Lab は 200 確認済み 2026-05-16）
-6. npm run check パス確認 → npm run publish:qiita -- claude-code-scope-creep-countermeasure
-公開順: 本記事（症状と全体像）→ preflight（5項目の詳細）。問題提起を先に出す。
--->
 
 ## はじめに
 
