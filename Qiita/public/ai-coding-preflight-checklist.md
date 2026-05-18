@@ -7,24 +7,12 @@ tags:
   - コードレビュー
   - ClaudeCode
 private: false
-updated_at: '2026-05-13T00:00:00+09:00'
+updated_at: '2026-05-19T00:00:00+09:00'
 id: null
 organization_url_name: null
 slide: false
-ignorePublish: true
+ignorePublish: false
 ---
-
-<!--
-公開当日チェックリスト（来週シリーズ公開予定 / 3視点+Codexレビュー反映済み 2026-05-16）:
-公開順: scope-creep（症状と全体像）を先、本記事（5項目詳細）を後。
-1. frontmatter ignorePublish: true → false に変更（これをしないと publish されない）
-2. frontmatter updated_at を公開当日の日時に更新
-3. このHTMLコメントブロックを削除（公開後も編集画面で閲覧可・社内運用語を含むため）
-4. 本文「関連記事」の scope-creep 参照を、scope-creep 公開後の実Qiita URLに差し込む
-   - PlanGate記事リンク https://qiita.com/s977043/items/5ebff79112ecf1af872c は到達確認済み
-5. 関連リンクの実URL最終確認（PlanGate / Growth Lab は 200 確認済み 2026-05-16）
-6. npm run check パス確認 → npm run publish:qiita -- ai-coding-preflight-checklist
--->
 
 ## はじめに
 
@@ -232,7 +220,7 @@ AIの実装速度を活かすには、実装前の確認を軽く仕組みにし
 
 この記事は「実装前に確認する5項目（Goal / Scope / Non-goals / Test / Risks）の書き方リファレンス」です。シリーズで役割を分けています。
 
-- 症状と対策の全体像（AIが勝手に実装範囲を広げる＝スコープクリープにどう気づき止めるか）: 「Claude CodeでAIが勝手に実装範囲を広げる（スコープクリープ）ときの対策」（別記事）
+- 症状と対策の全体像（AIが勝手に実装範囲を広げる＝スコープクリープにどう気づき止めるか）: [Claude CodeでAIが勝手に実装範囲を広げる（スコープクリープ）ときの対策](https://qiita.com/s977043/items/a25ec91ea411f39bf340)
 - 「止めた回数を数字で見る」運用化の実例: [AIの止まり方を「数字で見る」ようにした体験：PlanGate v8.6.0](https://qiita.com/s977043/items/5ebff79112ecf1af872c)
 
 スコープクリープ記事は「まず症状に気づいて止める」、本記事は「止めるための計画の書き方」、PlanGate記事は「止めた結果を計測する」と役割を分けています。先にスコープクリープ記事を読むと、この5項目が何を防ぐためのものか掴みやすいです。

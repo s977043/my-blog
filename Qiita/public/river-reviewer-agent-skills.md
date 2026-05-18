@@ -6,21 +6,13 @@ tags:
   - コードレビュー
   - GitHubActions
   - OSS
-private: true
-updated_at: '2026-05-07T07:00:00+09:00'
+private: false
+updated_at: '2026-05-19T00:00:00+09:00'
 id: null
 organization_url_name: null
 slide: false
-ignorePublish: true
+ignorePublish: false
 ---
-
-<!--
-公開メモ:
-- 初期状態はローカル下書き: ignorePublish: true
-- Qiita へ限定共有する場合: private: true / ignorePublish: false
-- 一般公開する場合: private: false / ignorePublish: false
-- Codex review 完了後に公開判断する想定
--->
 
 ## はじめに
 
