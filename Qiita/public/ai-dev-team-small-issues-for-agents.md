@@ -2,23 +2,16 @@
 title: AIエージェントに任せるIssueは、小さく切るほどチーム開発で扱いやすかった
 tags:
   - チーム開発
+  - プロジェクト管理
   - 生成AI
   - AI駆動開発
-  - プロジェクト管理
 private: false
-updated_at: '2026-04-29T00:00:00+09:00'
-id: null
+updated_at: '2026-05-19T07:49:52+09:00'
+id: b13950837889d97479fc
 organization_url_name: null
 slide: false
-ignorePublish: true
+ignorePublish: false
 ---
-
-<!--
-作業メモ:
-- 新規Qiita下書き。公開前に title / tags / private / ignorePublish を最終確認する。
-- 公開する場合は ignorePublish: false に変更する。
-- 既存のAIチーム開発シリーズに合わせ、体験談と運用改善を中心にした構成。
--->
 
 ## はじめに
 

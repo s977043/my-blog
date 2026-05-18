@@ -1,26 +1,18 @@
 ---
 title: プロンプトを磨くのをやめた：チームのレビュー知識を Agent Skills に変える River Reviewer 体験
 tags:
-  - 生成AI
-  - AI駆動開発
+  - OSS
   - コードレビュー
   - GitHubActions
-  - OSS
-private: true
-updated_at: '2026-05-07T07:00:00+09:00'
-id: null
+  - 生成AI
+  - AI駆動開発
+private: false
+updated_at: '2026-05-19T07:49:58+09:00'
+id: 607d78c35745b17f9bc8
 organization_url_name: null
 slide: false
-ignorePublish: true
+ignorePublish: false
 ---
-
-<!--
-公開メモ:
-- 初期状態はローカル下書き: ignorePublish: true
-- Qiita へ限定共有する場合: private: true / ignorePublish: false
-- 一般公開する場合: private: false / ignorePublish: false
-- Codex review 完了後に公開判断する想定
--->
 
 ## はじめに
 
