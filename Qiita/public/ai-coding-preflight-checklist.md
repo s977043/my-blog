@@ -240,4 +240,5 @@ AIの実装速度を活かすには、実装前の確認を軽く仕組みにし
 ## 関連リンク
 
 - PlanGate（承認なし、コードなしを仕組みにするワークフロー）: https://github.com/s977043/PlanGate
-- Growth Lab: https://the3396.com/
+- この5項目の上位概念（チャット指示をやめて仕様書を書く）を掘り下げた解説: [AIエージェント開発の『新常識』SDD：チャット指示をやめて仕様書を書こう](https://the3396.com/articles/sdd-hub)（Growth Lab）
+- なぜ実装前の確認が効くのか（速くなったのにチケットが消えない理由）: [AI生産性のパラドックス：なぜ「速くなった」のにチケットが消えないのか](https://the3396.com/articles/ai-productivity-paradox)（Growth Lab）
