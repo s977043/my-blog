@@ -1,14 +1,14 @@
 ---
 title: プロンプトを磨くのをやめた：チームのレビュー知識を Agent Skills に変える River Reviewer 体験
 tags:
-  - 生成AI
-  - AI駆動開発
+  - OSS
   - コードレビュー
   - GitHubActions
-  - OSS
+  - 生成AI
+  - AI駆動開発
 private: false
-updated_at: '2026-05-19T00:00:00+09:00'
-id: null
+updated_at: '2026-05-19T07:49:58+09:00'
+id: 607d78c35745b17f9bc8
 organization_url_name: null
 slide: false
 ignorePublish: false

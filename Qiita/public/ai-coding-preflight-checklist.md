@@ -1,14 +1,14 @@
 ---
-title: AIコーディング前に確認する5項目: Goal / Scope / Non-goals / Test / Risks
+title: 'AIコーディング前に確認する5項目: Goal / Scope / Non-goals / Test / Risks'
 tags:
-  - 生成AI
-  - AI駆動開発
   - チーム開発
   - コードレビュー
+  - 生成AI
+  - AI駆動開発
   - ClaudeCode
 private: false
-updated_at: '2026-05-19T00:00:00+09:00'
-id: null
+updated_at: '2026-05-19T07:49:44+09:00'
+id: b8dacca4ce2d9079454a
 organization_url_name: null
 slide: false
 ignorePublish: false
