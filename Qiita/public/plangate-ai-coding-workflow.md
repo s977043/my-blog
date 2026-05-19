@@ -1,0 +1,282 @@
+---
+title: "アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート"
+tags:
+  - AI駆動開発
+  - アジャイル
+  - スクラム
+  - ClaudeCode
+  - TDD
+private: true
+updated_at: ''
+id: null
+organization_url_name: null
+slide: false
+ignorePublish: true
+---
+
+<!--
+公開メモ（公開前に削除）:
+- 初期状態: private: true / ignorePublish: true（ローカル下書き）
+- Qiita へ限定共有: private: true / ignorePublish: false
+- 一般公開: private: false / ignorePublish: false
+- 公開当日に updated_at を更新し、本コメントを削除してから npm run check → publish:qiita
+- 元記事(Zenn): https://zenn.dev/minewo/articles/plangate-ai-coding-workflow
+-->
+
+AIコーディングエージェントを実務で使い始めると、かなり高い確率で同じ壁にぶつかります。
+
+- 頼んでいない変更まで広げる
+- テストを後回しにする
+- 失敗しても別ルートでごまかして進める
+- セッションが切れると、どこまでやったか分からなくなる
+
+モデルが賢くなるほど、この問題は自然には消えません。
+むしろ、もっともらしい理由で逸脱を合理化できるぶん、運用は難しくなります。
+
+必要だったのは、AIに「ちゃんとやって」とお願いすることではなく、**安全に走らせるためのハーネスを先に設計すること**でした。
+自分はこの発想を `ハーネスエンジニアリング` と捉えています。そして、その考えをフローにしたのが PlanGate です。
+
+### 想定読者
+
+- AIコーディングエージェントを実務・チーム開発で使っている方
+- スクラム / アジャイル運用に AI 駆動開発を載せたい EM・スクラムマスター
+- 「AIの逸脱をプロンプトで何とかしようとして限界を感じた」方
+
+### 先に結論
+
+PlanGate のコアは1つだけです。**計画を承認するまで、AIは1行もコードを書けない**。
+逸脱を「注意」ではなく「ゲート（構造）」で止め、人間は計画承認と最終レビューだけに集中します。既存の PBI / バックログをそのまま AI 実行の入力と承認基準へ変換できるので、スクラム運用を壊さずに導入できます。
+
+:::note info
+本記事は、Zenn に掲載した [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow) を Qiita 向けに再構成したものです。
+:::
+
+## なぜPlanGateにたどり着いたのか
+
+最初は、プロンプトを工夫すれば改善できると思っていました。
+でも実際には、次のような問題が繰り返し起きました。
+
+- スコープが少しずつ広がる
+- テストが後付けになる
+- 実装後に仕様のズレが見つかる
+- 会話が切れると作業状態が消える
+
+どれも個別の注意で防ぐには限界があります。
+根本原因は、AIの能力不足というより、**ワークフローが未設計なこと**でした。
+
+つまり、必要だったのはモデルの追加能力よりも、AIの行動範囲を制御する仕組みでした。
+特に、スクラムで扱っている PBI の情報をそのまま AI 実行の制御点へつなぐことが重要だと分かってきました。
+
+## PlanGateとは何か
+
+PlanGateを一文で言うと、こうです。
+
+> 計画を承認しないとAIは1行もコードを書けない
+
+ポイントは、ルールを守らせることではなく、**ゲートを通らない限り次に進めないこと**です。
+人間がずっと監視し続けるのではなく、計画承認と最終レビューに集中できるようにしています。
+
+この意味で PlanGate は、AIコーディングに対するハーネスエンジニアリングの一例だと考えています。
+自由に任せる前に、どこで止まり、どこで確認し、どこまで自動で進めてよいかを先に設計します。
+
+この記事では、PlanGateの考え方を短く共有した上で、`PBI → 計画 → レビュー → 実行` の流れをどう設計するか、そのまま使えるテンプレートと運用手順をまとめます。
+
+## この記事で扱うもの
+
+- `PBI INPUT PACKAGE` の最小テンプレート
+- `plan.md / todo.md / test-cases.md / review-self.md / review-external.md / status.md` のひな形
+- 3コマンド運用の使い方
+- レビュー時に見るチェックリスト
+
+## 最小構成
+
+まずはディレクトリをこう置くと扱いやすいです。
+
+```text
+docs/working/TASK-XXXX/
+├── pbi-input.md
+├── plan.md
+├── todo.md
+├── test-cases.md
+├── review-self.md
+├── review-external.md
+└── status.md
+```
+
+この構成のポイントは、会話ログではなくファイルを正本にすることです。
+セッションが切れても、ファイルが残っていれば再開できます。
+
+## PBI INPUT PACKAGE
+
+AIにいきなり実装させず、まず人間が入力を揃えます。
+最初これを省いて AI に丸投げしたとき、スコープが静かに膨らんだので、入力を先に固定する形へ落ち着きました。まずはこの最小版で十分です。
+
+```markdown
+# PBI INPUT PACKAGE
+
+## Context / Why
+
+なぜこの変更が必要かを書く
+
+## Scope
+
+### In scope
+
+- ここに含める
+
+### Out of scope
+
+- ここには含めない
+
+## Acceptance Criteria
+
+- 完了条件を箇条書きで書く
+
+## Notes from Refinement
+
+- リファインメントで決まったことを書く
+
+## Estimation Evidence
+
+- 見積もりの根拠を書く
+```
+
+このファイルで固定したいのは次の3点です。
+
+- なぜやるか
+- 何をやるか、何をやらないか
+- どうなったら終わりか
+
+ここは、まさにアジャイル開発やスクラムでバックログに載せている情報と重なります。
+自分は、既存のバックログ運用を捨てるのではなく、その上に AI 駆動開発をフィットさせる仕組みとして PlanGate を考えています。
+
+- `Context / Why` は、そのPBIに取り組む理由
+- `In scope / Out of scope` は、今回のスプリントで触る範囲と触らない範囲
+- `Acceptance Criteria` は、Done を判断する基準
+- `Notes from Refinement` は、会話で決まった補足条件
+- `Estimation Evidence` は、分割や見積もりの根拠
+
+言い換えると、PlanGate はアジャイル開発に AI 駆動開発を低コストで導入するための橋渡しです。
+新しい管理様式を別に作るのではなく、PBI の文脈を保ったまま AI に渡せる形へ整えることを重視しています。
+
+## plan / todo / test-cases
+
+`plan` フェーズでは、実装前にこの3点を揃えます。計画だけ書いてテストを後回しにした回ほど作業が滑ったので、3点をセットで先に置くようにしています。
+
+```markdown
+# plan.md
+
+- 変更の目的
+- 実施ステップ
+- 依存関係
+- リスク
+
+# todo.md
+
+- [ ] 1. 仕様確認
+- [ ] 2. 実装
+- [ ] 3. テスト
+- [ ] 4. レビュー
+
+# test-cases.md
+
+- Case 1: 正常系
+- Case 2: 異常系
+- Case 3: 境界値
+```
+
+テストケースを `plan` の成果物として扱うことで、レビュー時に「受入基準がテストに落ちているか」を機械的に確認できます。
+
+## レビュー用テンプレート
+
+セルフレビューと外部レビューは、同じ観点を別々の視点で見るために置いています。
+`plan` を作った直後に `review-self.md` を作り、`exec` に進む前に `review-external.md` を通すと、承認前の見落としを減らしやすくなります。
+
+```markdown
+# review-self.md
+
+- スコープ外の変更はないか
+- 受入基準を満たしているか
+- テストは十分か
+- 後戻りしやすい設計か
+
+# review-external.md
+
+- 観点が重複していないか
+- 手順が曖昧でないか
+- 追加で壊れそうな箇所はないか
+```
+
+人間が見るのは `review-self.md` ではなく、`plan.md` と `review-external.md` を通した後です。
+
+## status.md
+
+セッション切れ対策は、仕組みとして最小で十分です。
+
+```markdown
+# status.md
+
+- phase: plan
+- done:
+  - PBI作成
+- next:
+  - 受入基準の確認
+- blockers:
+  - なし
+```
+
+ここで大事なのは、会話の記憶ではなくファイルに状態を残すことです。
+
+## 3コマンド運用
+
+実際の操作はこの3つに絞ると運用しやすいです。
+`plan` の中で `plan.md / todo.md / test-cases.md / review-self.md / status.md` まで作り、人間レビューの前に `review-external.md` を追加してから `exec` に進みます。
+
+```text
+# 1. 作業コンテキスト作成
+/working-context TASK-XXXX
+
+# 2. Plan + ToDo + Test Cases生成
+/ai-dev-workflow TASK-XXXX plan
+
+# 3. 承認後に実行
+/ai-dev-workflow TASK-XXXX exec
+```
+
+「3コマンドしかない」のにレビュー工程が抜けないのは、レビューをコマンドではなく成果物として管理しているからです。
+ここをファイルに落としておくと、承認の根拠もセッション再開時の状態も残せます。
+
+## レビューのチェックリスト
+
+公開リポジトリのテンプレートを引用する場合も、全文よりこのくらいの粒度が扱いやすいです。
+
+- スコープ外の変更が混ざっていないか
+- 受入基準がテストケースに落ちているか
+- 例外処理が曖昧になっていないか
+- 後から分割しやすいか
+- セッションが切れても再開できるか
+
+## この記事で持ち帰れること
+
+- AI 駆動開発をアジャイルに載せるときは、自由度より先に制御点を設計する
+- PBI の情報は、そのまま AI 実行の入力と承認基準に変換できる
+- PlanGate は、既存のスクラム運用を壊さずに AI 駆動開発を入れるための実装例として使える
+
+## 参考
+
+- [PlanGate GitHub](https://github.com/s977043/plangate)
+- [note: PlanGate の背景 / 問題意識](https://note.com/mine_unilabo/n/n3aae6b5467b9)
+
+## 自社メディア
+
+:::note info
+[Growth Lab](https://the3396.com/) - AIエージェント開発、SEO最適化、仕様駆動開発の検証ログを、代表記事からすぐ読み進められる形で整理しています。
+:::
+
+## 関連記事
+
+:::note info
+- [仕様を揃えて止めない：マルチエージェント開発の3原則（SDD・TDD・ノンブロッキング）](https://zenn.dev/minewo/articles/sdd-tdd-nonblocking-agent) - 仕様駆動開発の考え方をAI運用の制御点に落とし込む記事です。
+- [Next.js App Router時代のAI-driven TDD：実践的な最小ループと具体的な実装パターン](https://zenn.dev/minewo/articles/ai-driven-tdd-nextjs) - 実装前にテストを固めるAI-driven TDDの具体例です。
+- [GitHubにAI開発チームメイトを迎えよう — Gemini CLIでレビュー時間を1/3に短縮する方法](https://zenn.dev/minewo/articles/gemini-cli-github-actions-zenn-article) - レビューとIssue対応をAIに任せる運用例です。
+:::
