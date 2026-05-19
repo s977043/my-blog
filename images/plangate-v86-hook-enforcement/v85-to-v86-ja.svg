@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">PlanGate v8.5.0 と v8.6.0 の役割分担</title>
+  <desc id="desc">v8.5.0 は止める、v8.6.0 は観測して比較する役割であることを示す図</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0f172a" flood-opacity="0.13"/>
+    </filter>
+    <marker id="arrow" markerWidth="16" markerHeight="16" refX="12" refY="8" orient="auto">
+      <path d="M0,0 L16,8 L0,16 z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" fill="#fbfcfd"/>
+  <text x="800" y="78" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="46" font-weight="800" fill="#142033">v8.5.0 は「止める」、v8.6.0 は「観測して比較する」</text>
+  <text x="800" y="124" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="24" fill="#475569">Hook enforcement を置き換えるのではなく、その発火を改善材料に変える</text>
+
+  <g font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" filter="url(#shadow)">
+    <rect x="120" y="220" width="560" height="430" rx="30" fill="#eff6ff" stroke="#2563eb" stroke-width="3"/>
+    <text x="400" y="285" text-anchor="middle" font-size="38" font-weight="800" fill="#172033">v8.5.0</text>
+    <text x="400" y="330" text-anchor="middle" font-size="30" font-weight="800" fill="#1d4ed8">Hook enforcement 10/10</text>
+    <rect x="185" y="385" width="430" height="58" rx="16" fill="#dbeafe"/>
+    <text x="400" y="423" text-anchor="middle" font-size="24" font-weight="700" fill="#1e3a8a">承認なしの実装を止める</text>
+    <rect x="185" y="465" width="430" height="58" rx="16" fill="#dbeafe"/>
+    <text x="400" y="503" text-anchor="middle" font-size="24" font-weight="700" fill="#1e3a8a">scope外編集を止める</text>
+    <rect x="185" y="545" width="430" height="58" rx="16" fill="#dbeafe"/>
+    <text x="400" y="583" text-anchor="middle" font-size="24" font-weight="700" fill="#1e3a8a">検証なしPRを止める</text>
+
+    <rect x="920" y="220" width="560" height="430" rx="30" fill="#eefdfb" stroke="#0f8f88" stroke-width="3"/>
+    <text x="1200" y="285" text-anchor="middle" font-size="38" font-weight="800" fill="#172033">v8.6.0</text>
+    <text x="1200" y="330" text-anchor="middle" font-size="30" font-weight="800" fill="#0f766e">Metrics v1 / Governance / Baseline</text>
+    <rect x="985" y="385" width="430" height="58" rx="16" fill="#ccfbf1"/>
+    <text x="1200" y="423" text-anchor="middle" font-size="24" font-weight="700" fill="#115e59">どこで止まったか記録する</text>
+    <rect x="985" y="465" width="430" height="58" rx="16" fill="#ccfbf1"/>
+    <text x="1200" y="503" text-anchor="middle" font-size="24" font-weight="700" fill="#115e59">週次で集計して比較する</text>
+    <rect x="985" y="545" width="430" height="58" rx="16" fill="#ccfbf1"/>
+    <text x="1200" y="583" text-anchor="middle" font-size="24" font-weight="700" fill="#115e59">改善前 baseline と差分を見る</text>
+  </g>
+
+  <path d="M705 435 H895" stroke="#64748b" stroke-width="12" marker-end="url(#arrow)"/>
+  <text x="800" y="395" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="26" font-weight="800" fill="#475569">止めた事実をイベントへ</text>
+
+  <g font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif">
+    <rect x="260" y="725" width="1080" height="92" rx="26" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+    <text x="800" y="782" text-anchor="middle" font-size="27" font-weight="800" fill="#172033">結果: 「危ないから止める」から「止めた回数を見て harness を改善する」へ進む</text>
+  </g>
+</svg>
