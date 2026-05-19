@@ -1,0 +1,39 @@
+---
+description: Content channel strategy for article work
+globs:
+  - "articles/**/*.md"
+  - "Qiita/**/*.md"
+  - "articles_note/**/*.md"
+  - "docs/**/*.md"
+alwaysApply: true
+---
+
+# Content Channel Strategy
+
+Before creating, editing, reviewing, or restructuring articles, follow:
+
+- `AGENTS.md`
+- `docs/content-channel-strategy.md`
+
+## Shared positioning
+
+Use this positioning consistently across note, Zenn, Qiita, Growth Lab, and GitHub:
+
+> AIコーディングをチーム開発に乗せる運用設計
+
+## Channel roles
+
+- note: background, narrative, management perspective, and team-operation lessons.
+- Zenn: technical deep dives, implementation details, schemas, GitHub Actions, and examples.
+- Qiita: search-entry articles, short how-to notes, troubleshooting, and first-step guides.
+- Growth Lab: canonical long-form guides, validation logs, and evergreen documentation.
+- GitHub: OSS source of truth, README, releases, issues, and implementation docs.
+
+## Editing rules
+
+- Decide the destination channel before rewriting.
+- Match article depth and tone to the channel role.
+- Do not duplicate the same body across platforms.
+- Use contextual cross-links when useful.
+- Prefer concrete pain, concrete workflow, and concrete next action.
+- Connect changes to PlanGate, River Reviewer, Agent Skills, AI-readable repository design, or Metrics and governance when relevant.

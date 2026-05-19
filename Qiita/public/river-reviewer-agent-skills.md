@@ -1,26 +1,18 @@
 ---
 title: プロンプトを磨くのをやめた：チームのレビュー知識を Agent Skills に変える River Reviewer 体験
 tags:
-  - 生成AI
-  - AI駆動開発
+  - OSS
   - コードレビュー
   - GitHubActions
-  - OSS
-private: true
-updated_at: '2026-05-07T07:00:00+09:00'
-id: null
+  - 生成AI
+  - AI駆動開発
+private: false
+updated_at: '2026-05-19T07:49:58+09:00'
+id: 607d78c35745b17f9bc8
 organization_url_name: null
 slide: false
-ignorePublish: true
+ignorePublish: false
 ---
-
-<!--
-公開メモ:
-- 初期状態はローカル下書き: ignorePublish: true
-- Qiita へ限定共有する場合: private: true / ignorePublish: false
-- 一般公開する場合: private: false / ignorePublish: false
-- Codex review 完了後に公開判断する想定
--->
 
 ## はじめに
 
@@ -322,3 +314,4 @@ PlanGate v8.6.0 を Metrics v1 で語った [Qiita 記事](https://qiita.com/s97
   - Zenn: [AI エージェントを"投げっぱなし"にしない：Agent Skills と自由度の設計](https://zenn.dev/minewo/articles/zenn-river-reviewer-architecture)
   - note: [「プロンプトを磨けば勝てる」をやめた：AI レビューを運用に乗せる "Agent Skills" 設計](https://note.com/mine_unilabo/n/nd21c3f1df22e)
   - Qiita: [AIの止まり方を「数字で見る」ようにした体験：PlanGate v8.6.0 で Metrics v1 と Governance を入れた話](https://qiita.com/s977043/items/5ebff79112ecf1af872c)
+  - Growth Lab: [プロンプトエンジニアリングの終焉：「スキル定義ファイル」でAIを即戦力にする](https://the3396.com/articles/agent-skill-hub)（本記事の「プロンプトを磨くのをやめた」をシリーズとして体系化した解説）

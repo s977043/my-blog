@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">PlanGate v8.6.0 の導入順</title>
+  <desc id="desc">baseline、Issue governance、Metrics privacy、Metrics v1 の順に整えることを示す図</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0f172a" flood-opacity="0.13"/>
+    </filter>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="10" refY="7" orient="auto">
+      <path d="M0,0 L14,7 L0,14 z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" fill="#fbfcfd"/>
+  <text x="800" y="80" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="48" font-weight="800" fill="#142033">Metrics v1 は「先に土台を固めてから」入れる</text>
+  <text x="800" y="128" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="24" fill="#475569">比較対象・入力ルール・保存ルールがない数字は、あとから信頼しにくい</text>
+
+  <g font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" filter="url(#shadow)">
+    <rect x="75" y="255" width="320" height="300" rx="26" fill="#eff6ff" stroke="#2563eb" stroke-width="3"/>
+    <circle cx="130" cy="310" r="32" fill="#2563eb"/>
+    <text x="130" y="322" text-anchor="middle" font-size="32" font-weight="800" fill="#fff">1</text>
+    <text x="235" y="320" text-anchor="middle" font-size="31" font-weight="800" fill="#172033">改善前 baseline</text>
+    <text x="235" y="390" text-anchor="middle" font-size="23" fill="#334155">代表TASKを固定し</text>
+    <text x="235" y="426" text-anchor="middle" font-size="23" fill="#334155">改善前の状態を</text>
+    <text x="235" y="462" text-anchor="middle" font-size="23" fill="#334155">比較可能にする</text>
+    <rect x="120" y="500" width="230" height="42" rx="14" fill="#dbeafe"/>
+    <text x="235" y="529" text-anchor="middle" font-size="20" font-weight="700" fill="#1e3a8a">「良くなった気がする」を防ぐ</text>
+
+    <rect x="455" y="255" width="320" height="300" rx="26" fill="#eefdfb" stroke="#0f8f88" stroke-width="3"/>
+    <circle cx="510" cy="310" r="32" fill="#0f8f88"/>
+    <text x="510" y="322" text-anchor="middle" font-size="32" font-weight="800" fill="#fff">2</text>
+    <text x="615" y="320" text-anchor="middle" font-size="31" font-weight="800" fill="#172033">Issue governance</text>
+    <text x="615" y="390" text-anchor="middle" font-size="23" fill="#334155">Why / What / AC を</text>
+    <text x="615" y="426" text-anchor="middle" font-size="23" fill="#334155">AIが推測で</text>
+    <text x="615" y="462" text-anchor="middle" font-size="23" fill="#334155">埋めないようにする</text>
+    <rect x="500" y="500" width="230" height="42" rx="14" fill="#ccfbf1"/>
+    <text x="615" y="529" text-anchor="middle" font-size="20" font-weight="700" fill="#115e59">推測データを混ぜない</text>
+
+    <rect x="835" y="255" width="320" height="300" rx="26" fill="#fff7ed" stroke="#ea580c" stroke-width="3"/>
+    <circle cx="890" cy="310" r="32" fill="#ea580c"/>
+    <text x="890" y="322" text-anchor="middle" font-size="32" font-weight="800" fill="#fff">3</text>
+    <text x="995" y="320" text-anchor="middle" font-size="31" font-weight="800" fill="#172033">Metrics privacy</text>
+    <text x="995" y="390" text-anchor="middle" font-size="23" fill="#334155">保存してよい情報と</text>
+    <text x="995" y="426" text-anchor="middle" font-size="23" fill="#334155">保存しない情報を</text>
+    <text x="995" y="462" text-anchor="middle" font-size="23" fill="#334155">先に線引きする</text>
+    <rect x="880" y="500" width="230" height="42" rx="14" fill="#fed7aa"/>
+    <text x="995" y="529" text-anchor="middle" font-size="20" font-weight="700" fill="#9a3412">ログ漏えいを防ぐ</text>
+
+    <rect x="1215" y="255" width="320" height="300" rx="26" fill="#f1f5f9" stroke="#475569" stroke-width="3"/>
+    <circle cx="1270" cy="310" r="32" fill="#475569"/>
+    <text x="1270" y="322" text-anchor="middle" font-size="32" font-weight="800" fill="#fff">4</text>
+    <text x="1375" y="320" text-anchor="middle" font-size="31" font-weight="800" fill="#172033">Metrics v1</text>
+    <text x="1375" y="390" text-anchor="middle" font-size="23" fill="#334155">11イベントを</text>
+    <text x="1375" y="426" text-anchor="middle" font-size="23" fill="#334155">Schemaで固定し</text>
+    <text x="1375" y="462" text-anchor="middle" font-size="23" fill="#334155">週次で集計する</text>
+    <rect x="1260" y="500" width="230" height="42" rx="14" fill="#e2e8f0"/>
+    <text x="1375" y="529" text-anchor="middle" font-size="20" font-weight="700" fill="#334155">感想を数字に変える</text>
+  </g>
+
+  <path d="M400 405 H440" stroke="#64748b" stroke-width="8" marker-end="url(#arrow)"/>
+  <path d="M780 405 H820" stroke="#64748b" stroke-width="8" marker-end="url(#arrow)"/>
+  <path d="M1160 405 H1200" stroke="#64748b" stroke-width="8" marker-end="url(#arrow)"/>
+
+  <g font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif">
+    <rect x="270" y="650" width="1060" height="110" rx="28" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+    <text x="800" y="696" text-anchor="middle" font-size="28" font-weight="800" fill="#172033">順番を守る理由</text>
+    <text x="800" y="735" text-anchor="middle" font-size="23" fill="#475569">比較対象があり、推測が混ざらず、保存ルールが明確だから、Metrics の数字を改善判断に使える</text>
+  </g>
+</svg>

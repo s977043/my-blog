@@ -14,6 +14,7 @@ note.com記事のレビュー → 指摘反映 のライフサイクルを扱う
 ## 前提条件
 - 対象記事: `articles_note/<state>/<slug>.md`（`<state>` は `new` / `drafts` / `published`）
 - 出力先: `reviews/note/<state>/<slug>.md`
+- 品質チェックリスト: `articles_note/checklists/note-article-quality-checklist.md`
 - main ブランチが最新 (`git pull origin main`)
 - git identity がリポジトリ規約どおり (`mine_take <s977043@users.noreply.github.com>`)
 
@@ -80,6 +81,8 @@ mkdir -p reviews/note/<state>
 - b) note編集者視点
 - c) 想定読者視点（記事タイプに応じて動的ロール）
 
+`articles_note/checklists/note-article-quality-checklist.md` も参照する。まず「必須確認」を見たうえで、テーマ設計 / サムネ・タイトル設計 / 本文構成 / 読者体験の観点から、記事に対して実質的な改善余地があるものだけを指摘化する。全項目を機械的に列挙しない。
+
 ### 5. JTFスタイル個別チェック（必須指摘項目）
 - ダッシュ（—、――、——、―）の混入 → 括弧/句点への置換提案
 - 三点リーダー記号の統一
@@ -94,6 +97,8 @@ mkdir -p reviews/note/<state>
 - 2スペース改行の使い方が意図的か
 - ハッシュタグ候補が記事意図と一致するか
 - マガジン適合性
+- テーマ、タイトル、リード、CTAが同じ読者像に向いているか
+- 誰の悩みに向けた記事か、読後に何が変わるかが冒頭で伝わるか
 
 ### 7. コミット
 ```bash
@@ -174,5 +179,6 @@ gh pr create --title "docs(articles_note): apply note review feedback to <state>
 - `.claude/agents/note-article-reviewer.md` (エージェント定義)
 - `.claude/agents/article-reviewer.md` (Zenn版、対応関係の確認用)
 - `.claude/skills/article-review-apply/SKILL.md` (Zenn版、反映フェーズ設計の参考)
+- `articles_note/checklists/note-article-quality-checklist.md` (note記事品質チェックリスト)
 - `reviews/note/new/ai_agent_operations_opinion_note.md` (new/ の既存レビューフォーマット)
 - `reviews/note/published/n3aae6b5467b9.md` (published/ の既存レビューフォーマット)
