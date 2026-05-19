@@ -2,7 +2,7 @@
 title: "PenpotとReactを同じ契約で運用するデザインシステムの作り方"
 emoji: "🎛️"
 type: "tech"
-topics: ["designsystem", "penpot", "react", "nextjs", "ai"]
+topics: ["designsystem", "penpot", "ai", "frontend", "ai駆動開発"]
 published: false
 ---
 
