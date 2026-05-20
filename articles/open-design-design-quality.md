@@ -24,6 +24,8 @@ published: false
 - Open Design（オープンフォーマット）が品質に効く理由は4つ：SVG が差分で読める／token が往復できる／AI が読める／レビューがフォーマット非依存になる
 - ただし「ツールを Open Design に替えれば品質が上がる」は誤り。契約（前作）と入口（ガイド）が無いと、ツールの開放性は品質に変換されない
 
+![Open Designを品質ゲートへ接続する流れ](/images/open-design-design-quality/open-design-quality-flow.png)
+
 ## 1. ここでの「デザイン品質」を定義する
 
 品質を上げたい、と言うとき、まず何を品質と呼ぶかを揃えないと議論が滑ります。
