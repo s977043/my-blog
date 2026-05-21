@@ -40,6 +40,59 @@ This positioning connects the existing topics into a single recognizable categor
 | Growth Lab | Canonical long-form hub | Complete guides, validation logs, evergreen documentation | 体系ガイドの最終到達点 |
 | GitHub | Source of truth for OSS | README, releases, issues, implementation docs | OSS の実装真実 |
 
+## Data-driven channel weighting（2026-05 実測スナップショット）
+
+GA4 と各媒体 API で取得した実測値（2026-05-21 時点）に基づく、Channel roles の補強と運用方針更新。次回測定で陳腐化判定。
+
+### 流入規模（GA4 PV ベース）
+
+| 媒体 | PV | UU | 平均エンゲ | 媒体内最高 PV 記事 | 比率 |
+| --- | --- | --- | --- | --- | --- |
+| **Zenn** | **9,345** | 5,717 | 32秒 | DESIGN.md 4,172 PV（全体の46%） | 1.0x（基準） |
+| Qiita | 160 | 107 | 39秒 | スコープクリープ対策 36 PV | **0.017x** |
+| note | （要 GA） | — | — | （API スキ数で代替: PjM/PdM/PO 108スキ） | — |
+
+**確認された事実**: Zenn が **流入の主戦場**（Qiita の約58倍）。集客導線設計は Zenn 起点で考える。Qiita は派生・補完チャネルとして位置付ける。
+
+### 反応指標の媒体別運用方針
+
+| 媒体 | 主指標 | 副指標 | 見ない指標 | 根拠 |
+| --- | --- | --- | --- | --- |
+| **Zenn** | いいね数（記事内バズ）／GA4 PV（SEO 流入） | エンゲ秒・PV/like 比率 | — | 平均 9.3 likes/記事、PV/like 比でフロー型（SEO主導）と内部拡散型を区別 |
+| **Qiita** | **ストック数** | エンゲ秒・PV | **LGTM（いいね）** | LGTM 押下率が極端に低く品質と非相関。ストックの方が再訪・実用判断の代理指標 |
+| **note** | スキ数（ログイン+匿名） | コメント | — | 平均 29.7 スキ/記事、匿名スキが24%（他媒体にないチャネル特性） |
+
+### 集客タイプの書き分け（Zenn 実測で発見）
+
+PV/like 比率で2タイプに分離。執筆時にどちらを狙うかを意識する。
+
+| タイプ | PV/like 目安 | 特徴 | 該当例 | 執筆指針 |
+| --- | --- | --- | --- | --- |
+| **SEO 主導型**（フロー） | 100〜200+ | 検索クエリで集客、フォロワー外まで届く | ai-generated-skill-md-reality-check 224 / codex-developer-instructions 146 | タイトルに具体製品名＋問題語＋解決示唆。冒頭200字に検索意図キーワード集約 |
+| **Zenn 内バズ型**（コアファン） | 3〜10 | フォロー新着・いいね順トレンド経由 | obsidian-supermemory-mcp 3 | 思想・体験談寄り。タイトルに固有名詞密度を上げてもよい |
+| **バランス型** | 50〜100 | 両経路で安定 | DESIGN.md 58 / Claude Code移行 98 | 入口記事として最有力。シリーズ起点に配置する |
+
+### キラーコンテンツと派生戦略
+
+**DESIGN.md 導入ガイド単独で Zenn 全 PV の 46%（4,172/9,345）** を占める。これを軸にした派生・回遊設計を最優先とする。
+
+- 関連シリーズ（PenpotとReactの契約 / Open Design 続編）はリンク経由で DESIGN.md トラフィックを派生記事へ流す
+- Qiita 三部作（PR #285/#286 で予防反映済）は Zenn DESIGN.md からのクロス導線の受け皿
+- **Codex × Claude Code 系**（移行ガイド/規約/ルール制御）が次の柱（合計 24%、3記事）— 継続供給価値が高い
+
+### 既知の運用課題（実測で表面化）
+
+- **Qiita 旧 ID `93027e02e962ec327c2f`（404）が今も月8 PV 集める** — 削除済記事の残留トラフィック。Qiita は記事リダイレクト不可のため、新 URL `5ebff79112ecf1af872c` への外部参照差し替えを既知の範囲で進める
+- **note は GA4 未連携または未取得** — 媒体内スキ数のみで運用。将来 GA4 連携できれば SEO 流入の質を Zenn と比較可能になる
+
+### Channel roles の補強（実測反映）
+
+上記表「Channel roles」の運用補助として以下を併記:
+
+- **note の役割追加**: 「2021〜2022 年公開の EM/PjM/Scrum 系記事が今も上位スキを蓄積」= long-tail evergreen 形成チャネル。新規 AI 系記事は短期反応より長期蓄積を期待する設計でよい
+- **Zenn の役割補強**: 「逆引きリファレンス」だけでなく**SEO 主導型の入口記事 + 内部拡散型のコアファン記事**の2系統を同時運用する場として位置づける
+- **Qiita の役割補強**: 「検索入口」の実態は当面 Zenn が上位。Qiita は **Tips の保存価値（ストック）**を主目的とする。タイトルは「製品名 + 問題語 + 解決示唆」の3要素を満たす
+
 ## Reader journey
 
 Design articles so that readers can move through this path.
