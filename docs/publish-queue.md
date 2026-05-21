@@ -19,6 +19,7 @@
 | 5 | **2026-06-16（火）18:00 JST** | qiita | `Qiita/public/penpot-react-design-system-contract.md` | Full（済 PR#286、予防反映済） | 未公開（ignorePublish:true）|
 | 6 | **2026-06-23（火）18:00 JST** | qiita | `Qiita/public/open-design-design-quality.md` | Full（済 PR#286、予防反映済） | 未公開（ignorePublish:true）／**Zenn 公開（2026-05-26週）後に cross-post note 有効化必須**|
 | 8 | **2026-05-26（火）18:00 JST** | zenn | `articles/open-design-design-quality.md` | Full（PR #281/#282/#284 反映済、画像追加済） | 未公開（published:false）／**続編公開時に前作・ガイドへ相互リンク追加、Qiita 版 cross-post note も同時有効化**|
+| 10 | **2026-05-23（土）08:00 JST 以降** | zenn | `articles/river-reviewer-v033-improvement-loop.md` | 公開済記事の **再デプロイ** | published:true は既設定。release/zenn に空 commit or 該当ファイル touch して再 push、5/22 06:28 から 24h 経過後（5/23 06:28 JST 以降）に実行 |
 - #2 公開時、本文「関連記事」の scope-creep 参照に下記 Done の実 Qiita URL を差し込む（相互リンク確定）
 - #3〜#6 はデザイン三部作 Qiita 化＋PlanGate Qiita 化。Codex 助言に基づく段階公開（PlanGate → DESIGN.md → penpot-react → open-design）。1週ペース・初動の反応とタイトル調整余地を確保
 - #6（open-design）は Zenn 原典が 2026-05-26 週公開予定のため、Zenn 公開後の cross-post `:::note info` 有効化を**公開作業の前段**に組み込む（コメントアウト退避済み、手順は記事内 HTML コメントに記載）
@@ -29,4 +30,4 @@
 
 - 2026-05-18 qiita claude-code-scope-creep-countermeasure https://qiita.com/s977043/items/a25ec91ea411f39bf340
 - 2026-05-21 zenn ai-agile-value-increases https://zenn.dev/minewo/articles/ai-agile-value-increases （PR #289 main / PR #290 release/zenn、予定6/6から前倒し公開）
-- 2026-05-22 zenn river-reviewer-v033-improvement-loop https://zenn.dev/minewo/articles/river-reviewer-v033-improvement-loop （PR #295 main / PR #296 release/zenn、予定5/23から1日前倒し公開・著者明示指示）
+- 2026-05-22 zenn river-reviewer-v033-improvement-loop **🚨 rate-limit hit でデプロイ拒否** — main / release/zenn ともマージ済（PR #295/#296）だが Zenn 側で「投稿数の上限に達したため」未公開。再デプロイ必要（下記 Queue #10 参照）
