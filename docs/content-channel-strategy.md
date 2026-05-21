@@ -44,6 +44,9 @@ This positioning connects the existing topics into a single recognizable categor
 
 GA4 と各媒体 API で取得した実測値（2026-05-21 時点）に基づく、Channel roles の補強と運用方針更新。次回測定で陳腐化判定。
 
+**詳細データ**: [`channel-metrics/2026-05-21.md`](./channel-metrics/2026-05-21.md) — トップ10一覧・PV/like 分類・既知課題のフル記録
+**公開操作の境界**: [`publish-operating-policy.md`](./publish-operating-policy.md) — 自律実行範囲・著者ゲート・rate-limit 遵守
+
 ### 流入規模（GA4 PV ベース）
 
 | 媒体 | PV | UU | 平均エンゲ | 媒体内最高 PV 記事 | 比率 |
