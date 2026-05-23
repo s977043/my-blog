@@ -3,7 +3,7 @@ title: "PlanGate v3 から v8.6 までの設計変遷：AI コーディング統
 emoji: "🗺️"
 type: "tech"
 topics: ["ai", "claudecode", "oss", "automation", "harness"]
-published: false
+published: true
 ---
 
 **PlanGate は v3 から v8.6 までの 1 か月で、「AI に作業させる仕組み」から「AI を止め、観測し、再現可能にする統制ハーネス」へ育ちました。**
