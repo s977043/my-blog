@@ -1238,6 +1238,23 @@ AI を“使う”だけでなく、**育てる**。
 
 ---
 
+## Next.js App Router での AI-driven TDD FAQ
+
+### Q. Server Components のテストはどう書けばよいですか？記事の例は Client Component 中心ですが。
+A. Server Components は async 関数として直接呼び出してレンダリング結果（JSX）をスナップショット検証するか、E2E（Playwright）でレンダリング後のDOMを検証するのが現実的です。Jest の Server Components 対応は発展途上のため、データ取得ロジックは関数として切り出してユニットテストし、コンポーネント自体は E2E でカバーする二段構えが安定します。
+
+### Q. AI にテストを先に書かせると、テスト自体がバグを持つことが多くないですか？
+A. あります。対策は「期待値を具体例で2〜3個渡す」「1テスト=1 expect を守らせる」の2点です。AIが生成したテストは必ず一度赤を確認し、意図通りに失敗する理由まで人間が読むワークフローにすれば、テストのバグは実装着手前に潰せます。
+
+### Q. デバウンスのテストで `jest.useFakeTimers` + `userEvent.setup({ advanceTimers })` の組み合わせ、Jest や RTL のバージョン依存で動かない場合は？
+A. `@testing-library/user-event` v14 以降 + Jest 29 以降が前提です。それ以前のバージョンでは `userEvent` が同期APIだったり `advanceTimers` オプションが無かったりするため、package.json のバージョンを先に確認します。動かない場合は `act` で明示的に `jest.advanceTimersByTime` をラップする旧来の書き方にフォールバックします。
+
+### Q. CI で E2E がランダムに落ちます。本記事の retry 設定でも安定しません。
+A. retry を増やす前に「`data-testid` が動的に変わっていないか」「`expect().toBeVisible()` で待たずに `click()` していないか」を確認します。Playwright は基本的に auto-wait があるので、明示的な `waitFor` を足すよりも、セレクタの安定化と `expect` 側での待機が効きます。それでも落ちる場合は `webServer` の起動完了待ちタイムアウトを延ばします。
+
+### Q. App Router 用のプロンプトテンプレートを Cursor や GitHub Copilot Chat にそのまま使えますか？
+A. 使えます。本記事のテンプレートはツール非依存で、「役割」「出力要件」「制約」の構造を保てばどのAIアシスタントでも動作します。ただしツールごとにコンテキスト窓と出力長の制約が違うので、Copilot Chat では出力要件を3点程度に絞る、Cursor では関連ファイルを `@` で明示参照する、などの微調整は必要です。
+
 ## 参考リンク
 
 - Jest（公式）: https://jestjs.io/
