@@ -3,7 +3,7 @@ title: "Open Designでデザイン品質を上げる：Penpot契約運用とDESI
 emoji: "🎚️"
 type: "tech"
 topics: ["designsystem", "penpot", "opendesign", "ai", "frontend"]
-published: false
+published: true
 ---
 
 :::message
