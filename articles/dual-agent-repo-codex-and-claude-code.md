@@ -161,6 +161,20 @@ fi
 
 AGENTS.md の標準化は、マルチエージェント時代の「リポジトリ設計の共通語」になりつつあります。どのエージェントでも同じ規約を読む土台を作っておくと、ツールが増えても運用が破綻しにくいです。
 
+## Codex と Claude Code の併用運用FAQ
+
+### Q. Codex と Claude Code 以外のエージェント（Cursor、Aider 等）が増えた場合も同じ構成で対応できますか？
+A. できます。`AGENTS.md` は AGENTS.md 標準に準拠するエージェントなら追加設定なしで読まれます。Cursor のように独自の `.cursorrules` を持つツールでは、`.cursorrules` から `AGENTS.md` を参照させる1行を足すだけで規約を共有できます。
+
+### Q. `.claude/skills` と `.agents/skills` の drift 問題、結局シンボリックリンクと削除のどちらが正解ですか？
+A. 現状の結論は「Codex 固有のスキルが無いなら `.agents/skills` を削除する（3の方針）」が最もシンプルです。Windows 開発者がいる場合のシンボリックリンクのリスクを考えると、削除 + `AGENTS.md` への規約集約が安全です。固有スキルが必要になった時点で改めて分離を検討します。
+
+### Q. `AGENT_LEARNINGS.md` が肥大化したらどう運用しますか？
+A. 古いエントリは別ファイル（`AGENT_LEARNINGS_ARCHIVE.md` など）に切り出し、本体は直近6ヶ月程度に絞ります。エージェントが毎セッション読むファイルなので、肥大化はトークン消費と「重要な学びの埋没」の両方で害になります。
+
+### Q. Codex と Claude Code を同じPRで作業させて競合しませんか？
+A. 同じブランチを同時に触らせない運用が前提です。Codex は軽量タスク用ブランチ、Claude Code はメインの実装ブランチ、のように担当範囲を分けます。本記事の「得意不得意」表を参考に、タスク種別でルーティングするのが衝突回避になります。
+
 ### 関連記事
 
 - AI が迷わないリポジトリ設計（入口 / 局所 / 仕組み / 正本の 4 分割）: [/articles/ai-legible-repository-design](/articles/ai-legible-repository-design)
