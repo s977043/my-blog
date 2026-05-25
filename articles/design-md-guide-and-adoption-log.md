@@ -413,6 +413,13 @@ Growth Lab では、`DESIGN.md` を軽量な入口に絞り、詳細を関連ド
 
 - Growth Lab デザインシステム: https://the3396.com/design-system
 
+## 三部作の他2記事
+
+本記事は「入口ドキュメントをどう整えるか」を扱いました。前作で契約の持ち方、続編でツール選定（Open Design）の論拠を扱っています。
+
+- 前作（契約の持ち方）: [PenpotとReactを同じ契約で運用するデザインシステムの作り方](https://zenn.dev/minewo/articles/penpot-react-design-system-contract)
+- 続編（ツール選定の論拠）: [Open Designでデザイン品質を上げる：Penpot契約運用とDESIGN.mdの続編](https://zenn.dev/minewo/articles/open-design-design-quality)
+
 ---
 
 ## DESIGN.md 導入のFAQ
