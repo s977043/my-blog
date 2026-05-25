@@ -409,6 +409,13 @@ Growth Lab では、`DESIGN.md` を軽量な入口に絞り、詳細を関連ド
 
 別リポジトリで始めるなら、まずは小さく導入し、導入実績を同じ記事に積み増していく運用がおすすめです。
 
+## シリーズの他の記事
+
+本記事は三部作の2記事目で、入口ドキュメントの整え方を扱いました。前作で契約の持ち方、続編でツール選定（Open Design）の論拠を整理しています。
+
+- (1/3) 契約の持ち方: [PenpotとReactを同じ契約で運用するデザインシステムの作り方](https://zenn.dev/minewo/articles/penpot-react-design-system-contract)
+- (3/3) ツール選定（Open Design）の論拠: [Open Designでデザイン品質を上げる：Penpot契約運用とDESIGN.mdの続編](https://zenn.dev/minewo/articles/open-design-design-quality)
+
 ## 関連ページ
 
 - Growth Lab デザインシステム: https://the3396.com/design-system
