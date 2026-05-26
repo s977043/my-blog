@@ -6,22 +6,13 @@ tags:
   - スクラム
   - ClaudeCode
   - TDD
-private: true
-updated_at: ''
+private: false
+updated_at: '2026-05-27T08:00:00+09:00'
 id: null
 organization_url_name: null
 slide: false
-ignorePublish: true
+ignorePublish: false
 ---
-
-<!--
-公開メモ（公開前に削除）:
-- 初期状態: private: true / ignorePublish: true（ローカル下書き）
-- Qiita へ限定共有: private: true / ignorePublish: false
-- 一般公開: private: false / ignorePublish: false
-- 公開当日に updated_at を更新し、本コメントを削除してから npm run check → publish:qiita
-- 元記事(Zenn): https://zenn.dev/minewo/articles/plangate-ai-coding-workflow
--->
 
 AIコーディングエージェントを実務で使い始めると、かなり高い確率で同じ壁にぶつかります。
 
