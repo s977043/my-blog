@@ -1,14 +1,14 @@
 ---
-title: "アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート"
+title: 'アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート'
 tags:
-  - AI駆動開発
+  - TDD
   - アジャイル
   - スクラム
+  - AI駆動開発
   - ClaudeCode
-  - TDD
 private: false
-updated_at: '2026-05-27T08:00:00+09:00'
-id: null
+updated_at: '2026-05-27T06:43:40+09:00'
+id: 6041bbc2659412341d54
 organization_url_name: null
 slide: false
 ignorePublish: false
