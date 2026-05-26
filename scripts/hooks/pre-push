@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Git pre-push hook — gh CLI の active account が s977043 でなければ push を中止する。
+#
+# インストール（リポジトリ単位、1回だけ実行）:
+#   git config core.hooksPath scripts/hooks
+#
+# バイパス（緊急時、推奨しない）:
+#   git push --no-verify
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && cd ../.. && pwd)"
+CHECK="$SCRIPT_DIR/scripts/check-gh-account.sh"
+
+if [ ! -x "$CHECK" ]; then
+  exit 0  # スクリプトが無ければ素通り（CI 等で実行されるケースを想定）
+fi
+
+if ! "$CHECK"; then
+  echo "" >&2
+  echo "[pre-push] gh active account が想定外。s977043 に切り替えてから再 push してください:" >&2
+  echo "  gh auth switch --user s977043" >&2
+  echo "  gh auth setup-git" >&2
+  echo "" >&2
+  echo "緊急時のバイパス: git push --no-verify" >&2
+  exit 1
+fi

@@ -68,6 +68,14 @@ python3 .claude/skills/note-export-import/scripts/verify_wxr.py articles_note/bu
 
 依存: `pip install --break-system-packages markdownify markdown`（`verify_wxr.py` は標準ライブラリのみ）
 
+## 初回セットアップ（リポジトリ毎に1回）
+
+```bash
+git config core.hooksPath scripts/hooks
+```
+
+これで `scripts/hooks/pre-push` が有効になり、`gh active account` が `s977043` でない状態の `git push` を自動でブロックする。緊急時バイパスは `git push --no-verify`。
+
 ## 作業開始時のチェックリスト
 
 1. 並列セッション衝突を回避するため `gh pr list --state open` で重複 PR がないか確認
@@ -76,7 +84,8 @@ python3 .claude/skills/note-export-import/scripts/verify_wxr.py articles_note/bu
 4. 対象ファイルがどのプラットフォームか確認（`@AGENTS.md` の配置規約表）
 5. `articles_note/published/` を触る場合は ⚠️ 規約を確認（`@AGENTS.md` 禁止事項）
 6. note 記事に画像を追加する場合: SVG → PNG 変換 → `articles_note/assets/` 配置 → **`file` でサイズ・寸法を確認**（プレースホルダ画像 <10KB を弾く） → main に先にマージ → WXR 生成の順序を守る。**WXR 生成は必ず `--base-url https://raw.githubusercontent.com/s977043/my-blog/main/articles_note/assets` を付ける**（未指定で画像参照が残ると `md_to_wxr.py` が exit 1 で失敗、意図的にローカル参照を残すなら `--allow-local-images`）
-7. **Zenn 公開系の作業を進める前に**、`@AGENTS.md` の「Zenn 公開フロー（release/zenn ブランチ経由）」を確認。`articles/*.md` の `published: true` 切替や本文修正は **`release/zenn` ブランチへの merge をもって公開**となる。`main` への push は Zenn deploy をトリガーしない（rate-limit 対策）。1 PR 最大 3 本 / 24 時間あけてマージ / 既存 update と新規 publish は別 PR、を厳守。**release/zenn 系 PR を作る前に `npm run check:zenn-pace` で過去 24h の publish 切替件数を確認**（5 件以上で FAIL exit、3 件以上で WARN）
+7. **Zenn 公開系の作業を進める前に**、`@AGENTS.md` の「Zenn 公開フロー（release/zenn ブランチ経由）」を確認。`articles/*.md` の `published: true` 切替や本文修正は **`release/zenn` ブランチへの merge をもって公開**となる。`main` への push は Zenn deploy をトリガーしない（rate-limit 対策）。1 PR 最大 3 本 / 24 時間あけてマージ / 既存 update と新規 publish は別 PR、を厳守。**release/zenn 系 PR を作る前に `npm run check:zenn-pace` で過去 24h の publish 切替件数を確認**（5 件以上で FAIL exit、3 件以上で WARN）。release/zenn への sync PR は `scripts/sync-release-zenn.sh "<commit message>"` で一括実行可能（`articles_note/drafts/` の rename/rename 競合を main 採用で自動解決）
+   - **公開キュー (`docs/publish-queue.md`) と実態の乖離チェック**: queue から記事を公開準備に着手する前に、対象ファイルの `id:` フィールドと `curl -s -o /dev/null -w "%{http_code}" "https://qiita.com/s977043/items/<id>"` で web 状態を確認する。**id が null でなく web 200 なら既に公開済み**なので queue を Done へ移動するだけで終わる。queue を信じて二重公開準備に進むと10分以上のロスになる（2026-05-27 #2 ai-coding-preflight-checklist で実際に発生）
 8. **`git switch -c <new>` 直後に `git branch --show-current` で意図ブランチと一致するか確認** — Round 5 並列セッション干渉対策（PR #203 で観測、`memory/project_parallel_session_metrics.md` 参照）。不一致なら commit を作らず停止
 9. 既存 Skill / Agent / Command で対応できないか確認（上記表）
 10. `@AGENT_LEARNINGS.md` で類似タスクの落とし穴を確認
