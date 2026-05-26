@@ -8,7 +8,8 @@ const path = require('node:path');
 
 const ARTICLES_DIR = path.join(__dirname, '..', 'articles');
 const GUIDE_KEYWORDS = ['ガイド', '導入', '整え方', '作り方', 'ワークフロー', '設計', 'パターン', '運用', '実践'];
-const MIN_WORDS_FOR_GUIDE = 800;
+// 日本語本文は空白分割で word 数が崩れるため、文字数（コードポイント数）で判定する
+const MIN_CHARS_FOR_GUIDE = 2400;
 const MIN_QA_FOR_FAQ = 3;
 
 const files = fs.readdirSync(ARTICLES_DIR).filter((f) => f.endsWith('.md'));
@@ -32,21 +33,31 @@ for (const file of files) {
   const title = titleMatch ? titleMatch[1] : file;
 
   const body = text.slice(fmMatch[0].length);
-  const wordCount = body.split(/\s+/).length;
-  const isGuide = GUIDE_KEYWORDS.some((k) => title.includes(k)) || wordCount >= MIN_WORDS_FOR_GUIDE;
+  // 文字数（コードポイント単位）。日本語本文の長さを正確に拾うため。
+  const charCount = [...body.replace(/\s/g, '')].length;
+  const isGuide = GUIDE_KEYWORDS.some((k) => title.includes(k)) || charCount >= MIN_CHARS_FOR_GUIDE;
   if (!isGuide) {
     skipCount++;
     continue;
   }
 
-  const hasFaqHeading = /^## .*FAQ/m.test(body) || /^## よくある質問/m.test(body);
-  const qCount = (body.match(/^### Q\./gm) || []).length;
-  const hasFaq = hasFaqHeading && qCount >= MIN_QA_FOR_FAQ;
+  // FAQ章を `## ...FAQ` または `## よくある質問` 見出しの直後〜次の `## ` 見出し直前で切り出し、
+  // その章内の `### Q.` のみをカウントする（章外散在の Q. を拾わないため）。
+  const faqHeadingMatch = body.match(/^## .*(FAQ|よくある質問).*$/m);
+  let qCount = 0;
+  if (faqHeadingMatch) {
+    const startIdx = body.indexOf(faqHeadingMatch[0]) + faqHeadingMatch[0].length;
+    const restAfterHeading = body.slice(startIdx);
+    const nextH2 = restAfterHeading.search(/^## /m);
+    const faqSection = nextH2 === -1 ? restAfterHeading : restAfterHeading.slice(0, nextH2);
+    qCount = (faqSection.match(/^### Q\./gm) || []).length;
+  }
+  const hasFaq = !!faqHeadingMatch && qCount >= MIN_QA_FOR_FAQ;
 
   if (hasFaq) {
     okCount++;
   } else {
-    warnings.push({ file, title, wordCount, qCount, hasHeading: hasFaqHeading });
+    warnings.push({ file, title, charCount, qCount, hasHeading: !!faqHeadingMatch });
   }
 }
 
@@ -60,7 +71,7 @@ for (const w of warnings) {
   const reason = w.hasHeading
     ? `FAQ見出しありだが Q&A ${w.qCount} 件 (<${MIN_QA_FOR_FAQ})`
     : 'FAQセクションなし';
-  console.log(`  - ${w.file} (${w.wordCount} words): ${reason}`);
+  console.log(`  - ${w.file} (${w.charCount} chars): ${reason}`);
 }
-console.log(`[check:faq-coverage] guide-type 判定: title に [${GUIDE_KEYWORDS.join('/')}] を含む or ${MIN_WORDS_FOR_GUIDE}+ words`);
+console.log(`[check:faq-coverage] guide-type 判定: title に [${GUIDE_KEYWORDS.join('/')}] を含む or ${MIN_CHARS_FOR_GUIDE}+ 文字`);
 console.log(`[check:faq-coverage] NOTE: WARN は強制力なし、新規記事のリマインダー用途`);

@@ -422,7 +422,7 @@ Growth Lab では、`DESIGN.md` を軽量な入口に絞り、詳細を関連ド
 
 ---
 
-## DESIGN.md 導入のFAQ
+## DESIGN.md 導入ガイドのFAQ
 
 ### Q. DESIGN.md の導入はどのタイミングが最適？
 
