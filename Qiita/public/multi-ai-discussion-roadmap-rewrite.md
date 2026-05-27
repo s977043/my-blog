@@ -26,10 +26,10 @@ ignorePublish: true
 -->
 
 <!--
-Qiita 公開時に有効化する :::note info（Zenn 公開済みなのでコメントアウト解除して公開）:
+Qiita 公開時に有効化する :::note info（コメントアウト解除して公開）:
 
 :::note info
-本記事は、Zenn に掲載した [AIエージェント3種で戦略議論したら、OSSロードマップの主軸が根本から変わった話](https://zenn.dev/minewo/articles/multi-ai-discussion-roadmap-rewrite) を Qiita 向けに再構成したものです。
+本記事は、note に掲載した [AIエージェント3種で戦略議論したら、OSSロードマップの主軸が根本から変わった話](https://note.com/mine_unilabo/n/n5fe2e97b9600) を Qiita 向けに再構成したものです。
 :::
 -->
 
