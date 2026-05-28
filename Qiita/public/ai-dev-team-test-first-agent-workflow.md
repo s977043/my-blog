@@ -20,6 +20,10 @@ ignorePublish: false
 - 公開する場合は ignorePublish: false に変更する。
 -->
 
+:::note info
+本記事は、note に掲載した [AITDD実践録：AIエージェント(Claude Code/Gemini CLI)だから「テストが先に動く」開発を日常化する](https://note.com/mine_unilabo/n/nc62d478194d3) と同じテーマ（AI 駆動開発でのテスト先行）を、Qiita 向けに「チーム開発で安定させるための観点」に角度を変えて整理したものです。
+:::
+
 ## はじめに
 
 AIコーディングエージェントを使うと、実装の初速はかなり上がります。
