@@ -14,6 +14,10 @@ slide: false
 ignorePublish: false
 ---
 
+:::note info
+本記事は、note に掲載した [「プロンプトを磨けば勝てる」をやめた：AIレビューを運用に乗せる "Agent Skills" 設計](https://note.com/mine_unilabo/n/nd21c3f1df22e) と同じ題材を、Qiita 向けに「GitHub Actions と `skills/upstream/` の実物を触って始める導入寄り」へ絞って再構成したものです。
+:::
+
 ## はじめに
 
 AI コードレビューを「とりあえず PR に投げる」段階から、チームで運用する段階に進めようとして、プロンプトを磨き続けていました。
