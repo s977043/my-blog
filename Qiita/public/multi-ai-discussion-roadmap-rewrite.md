@@ -1,14 +1,14 @@
 ---
-title: "AIエージェント3種で戦略議論したら、OSSロードマップの主軸が根本から変わった話"
+title: AIエージェント3種で戦略議論したら、OSSロードマップの主軸が根本から変わった話
 tags:
+  - OSS
+  - Gemini
+  - codex
   - AI駆動開発
   - ClaudeCode
-  - Codex
-  - Gemini
-  - OSS
 private: false
-updated_at: '2026-05-28T07:00:00+09:00'
-id: null
+updated_at: '2026-05-28T09:29:07+09:00'
+id: 4e89a93c2ebfb928e2b1
 organization_url_name: null
 slide: false
 ignorePublish: false
