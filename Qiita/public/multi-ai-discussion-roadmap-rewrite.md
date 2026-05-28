@@ -6,32 +6,17 @@ tags:
   - Codex
   - Gemini
   - OSS
-private: true
-updated_at: ''
+private: false
+updated_at: '2026-05-28T07:00:00+09:00'
 id: null
 organization_url_name: null
 slide: false
-ignorePublish: true
+ignorePublish: false
 ---
-
-<!--
-公開メモ（公開前に削除）:
-- 初期状態: private: true / ignorePublish: true（ローカル下書き）
-- Qiita へ限定共有: private: true / ignorePublish: false
-- 一般公開: private: false / ignorePublish: false
-- 公開当日に updated_at を更新し、本コメントを削除してから npm run check → publish:qiita
-- 元記事(Zenn): https://zenn.dev/minewo/articles/multi-ai-discussion-roadmap-rewrite
-- 元記事(note): https://note.com/mine_unilabo/n/n5fe2e97b9600
-- 公開後に下記 :::note info を有効化して Zenn 原典リンクを表示
--->
-
-<!--
-Qiita 公開時に有効化する :::note info（コメントアウト解除して公開）:
 
 :::note info
 本記事は、note に掲載した [AIエージェント3種で戦略議論したら、OSSロードマップの主軸が根本から変わった話](https://note.com/mine_unilabo/n/n5fe2e97b9600) を Qiita 向けに再構成したものです。
 :::
--->
 
 私は PlanGate という、AI コーディングエージェント向けの軽量ガバナンスハーネスを個人 OSS として開発しています。
 
