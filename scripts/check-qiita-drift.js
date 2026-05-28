@@ -34,11 +34,13 @@ function fetchItem(id) {
           resolve(null);
           return;
         }
-        let body = '';
-        res.on('data', (c) => (body += c));
+        // Buffer で受けて最後に UTF-8 デコードする。
+        // 文字列連結 (body += c) はマルチバイト文字がチャンク境界で分割されると破損するため不可。
+        const chunks = [];
+        res.on('data', (c) => chunks.push(c));
         res.on('end', () => {
           try {
-            resolve(JSON.parse(body));
+            resolve(JSON.parse(Buffer.concat(chunks).toString('utf8')));
           } catch {
             resolve(null);
           }
