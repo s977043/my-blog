@@ -21,7 +21,7 @@ title: "はじめに — この本の主張と読み方"
 
 <!--
 - Plan = 何を作るかの精度（PBI INPUT → 確認質問 → plan/todo/test-cases → C-3 承認）
-- Exec = 計画を逸脱させない強制力（Hook 強制 EH-1〜EH-10 + EHS-1〜3 ＋ C-4）
+- Exec = 計画を逸脱させない強制力（Hook 強制 EH-1〜EH-10 + EHS-1〜EHS-3 ＋ C-4）
 -->
 
 ## 想定読者と読み方

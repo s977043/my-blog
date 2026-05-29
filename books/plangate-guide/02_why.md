@@ -4,6 +4,7 @@ title: "なぜ AI 開発に承認ゲートが必要か"
 
 <!--
 役割: 本命への導入（圧縮）
+冒頭: 検証バージョンバッジ ＋ 前章（01）からの接続 1 段落
 素材: ai-dev-guardrail-plangate-river-reviewer / multi-ai-discussion-roadmap-rewrite
 注意: 本命2章が固まってから書く。説教は短く、負の体験起点で
 -->
