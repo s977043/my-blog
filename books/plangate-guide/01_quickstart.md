@@ -40,10 +40,10 @@ doctor           環境チェック / Hook 配線
 
 ## 10 分チュートリアル — 1 タスクを流す
 
-公式 README の 10 分チュートリアルに沿って、最小の 1 サイクルを回します。
+公式 README の 10 分チュートリアルに沿って、最小の 1 サイクルを回します。`/working-context` や `/ai-dev-workflow` は **Claude Code のスラッシュコマンド**（シェルのコマンドではない）で、Claude Code のセッション内で実行します。
 
-```bash
-# 1. 作業コンテキストを作る
+```text
+# 1. 作業コンテキストを作る（Claude Code 内）
 /working-context TASK-0001
 
 # 2. PBI INPUT PACKAGE を書く（人間の作業）
@@ -53,7 +53,7 @@ doctor           環境チェック / Hook 配線
 /ai-dev-workflow TASK-0001 plan
 
 # 4. C-3 ゲート — plan.md を読んで人間が判定
-#    APPROVE / CONDITIONAL / REJECT のいずれか
+#    APPROVED / CONDITIONAL / REJECTED のいずれか
 
 # 5. 実行する
 /ai-dev-workflow TASK-0001 exec

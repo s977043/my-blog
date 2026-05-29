@@ -82,7 +82,7 @@ Exec フェーズの中身は、TDD を軸にした実装ループです。PlanG
 
 実装が進んだら **L-0**（リンター自動修正）→ **V-1**（test-cases との突合による受け入れ検査）が走ります。計画段階で固定した受入基準が、ここで自動的に「満たされたか」を判定する ―― 計画と検証が test-cases.md を通じて一本につながります。
 
-> Next.js App Router を題材にした AI-driven TDD の具体的な最小ループは、本書とは別に詳しく書いた記事があります → [Next.js App Router 時代の AI-driven TDD](https://zenn.dev/）（※ Book 内では本文を抱えず外部記事へ送る）
+> Next.js App Router を題材にした AI-driven TDD の具体的な最小ループは、本書とは別に詳しく書いた記事があります → [Next.js App Router 時代の AI-driven TDD](https://zenn.dev/)（※ Book 内では本文を抱えず外部記事へ送る）
 
 ## C-4 — PR 上で人間が最終確認する
 
