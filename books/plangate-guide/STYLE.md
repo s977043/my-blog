@@ -17,7 +17,7 @@
 | C-3 / C-4 | C3, c-3 | 計画承認ゲート / PR レビューゲート |
 | L-0 | L0 | lint 自動修正 |
 | V-1〜V-4 | V1〜V4 | 検証フェーズ |
-| EH-1〜EH-10 | EH1, Hook番号の範囲ずれ | Enforcement Hook。範囲は着手時に公式 glossary で再確認 |
+| EH-1〜EH-9 + EHS-1〜EHS-3（12/12実装）| EH1, EH-1〜EH-10 と書く | Enforcement Hook。**EH-10 は RFC Draft で未実装**。実装済みは 12/12（EH-1〜EH-9 + EHS-1〜EHS-3）。着手時に公式 glossary で再確認 |
 | EHS-1〜EHS-3 | — | strict-mode 追加 Hook |
 | Level 1〜5 | Lv1, レベル1 | 段階導入 |
 | PBI INPUT | PBI input, pbi | |
