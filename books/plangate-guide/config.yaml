@@ -1,0 +1,14 @@
+title: "AI にコードを書かせる前にやること — PlanGate 実践ガイド"
+summary: "AI 開発の成否は計画の精度で決まる。精度の高い計画（Plan）の作り方と、それを実行時に守らせる強制力（Exec）を 2 本柱に、PlanGate の実践ログで解説する。"
+topics: ["AI", "ClaudeCode", "生成AI", "開発手法", "TDD"]
+published: false
+price: 0
+chapters:
+  - 00_intro
+  - 01_quickstart
+  - 02_why
+  - 03_plan
+  - 04_exec
+  - 05_verify-scale
+  - a1_troubleshooting
+  - a2_design-evolution
