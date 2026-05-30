@@ -9,16 +9,16 @@
 
 `published: true` は単なるフラグ変更でなく**公開意思決定**。以下を全通過してから切り替える。
 
-- [ ] **PR #331（図解・読者導線）マージ済み** — 下記レビュー指摘3点が解消されていること
-  - [ ] enforcement-architecture.svg の矢印が `Hooks → Audit log → Verify/C-4/CI` の向き（本文 04_exec と一致）
-  - [ ] adoption-roadmap.svg の「partial strict」を実態用語へ修正（`default`/`strict`/`bypass` ＋ Phase 0→3。中間は「段階的に strict 化」）
-  - [ ] STYLE.md の図方針が SVG 採用と整合（「図は SVG（`images/plangate-guide/`）。mermaid も可」へ更新）
-- [ ] **cover 画像**を配置（§2 の要件を満たす）
+- [x] **PR #331（図解・読者導線）マージ済み** — 下記レビュー指摘3点が解消されていること
+  - [x] enforcement-architecture.svg の矢印が `Hooks → Audit log → Verify/C-4/CI` の向き（本文 04_exec と一致）
+  - [x] adoption-roadmap.svg の「partial strict」を実態用語へ修正（`default`/`strict`/`bypass` ＋ Phase 0→3。中間は「段階的に strict 化」）
+  - [x] STYLE.md の図方針が SVG 採用と整合（「図は SVG（`images/plangate-guide/`）。mermaid も可」へ更新）
+- [x] **cover 画像**を配置（§2 の要件を満たす）
 - [ ] **通し校正**完了（§3 の観点）
 - [ ] `npm run check`（`list:books` 含む）exit 0
 - [ ] **Zenn preview** で全8章＋図＋表紙の表示崩れがないことを目視（`npm run preview`）
 - [ ] 公開キュー #7 の時期判断（締切 2026-06-30、前倒し可）
-- [ ] 事実の最終確認: 検証バージョン **v8.10.0**、Hook は **EH-1〜EH-9 + EHS-1〜EHS-3（12/12）/ EH-10 は RFC Draft**、タグライン「No approval, no code.」
+- [x] 事実の最終確認: 検証バージョン **v8.10.0**、Hook は **EH-1〜EH-9 + EHS-1〜EHS-3（12/12）/ EH-10 は RFC Draft**、タグライン「No approval, no code.」
 
 > ⚠️ Zenn の publish rate-limit（24h/本数）は**単発記事用で Book は別枠**。ただし `release/zenn` 経由の運用と重なる日は避け、記事 publish と同日マージにしない。
 
@@ -43,9 +43,9 @@
 - [ ] **用語ゆれ**: C-3/C-4/L-0/V-1〜V-4、EH-1〜EH-9+EHS-1〜EHS-3、Level 1〜5、C-3 の状態を表す値 `APPROVED`/`CONDITIONAL`/`REJECTED`（`c3_status` の enum）
 - [ ] **章間リンク**: 各章末 CTA が機能、章間の「前章からの接続」1段落が成立
 - [ ] **重複**: 概念の初出章が固定され、後続章は再説明でなくリンク送り
-- [ ] **⚠️ Book→記事リンクは Zenn フル URL を使う（相対パス禁止）**: Zenn Book から Zenn 記事へのリンクに相対パス（`../../articles/*.md`）を使うと、**公開サイトで 404** になる。GitHub プレビューでは解決するため見落としやすい。公開記事は `https://zenn.dev/minewo/articles/<slug>` のフル URL に置き換える
-  - [ ] 現状 `04_exec.md`（Next.js TDD 記事）と `a2_design-evolution.md`（設計変遷記事）が相対パスのため、公開前に**該当記事の公開状態を確認しフル URL 化**（未公開なら別表現に。`04_exec` は PR #331 の対象ファイルなので同 PR 内で修正）
-- [ ] **図と本文の整合**: SVG 図の用語・矢印が本文の記述と一致（#331 指摘の解消確認）
+- [x] **⚠️ Book→記事リンクは Zenn フル URL を使う（相対パス禁止）**: Zenn Book から Zenn 記事へのリンクに相対パス（`../../articles/*.md`）を使うと、**公開サイトで 404** になる。GitHub プレビューでは解決するため見落としやすい。公開記事は `https://zenn.dev/minewo/articles/<slug>` のフル URL に置き換える
+  - [x] `04_exec.md`（Next.js TDD 記事）と `a2_design-evolution.md`（設計変遷記事）は Zenn フル URL 化済み
+- [x] **図と本文の整合**: SVG 図の用語・矢印が本文の記述と一致（#331 指摘の解消確認）
 - [ ] **MVP 完結性**: 00+01+03+04+付録A だけ読んでも主張が閉じ、かつ「Verify/Scale は後続」の予防線がある
 
 ## 4. 公開後タスク（参考・別 issue 連携）
