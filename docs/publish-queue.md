@@ -16,6 +16,8 @@
 | 4 | **2026-06-09（火）18:00 JST** | qiita | `Qiita/public/design-md-guide-and-adoption-log.md` | Full（済 PR#285、予防反映済） | 未公開（ignorePublish:true）|
 | 5 | **2026-06-16（火）18:00 JST** | qiita | `Qiita/public/penpot-react-design-system-contract.md` | Full（済 PR#286、予防反映済） | 未公開（ignorePublish:true）|
 | 6 | **2026-06-23（火）18:00 JST** | qiita | `Qiita/public/open-design-design-quality.md` | Full（済 PR#286、予防反映済） | 未公開（ignorePublish:true）／**Zenn 公開（2026-05-26週）後に cross-post note 有効化必須**|
+| 7 | **2026-06-30（火）18:00 JST** | zenn-book | `books/plangate-guide/`（全8章） | 3巡（セルフ/マルチエージェント/Gemini）＋PR#326-330 | 未公開（`published: false`）／**公開前提条件**: ①ChatGPT 作業 PR #331（図解・読者導線・SVG）マージ ②cover 画像用意 ③通し校正 ④`published: true` 切替（issue #325）|
+- #7 は **Zenn Book**（単発記事でなく book）。Zenn の publish rate-limit（24h/本数）は**記事用で book は別枠**だが、念のため記事 publish と同日マージを避ける。MVP コア（00+01+03+04+付録A）は完成済み、ChatGPT 並行作業（PR #331）の図解・導線確定を待って公開判断
 - #2 公開時、本文「関連記事」の scope-creep 参照に下記 Done の実 Qiita URL を差し込む（相互リンク確定）
 - #3〜#6 はデザイン三部作 Qiita 化＋PlanGate Qiita 化。Codex 助言に基づく段階公開（PlanGate → DESIGN.md → penpot-react → open-design）。1週ペース・初動の反応とタイトル調整余地を確保
 - #6（open-design）は Zenn 原典が 2026-05-26 週公開予定のため、Zenn 公開後の cross-post `:::note info` 有効化を**公開作業の前段**に組み込む（コメントアウト退避済み、手順は記事内 HTML コメントに記載）
