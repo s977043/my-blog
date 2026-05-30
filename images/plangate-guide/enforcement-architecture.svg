@@ -40,8 +40,8 @@
     <path d="M320 245 H468"/>
     <path d="M725 245 H873"/>
     <path d="M1005 310 V445"/>
-    <path d="M880 520 H732"/>
-    <path d="M475 520 H327"/>
+    <path d="M320 520 H473"/>
+    <path d="M725 520 H877"/>
     <path d="M195 455 V318"/>
   </g>
   <path d="M1005 326 C870 388 330 388 195 326" stroke="#64748b" stroke-width="3" fill="none" stroke-dasharray="9 9" marker-end="url(#arrow)"/>
