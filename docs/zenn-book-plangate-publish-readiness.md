@@ -26,7 +26,7 @@
 
 > Codex 助言: 本文図とトーンを揃えてから制作。先行制作は視覚方針の二重化を招く。現段階は**要件のみ**確定。
 
-- **配置 / 形式**: `books/plangate-guide/cover.jpg`（既存 `flame-portrait-essay/cover.jpg` に倣う。Zenn 推奨は 3:4 縦長、JPG/PNG）
+- **配置 / 形式**: `books/plangate-guide/cover.jpg`（既存 `flame-portrait-essay/cover.jpg` に倣う。Zenn 公式推奨アスペクト比 **1:1.6**＝横 500px × 縦 800px、または 横 1000px × 縦 1600px、JPG/PNG）
 - **トーン**: PR #331 の SVG 図（core-loop / enforcement-architecture / adoption-roadmap）と同系の配色・線。Plan=青系 / Exec=緑系の本文 mermaid 配色を踏襲
 - **要素**:
   - タイトル「AI にコードを書かせる前にやること」を主役に（サブ「PlanGate 実践ガイド」）
@@ -40,10 +40,11 @@
 本文は章ごとに執筆したため、通し読みで以下を確認する（STYLE.md 準拠）。
 
 - [ ] **トーン統一**: 敬体で統一。一人称・コードブロック注釈ルールが全章一致
-- [ ] **用語ゆれ**: C-3/C-4/L-0/V-1〜V-4、EH-1〜EH-9+EHS-1〜EHS-3、Level 1〜5、`APPROVED`/`CONDITIONAL`/`REJECTED`（過去分詞形）
+- [ ] **用語ゆれ**: C-3/C-4/L-0/V-1〜V-4、EH-1〜EH-9+EHS-1〜EHS-3、Level 1〜5、C-3 の状態を表す値 `APPROVED`/`CONDITIONAL`/`REJECTED`（`c3_status` の enum）
 - [ ] **章間リンク**: 各章末 CTA が機能、章間の「前章からの接続」1段落が成立
 - [ ] **重複**: 概念の初出章が固定され、後続章は再説明でなくリンク送り
-- [ ] **外部リンク**: 相対パス（`../../articles/*.md`）が正しく解決、GitHub リンクが有効
+- [ ] **⚠️ Book→記事リンクは Zenn フル URL を使う（相対パス禁止）**: Zenn Book から Zenn 記事へのリンクに相対パス（`../../articles/*.md`）を使うと、**公開サイトで 404** になる。GitHub プレビューでは解決するため見落としやすい。公開記事は `https://zenn.dev/minewo/articles/<slug>` のフル URL に置き換える
+  - [ ] 現状 `04_exec.md`（Next.js TDD 記事）と `a2_design-evolution.md`（設計変遷記事）が相対パスのため、公開前に**該当記事の公開状態を確認しフル URL 化**（未公開なら別表現に。`04_exec` は PR #331 の対象ファイルなので同 PR 内で修正）
 - [ ] **図と本文の整合**: SVG 図の用語・矢印が本文の記述と一致（#331 指摘の解消確認）
 - [ ] **MVP 完結性**: 00+01+03+04+付録A だけ読んでも主張が閉じ、かつ「Verify/Scale は後続」の予防線がある
 
