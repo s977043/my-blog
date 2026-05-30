@@ -13,14 +13,16 @@
   - [x] enforcement-architecture.svg の矢印が `Hooks → Audit log → Verify/C-4/CI` の向き（本文 04_exec と一致）
   - [x] adoption-roadmap.svg の「partial strict」を実態用語へ修正（`default`/`strict`/`bypass` ＋ Phase 0→3。中間は「段階的に strict 化」）
   - [x] STYLE.md の図方針が SVG 採用と整合（「図は SVG（`images/plangate-guide/`）。mermaid も可」へ更新）
-- [x] **cover 画像**を配置（§2 の要件を満たす）
-- [ ] **通し校正**完了（§3 の観点）
-- [ ] `npm run check`（`list:books` 含む）exit 0
-- [ ] **Zenn preview** で全8章＋図＋表紙の表示崩れがないことを目視（`npm run preview`）
-- [ ] 公開キュー #7 の時期判断（締切 2026-06-30、前倒し可）
+- [x] **cover 画像**を配置（§2 の要件を満たす。500×800＝1:1.6、約11.5KB、JPEG。プレースホルダでない）
+- [x] **通し校正**完了（§3 の観点。用語ゆれ・敬体・章間リンク・図と本文整合・相対リンク404を確認）
+- [x] `npm run check`（`list:books` 含む）exit 0
+- [ ] **Zenn preview** で全8章＋図＋表紙の表示崩れがないことを目視（`npm run preview`）← release/zenn デプロイ前に実施
+- [ ] 公開キュー #7 の時期判断（締切 2026-06-30、前倒し可）← 公開意思決定（人間）
 - [x] 事実の最終確認: 検証バージョン **v8.10.0**、Hook は **EH-1〜EH-9 + EHS-1〜EHS-3（12/12）/ EH-10 は RFC Draft**、タグライン「No approval, no code.」
 
 > ⚠️ Zenn の publish rate-limit（24h/本数）は**単発記事用で Book は別枠**。ただし `release/zenn` 経由の運用と重なる日は避け、記事 publish と同日マージにしない。
+>
+> ⚠️ **`published: true` の main マージ＝即公開ではない**。本リポジトリでは Zenn デプロイは `release/zenn` への merge でトリガーされ、main への push はデプロイしない（rate-limit 対策）。よって本 PR の main マージは安全（公開フラグを main 上で true にするだけ）。**実際の go-live は別途 `release/zenn` 同期＋上記 Zenn preview＋キュー時期判断（人間の公開意思決定）が必要**。
 
 ## 2. cover 画像 要件定義（実制作は #331 の視覚方針確定後）
 
