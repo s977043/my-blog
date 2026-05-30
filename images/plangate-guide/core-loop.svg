@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">PlanGate core loop</title>
+  <desc id="desc">Plan, Approve, Exec, Verify, Scale loop for PlanGate guide.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8fbff"/>
+      <stop offset="100%" stop-color="#eef5ff"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#1f2937" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#334155"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="630" rx="32" fill="url(#bg)"/>
+  <text x="72" y="92" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="42" font-weight="700" fill="#0f172a">AI にコードを書かせる前にやること</text>
+  <text x="72" y="136" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="24" fill="#475569">Plan の精度と Exec の強制力で、AI 開発の事故を減らす</text>
+  <g filter="url(#shadow)">
+    <rect x="82" y="230" width="180" height="120" rx="24" fill="#dbeafe" stroke="#2563eb" stroke-width="3"/>
+    <rect x="302" y="230" width="180" height="120" rx="24" fill="#fef3c7" stroke="#d97706" stroke-width="3"/>
+    <rect x="522" y="230" width="180" height="120" rx="24" fill="#dcfce7" stroke="#16a34a" stroke-width="3"/>
+    <rect x="742" y="230" width="180" height="120" rx="24" fill="#f1f5f9" stroke="#64748b" stroke-width="3"/>
+    <rect x="962" y="230" width="180" height="120" rx="24" fill="#ede9fe" stroke="#7c3aed" stroke-width="3"/>
+  </g>
+  <text x="172" y="281" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="30" font-weight="700" fill="#1e3a8a">Plan</text>
+  <text x="172" y="316" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="17" fill="#1e40af">計画の精度</text>
+  <text x="392" y="281" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="30" font-weight="700" fill="#92400e">Approve</text>
+  <text x="392" y="316" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="17" fill="#92400e">C-3 承認</text>
+  <text x="612" y="281" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="30" font-weight="700" fill="#166534">Exec</text>
+  <text x="612" y="316" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="17" fill="#166534">逸脱を止める</text>
+  <text x="832" y="281" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="30" font-weight="700" fill="#334155">Verify</text>
+  <text x="832" y="316" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="17" fill="#475569">守られた証明</text>
+  <text x="1052" y="281" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="30" font-weight="700" fill="#5b21b6">Scale</text>
+  <text x="1052" y="316" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="17" fill="#6d28d9">継続改善</text>
+  <g stroke="#334155" stroke-width="4" fill="none" marker-end="url(#arrow)">
+    <path d="M262 290 H296"/>
+    <path d="M482 290 H516"/>
+    <path d="M702 290 H736"/>
+    <path d="M922 290 H956"/>
+  </g>
+  <path d="M1052 374 C900 515 350 515 172 374" stroke="#64748b" stroke-width="3" fill="none" stroke-dasharray="10 10" marker-end="url(#arrow)"/>
+  <text x="612" y="515" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="22" font-weight="600" fill="#334155">学びを次の Plan に戻す</text>
+  <text x="612" y="570" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="20" fill="#64748b">No approval, no code.</text>
+</svg>
