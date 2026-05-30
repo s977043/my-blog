@@ -41,4 +41,4 @@
 - 既存公開記事の**本文コピペ禁止**。Book 固有の「Plan→Exec 主張への接続文」を新規に書く
 - 稼ぎ頭 entry-point 記事（`ai-legible-repository-design` / `plangate-v86-hook-enforcement`）は
   canonical を記事側に置き、Book 章冒頭で元記事へリンク（自家中毒回避）
-- 検証バージョンは **v8.10.0 想定**。手順の最新は公式 docs / GitHub へのリンクに逃がす
+- 検証バージョンは **v8.10.0**（2026-05-29 リリース、バッジ表記は v8.10.0(2026-05)）。手順の最新は公式 docs / GitHub へのリンクに逃がす
