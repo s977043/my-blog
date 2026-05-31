@@ -53,10 +53,13 @@ bin/plangate metrics <TASK> --collect
 bin/plangate metrics <TASK> --report
 
 # 全 TASK 横断で集計
-bin/plangate metrics --aggregate
+bin/plangate metrics <TASK> --report --aggregate
+
+# Keep Rate は独立コマンド（advisory）
+bin/plangate keep-rate <TASK>
 ```
 
-ここで主要指標になるのが **Keep Rate**（計画がどれだけ守られたか）です。計画と実装の乖離、Hook が何回止めたか、C-3 / C-4 の判断がどう推移したか ―― こうした数字を retrospective や週次レビューに乗せることで、「**計画の精度が上がっているか**」を勘でなくデータで確認できます。
+ここで主要指標になるのが **Keep Rate**（計画がどれだけ守られたか）です。これは `metrics` とは別の独立コマンド `bin/plangate keep-rate` で算出します。計画と実装の乖離、Hook が何回止めたか、C-3 / C-4 の判断がどう推移したか ―― こうした数字を retrospective や週次レビューに乗せることで、「**計画の精度が上がっているか**」を勘でなくデータで確認できます。
 
 > Keep Rate は advisory（参考指標）であり、合否を機械的に決めるものではありません。「先週より計画の逸脱が減ったか」を会話の起点にするための数字です。
 
