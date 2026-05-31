@@ -9,6 +9,7 @@ chapters:
   - 02_why
   - 03_plan
   - 04_exec
-  - 05_verify-scale
+  - 05_verify
+  - 06_scale
   - a1_troubleshooting
   - a2_design-evolution
