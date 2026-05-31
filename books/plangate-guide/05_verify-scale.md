@@ -43,6 +43,8 @@ PlanGate は最初から全部を使う必要はありません。**段階導入
 
 Hook も同じく段階的に配線します。Phase 1 では EH-1 を **warning** だけ、Phase 2 で EH-2 / EH-3 を追加、Phase 3 で EH-1〜EH-7 を **strict（block）**へ ―― と、強制力をチームの慣れに比例させます。第 4 章で見た「default → strict」の段階は、この導入計画の一部です。
 
+> **Phase と Mode を混同しないこと**。**Phase はチーム全体の導入段階**（どの Hook を配線し、どこまで strict 化したか）を指し、**Mode は個々のタスクの厳格さ**（ultra-light / light / standard / high-risk / critical）を指します。Phase が進むほど、各 Mode に応じた制約が「警告」から「ブロック」へ強化される、という関係です。たとえば Phase 2 のチームでも、high-risk な 1 タスクは Mode=critical で慎重に進められます。
+
 そして改善は計測ベースで回します。`bin/plangate metrics <TASK> --collect` でワークフローのイベントを append-only で蓄積し、**Keep Rate**（計画がどれだけ守られたか）などの指標で「計画の精度が上がっているか」を継続的に確認します。勘でなくデータで、計画フェーズへの投資効果を検証できます。
 
 ## PlanGate なしでも使える原則
