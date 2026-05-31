@@ -2,13 +2,18 @@
 title: "実装フェーズを制御する（Exec）— 計画を守らせる強制力"
 ---
 
-> 検証バージョン: **PlanGate v8.10.0**（2026-05）。Hook の最新仕様は[公式の hook-enforcement ドキュメント](https://github.com/s977043/PlanGate/blob/main/docs/ai/hook-enforcement.md)を参照。
-
 前章で「精度の高い計画」を C-3 で承認するところまで来ました。本章はその続き ―― **承認した計画を、実装時に守らせる**仕組みです。
 
 Exec の全体像は次の図です。計画と承認を入力にし、Hook が実装直前に検査し、違反や bypass は監査ログへ残します。
 
-![PlanGate enforcement architecture](/images/plangate-guide/enforcement-architecture.svg)
+```mermaid
+flowchart LR
+    Plan[plan.md<br/>スコープ・受入基準] --> C3[C-3 approval<br/>APPROVED]
+    C3 --> Exec[Exec<br/>AI が実装]
+    Exec --> Hooks[Hooks<br/>EH-1〜EH-9 / EHS]
+    Hooks --> Audit[Audit log<br/>VIOLATION / BYPASS]
+    Audit --> Verify[Verify / C-4 / CI<br/>証明してマージへ]
+```
 
 ## 良い計画も、守られなければ意味がない
 
