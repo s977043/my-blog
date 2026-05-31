@@ -43,6 +43,8 @@ bin/plangate doctor --fix --yes
 
 > `doctor` 単体は環境チェックだけで、Hook の配線はしません。**配線には `doctor --fix` が必要**です。配線しないと後述の EH-1 / EH-2 は発火しません。
 
+> 💡 **Codex CLI を使う場合**：v8.10.0 で Codex parity が入り、Claude Code の `.claude/settings.json` と同様に、Codex CLI 用の `.codex/hooks.json`（`eh-bridge.sh`）経由で同じ EH 系 Hook が発火します。どちらのエージェントでも「承認なし実装の検知」は同じように効きます。
+
 `bin/plangate` は単一の CLI エントリポイントです。主要なサブコマンドは次の通り（`bin/plangate help` 相当）。
 
 ```text
