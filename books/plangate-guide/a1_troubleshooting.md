@@ -56,6 +56,32 @@ bypass しても、監査ログには `BYPASS` として必ず記録されます
 
 同じ検査を両方でやらない、を原則にすれば両者は多層防御として補完します。
 
+## 複数 TASK を並行で進めている
+
+PlanGate は `docs/working/TASK-XXXX/` を TASK 単位で分離します。複数 TASK を同時に進めると、Hook が「いまどの TASK の文脈か」を取り違えることがあります。対策は明示です。
+
+```bash
+# どの TASK の文脈で Hook を評価するか明示する
+PLANGATE_HOOK_TASK=TASK-0002 <操作>
+```
+
+`bin/plangate status <TASK>` で各 TASK の現在フェーズを確認し、いま触っている変更がどの TASK の plan に属するかを意識すると、scope（EH-6）の誤検知も減ります。並行作業は「1 セッション 1 TASK」に寄せるのが最も安全です。
+
+## monorepo / サブディレクトリで動かしたい
+
+Hook は plan やスキーマのパスを基準に検査します。monorepo でパッケージごとに運用する場合、`docs/working/` の位置と plan のスコープ宣言（Files）を、そのパッケージのパスに合わせて記述してください。ルートと各パッケージで二重に Hook を配線すると競合するため、**配線は 1 箇所に集約**するのが原則です。
+
+## python3 / git が見つからない・複数ある
+
+PlanGate の CLI と Hook は `git` / POSIX `sh` / `python3` に依存します。`bin/plangate doctor` が不足や版の問題を診断します。
+
+```bash
+bin/plangate doctor          # 依存の有無・版を診断
+which python3 git            # 複数インストール時はパスを確認
+```
+
+`python3` が複数あって意図しない版が使われる場合は、`PATH` の順序を調整するか、リポジトリの実行環境（WSL / venv など）を固定してください。
+
 ## Windows / WSL での差異
 
 PlanGate は POSIX shell 前提のため、Windows ではネイティブでなく **WSL 上での実行を推奨**します。パス区切り（`/` と `\`）、シェルスクリプトの実行権限、Git Hook の起動挙動が Windows ネイティブと WSL で異なるため、トラブルを避けるには WSL に揃えるのが確実です。
