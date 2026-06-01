@@ -20,6 +20,7 @@
     "check:zenn-title": "node scripts/check-zenn-title-length.js",
     "check:fm-title": "node scripts/check-frontmatter-title-yaml.js",
     "check:faq-coverage": "node scripts/check-article-faq-coverage.js",
+    "check:qiita-drift": "node scripts/check-qiita-drift.js",
     "check": "npm run list:articles && npm run list:books && npm run check:qiita && npm run check:note-ref && npm run check:note-images && npm run check:note-tables && npm run check:qiita-publish-hygiene && npm run check:doc-freshness && npm run check:zenn-title && npm run check:fm-title && npm run check:faq-coverage"
   },
   "dependencies": {

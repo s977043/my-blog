@@ -7,12 +7,16 @@ tags:
   - 生成AI
   - AI駆動開発
 private: false
-updated_at: '2026-05-19T07:49:58+09:00'
+updated_at: '2026-05-28T12:14:09+09:00'
 id: 607d78c35745b17f9bc8
 organization_url_name: null
 slide: false
 ignorePublish: false
 ---
+
+:::note info
+本記事は、note に掲載した [「プロンプトを磨けば勝てる」をやめた：AIレビューを運用に乗せる "Agent Skills" 設計](https://note.com/mine_unilabo/n/nd21c3f1df22e) と同じ題材を、Qiita 向けに「GitHub Actions と `skills/upstream/` の実物を触って始める導入寄り」へ絞って再構成したものです。
+:::
 
 ## はじめに
 

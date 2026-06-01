@@ -6,7 +6,7 @@ tags:
   - 生成AI
   - AI駆動開発
 private: false
-updated_at: '2026-04-16T06:37:15+09:00'
+updated_at: '2026-05-28T12:16:01+09:00'
 id: fd5e5642efb40bfe4198
 organization_url_name: null
 slide: false
@@ -19,6 +19,10 @@ ignorePublish: false
 - 通常記事として公開する場合は、キャンペーンタグ FindyTeamPlus_AI_2025 を付けない方針で最終確認する。
 - 公開する場合は ignorePublish: false に変更する。
 -->
+
+:::note info
+本記事は、note に掲載した [AITDD実践録：AIエージェント(Claude Code/Gemini CLI)だから「テストが先に動く」開発を日常化する](https://note.com/mine_unilabo/n/nc62d478194d3) と同じテーマ（AI 駆動開発でのテスト先行）を、Qiita 向けに「チーム開発で安定させるための観点」に角度を変えて整理したものです。
+:::
 
 ## はじめに
 

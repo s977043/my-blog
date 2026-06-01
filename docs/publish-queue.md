@@ -13,11 +13,11 @@
 
 | # | 締切 | platform | path | レビュー | 状態 |
 |---|---|---|---|---|---|
-| 2 | **2026-05-29（金）18:00 JST** | qiita | `Qiita/public/ai-coding-preflight-checklist.md` | Full（済 PR#247） | 未公開（ignorePublish:true）|
-| 3 | **2026-06-02（火）18:00 JST** | qiita | `Qiita/public/plangate-ai-coding-workflow.md` | Full（済 PR#283、4指摘反映済） | 未公開（ignorePublish:true）|
 | 4 | **2026-06-09（火）18:00 JST** | qiita | `Qiita/public/design-md-guide-and-adoption-log.md` | Full（済 PR#285、予防反映済） | 未公開（ignorePublish:true）|
 | 5 | **2026-06-16（火）18:00 JST** | qiita | `Qiita/public/penpot-react-design-system-contract.md` | Full（済 PR#286、予防反映済） | 未公開（ignorePublish:true）|
 | 6 | **2026-06-23（火）18:00 JST** | qiita | `Qiita/public/open-design-design-quality.md` | Full（済 PR#286、予防反映済） | 未公開（ignorePublish:true）／**Zenn 公開（2026-05-26週）後に cross-post note 有効化必須**|
+| 7 | **2026-06-01（日）20:00 JST 以降** | zenn-book | `books/plangate-guide/`（全9章） | 5系統×複数ラウンド収束（セルフ/品質Agent/事実Agent/Codex/Gemini=全員「出版可」）＋PR#326-347 | **公開準備完了**（main は `published: true`／全章 mermaid 図／cover 500×700 表示確認済／検証バージョン統一）。残: **release/zenn 同期＝go-live のみ**（本日 20:00 以降に実行予定）|
+- #7 は **Zenn Book**（単発記事でなく book）。Zenn の publish rate-limit（24h/本数）は**記事用で book は別枠**だが、念のため記事 publish と同日マージを避ける。**本文・図・cover・レビューは全て完了**。公開は本日 20:00 以降に `scripts/sync-release-zenn.sh` → release/zenn PR マージで実行（go-live は外向きアクションのため人間 GO 必須）。go-live 前に `npm run check:zenn-pace` で rate-limit を確認すること
 - #2 公開時、本文「関連記事」の scope-creep 参照に下記 Done の実 Qiita URL を差し込む（相互リンク確定）
 - #3〜#6 はデザイン三部作 Qiita 化＋PlanGate Qiita 化。Codex 助言に基づく段階公開（PlanGate → DESIGN.md → penpot-react → open-design）。1週ペース・初動の反応とタイトル調整余地を確保
 - #6（open-design）は Zenn 原典が 2026-05-26 週公開予定のため、Zenn 公開後の cross-post `:::note info` 有効化を**公開作業の前段**に組み込む（コメントアウト退避済み、手順は記事内 HTML コメントに記載）
@@ -30,3 +30,6 @@
 - 2026-05-21 zenn ai-agile-value-increases https://zenn.dev/minewo/articles/ai-agile-value-increases （PR #289 main / PR #290 release/zenn、予定6/6から前倒し公開）
 - 2026-05-22 zenn river-reviewer-v033-improvement-loop https://zenn.dev/minewo/articles/river-reviewer-v033-improvement-loop — 当初 5/22 rate-limit hit でデプロイ拒否、2026-05-25 に release/zenn 空 commit（4ded8e6）で再デプロイ→公開反映確認済
 - 2026-05-25 zenn open-design-design-quality https://zenn.dev/minewo/articles/open-design-design-quality （PR #305 main / PR #306 release/zenn、予定5/26から前倒し公開）
+- 2026-05-19 qiita ai-coding-preflight-checklist https://qiita.com/s977043/items/b8dacca4ce2d9079454a （queue 上に残存していた古い #2 を実態に合わせて Done へ移動）
+- 2026-05-27 qiita plangate-ai-coding-workflow https://qiita.com/s977043/items/6041bbc2659412341d54 （PR #314 経由で公開、予定6/2から前倒し）
+- 2026-05-28 qiita multi-ai-discussion-roadmap-rewrite https://qiita.com/s977043/items/4e89a93c2ebfb928e2b1 （PR #319 経由で公開、予定6/30から前倒し、note原典 n5fe2e97b9600 cross-post）
