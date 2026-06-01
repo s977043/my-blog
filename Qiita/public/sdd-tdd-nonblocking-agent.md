@@ -1,17 +1,17 @@
 ---
-title: '仕様を揃えて止めない：マルチエージェント開発の3原則（SDD・TDD・ノンブロッキング）'
+title: 仕様を揃えて止めない：マルチエージェント開発の3原則（SDD・TDD・ノンブロッキング）
 tags:
   - TDD
-  - SDD
+  - sdd
   - AI駆動開発
   - マルチエージェント
   - ClaudeCode
 private: false
-updated_at: ''
-id: null
+updated_at: '2026-06-02T07:20:32+09:00'
+id: 05934596111b9065465d
 organization_url_name: null
 slide: false
-ignorePublish: true
+ignorePublish: false
 ---
 
 > TL;DR
