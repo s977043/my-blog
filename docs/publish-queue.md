@@ -16,6 +16,7 @@
 | 4 | **2026-06-09（火）18:00 JST** | qiita | `Qiita/public/design-md-guide-and-adoption-log.md` | Full（済 PR#285、予防反映済） | 未公開（ignorePublish:true）|
 | 5 | **2026-06-16（火）18:00 JST** | qiita | `Qiita/public/penpot-react-design-system-contract.md` | Full（済 PR#286、予防反映済） | 未公開（ignorePublish:true）|
 | 6 | **2026-06-23（火）18:00 JST** | qiita | `Qiita/public/open-design-design-quality.md` | Full（済 PR#286、予防反映済） | 未公開（ignorePublish:true）／**Zenn 公開（2026-05-26週）後に cross-post note 有効化必須**|
+| 8 | **2026-06-30（火）18:00 JST** | qiita | `Qiita/public/sdd-tdd-nonblocking-agent.md` | cross-post（Zenn 原典 published 済み） | 未公開（ignorePublish:true / id:null）。Zenn「仕様を揃えて止めない…3原則」の Qiita 転載。公開時 ignorePublish→false / updated_at 更新 / `publish:qiita`|
 - #7 (zenn-book) は **2026-06-01 公開完了**（下記 Done 参照）。本文・図・cover・5系統＋ultracode レビュー完了後、release/zenn PR #350 マージで go-live
 - #2 公開時、本文「関連記事」の scope-creep 参照に下記 Done の実 Qiita URL を差し込む（相互リンク確定）
 - #3〜#6 はデザイン三部作 Qiita 化＋PlanGate Qiita 化。Codex 助言に基づく段階公開（PlanGate → DESIGN.md → penpot-react → open-design）。1週ペース・初動の反応とタイトル調整余地を確保
