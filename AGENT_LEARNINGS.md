@@ -891,6 +891,67 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 
 ---
 
+### 2026-05-26 — release/zenn sync PR の競合は articles_note/drafts/ で頻発、main 側採用が標準 [Workflow] [Pattern]
+
+**観察**: main → release/zenn の sync PR を作ると、`articles_note/drafts/` の rename/rename / modify/delete / add/add が 10件超で頻発する。原因は (1) main で note import の dedup によりファイル名が ID 単位に書き換わる、(2) release/zenn 側は同期前の古い名前で残っている、の組み合わせ。手動解決していると 5〜10 分のロスが出る。
+
+**対策/学び**:
+- `git merge -X theirs origin/main` だけでは rename/rename / modify/delete / add/add は自動解決されない（unmerged が残る）
+- 残った unmerged を一括処理する手順:
+  ```bash
+  for f in $(git diff --name-only --diff-filter=U); do
+    if git ls-tree origin/main "$f" 2>/dev/null | grep -q .; then
+      git checkout --theirs -- "$f" && git add "$f"
+    else
+      git rm -f "$f"
+    fi
+  done
+  ```
+  → main にあれば main 版を採用、main に無ければ削除（release/zenn 側で残っている古いファイルを整理）
+- release/zenn の articles_note/ は Zenn deploy 対象外なので、main を全面採用しても deploy には影響しない
+- 採用後は `grep "^published:" articles/<対象>.md` で本来の deploy 対象（articles/）が想定通りか必ず検証
+
+**根拠**: 2026-05-26 PR #306 / #309 / #311 / #313 のいずれでも同パターンの競合が発生。`git ls-tree` フィルタで一括処理する手順を確立
+
+---
+
+### 2026-05-26 — 既存ガイド系記事への FAQ セクション横展開は SEO/可読性の両面で効く [Pattern] [Workflow]
+
+**観察**: 1記事 (design-md-guide) で末尾に置いた「FAQ」セクションが読者から強い反応を得たため、ガイド系8記事に横展開。3-5問 / 各回答 2-4 文 / 「やってみないと分からない」で逃げない断定型で揃えた結果、`### Q.` 単位で People Also Ask に拾われやすい形になった。
+
+**対策/学び**:
+- 横展開時のテンプレート:
+  - 見出し: `## <記事の主題>のFAQ`（記事ごとに固有名、design-md-guide だけは「DESIGN.md 導入ガイドのFAQ」のように完全形）
+  - Q&A: `### Q. <質問>` 改行 `A. <2-4文>` の Markdown 形式
+  - 回答は条件付き断定（「3日以上のタスクで」「Sonnet クラスで」のように前提を明示）
+- FAQ単独抜粋を想定して「本文の方針3」のような番号参照は括弧で意味を補う
+- 検査自動化: `scripts/check-article-faq-coverage.js` で「title に gnide keyword を含む or 2400+ 文字」を guide-type と判定、FAQ欠落を WARN（exit 0、強制力なし）
+- `### Q.` カウントは FAQ章内限定にすること（章外散在の Q.形式見出しを誤検出しないため）
+
+**根拠**: PR #310（8記事FAQ追加 + check script）、PR #312（セルフレビュー結果反映）。3ペルソナ + Codex 並列レビューで「見出し命名不整合」「定量回答の前提抜け」「本文番号参照の抜粋時不明化」が共通指摘として浮上
+
+---
+
+### 2026-05-27 — publish-queue.md は実態と乖離しやすい、公開実行直前に必ず id / web 状態を確認 [Workflow] [Gotcha]
+
+**観察**: `docs/publish-queue.md` の #2 ai-coding-preflight-checklist が「未公開（ignorePublish:true）/ 締切 5/29」と記載されたまま、実際は 2026-05-19 に Qiita 公開済み（id: b8dacca4ce2d9079454a）だった。queue だけ見て公開準備を進めると、二重公開や無駄な hygiene 修正に時間を使う。
+
+**対策/学び**:
+- 公開作業着手前の確認手順:
+  ```bash
+  # ローカル状態
+  grep "^id:\|^ignorePublish:" Qiita/public/<slug>.md
+  # web 状態（id が null でなければ確認）
+  curl -s -o /dev/null -w "%{http_code}" "https://qiita.com/s977043/items/<id>"
+  ```
+  → id が `null` でなく web 200 なら既公開。queue は更新せず単に Done へ移動するだけで済む
+- queue 更新 PR は公開実行 PR とは別にしない。同一 PR で「実態整合 + 公開準備」を扱う方が history が辿りやすい
+- `npm run publish:qiita -- <slug>` 実行後に id が frontmatter に自動付与されるので、その差分は別 commit にせず公開記録 PR にまとめる
+
+**根拠**: 2026-05-27 PR #314 で queue #2 整合化、PR #315 で id 反映と Done 移動を実施。Codex 助言「queue 状態は実態と乖離しやすい」を裏付け
+
+---
+
 <!--
 ## 追加時のテンプレート
 
