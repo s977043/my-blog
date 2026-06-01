@@ -16,7 +16,6 @@
 | 4 | **2026-06-09（火）18:00 JST** | qiita | `Qiita/public/design-md-guide-and-adoption-log.md` | Full（済 PR#285、予防反映済） | 未公開（ignorePublish:true）|
 | 5 | **2026-06-16（火）18:00 JST** | qiita | `Qiita/public/penpot-react-design-system-contract.md` | Full（済 PR#286、予防反映済） | 未公開（ignorePublish:true）|
 | 6 | **2026-06-23（火）18:00 JST** | qiita | `Qiita/public/open-design-design-quality.md` | Full（済 PR#286、予防反映済） | 未公開（ignorePublish:true）／**Zenn 公開（2026-05-26週）後に cross-post note 有効化必須**|
-| 8 | **2026-06-30（火）18:00 JST** | qiita | `Qiita/public/sdd-tdd-nonblocking-agent.md` | cross-post（Zenn 原典 published 済み） | 未公開（ignorePublish:true / id:null）。Zenn「仕様を揃えて止めない…3原則」の Qiita 転載。公開時 ignorePublish→false / updated_at 更新 / `publish:qiita`|
 - #7 (zenn-book) は **2026-06-01 公開完了**（下記 Done 参照）。本文・図・cover・5系統＋ultracode レビュー完了後、release/zenn PR #350 マージで go-live
 - #2 公開時、本文「関連記事」の scope-creep 参照に下記 Done の実 Qiita URL を差し込む（相互リンク確定）
 - #3〜#6 はデザイン三部作 Qiita 化＋PlanGate Qiita 化。Codex 助言に基づく段階公開（PlanGate → DESIGN.md → penpot-react → open-design）。1週ペース・初動の反応とタイトル調整余地を確保
@@ -25,6 +24,8 @@
 - 補充は手動。次テーマが決まったら行を追加（Rolling/テンプレは凍結中のため使わない）
 
 ## Done
+
+- 2026-06-02 qiita sdd-tdd-nonblocking-agent https://qiita.com/s977043/items/05934596111b9065465d （Zenn「仕様を揃えて止めない…3原則」cross-post、PR #353 改善反映、id:05934596111b9065465d）
 
 - 2026-06-01 zenn-book plangate-guide「AI にコードを書かせる前にやること — PlanGate 実践ガイド」 https://zenn.dev/minewo/books/plangate-guide （全9章/無料、PR #350 で release/zenn マージ→公開。5系統×複数ラウンド＋ultracode レビュー収束、cover 500×700。issue #325）
 - 2026-05-18 qiita claude-code-scope-creep-countermeasure https://qiita.com/s977043/items/a25ec91ea411f39bf340
