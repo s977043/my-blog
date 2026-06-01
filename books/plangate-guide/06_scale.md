@@ -63,23 +63,29 @@ bin/plangate keep-rate <TASK>
 
 ```text
 # Metrics summary: TASK-XXXX
-- events: 8
+- events: 9
 - events by type:
     - c3_decided: 1
     - exec_started: 1
+    - hook_violation: 2
     - v1_completed: 1
     - ...
-- modes: {'light': 1}
+- modes: {'standard': 1}
 
 ## Hook violations
-- total: 0
+- total: 2
+- by hook_id:
+    - EH-2: 1
+    - EH-6: 1
+- by result:
+    - block: 2
 
 ## Gate decisions
 - C-3: {'APPROVED': 1, 'CONDITIONAL': 0, 'REJECTED': 0}
 - V-1: {'PASS': 1, 'FAIL': 0, 'WARN': 0}
 ```
 
-「どの Hook が何回止めたか」「C-3 / V-1 がどう推移したか」が一目で分かります。見た目の可視化より、**後から比較できる構造化データ**として残すことを優先した設計です。
+`by hook_id` を見れば「**どの Hook が何回止めたか**」（この例では EH-2＝承認なし実装、EH-6＝スコープ外編集が各 1 回）が分かり、`Gate decisions` で「C-3 / V-1 がどう推移したか」が追えます。見た目の可視化より、**後から比較できる構造化データ**として残すことを優先した設計です。
 
 ここで主要指標になるのが **Keep Rate**（計画がどれだけ守られたか）です。これは `metrics` とは別の独立コマンド `bin/plangate keep-rate` で算出します。計画と実装の乖離、Hook が何回止めたか、C-3 / C-4 の判断がどう推移したか ―― こうした数字を retrospective や週次レビューに乗せることで、「**計画の精度が上がっているか**」を勘でなくデータで確認できます。
 
