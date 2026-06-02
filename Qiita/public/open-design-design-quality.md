@@ -42,7 +42,7 @@ Zenn 公開時に有効化する :::note info（壊れリンク回避のため Z
 
 デザインツールを Open Design に替えるだけでは品質は上がりません。**契約（前作）と入口（DESIGN.md ガイド）が無いと、ツールの開放性は品質に変換されない**のが本記事の主張です。開放性は「SVG 差分・token 往復・AI 可読・フォーマット非依存レビュー」の4経路で前作と入口を増幅します。
 
-この記事は、[PenpotとReactを同じ契約で運用するデザインシステムの作り方](https://qiita.com/) と [DESIGN.md 導入ガイド](https://qiita.com/) の続編（Qiita版）です。前2記事が「契約をどう持つか」「入口ドキュメントをどう整えるか」だったのに対し、本記事は **Open Design を導入すると、なぜデザイン品質が上がるのか** に絞ります。
+この記事は、[PenpotとReactを同じ契約で運用するデザインシステムの作り方](https://zenn.dev/minewo/articles/penpot-react-design-system-contract) と [DESIGN.md 導入ガイド](https://zenn.dev/minewo/articles/design-md-guide-and-adoption-log) の続編（Qiita版）です。前2記事が「契約をどう持つか」「入口ドキュメントをどう整えるか」だったのに対し、本記事は **Open Design を導入すると、なぜデザイン品質が上がるのか** に絞ります。
 
 前作では、Penpot と React を「同期する」のではなく **同じ契約に従わせる** 運用を書きました。続くガイドでは、その契約への入口を `DESIGN.md` に集約しました。
 
