@@ -23,7 +23,7 @@ Use the following positioning as the shared theme across all channels.
 This positioning connects the existing topics into a single recognizable category.
 
 - PlanGate: stop AI before implementation and require approval.
-- River Reviewer: review the full development flow, not only PR diffs.
+- River Review: review the full development flow, not only PR diffs.
 - Agent Skills: make AI review criteria reusable and reproducible.
 - AI-readable repository design: make repositories easier for agents to navigate.
 - Metrics and governance: evaluate AI development workflows with numbers, not impressions.
@@ -149,7 +149,7 @@ Channel mapping:
 | Qiita | Claude CodeでAIが勝手に実装範囲を広げるときの対策 |
 | Growth Lab | PlanGate complete guide: setup, operation, metrics, governance |
 
-### River Reviewer
+### River Review
 
 Main message:
 
@@ -160,9 +160,9 @@ Channel mapping:
 | Channel | Article angle |
 | --- | --- |
 | note | AIレビューはPR差分だけでは足りない理由 |
-| Zenn | River Reviewer architecture and review phases |
+| Zenn | River Review architecture and review phases |
 | Qiita | GitHub ActionsでAIレビューを開発フロー全体に広げる |
-| Growth Lab | River Reviewer operation guide and validation log |
+| Growth Lab | River Review operation guide and validation log |
 
 ### Agent Skills
 
@@ -206,7 +206,7 @@ Unify profiles so that readers immediately understand the theme.
 
 ```text
 AIコーディングをチーム開発に乗せる運用設計を検証しています。
-PlanGate / River Reviewer / Agent Skills / AI-readable repository を中心に、
+PlanGate / River Review / Agent Skills / AI-readable repository を中心に、
 Claude Code・Codex・GitHub Actions・Next.js・Laravelでの実践ログを発信中。
 
 詳しい検証ログ: Growth Lab
@@ -218,7 +218,7 @@ OSS: GitHub
 
 ```text
 AIコーディングエージェントをチーム開発で安全に使うための運用設計を検証しています。
-PlanGate / River Reviewer / Agent Skills / AI-readable repository などを書いています。
+PlanGate / River Review / Agent Skills / AI-readable repository などを書いています。
 
 note: 背景・思想
 Zenn: 技術深掘り
@@ -240,7 +240,7 @@ Use note as the narrative hub.
 
 ```text
 AIコーディングをチーム開発に乗せる運用設計について書いています。
-PlanGate / River Reviewer / Agent Skills を中心に、
+PlanGate / River Review / Agent Skills を中心に、
 AIエージェントを個人の便利ツールで終わらせず、チームの開発フローにどう組み込むかを考えています。
 
 技術深掘り: Zenn
@@ -257,9 +257,9 @@ Use these as the visible first-step articles when updating pinned articles, pick
 | --- | --- |
 | note | [AIにコードを書かせる前に、人間が承認する場所を作る](https://note.com/mine_unilabo/n/n02992266d622) as the fixed entry article |
 | Zenn | [PlanGate v8.6.0 metrics and governance](https://zenn.dev/minewo/articles/plangate-v86-hook-enforcement) / [AI-readable repository design](https://zenn.dev/minewo/articles/ai-legible-repository-design) |
-| Qiita | [PlanGate v8.6.0 metrics and governance](https://qiita.com/s977043/items/5ebff79112ecf1af872c) / `Qiita/public/river-reviewer-agent-skills.md` (River Reviewer and Agent Skills, publish candidate) |
-| Growth Lab | canonical guides and validation logs for PlanGate and River Reviewer |
-| GitHub | PlanGate / River Reviewer / repository docs and issues |
+| Qiita | [PlanGate v8.6.0 metrics and governance](https://qiita.com/s977043/items/5ebff79112ecf1af872c) / `Qiita/public/river-reviewer-agent-skills.md` (River Review and Agent Skills, publish candidate) |
+| Growth Lab | canonical guides and validation logs for PlanGate and River Review |
+| GitHub | PlanGate / River Review / repository docs and issues |
 
 ### Manual update checklist
 
@@ -270,7 +270,7 @@ Use this order when applying the strategy outside the repository.
 3. Update the note profile with the note profile draft and links to Zenn (https://zenn.dev/minewo), Qiita (https://qiita.com/s977043), Growth Lab (https://the3396.com/articles), and GitHub (https://github.com/s977043).
 4. Set Qiita Pickup Articles to the current AI-development entry points.
 5. Set the note fixed article to the PlanGate entry article above.
-6. Revisit this document after publishing the Qiita River Reviewer / Agent Skills candidate to update the entry-point URL in the table above.
+6. Revisit this document after publishing the Qiita River Review / Agent Skills candidate to update the entry-point URL in the table above.
 
 ## Existing article update priorities
 
@@ -278,7 +278,7 @@ Use this order when applying the strategy outside the repository.
 
 1. Make a PlanGate-related article the fixed entry article when the goal is access growth.
 2. Add an opening summary to PlanGate articles.
-3. Add internal links between PlanGate, River Reviewer, Agent Skills, and EM/TL/PdM articles.
+3. Add internal links between PlanGate, River Review, Agent Skills, and EM/TL/PdM articles.
 4. Add stronger GitHub calls to action.
 5. Use around five tags per article.
 
@@ -296,7 +296,7 @@ Recommended tags for PlanGate articles:
 ### Zenn
 
 1. Keep Zenn as the technical deep-dive channel.
-2. Strengthen article clusters around PlanGate, River Reviewer, Agent Skills, and AI-readable repository design.
+2. Strengthen article clusters around PlanGate, River Review, Agent Skills, and AI-readable repository design.
 3. Add links from each technical article to the corresponding note background article and GitHub repository.
 4. Use Zenn for implementation details, not broad narrative essays.
 
@@ -373,7 +373,7 @@ Publish one note hub article.
 
 Title draft:
 
-> AIコーディングをチーム開発に乗せるために作っているもの: PlanGate / River Reviewer / Agent Skills
+> AIコーディングをチーム開発に乗せるために作っているもの: PlanGate / River Review / Agent Skills
 
 Purpose:
 
@@ -398,7 +398,7 @@ Track the following signals.
 
 1. Update profile text across Zenn, Qiita, and note using the canonical copy above.
 2. Set current AI-development articles as visible entry points.
-3. Add cross-links to PlanGate, River Reviewer, Agent Skills, and AI-readable repository articles.
+3. Add cross-links to PlanGate, River Review, Agent Skills, and AI-readable repository articles.
 4. Confirm note fixed entry article choice for the current growth goal.
 5. Publish two Qiita search-entry articles.
 6. Publish one note hub article.

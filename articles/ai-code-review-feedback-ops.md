@@ -369,6 +369,6 @@ A. 件数が3桁を超えるまでは Markdown で十分です。それ以上に
 
 :::message
 - [AI記事制作で品質を落とさない：編集フローを3層の品質ゲートで設計する](https://zenn.dev/minewo/articles/ai-article-quality-gate-workflow)
-- [AI駆動開発の2層ガード設計：PlanGateとRiver Reviewerで実装前後を守る](https://zenn.dev/minewo/articles/ai-dev-guardrail-plangate-river-reviewer)
+- [AI駆動開発の2層ガード設計：PlanGateとRiver Reviewで実装前後を守る](https://zenn.dev/minewo/articles/ai-dev-guardrail-plangate-river-reviewer)
 - [AIが迷わないリポジトリ設計：長いプロンプトより先に整える4つの置き場所](https://zenn.dev/minewo/articles/ai-legible-repository-design)
 :::

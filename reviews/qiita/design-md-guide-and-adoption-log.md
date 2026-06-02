@@ -34,7 +34,7 @@ Zenn 公開済み記事の Qiita 移植版。Growth Lab デザイン三部作の
 
 ### 指摘2（任意）: 関連ページのリンク密度
 
-末尾「関連ページ」が Growth Lab デザインシステム1リンクのみ。Qiita 群（PlanGate / River Reviewer / ai-coding-preflight-checklist など）との回遊導線を作るなら、Qiita 内 ID リンクを2-3本添えると保存後の再訪率が上がる。**公開タイミングで関連 Qiita 記事 ID が確定してから追加するのが安全**（壊れリンク回避）。
+末尾「関連ページ」が Growth Lab デザインシステム1リンクのみ。Qiita 群（PlanGate / River Review / ai-coding-preflight-checklist など）との回遊導線を作るなら、Qiita 内 ID リンクを2-3本添えると保存後の再訪率が上がる。**公開タイミングで関連 Qiita 記事 ID が確定してから追加するのが安全**（壊れリンク回避）。
 
 ### 指摘3（任意）: 三部作の相互リンク
 
