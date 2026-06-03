@@ -43,7 +43,7 @@ L153-L162 （`## 関連記事` と `## 参考` の分離が弱く、`Growth Lab`
 ## 関連記事
 
 - [開発セッション直後の振り返りを改善フローにつなげる方法](https://zenn.dev/minewo/articles/engineering-process-improvement-skill) — 本記事の3層モデルを「コード開発セッション」に適用した姉妹記事
-- [AI駆動開発の2層ガード設計：PlanGateとRiver Reviewerで実装前後を守る](https://zenn.dev/minewo/articles/ai-dev-guardrail-plangate-river-reviewer) — 実装前後のガード設計
+- [AI駆動開発の2層ガード設計：PlanGateとRiver Reviewで実装前後を守る](https://zenn.dev/minewo/articles/ai-dev-guardrail-plangate-river-reviewer) — 実装前後のガード設計
 - [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow) — 書く前に計画を固定する思想の原典
 
 ## 参考

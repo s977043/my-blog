@@ -186,7 +186,7 @@ AIエージェントによるコミットは、利用中モデルの名前で `C
 Co-Authored-By: <Model name and byline> <noreply@anthropic.com>
 ```
 
-例: `Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>`
+`<Model name and byline>` には **そのコミットを生成した実モデル名**を入れる（例として特定バージョンをここに固定しない。古い名前をハードコードして残さないこと）。
 
 ## 禁止事項
 
