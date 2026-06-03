@@ -27,7 +27,8 @@ Claude Code 向けのツールガイド。規約（何が正しいか）は `@AG
 |-----------|------|
 | `article-reviewer` | Zenn記事の3ペルソナレビュー生成 |
 | `note-article-reviewer` | note記事の3ペルソナレビュー生成（JTFスタイル準拠） |
-| `review-applier` | レビュー指摘の採用/保留/却下分類と本文反映 |
+| `review-applier` | Zennレビュー指摘の採用/保留/却下分類と本文反映（`articles/`・`:::message`/`:::details` 前提） |
+| `note-review-applier` | noteレビュー指摘の採用/保留/却下分類と本文反映（`articles_note/<state>/`・JTFスタイル・published手動反映前提） |
 | `note-export-importer` | note公式WXRエクスポートの取り込み/WXR生成 |
 
 ## Skills（`.claude/skills/`）
