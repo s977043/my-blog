@@ -8,7 +8,7 @@
     "list:books": "zenn list:books",
     "new:qiita": "qiita new --root Qiita",
     "pull:qiita": "qiita pull --root Qiita",
-    "publish:qiita": "qiita publish --root Qiita",
+    "publish:qiita": "bash scripts/publish-qiita.sh",
     "publish:qiita:all": "qiita publish --all --root Qiita",
     "check:qiita": "qiita version",
     "check:note-ref": "node scripts/check-note-reference.js",
@@ -21,7 +21,9 @@
     "check:fm-title": "node scripts/check-frontmatter-title-yaml.js",
     "check:faq-coverage": "node scripts/check-article-faq-coverage.js",
     "check:qiita-drift": "node scripts/check-qiita-drift.js",
-    "check": "npm run list:articles && npm run list:books && npm run check:qiita && npm run check:note-ref && npm run check:note-images && npm run check:note-tables && npm run check:qiita-publish-hygiene && npm run check:doc-freshness && npm run check:zenn-title && npm run check:fm-title && npm run check:faq-coverage"
+    "check:qiita-remote-cache": "node scripts/check-qiita-remote-cache.js",
+    "check:internal-links": "node scripts/check-internal-links.js",
+    "check": "npm run list:articles && npm run list:books && npm run check:qiita && npm run check:note-ref && npm run check:note-images && npm run check:note-tables && npm run check:qiita-publish-hygiene && npm run check:doc-freshness && npm run check:zenn-title && npm run check:fm-title && npm run check:faq-coverage && npm run check:internal-links && npm run check:zenn-pace"
   },
   "dependencies": {
     "zenn-cli": "^0.4.8"

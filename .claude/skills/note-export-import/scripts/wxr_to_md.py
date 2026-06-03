@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import re
 import shutil
+import subprocess
 import sys
 import tempfile
 import zipfile
@@ -110,11 +111,48 @@ def archive_zip(src: Path, out_root: Path) -> None:
         print(f"archived ZIP → {dst.relative_to(out_root)}")
 
 
+def check_local_regression(out_root: Path, force: bool) -> None:
+    """取り込みは published/ drafts/ を server 状態で上書き再生成する。
+    これらに未コミットのローカル編集があると、取り込みで巻き戻る（AGENT_LEARNINGS 2026-04-26）。
+    git 管理下なら取り込み前に dirty を検出し、上書き対象を警告する。"""
+    targets = [str(out_root / "published"), str(out_root / "drafts")]
+    try:
+        res = subprocess.run(
+            ["git", "status", "--short", "--", *targets],
+            capture_output=True, text=True, check=True,
+        )
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return  # git 管理外 / git 不在なら素通り
+    dirty = [ln for ln in res.stdout.splitlines() if ln.strip()]
+    if not dirty:
+        return
+
+    sys.stderr.write(
+        "\n[wxr_to_md] WARN: published/ drafts/ に未コミットのローカル変更があります。\n"
+        "  取り込みは server 状態でこれらを上書き再生成するため、未反映の編集が巻き戻ります:\n"
+    )
+    for ln in dirty:
+        sys.stderr.write(f"    {ln}\n")
+    sys.stderr.write(
+        "  対処: 先に commit/stash するか、編集が new/ にあるべきか確認してください。\n"
+        "  意図して上書きする場合は --force を付けて再実行してください。\n\n"
+    )
+    if not force:
+        sys.exit(1)
+    sys.stderr.write("[wxr_to_md] --force 指定のため続行します。\n")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("src", type=Path, help="ZIP or extracted dir")
     ap.add_argument("--out", type=Path, default=Path("articles_note"), help="articles_note/ root")
+    ap.add_argument(
+        "--force", action="store_true",
+        help="published/ drafts/ に未コミット変更があっても取り込みを強行する",
+    )
     args = ap.parse_args()
+
+    check_local_regression(args.out, args.force)
 
     with tempfile.TemporaryDirectory() as tmp:
         workdir = Path(tmp)

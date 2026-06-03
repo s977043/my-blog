@@ -1,0 +1,10 @@
+{
+  "_comment": "Qiita 公開対象記事(ignorePublish:false または未指定)に残ってはいけない内部運用 HTML コメントのマーカー語。check-qiita-publish-hygiene.js が参照する。表現揺れに気づいたらここへ追記する。",
+  "markers": [
+    "公開当日チェックリスト",
+    "公開前に削除",
+    "社内運用",
+    "ignorePublish: true → false",
+    "限定共有"
+  ]
+}
