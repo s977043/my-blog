@@ -3,8 +3,10 @@
 // 何件あるかを集計する。Zenn rate-limit 対策。
 //
 // 使い方: 新規 publish 系 PR を作る前に `npm run check:zenn-pace` で確認する。
-// `npm run check`（集約）には組み込まない: 既存記事の修正 PR でも検査してしまい、
-// main 運用での誤検知になるため意図的に除外している（開発者が単独実行する想定）。
+// `npm run check`（集約）にも非ブロッキングで組み込み済み（件数を可視化するだけで exit 0）。
+// 強制ゲート化したい場合は STRICT=1 を設定する（CI で release/zenn 宛 PR にのみ付与する想定）。
+// 注: CI の shallow checkout（fetch-depth 浅い）では 24h スキャンが過少になるため、
+//     ci.yml では本 PR で fetch-depth: 0 を指定して全履歴を取得している。
 //
 // 閾値の根拠: 文書上の公式 rate-limit は「24h/5本」だが、実観測では release/zenn の
 // publish:true 切替が 24h 以内 2 件目で deploy がブロックされた（実効 ~24h/1本）。
@@ -73,14 +75,21 @@ function main() {
     console.log(`  ${c.sha} (${c.flips}件) ${c.subject}`);
   }
 
+  // STRICT=1 のときのみ FAIL を fatal(exit 1) にする。
+  // 既定（npm run check 集約・通常 PR）は非ブロッキング: 件数を可視化するだけで exit 0。
+  // CI で release/zenn 宛 PR にのみ STRICT=1 を設定すれば公開ペースを強制ゲート化できる。
+  const STRICT = process.env.STRICT === '1';
+
   if (totalFlips >= FAIL_THRESHOLD) {
+    const head = STRICT ? 'FAIL' : 'WARN(FAIL相当)';
     console.error('');
     console.error(
-      `[check:zenn-pace] FAIL: ${totalFlips} 件 ≥ ${FAIL_THRESHOLD} 件で Zenn rate-limit に hit する可能性が高い`,
+      `[check:zenn-pace] ${head}: ${totalFlips} 件 ≥ ${FAIL_THRESHOLD} 件で Zenn rate-limit に hit する可能性が高い`,
     );
     console.error('  対処: 24h あけてから次の publish 系 PR を release/zenn に merge する');
-    console.error('  詳細: memory/reference_zenn_rate_limit_spec.md');
-    process.exit(1);
+    console.error('  詳細: AGENT_LEARNINGS.md 2026-05-22「Zenn rate-limit は実効 24h/2本でも hit する」');
+    if (STRICT) process.exit(1);
+    return;
   }
 
   if (totalFlips >= WARN_THRESHOLD) {
@@ -88,7 +97,7 @@ function main() {
     console.warn(
       `[check:zenn-pace] WARN: ${totalFlips} 件で安全マージン (${WARN_THRESHOLD}) 超過。今後の publish は慎重に分散する`,
     );
-    console.warn('  詳細: memory/feedback_zenn_publish_rate_pacing.md');
+    console.warn('  （非ブロッキング。release/zenn 宛 PR で STRICT=1 のときのみ FAIL 閾値で fatal）');
   } else {
     console.log('[check:zenn-pace] OK: pace は安全圏内');
   }

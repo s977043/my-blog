@@ -38,6 +38,15 @@ Claude Code 向けのツールガイド。規約（何が正しいか）は `@AG
 | `note-article-review` | noteレビューの生成→反映ライフサイクル |
 | `note-export-import` | note公式エクスポートZIPの取り込み/WXR生成 |
 
+### コマンド/エージェント化していない運用（意図的非対応）
+
+以下は**あえて Slash Command / Agent にしていない**。需要が固まるまで npm script + 手順書で運用する（公開系は禁止事項に触れ事故リスクが高いため）。
+
+- **Qiita 公開・drift・hygiene**: `npm run publish:qiita` / `check:qiita-drift` / `check:qiita-publish-hygiene` を手動実行（レビュー反映コマンドは Zenn/note のみ対象）
+- **release/zenn 公開（Zenn deploy）**: `scripts/sync-release-zenn.sh` + `@AGENTS.md` のZenn公開フロー手順 + pre-push/pre-commit ガードで運用。rate-limit と不可逆性のため自動化しない
+
+需要が出たら PR #366 の wrapper・ガードを土台に拡張する。
+
 ## 運用スクリプト（Bash）
 
 ### Zenn / Qiita （npm）
