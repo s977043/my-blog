@@ -48,6 +48,7 @@ articles_note/
 3. ZIPを `articles_note/export/YYYY-MM-DD/` に**リネームせずに**配置（まだの場合）
 4. WXR (`note-*.xml`) + `assets/` を取得
 5. `scripts/wxr_to_md.py` で `published/` `drafts/` を再生成
+   - ⚠️ 取り込みは `published/` `drafts/` を server 状態で**上書き再生成**する。これらに未コミットのローカル編集があると巻き戻る（2026-04-26 で 2 記事巻き戻り事故）。スクリプトは取り込み前に `git status --short` で dirty を検出し、未コミット変更があれば **exit 1 で停止**する。先に commit/stash するか、編集が `new/` にあるべきか確認すること。意図して上書きする場合のみ `--force`
 6. `assets/` は最新エクスポート内容で上書き（ルートの `articles_note/assets/`）
 7. 差分をレビューしてコミット
 
