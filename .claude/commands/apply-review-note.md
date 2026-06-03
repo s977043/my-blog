@@ -38,16 +38,17 @@ argument-hint: <state>/<slug> （例: published/n3aae6b5467b9、drafts/n17c899de
    # レビュー生成時点以降に #67 / #71 のような linebreaks fix 等が入っていないか確認
    git log --oneline --since='48 hours ago' -- "articles_note/$1.md"
    ```
-   - 直近に反映コミットが存在する場合、レビューの指摘が既に解消されている可能性があるため、review-applier 起動前に人間側で採否目星をつける
+   - 直近に反映コミットが存在する場合、レビューの指摘が既に解消されている可能性があるため、起動前に人間側で採否目星をつける
    - 特に note 系は `2 スペース改行除去` や `エクスポート再同期` が別 PR で反映されることが多い
 
-4. `review-applier` エージェントを起動（note向け挙動を指定）
+4. **`note-review-applier`** エージェントを起動（note 専用。Zenn 前提の `review-applier` は使わない）
    - 入力: `reviews/note/$1.md`, `articles_note/$1.md`
    - スキル `.claude/skills/note-article-review/SKILL.md` の反映フェーズ（手順 9〜12）に準拠
    - 採用/保留/却下を分類し、採用分のみ Edit
    - JTFスタイル違反（ダッシュ等）は一括置換で採用
-   - Zenn固有観点の誤混入指摘は却下
+   - Zenn固有観点（`:::message`/`:::details` 追加・Front Matter 前提）の誤混入指摘は却下
    - PR本文用の採否一覧 Markdown を返す
+   - ⚠️ **`note-review-applier` は新規 Agent のため、ハーネス未リロード時は `Agent type not found` になる**。その場合は `general-purpose` エージェントに `.claude/agents/note-review-applier.md` の Read を指示してインライン委譲する（CLAUDE.md「新規 Agent / Skill / Command 作成時の注意」参照）
 
 5. 採用件数が0の場合
    - PRは作らず、結果を報告して終了
