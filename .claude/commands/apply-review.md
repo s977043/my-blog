@@ -12,11 +12,14 @@ argument-hint: <article-slug> (reviews/zenn/ 配下のファイル名 .md 抜き
 
 ## 手順
 
-1. 引数検証
+1. 引数検証 & 重複 PR 確認
    ```bash
    test -f reviews/zenn/$1.md || { echo "レビューが存在しません: reviews/zenn/$1.md"; exit 1; }
    test -f articles/$1.md || { echo "記事が存在しません: articles/$1.md"; exit 1; }
+   # 並列セッション衝突回避: 対象 slug の既存 open PR があれば停止して報告
+   gh pr list --state open --search "apply-review-$1 in:title" --json number,title
    ```
+   既存 PR があれば作成せず報告して終了。
 
 2. main 同期 + ブランチ作成
    ```bash
@@ -58,7 +61,7 @@ argument-hint: <article-slug> (reviews/zenn/ 配下のファイル名 .md 抜き
 
 本コマンドが作る PR は **`main` ブランチへのマージ**で完結する。Zenn deploy は発火しない（PR #199 で `release/zenn` ブランチ運用に切替済）。
 
-`published: true` 記事の修正反映 PR が main にマージされた後、**Zenn 上に反映するには別途 `release/zenn` ブランチへの merge が必要**。連続実行時は rate-limit (24h/5本) に注意し、release/zenn への merge は 24h あけて 1 PR 最大 3 本までに分散すること。
+`published: true` 記事の修正反映 PR が main にマージされた後、**Zenn 上に反映するには別途 `release/zenn` ブランチへの merge が必要**。連続実行時は rate-limit に注意（**実効 ~24h/1本**。`npm run check:zenn-pace` で WARN=1/FAIL=2）。release/zenn への merge は 24h あけて分散すること。
 
 詳細:
 - `AGENTS.md` §「Zenn 公開フロー（release/zenn ブランチ経由）」

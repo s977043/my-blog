@@ -952,6 +952,21 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 
 ---
 
+### 2026-06-03 — `qiita publish` は冒頭で全記事 pull する。`.remote/` を手編集するとローカル改変が巻き戻る [Gotcha][Incident]
+
+**観察**: River Review リネーム（#361 で `articles/` + `Qiita/public/` の本文を書換済み）を Qiita へ反映するため `npm run publish:qiita -- <slug>` を実行したところ、**作業ツリーの本文が「River Review」→ 旧名「River Reviewer」へ巻き戻り**、その旧内容が再 publish された（サーバも `updated_at` だけ進んで本文は旧名のまま）。原因は qiita-cli の `publish` が冒頭で**必ず `syncArticlesFromQiita`（全記事 pull）を実行**し、その `syncItem` が「**作業ファイル == `.remote/<id>.md` キャッシュ**」のとき**サーバ内容で作業ファイルを上書き**する仕様（`file-system-repo.js` の `syncItem`: `remoteFileContent.equals(data)` 成立で working も上書き）。リネーム時に Python 一括置換が `.remote/` キャッシュも「River Review」に書き換えていた（= 作業ファイルと一致）ため、pre-sync がサーバ旧内容で working を巻き戻した。
+
+**対策/学び**:
+- **`Qiita/public/.remote/` は qiita-cli 専用の「最後に取得したサーバ状態」キャッシュ。絶対に手編集しない**（リネーム等の一括 sed/置換スクリプトでは必ず `Qiita/public/.remote/` を除外する）
+- 作業ファイルを安全に push する条件は「**working ≠ `.remote/` キャッシュ**」。一致していると pre-sync がサーバ版で working を巻き戻す（else 分岐に入れば working は保護される）
+- 巻き戻された場合の復旧: `git checkout HEAD -- <file>` で正しい本文を作業ツリーへ復元 → `.remote/` がサーバ旧内容（= working と相違）であることを確認 → `--force` 付きで再 publish（`npm run publish:qiita -- <slug> --force`）。`--force` は publish 内の `isOlderThanRemote`（サーバ `updated_at` の方が新しいと FAIL）検証を skip するため、失敗 publish でサーバ `updated_at` が進んだ後の再投稿に必須
+- publish 後は `Qiita/public/.remote/<id>.md` の title を見ればサーバ実体を確認できる（web は CDN キャッシュで遅延し得る）。`npm run check:qiita-drift` も併用
+- リネーム/一括置換 → publish のワークフローでは、**置換対象から `.remote/` を外す**だけで本件は起きない
+
+**根拠**: PR #363（updated_at 同期）。`node_modules/@qiita/qiita-cli/dist/commands/publish.js` 冒頭の `syncArticlesFromQiita` と `lib/file-system-repo.js` `syncItem` の分岐をソース確認して機序を特定。3記事（5a4665e78c4bd1a5c1bc / 607d78c35745b17f9bc8 / 05934596111b9065465d）を `--force` 再 publish して「River Review」反映に復旧
+
+---
+
 <!--
 ## 追加時のテンプレート
 

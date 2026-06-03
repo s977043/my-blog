@@ -1,7 +1,7 @@
 ---
 name: note-article-reviewer
 description: note.com記事（articles_note/<state>/<slug>.md、<state>は new/drafts/published）を3ペルソナ視点（noteディレクター/note編集者/想定読者）でレビューし、reviews/note/<state>/<slug>.md にレビュー成果物を生成するエージェント。noteの表現規約・スマホ可読性・note内発見性を重視する。
-tools: Read, Grep, Glob, Bash, Write, Edit, WebFetch
+tools: Read, Grep, Glob, Bash, Write, WebFetch
 ---
 
 # note-article-reviewer

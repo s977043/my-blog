@@ -15,18 +15,24 @@ argument-hint: <state>/<slug> （例: published/n3aae6b5467b9、drafts/n17c899de
 
 ## 手順
 
-1. 引数検証
+1. 引数検証 & 重複 PR 確認
    ```bash
    test -f articles_note/$1.md || { echo "記事が存在しません: articles_note/$1.md"; exit 1; }
    STATE=$(dirname $1)   # new | drafts | published
    SLUG=$(basename $1)
+   case "$STATE" in new|drafts|published) ;; *) echo "state は new|drafts|published のいずれか: $STATE"; exit 1;; esac
+   # 並列セッション衝突回避: 対象 slug の既存 open PR があれば停止して報告
+   gh pr list --state open --search "review-note-$SLUG in:title" --json number,title
    ```
+   既存 PR があれば作成せず報告して終了。
 
 2. main 同期 & ブランチ作成
    ```bash
    git checkout main && git pull origin main
    git checkout -b docs/review-note-$SLUG
+   git branch --show-current   # 期待ブランチ docs/review-note-$SLUG と一致するか確認
    ```
+   不一致なら **commit を作らず停止**（並列セッション干渉。memory/ はリポジトリ外の個人領域）。
 
 3. 出力先ディレクトリ準備
    ```bash
@@ -50,6 +56,8 @@ argument-hint: <state>/<slug> （例: published/n3aae6b5467b9、drafts/n17c899de
 
 6. push & PR作成
    ```bash
+   # push/PR 直前に active account を確認（s977043 でなければ switch）
+   gh auth status | grep -q "Active account: true" && gh auth status | grep "s977043" || gh auth switch --user s977043
    git push -u origin docs/review-note-$SLUG
    gh pr create --title "docs(reviews): add note review for $1" --body "note.com記事の3ペルソナレビューを生成しました。
 
