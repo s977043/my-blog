@@ -76,7 +76,20 @@ python3 .claude/skills/note-export-import/scripts/verify_wxr.py articles_note/bu
 git config core.hooksPath scripts/hooks
 ```
 
-これで `scripts/hooks/pre-push` が有効になり、`gh active account` が `s977043` でない状態の `git push` を自動でブロックする。緊急時バイパスは `git push --no-verify`。
+これで以下の Git hook が有効になる:
+
+- `scripts/hooks/pre-push` — `gh active account` が `s977043` でない状態の `git push` をブロック。バイパス: `git push --no-verify`
+- `scripts/hooks/pre-commit` — 以下を自動ブロックし、口頭チェックリスト依存だった最頻事故クラスを機械化する:
+  - **main 直 commit**（バイパス: `ALLOW_MAIN_COMMIT=1 git commit ...`）
+  - **`Qiita/public/.remote/` の混入**（qiita-cli 専用キャッシュ。commit 禁止）
+  - **AGENTS.md の `<claude-mem-context>` ブロック混入**（claude-mem の transient 記憶）
+  - **0-insertion リネーム取りこぼし**（`git mv` + 内容編集の同一 commit を WARN）
+  - 全チェックのバイパス: `git commit --no-verify`
+
+### 公開前ガード（自動実行）
+
+- `npm run publish:qiita` は wrapper（`scripts/publish-qiita.sh`）経由で、publish 直前に **`check:qiita-remote-cache`** を走らせる。`.remote/` キャッシュ手編集による pre-sync 巻き戻り（AGENT_LEARNINGS 2026-06-03）を検知して publish を止める。誤検知時のバイパス: `SKIP_REMOTE_CACHE_CHECK=1 npm run publish:qiita -- <slug>`
+- `npm run check` に **`check:internal-links`** を統合済み（Zenn 記事間リンク `/articles/<slug>` と画像 `/images/...` の実在検証、リネーム前旧表記の WARN）。
 
 ## 作業開始時のチェックリスト
 
