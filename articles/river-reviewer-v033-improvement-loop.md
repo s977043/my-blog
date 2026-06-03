@@ -1,17 +1,17 @@
 ---
-title: 'River Reviewer v0.30→v0.33：Improvement Loop と applyTo Scoping 整備の半月'
+title: 'River Review v0.30→v0.33：Improvement Loop と applyTo Scoping 整備の半月'
 emoji: '🌊'
 type: 'tech'
 topics: ['ai', 'codereview', 'AgentSkills', 'AI駆動開発', 'oss']
 published: true
 ---
 
-> 本記事は River Reviewer v0.30.0〜v0.33.0 の作業ログ（2026-05-08 時点）を再構成したものです。
+> 本記事は River Review v0.30.0〜v0.33.0 の作業ログ（2026-05-08 時点）を再構成したものです。
 
 ## TL;DR
 
-- v0.30.0〜v0.33.0 の半月で、River Reviewer は「レビューを実行するだけのエージェント」から「レビュー結果を検証してフィードバックを仕組み（テストケース / 抑制ルール / リファレンス）に還元するループ（Improvement Loop OS、以下「改善ループ」と呼ぶ "レビュー → 検証 → 仕組み化" の運用基盤）」へ再定義された。
-- Epic #743 (P1+P2) で、エントリスキル `river-reviewer` の責務（入力分類 / 専門スキル選定 / 検証 / フィードバック分類 / ループ引き継ぎ）が明文化された。
+- v0.30.0〜v0.33.0 の半月で、River Review は「レビューを実行するだけのエージェント」から「レビュー結果を検証してフィードバックを仕組み（テストケース / 抑制ルール / リファレンス）に還元するループ（Improvement Loop OS、以下「改善ループ」と呼ぶ "レビュー → 検証 → 仕組み化" の運用基盤）」へ再定義された。
+- Epic #743 (P1+P2) で、エントリスキル `river-review` の責務（入力分類 / 専門スキル選定 / 検証 / フィードバック分類 / ループ引き継ぎ）が明文化された。
 - `applyTo` の scoping ルール（`docs/development/skill-applyto-scoping.md`）が新設され、planner false-positive routing（誤ルーティング）を誘発していた広すぎる glob を 2 バッチ計 13 skill で整理した。
 - planner-dataset eval（routing 用の評価セット、`coverage=1.0 / top1Match=1.0` / 23 cases）は全期間を通して green を保ったまま、ルーティング回帰の検出力を上げる方向にしか動かしていない。
 
@@ -22,7 +22,7 @@ published: true
 | Release | 主要変更 |
 | ------- | -------- |
 | v0.30.0 | `rr-upstream-context-budget-tuning-001` skill 追加 (#736) |
-| v0.31.0 | **Epic #743 P1**: `river-reviewer` を improvement-loop orchestrator として再定義 + 3 references (VERIFICATION / FEEDBACK / IMPROVEMENT_LOOP) (#744 #745) |
+| v0.31.0 | **Epic #743 P1**: `river-review` を improvement-loop orchestrator として再定義 + 3 references (VERIFICATION / FEEDBACK / IMPROVEMENT_LOOP) (#744 #745) |
 | v0.32.0 | **Epic #743 P2**: routing/planner eval cases (#746) + feedback-to-fixture conversion workflow (#747) + suppression-feedback fixtures (#739) + eval-driven-skill-design skill (#737) |
 | v0.33.0 | `applyTo` scoping rules + 13 skills 整理（Epic #762 / 実装 PR #766 #767） |
 
@@ -32,7 +32,7 @@ published: true
 
 ### Before / After
 
-**Before**: `skills/agent-skills/river-reviewer/SKILL.md` は「キーワードに応じて専門スキルへ振り分けるルーター」だった。誤検知や見落としは ad hoc な prompt 修正で消え、リポジトリには痕跡が残らない。
+**Before**: `skills/agent-skills/river-review/SKILL.md` は「キーワードに応じて専門スキルへ振り分けるルーター」だった。誤検知や見落としは ad hoc な prompt 修正で消え、リポジトリには痕跡が残らない。
 
 **After**: 同じ SKILL.md がエントリスキルの責務を以下 6 つに展開し、それぞれを reference に深掘りしている。
 
@@ -122,9 +122,9 @@ audit 当初の「50 over-broad」推定値は実測 13 件と乖離していた
 
 ## 関連リンク
 
-- [river-reviewer](https://github.com/s977043/river-reviewer) — リポジトリ
-- [Epic #743](https://github.com/s977043/river-reviewer/issues/743) — Skill Improvement Loop
-- [`docs/development/skill-applyto-scoping.md`](https://github.com/s977043/river-reviewer/blob/main/docs/development/skill-applyto-scoping.md) — applyTo scoping ルール
-- [`skills/agent-skills/river-reviewer/references/IMPROVEMENT_LOOP.md`](https://github.com/s977043/river-reviewer/blob/main/skills/agent-skills/river-reviewer/references/IMPROVEMENT_LOOP.md) — 9-step loop
-- [`skills/agent-skills/river-reviewer/references/FEEDBACK_TO_FIXTURE.md`](https://github.com/s977043/river-reviewer/blob/main/skills/agent-skills/river-reviewer/references/FEEDBACK_TO_FIXTURE.md) — feedback type → 変更先の対応表
+- [river-review](https://github.com/s977043/river-review) — リポジトリ
+- [Epic #743](https://github.com/s977043/river-review/issues/743) — Skill Improvement Loop
+- [`docs/development/skill-applyto-scoping.md`](https://github.com/s977043/river-review/blob/main/docs/development/skill-applyto-scoping.md) — applyTo scoping ルール
+- [`skills/agent-skills/river-review/references/IMPROVEMENT_LOOP.md`](https://github.com/s977043/river-review/blob/main/skills/agent-skills/river-review/references/IMPROVEMENT_LOOP.md) — 9-step loop
+- [`skills/agent-skills/river-review/references/FEEDBACK_TO_FIXTURE.md`](https://github.com/s977043/river-review/blob/main/skills/agent-skills/river-review/references/FEEDBACK_TO_FIXTURE.md) — feedback type → 変更先の対応表
 

@@ -292,4 +292,4 @@ AIを執筆者として使うほど、人間は「全文の修正者」ではな
 
 - [Growth Lab](https://the3396.com/articles)（本記事の原型になった記事制作フロー）
 - [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow)
-- [AI駆動開発の2層ガード設計：PlanGateとRiver Reviewerで実装前後を守る](https://zenn.dev/minewo/articles/ai-dev-guardrail-plangate-river-reviewer)
+- [AI駆動開発の2層ガード設計：PlanGateとRiver Reviewで実装前後を守る](https://zenn.dev/minewo/articles/ai-dev-guardrail-plangate-river-reviewer)

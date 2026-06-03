@@ -188,7 +188,7 @@ L133-L138 （参考セクションが出典リンクと関連記事の混在）
 - [Growth Lab](https://the3396.com/articles)
 - [DESIGN.md 導入ガイド: AI実装のための入口・契約・検証をどう整えるか](https://zenn.dev/minewo/articles/design-md-guide-and-adoption-log)
 - [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow)
-- [AI駆動開発の2層ガード設計：PlanGateとRiver Reviewerで実装前後を守る](https://zenn.dev/minewo/articles/ai-dev-guardrail-plangate-river-reviewer)
+- [AI駆動開発の2層ガード設計：PlanGateとRiver Reviewで実装前後を守る](https://zenn.dev/minewo/articles/ai-dev-guardrail-plangate-river-reviewer)
 ```
 
 ### 問題点
@@ -205,7 +205,7 @@ L133-L138 （参考セクションが出典リンクと関連記事の混在）
 :::message
 - [DESIGN.md 導入ガイド: AI実装のための入口・契約・検証をどう整えるか](https://zenn.dev/minewo/articles/design-md-guide-and-adoption-log)
 - [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow)
-- [AI駆動開発の2層ガード設計：PlanGateとRiver Reviewerで実装前後を守る](https://zenn.dev/minewo/articles/ai-dev-guardrail-plangate-river-reviewer)
+- [AI駆動開発の2層ガード設計：PlanGateとRiver Reviewで実装前後を守る](https://zenn.dev/minewo/articles/ai-dev-guardrail-plangate-river-reviewer)
 :::
 ```
 

@@ -35,7 +35,7 @@ Use the shared positioning consistently:
 Prefer connecting article changes to one of these clusters:
 
 - PlanGate
-- River Reviewer
+- River Review
 - Agent Skills
 - AI-readable repository design
 - Metrics and governance
