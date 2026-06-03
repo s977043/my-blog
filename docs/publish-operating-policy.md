@@ -35,18 +35,19 @@
 
 **判定原則**: 不可逆な外向き操作・公開影響が出る操作は全て著者ゲート。リバーシブルな内部整備（下書き作成・レビュー・ドキュメント更新）は自律可。
 
-## Rate-limit 遵守
+## Rate-limit 遵守（rate-limit/公開ペースの正本）
 
-公開フローでは、自律実行範囲内であっても以下の制約に従う。
+公開フローでは、自律実行範囲内であっても以下の制約に従う。**rate-limit 数値の正本は本セクション**。AGENTS.md / CLAUDE.md / `scripts/check-zenn-publish-pace.js` はここを参照する（数値を各所に二重定義しない）。
 
 | 項目 | 制約 |
 | --- | --- |
-| Zenn release/zenn rate-limit | 24h / 5本（公式仕様）。本リポジトリでは安全マージンとして **24h / 3本** を運用上限とする |
-| Zenn PR あたりの記事数 | 1 PR で release/zenn にマージする記事は最大 3本 |
-| Zenn PR 間隔 | 24時間以上あけてマージ |
+| Zenn release/zenn rate-limit（実効） | 文書上の公式仕様は 24h / 5本 だが、**実観測では 24h 以内 2 本目で deploy がブロック**された（実効 ~24h / 1本）。安全マージンを実測に倒す |
+| 公開ペースの判定 | `npm run check:zenn-pace` で過去 24h の publish 切替を集計。**1 件で WARN / 2 件で FAIL**（`STRICT=1` 時は exit 1）|
+| Zenn PR 間隔 | 前回の release/zenn 公開から **24 時間以上**あけてマージ |
 | 既存 update と新規 publish | 別 PR に分割（update が rate-limit に巻き込まれて公開済記事が古いままになる事故を防ぐ） |
+| rate-limit hit 時 | リポジトリ側に追加 commit を作らず、[Zenn お問い合わせ](https://zenn.dev/inquiry) で緩和申請 |
 
-詳細は [`AGENTS.md`](../AGENTS.md) の「Zenn 公開フロー」と [memory `feedback-zenn-publish-rate-pacing`] を参照。
+根拠: `AGENT_LEARNINGS.md` 2026-05-22「Zenn rate-limit は実効 24h/2本でも hit する」。release/zenn 運用フロー（ブランチ単方向・sync 手順）は [`AGENTS.md`](../AGENTS.md) §「Zenn 公開フロー」を参照。
 
 ## 自律実行時のチェックリスト
 
