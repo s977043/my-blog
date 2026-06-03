@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+# Git pre-commit hook — 並列セッション干渉と commit 汚染の最頻事故クラスを機械ガードする。
+#
+# インストール（リポジトリ単位、1回だけ実行）:
+#   git config core.hooksPath scripts/hooks
+#
+# 検出する事故クラス（いずれも AGENT_LEARNINGS.md に実例記録あり）:
+#   1. main への直 commit（並列セッションのブランチ干渉で誤って main に積む）
+#   2. Qiita/public/.remote/ の混入（qiita-cli 専用キャッシュ。手編集・commit 禁止）
+#   3. AGENTS.md の <claude-mem-context> ブロック混入（claude-mem の transient 記憶）
+#   4. 0-insertion リネーム取りこぼし（git mv と Edit を同一 commit にして内容編集が欠落）
+#
+# バイパス:
+#   ALLOW_MAIN_COMMIT=1 git commit ...   # 1 のみ許可（main で正当に作業する稀ケース）
+#   git commit --no-verify                # 全チェックを skip（非推奨）
+
+set -u
+
+REPO_ROOT="$(cd "$(dirname "$0")" && cd ../.. && pwd)"
+FAIL=0
+
+# --- 1. main 直 commit ガード -------------------------------------------------
+BRANCH="$(git symbolic-ref --short HEAD 2>/dev/null || echo "")"
+if [ "$BRANCH" = "main" ] && [ "${ALLOW_MAIN_COMMIT:-}" != "1" ]; then
+  echo "[pre-commit] BLOCK: main へ直接 commit しようとしています。" >&2
+  echo "  作業ブランチを切ってください: git switch -c <branch>" >&2
+  echo "  main で正当に作業する場合のみ: ALLOW_MAIN_COMMIT=1 git commit ..." >&2
+  FAIL=1
+fi
+
+# staged ファイル一覧（追加・変更・名前変更後のパス）
+STAGED="$(git diff --cached --name-only --diff-filter=ACMR)"
+
+# --- 2. Qiita/public/.remote/ 混入ガード -------------------------------------
+REMOTE_HITS="$(echo "$STAGED" | grep -E '(^|/)Qiita/public/\.remote/' || true)"
+if [ -n "$REMOTE_HITS" ]; then
+  echo "[pre-commit] BLOCK: qiita-cli 専用キャッシュ Qiita/public/.remote/ が staged されています。" >&2
+  echo "  これは commit してはいけません（pull/publish で再生成される）。unstage してください:" >&2
+  echo "$REMOTE_HITS" | sed 's/^/    git restore --staged /' >&2
+  FAIL=1
+fi
+
+# --- 3. AGENTS.md の claude-mem ブロック混入ガード ---------------------------
+if echo "$STAGED" | grep -qx "AGENTS.md"; then
+  if git diff --cached AGENTS.md | grep -q '<claude-mem-context>'; then
+    echo "[pre-commit] BLOCK: AGENTS.md に <claude-mem-context> ブロックが含まれています。" >&2
+    echo "  claude-mem の transient 記憶であり commit 禁止。破棄してから commit してください:" >&2
+    echo "    git restore --staged AGENTS.md && git checkout -- AGENTS.md" >&2
+    FAIL=1
+  fi
+fi
+
+# --- 4. 0-insertion リネーム取りこぼし WARN ----------------------------------
+# rename(R) を含むのに numstat の追加+削除合計が極小なら、内容編集の取りこぼし疑い。
+RENAME_COUNT="$(git diff --cached --name-status --diff-filter=R | grep -c '^R' || true)"
+if [ "${RENAME_COUNT:-0}" -gt 0 ]; then
+  # 同名ファイルが working tree でまだ dirty（= 内容編集が未 stage）なら強警告
+  DIRTY_RENAMED="$(git diff --cached --name-only --diff-filter=R | while read -r f; do
+    if ! git diff --quiet -- "$f" 2>/dev/null; then echo "$f"; fi
+  done)"
+  if [ -n "$DIRTY_RENAMED" ]; then
+    echo "[pre-commit] WARN: rename 対象ファイルに未 stage の内容変更が残っています。" >&2
+    echo "  git mv + 内容編集を同一 commit にすると編集が取りこぼされる事例があります（AGENT_LEARNINGS 2026-05-17）。" >&2
+    echo "  意図した編集なら 'git add' し直してから commit してください:" >&2
+    echo "$DIRTY_RENAMED" | sed 's/^/    /' >&2
+  fi
+fi
+
+if [ "$FAIL" -ne 0 ]; then
+  echo "" >&2
+  echo "[pre-commit] commit を中止しました。緊急バイパス: git commit --no-verify" >&2
+  exit 1
+fi
+
+exit 0
