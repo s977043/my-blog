@@ -12,18 +12,23 @@ argument-hint: <state>/<slug> （例: published/n3aae6b5467b9、drafts/n17c899de
 
 ## 手順
 
-1. 引数検証
+1. 引数検証 & 重複 PR 確認
    ```bash
    test -f reviews/note/$1.md || { echo "レビューが存在しません: reviews/note/$1.md"; exit 1; }
    test -f articles_note/$1.md || { echo "記事が存在しません: articles_note/$1.md"; exit 1; }
    STATE=$(dirname $1)
    SLUG=$(basename $1)
+   case "$STATE" in new|drafts|published) ;; *) echo "state は new|drafts|published のいずれか: $STATE"; exit 1;; esac
+   # 並列セッション衝突回避: 対象 slug の既存 open PR があれば停止して報告
+   gh pr list --state open --search "apply-review-note-$SLUG in:title" --json number,title
    ```
+   既存 PR があれば作成せず報告して終了。
 
 2. main 同期 & ブランチ作成
    ```bash
    git checkout main && git pull origin main
    git checkout -b chore/apply-review-note-$SLUG
+   git branch --show-current   # 期待ブランチ chore/apply-review-note-$SLUG と一致するか確認、不一致なら commit せず停止
    ```
 
 3. 直近反映履歴の確認（ムダ起動の回避）
@@ -33,16 +38,17 @@ argument-hint: <state>/<slug> （例: published/n3aae6b5467b9、drafts/n17c899de
    # レビュー生成時点以降に #67 / #71 のような linebreaks fix 等が入っていないか確認
    git log --oneline --since='48 hours ago' -- "articles_note/$1.md"
    ```
-   - 直近に反映コミットが存在する場合、レビューの指摘が既に解消されている可能性があるため、review-applier 起動前に人間側で採否目星をつける
+   - 直近に反映コミットが存在する場合、レビューの指摘が既に解消されている可能性があるため、起動前に人間側で採否目星をつける
    - 特に note 系は `2 スペース改行除去` や `エクスポート再同期` が別 PR で反映されることが多い
 
-4. `review-applier` エージェントを起動（note向け挙動を指定）
+4. **`note-review-applier`** エージェントを起動（note 専用。Zenn 前提の `review-applier` は使わない）
    - 入力: `reviews/note/$1.md`, `articles_note/$1.md`
    - スキル `.claude/skills/note-article-review/SKILL.md` の反映フェーズ（手順 9〜12）に準拠
    - 採用/保留/却下を分類し、採用分のみ Edit
    - JTFスタイル違反（ダッシュ等）は一括置換で採用
-   - Zenn固有観点の誤混入指摘は却下
+   - Zenn固有観点（`:::message`/`:::details` 追加・Front Matter 前提）の誤混入指摘は却下
    - PR本文用の採否一覧 Markdown を返す
+   - ⚠️ **`note-review-applier` は新規 Agent のため、ハーネス未リロード時は `Agent type not found` になる**。その場合は `general-purpose` エージェントに `.claude/agents/note-review-applier.md` の Read を指示してインライン委譲する（CLAUDE.md「新規 Agent / Skill / Command 作成時の注意」参照）
 
 5. 採用件数が0の場合
    - PRは作らず、結果を報告して終了
@@ -50,6 +56,7 @@ argument-hint: <state>/<slug> （例: published/n3aae6b5467b9、drafts/n17c899de
 
 6. 採用件数が1以上の場合
    - PR作成まで自動進行（マージはしない）
+   - **push/PR 直前に active account = s977043 を確認**（違えば `gh auth switch --user s977043`。kominem-unilabo だと PR 操作が `must be a collaborator` で失敗）
    - ブランチ: `chore/apply-review-note-$SLUG`
    - PR本文にエージェント生成の採否一覧を含める
    - **`$STATE` が `published` の場合、PR本文冒頭に ⚠️ バナー必須**:

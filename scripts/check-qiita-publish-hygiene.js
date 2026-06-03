@@ -10,9 +10,10 @@
 //   機械ガードがなかった。本 lint で公開可能ファイルの残存を fatal 検出する。
 //
 // 挙動:
-//   - 対象: Qiita/public/**/*.md のうち frontmatter `ignorePublish: false`（=公開対象）
-//   - 検出: `<!-- ... -->` ブロック内に内部運用マーカー
-//     （"公開当日チェックリスト" / "社内運用" / "ignorePublish: true → false"）
+//   - 対象: Qiita/public/**/*.md のうち公開対象（frontmatter `ignorePublish: false` または
+//     ignorePublish 行が無い記事。qiita-cli は ignorePublish 未指定を「公開対象」と扱うため）
+//   - ignorePublish 行が無い記事は検査対象に含めたうえで「フィールド欠落」を WARN する
+//   - 検出: `<!-- ... -->` ブロック内に内部運用マーカー（scripts/config/qiita-internal-markers.json）
 //   - 検出時は FAIL(exit 1)。情報流出に直結するため非 fatal にしない
 //   - ignorePublish: true（下書き）のファイルはコメント残存を許容（対象外）
 //
@@ -24,11 +25,8 @@ const path = require('path');
 const REPO_ROOT = path.join(__dirname, '..');
 const TARGET_DIR = path.join(REPO_ROOT, 'Qiita', 'public');
 
-const INTERNAL_MARKERS = [
-  '公開当日チェックリスト',
-  '社内運用',
-  'ignorePublish: true → false',
-];
+const MARKERS_CONFIG = path.join(__dirname, 'config', 'qiita-internal-markers.json');
+const INTERNAL_MARKERS = JSON.parse(fs.readFileSync(MARKERS_CONFIG, 'utf8')).markers;
 
 function collectMarkdown(dir) {
   if (!fs.existsSync(dir)) return [];
@@ -57,10 +55,13 @@ function htmlComments(content) {
 function main() {
   const files = collectMarkdown(TARGET_DIR);
   const violations = [];
+  const missingField = [];
 
   for (const file of files) {
     const content = fs.readFileSync(file, 'utf8');
-    if (readIgnorePublish(content) !== false) continue; // 公開対象のみ検査
+    const ip = readIgnorePublish(content); // true | false | null(欠落)
+    if (ip === true) continue; // 下書きは対象外
+    if (ip === null) missingField.push(path.relative(REPO_ROOT, file)); // 公開対象として検査しつつ欠落を WARN
     for (const block of htmlComments(content)) {
       const hit = INTERNAL_MARKERS.find((mk) => block.includes(mk));
       if (hit) {
@@ -68,6 +69,13 @@ function main() {
         break;
       }
     }
+  }
+
+  if (missingField.length > 0) {
+    console.warn(
+      `[check:qiita-publish-hygiene] WARN: ignorePublish 未指定の記事 ${missingField.length} 件（公開対象として検査済み。意図を明示するため frontmatter に ignorePublish を追記推奨）`,
+    );
+    missingField.slice(0, 20).forEach((f) => console.warn(`  ${f}`));
   }
 
   if (violations.length === 0) {
