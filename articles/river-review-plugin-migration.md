@@ -3,7 +3,7 @@ title: "テンプレコピーをやめた — River Review を Claude Code / Cod
 emoji: "🔌"
 type: "tech"
 topics: ["claudecode", "codex", "marketplace", "プラグイン", "agentskills"]
-published: false
+published: true
 ---
 
 > TL;DR
