@@ -20,6 +20,8 @@ Claude Code 向けのツールガイド。規約（何が正しいか）は `@AG
 | `/review-note-article <state>/<slug>` | note記事の3ペルソナレビューを生成 | `articles_note/<state>/<slug>.md` |
 | `/apply-review-note <state>/<slug>` | noteレビューを本文に選別反映（PR作成） | `articles_note/<state>/<slug>.md` |
 | `/article-pipeline-note <state>/<slug>` | noteレビュー生成→反映を2PR分割で実行 | note記事 |
+| `/check-session-state` | セッション冒頭/節目の状態確認ルーチン（branch/PR/check/rate-limit/直近マージ）| 状態確認 |
+| `/post-merge-verify <pr#またはslug>` | PRマージ後の事後検証（live URL/drift/後片付け） | 公開反映確認 |
 
 ## Subagents（`.claude/agents/`）
 
