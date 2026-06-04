@@ -2,7 +2,7 @@
 title: "テンプレコピーをやめた — River Review を Claude Code / Codex の Plugin にした話"
 emoji: "🔌"
 type: "tech"
-topics: ["claudecode", "codex", "oss", "プラグイン", "agentskills"]
+topics: ["claudecode", "codex", "marketplace", "プラグイン", "agentskills"]
 published: false
 ---
 
@@ -43,7 +43,7 @@ v0.x の導入手順は、ざっくり以下のようなものでした。
 - **アップデート追随がだるい**：更新を取り込むたびに手作業を繰り返す
 - **`AGENTS.md` を二重管理しがち**：自プロジェクトの規約と River Review 由来の規約が混ざる
 
-「テンプレ配布」という形は、利用者が**自分用にカスタムする**前提では強い反面、**素直に最新を使いたい**人にとっては手間です。River Review のように「観点パッケージ」を提供する OSS では、後者のユースケースが多いことが見えてきました。
+OSS で「観点パッケージ」を提供するときは、**配布形式の選択そのものが利用体験を大きく左右する**——River Review のように「使う側がカスタムするより素直に最新を取りたい」ユースケースが多い OSS では、テンプレ配布は摩擦のほうが目立ちます。
 
 ## v1.x で踏み切ったこと
 
@@ -54,6 +54,8 @@ v1.x の方針はシンプルです。
 - **手作業のフォールバックは残す**：オフライン環境などのために、v0.x 相当のテンプレコピー手順は併存させる
 
 結果として、**導入は 3 ステップ**で済むようになりました。
+
+> 以下のコマンドは **River Review v1.2.1 時点で動作確認した手順**です。Claude Code のスラッシュコマンドと Codex のサブコマンドで CLI 構造が違うため、各ツールの最新ドキュメントもあわせて確認してください。
 
 ### Claude Code
 
@@ -79,8 +81,8 @@ codex plugin marketplace add s977043/river-review@v1.2.1  # バージョン pin 
 
 Plugin 化と聞くと「マニフェストファイルを書いて配布形式を変える」だけのように見えますが、River Review の v1.x で本当に意味があったのは **SSoT を移動したこと**でした。
 
-- v0.x: SSoT は **テンプレ群**（`templates/agent-workflow/codex/AGENTS.md` などのファイル一式）
-- v1.x: SSoT は **`.claude-plugin/marketplace.json`**
+- v0.x（Manual Era：テンプレ手配置時代）: SSoT は **テンプレ群**（`templates/agent-workflow/codex/AGENTS.md` などのファイル一式）
+- v1.x（Plugin Era：プラグイン配布時代）: SSoT は **`.claude-plugin/marketplace.json`**
 
 SSoT がマーケットプレイス定義に移動したことで、
 
