@@ -26,6 +26,7 @@
 
 ## Done
 
+- 2026-06-05 zenn river-review-plugin-migration https://zenn.dev/minewo/articles/river-review-plugin-migration （River Review の Claude Code/Codex プラグイン対応記事。queue 外の新規執筆、GitHub README を情報源に構成。Round 1/2 レビュー収束〔PR #379-#382〕→ PR #383 main / PR #384 release/zenn でマージ→Zenn deploy 発火、公開反映確認済み）
 - 2026-06-04 note hermes-introduction-note https://note.com/mine_unilabo/n/nc1ac531190c9 （新規 note 公開、WXR インポート→手動公開。`articles_note/new/hermes-introduction-note.md` は編集の正本として残置、次回エクスポート取り込みで `published/nc1ac531190c9.md` が自動生成される）
 - 2026-06-04 zenn multi-agent-book-review-workflow https://zenn.dev/minewo/articles/multi-agent-book-review-workflow （queue #9。PR #372 main / PR #373 release/zenn でマージ→Zenn deploy 発火、多層AIレビュー収束済み）
 - 2026-06-02 qiita sdd-tdd-nonblocking-agent https://qiita.com/s977043/items/05934596111b9065465d （Zenn「仕様を揃えて止めない…3原則」cross-post、PR #353 改善反映、id:05934596111b9065465d）
