@@ -41,6 +41,13 @@ jobs:
       - name: Check Zenn content
         run: npm run check
 
+      # release/zenn 宛 PR のみ: 公開ペース(実効 24h/1本)を強制ゲート化する。
+      # 通常の npm run check では zenn-pace は非ブロッキング(件数表示のみ)。
+      # release/zenn への merge が実 deploy=rate-limit 消費なので、ここで STRICT=1 で fatal 化する。
+      - name: Zenn publish pace gate (release/zenn PRs only)
+        if: github.event_name == 'pull_request' && github.base_ref == 'release/zenn'
+        run: STRICT=1 npm run check:zenn-pace
+
       - name: Audit production dependencies
         run: npm audit --audit-level=high --omit=dev
 
