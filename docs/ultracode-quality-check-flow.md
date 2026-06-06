@@ -25,9 +25,9 @@ flowchart TD
 
 | フェーズ | 何をするか | なぜ要るか |
 |---------|-----------|-----------|
-| **StaticScan** | 媒体固有の落とし穴を grep で静的検出（SVG 画像参照・相対リンク・frontmatter） | **文章レビューでは出ない媒体仕様バグ**を先回り（後述の学び①）|
+| **StaticScan** | 媒体固有の落とし穴を grep / Read で実ファイルから静的検出（SVG 画像参照・相対リンク・frontmatter。実際の行を引用）| **文章レビューでは出ない媒体仕様バグ**を先回り（後述の学び①）|
 | **Review** | 対象ごとに並列精読。実装の正本（コード/スキーマ/docs）と照合 | 事実誤り・読者を誤らせる記述を捕捉 |
-| **Links** | 外部リンクの実在/到達確認 | リンク切れ防止 |
+| **Links** | 外部リンクの実在/到達確認（**`args.links` を渡した時のみ実行**。未指定なら `brokenLinks` は常に 0）| リンク切れ防止 |
 | **Verify** | 各改善提案を「本当に価値があるか／水増しか」と**敵対的に判定**（既定は却下）| 過剰研磨の抑制（学び③）|
 | **Synthesize** | blocker / 確定改善 / リスクを構造化して返す | GO/NO-GO 判断材料 |
 | **（人手）実レンダリング** | Playwright 等で**実際の表示**を確認（mermaid 描画・cover・画像）| エージェントは描画結果を見ない（学び①）|
@@ -46,6 +46,8 @@ Workflow({ name: "ultracode-quality-check", args: {
 
 返り値の `summary.goNoGo` と `staticBlockers` / `blockers` / `brokenLinks` / `confirmedImprovements` を見る。
 `confirmedImprovements` だけを反映し、`rejectedImprovements` は**入れない**（水増し回避）。
+
+> `links` を渡さない場合 Links フェーズはスキップされ、`brokenLinks` は検証されず 0 のまま返る。外部リンクの実在確認が必要なときは `args.links` に URL 配列を明示的に渡す。
 
 ## このフローが捕まえた実例（PlanGate Book）
 
