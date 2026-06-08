@@ -25,7 +25,7 @@
 
 | 案 | 内容 | 長所 | 短所 |
 |---|---|---|---|
-| **A. reviews/zenn/<slug>.md 先頭に機械可読コメント** | Record フェーズが `<!-- publish-readiness: blocked=false mustHigh=0 verified=true reviewedSha=<sha> -->` を md 先頭に書く | 既存追跡ファイルに同居・追加実装最小 | reviews と記事の鮮度ズレ（後述・論点2）。学び「記事PRにreview同梱しない」と緊張 |
+| **A. reviews/zenn/<slug>.md 先頭に機械可読コメント** | Record フェーズが `<!-- publish-readiness: blocked=false mustHigh=0 verified=true reviewedBlob=<blob> -->` を md 先頭に書く | 既存追跡ファイルに同居・追加実装最小 | reviews と記事の鮮度ズレ（後述・論点2）。学び「記事PRにreview同梱しない」と緊張 |
 | B. reviews-cache/（.gitignore） に JSON | WF が機械可読 JSON を gitignore 領域に出力 | 記事PRに混ざらない | CI（他環境）から見えない＝CIゲートに使えない（致命的） |
 | C. 記事 front matter にメタ | 記事自身に `reviewState:` 等を持たせる | 記事と必ず同期 | 記事本文を WF が書き換える＝主張不変原則と緊張・Zenn 無関係 frontmatter 混入 |
 
@@ -35,8 +35,10 @@
 
 レビューは「ある時点のスナップショット」。記事を WF 後に手編集すると判定が古くなる（false OK のリスク）。
 
-- **対策**: 判定コメントに `reviewedSha=<記事のその時点のcommit>` を含め、公開ゲートで「対象記事の最新コミット == reviewedSha か」を確認。ズレていれば **stale 扱いで WARN**（「レビュー後に記事が変更されている。再レビュー推奨」）。
-- これにより「古い OK 判定で公開」を検知できる。
+- **⚠️ コミット SHA は使えない（鶏と卵問題）**: `reviewedSha=<記事のその時点の commit>` を記録し「記事の最新 commit == reviewedSha」で比較する素朴案は破綻する。WF が記事と reviews を**同一コミット `B` で commit すると、記事の最新 commit は `B` になるが reviewedSha は記録時点の `A` のまま** → 変更直後でも常に stale 判定。
+- **対策案1（推奨）: Blob SHA で比較**。コミット SHA でなく**ファイル内容のハッシュ**を記録: `git hash-object articles/<slug>.md`。コミット前後でも内容が変わらない限り同値なので鶏卵問題を回避。判定コメントは `reviewedBlob=<blob-sha>` とし、ゲートで `git hash-object` の現在値と比較。
+- **対策案2: `git log` でパス変更を遡る**。`reviewedSha` 以降に記事への変更コミットがあるかを `git log <reviewedSha>..HEAD -- articles/<slug>.md` で判定（出力が空でなければ stale）。
+- いずれも「レビュー後に記事が実質変更された」場合のみ stale とし、**古い OK 判定での公開を検知**する。
 
 ### 論点3: ブロック強度（WARN vs FAIL）
 
@@ -55,15 +57,15 @@
 ## 推奨設計（まとめ）
 
 1. **WF（Record フェーズ）**: `reviews/zenn/<slug>.md` 先頭に
-   `<!-- publish-readiness: blocked=<bool> mustHigh=<n> verified=<bool> reviewedSha=<sha> loops=<n> -->` を書く。
-2. **新スクリプト `scripts/check-publish-readiness.js`**:
+   `<!-- publish-readiness: blocked=<bool> mustHigh=<n> verified=<bool> reviewedBlob=<git hash-object の値> loops=<n> -->` を書く（鮮度比較は **Blob SHA**。論点2 参照）。
+2. **新スクリプト `scripts/check-zenn-publish-readiness.js`**（命名は既存 `check:zenn-pace`/`check:zenn-title` と整合させ `zenn-` を含める）:
    - 引数 or `BASE_REF=origin/release/zenn` の diff から「今回公開される記事」を特定（#393 の diff モードと同じ要領）。
    - 各記事の `reviews/zenn/<slug>.md` 先頭コメントを読む。
-     - コメントが無い（WF 未実行）→ skip（段階導入。将来 WARN 化検討）。
+     - コメントが無い（WF 未実行）→ skip。ただし**無音にせず INFO ログを出す**（`console.info('[check:zenn-publish-readiness] skip: <slug> はレビュー未実行')`）。段階導入期の透明性を確保し、未実行率の把握＝将来の WARN/FAIL 化判断を容易にする。
      - `blocked=true` → WARN（将来 STRICT で FAIL）。
-     - `reviewedSha != 記事の最新 commit` → stale WARN。
-3. **ci.yml**: release/zenn 宛 PR の step 群に `check:publish-readiness` を追加（pace ゲートの隣）。
-4. **package.json**: `check:publish-readiness` script を追加。
+     - `reviewedBlob != git hash-object の現在値` → stale WARN。
+3. **ci.yml**: release/zenn 宛 PR の step 群に `check:zenn-publish-readiness` を追加（pace ゲートの隣）。
+4. **package.json**: `check:zenn-publish-readiness` script を追加。
 
 ## 未解決・留意点
 
@@ -75,5 +77,5 @@
 
 1. 本提案の推奨設計でよいかレビュー。
 2. WF Record の readiness コメント出力を実装（小）。
-3. `check-publish-readiness.js` + ci.yml + package.json を実装（中）。WARN から開始。
+3. `check-zenn-publish-readiness.js` + ci.yml + package.json を実装（中）。WARN から開始。
 4. 既存公開記事への遡及は不要（新規公開・更新時から適用）。
