@@ -1,27 +1,18 @@
 ---
-title: "DESIGN.md 導入ガイド: AI実装のための入口・契約・検証をどう整えるか"
+title: 'DESIGN.md 導入ガイド: AI実装のための入口・契約・検証をどう整えるか'
 tags:
-  - AI駆動開発
-  - デザインシステム
-  - Penpot
-  - React
   - ドキュメント
-private: true
-updated_at: ''
-id: null
+  - React
+  - デザインシステム
+  - AI駆動開発
+  - penpot
+private: false
+updated_at: '2026-06-10T06:16:49+09:00'
+id: 1ce6753867f4b166d74b
 organization_url_name: null
 slide: false
-ignorePublish: true
+ignorePublish: false
 ---
-
-<!--
-公開メモ（公開前に削除）:
-- 初期状態: private: true / ignorePublish: true（ローカル下書き）
-- Qiita へ限定共有: private: true / ignorePublish: false
-- 一般公開: private: false / ignorePublish: false
-- 公開当日に updated_at を更新し、本コメントを削除してから npm run check → publish:qiita
-- 元記事(Zenn): https://zenn.dev/minewo/articles/design-md-guide-and-adoption-log
--->
 
 ## TL;DR
 
