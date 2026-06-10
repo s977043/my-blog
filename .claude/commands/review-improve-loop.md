@@ -24,6 +24,8 @@ argument-hint: <article-slug> [loops]
    - 実体: `.claude/workflows/article-review-improve-loop.js`
    - フェーズ: `Extract`（主張・強調の抽出）→ `LoopN-Review`/`LoopN-Improve`（最大 N 周）→ `Record`（`reviews/zenn/$1.md` に記録）
 
+   > **既知の落とし穴（2026-06-10 実証）**: Workflow ツールが `args` を注入せず `args.article（…）が必要です` で即失敗することがある（`name` 経由・`scriptPath` 経由とも観測）。その場合は、Workflow が**永続化したスクリプトコピー**の先頭 `RAW` フォールバック値に対象 slug を直書きし、`Workflow({ scriptPath: "<永続化パス>" })` で再実行する。永続化パスは初回 Workflow 呼び出しの戻り値に出る。詳細は `@AGENT_LEARNINGS.md` 2026-06-10 エントリ。
+
 2. ワークフローはバックグラウンド実行。完了通知が来たら結果（`loopsRun` / 各ループの反映件数 / `claimPreservedAll`）を要約して報告する。
 
 3. **git 操作はワークフロー内で行わない**（Edit と reviews 保存のみ）。commit / PR 化はユーザー判断。
