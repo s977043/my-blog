@@ -25,7 +25,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v6.0.3
         with:
           # check:zenn-pace が過去 24h の commit を走査するため全履歴を取得する
           fetch-depth: 0
@@ -41,6 +41,15 @@ jobs:
       - name: Check Zenn content
         run: npm run check
 
+      # release/zenn 宛 PR のみ: この PR が release/zenn に新規に持ち込む published 数を
+      # diff モード(BASE_REF)で直接計測し、二重公開(同一 deploy/24h で 2 記事)を STRICT で fatal 化する。
+      # date モード(コミット日付)は「溜めてから sync」運用で見逃す/誤ブロックするため base 比較で計測する。
+      - name: Zenn publish pace gate (release/zenn PRs only)
+        if: github.event_name == 'pull_request' && github.base_ref == 'release/zenn'
+        run: |
+          git fetch origin "${{ github.base_ref }}"
+          STRICT=1 BASE_REF="origin/${{ github.base_ref }}" npm run check:zenn-pace
+
       - name: Audit production dependencies
         run: npm audit --audit-level=high --omit=dev
 
@@ -55,7 +64,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v6.0.3
 
       - name: Review dependency changes
         uses: actions/dependency-review-action@v5.0.0
