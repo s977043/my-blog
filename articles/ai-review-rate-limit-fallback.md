@@ -98,7 +98,7 @@ flowchart LR
 
 - Gemini CLI は `429 You have exhausted your capacity on this model` で停止
 - 非対話実行では trusted-directory 系のエラーも発生
-- `flash` 系モデルに切り替えると動くが、所見が浅くなる
+- `flash` 系モデルに切り替えると動くが、所見が浅くなるだけでなく、存在しない記述への言及など的外れな指摘も混じる
 - Codex CLI も使用制限に到達
 - 結果として、手元の外部 CLI レビューが揃わない
 
