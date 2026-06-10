@@ -57,6 +57,16 @@ fi
 
 echo ""
 echo "[sync] OK: $BRANCH_NAME に main を反映済み"
+
+# 公開影響プレビュー（ドライラン）: この sync が release/zenn に新規に持ち込む publish 数を
+# diff モード（#393 で導入）で表示する。不可逆な公開の前に「何記事が公開されるか」を機械的に確認。
+# 非ブロッキング（STRICT 未指定＝表示のみ）。2 件以上なら WARN(FAIL相当) が出る。
+echo ""
+echo "[sync] ── 公開影響プレビュー（このsyncで新規公開される記事）──"
+BASE_REF=origin/release/zenn node scripts/check-zenn-publish-pace.js || true
+echo "[sync] ─────────────────────────────────────────────"
+
+echo ""
 echo "[sync] 次の手順:"
 echo "  git push -u origin $BRANCH_NAME"
 echo "  gh pr create --base release/zenn --title '$COMMIT_MSG'"
