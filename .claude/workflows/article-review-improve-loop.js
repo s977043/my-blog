@@ -16,8 +16,16 @@ export const meta = {
 }
 
 // ---- 引数解決（slug / 相対パス可、loops は 1..5 で非数値は 3、slug はサニタイズ）----
+// args は Workflow ツールの実装によっては注入されないことがある（実測: name 経由・scriptPath 経由とも
+// args.article が undefined になる事象あり / 2026-06-10）。その場合の回避策をエラーに明記する。
 const RAW = (args && (args.article || args.slug)) || ''
-if (!RAW) throw new Error('args.article（記事 slug もしくは articles/<slug>.md）が必要です')
+if (!RAW) {
+  throw new Error(
+    'args.article（記事 slug もしくは articles/<slug>.md）が必要です。\n' +
+    '【args が渡らない場合の回避策】このスクリプトの永続化コピー先頭の RAW フォールバック値に対象 slug を' +
+    '直書きし、Workflow({ scriptPath: "<永続化されたスクリプト>" }) で再実行する（2026-06-10 実証の既知ワークアラウンド）。'
+  )
+}
 const SLUG = String(RAW).replace(/^articles\//, '').replace(/\.[mM][dD]$/, '')
 if (!/^[\w-]+$/.test(SLUG)) throw new Error(`不正な slug: "${SLUG}"（[A-Za-z0-9_-] のみ許可。パストラバーサル防止）`)
 const ARTICLE = `articles/${SLUG}.md`

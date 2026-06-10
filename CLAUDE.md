@@ -109,7 +109,7 @@ git config core.hooksPath scripts/hooks
 
 1. 並列セッション衝突を回避するため `gh pr list --state open` で重複 PR がないか確認
 2. **DRAFT PR の存在確認** — `gh pr list --state open --search "is:draft"` で未完了の Codex / 並列セッション PR を把握（旧 PR の影響範囲を見落とさない）
-3. **`gh auth status` で active account を確認** — `git push` / `gh pr create` / `gh pr merge` の **直前すべて** で s977043 になっている必要あり（kominem-unilabo のままだと push は credential helper 設定次第で通るが PR 操作は `must be a collaborator` で失敗 → 切替 → 再実行の手戻り）。**特に `gh auth setup-git` を実行した直後は active account が切り替わる副作用がある** ため、その後の PR 操作前に必ず再確認
+3. **`gh auth status` で active account を確認** — `git push` / `gh pr create` / `gh pr merge` の **直前すべて** で s977043 になっている必要あり（kominem-unilabo のままだと push は credential helper 設定次第で通るが PR 操作は `must be a collaborator` で失敗 → 切替 → 再実行の手戻り）。**特に `gh auth setup-git` を実行した直後は active account が切り替わる副作用がある** ため、その後の PR 操作前に必ず再確認。**手戻りを避けるには `npm run gh:ensure`（= `check-gh-account.sh --fix`）を push/PR 操作の直前に走らせると、想定外アカウント時に自動で s977043 へ切替してくれる**（2026-06-11: setup-git 後の反転が push/PR/merge ごとに 403 を起こした実績）
 4. 対象ファイルがどのプラットフォームか確認（`@AGENTS.md` の配置規約表）
 5. `articles_note/published/` を触る場合は ⚠️ 規約を確認（`@AGENTS.md` 禁止事項）
 6. note 記事に画像を追加する場合: SVG → PNG 変換 → `articles_note/assets/` 配置 → **`file` でサイズ・寸法を確認**（プレースホルダ画像 <10KB を弾く） → main に先にマージ → WXR 生成の順序を守る。**WXR 生成は必ず `--base-url https://raw.githubusercontent.com/s977043/my-blog/main/articles_note/assets` を付ける**（未指定で画像参照が残ると `md_to_wxr.py` が exit 1 で失敗、意図的にローカル参照を残すなら `--allow-local-images`）
@@ -175,12 +175,13 @@ git rev-parse "@{u}" 2>/dev/null || echo "NO_UPSTREAM" # 上流 head（未 track
 ```bash
 gh pr view <n> --json state,mergeStateStatus --jq .   # state=OPEN か
 git fetch origin main <branch>
-git diff origin/main..origin/<branch> --stat          # tree-to-tree 差分（想定範囲内か）
+git diff origin/main...origin/<branch> --stat         # 3点比較。現 main に対して実際に入る差分（想定範囲内か）
 ```
 
 - `state != OPEN` の場合は何もしない（並列セッションが先行マージ済み）
-- tree-to-tree diff が PR 本文の想定範囲を超える場合は stale の疑い。ブランチで `git merge origin/main --no-ff` して追従してから再確認
-- 詳細事例: `@AGENT_LEARNINGS.md` の「Stale PR は `git diff main..branch` で事前にリグレッション検出する」エントリ
+- 3点 diff（`...`）が PR 本文の想定範囲を超える場合は stale の疑い。**PR の `gh pr` 上の diff は head の base に対する差分なので、base が現 main からズレていると実害（巻き戻し）を隠す**。`git diff origin/main...origin/<branch>` で「現 main に対して入る正味差分」を必ず確認する（2026-06-10: #404/#405 が squash 済み記事を巻き戻したインシデント）
+- **マージは常に `gh pr merge <n> --squash --delete-branch`**。このリポジトリは merge commit 禁止で、`--merge` は `GraphQL: Merge commits are not allowed` で失敗する
+- 詳細事例: `@AGENT_LEARNINGS.md` の「Stale PR は `git diff main..branch` で事前にリグレッション検出する」「並列セッションが squash 済み記事を別 base で再マージ」エントリ
 
 ## 新規 Agent / Skill / Command 作成時の注意
 
