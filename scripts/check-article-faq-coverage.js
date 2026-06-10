@@ -42,7 +42,8 @@ for (const file of files) {
   }
 
   // FAQ章を `## ...FAQ` または `## よくある質問` 見出しの直後〜次の `## ` 見出し直前で切り出し、
-  // その章内の `### Q.` のみをカウントする（章外散在の Q. を拾わないため）。
+  // その章内の Q&A をカウントする（章外散在の Q. を拾わないため）。
+  // 形式は2種を許容: `### Q.`（H3 見出し形式）と `:::details Q.`（Zenn アコーディオン形式）。
   const faqHeadingMatch = body.match(/^## .*(FAQ|よくある質問).*$/m);
   let qCount = 0;
   if (faqHeadingMatch) {
@@ -50,7 +51,8 @@ for (const file of files) {
     const restAfterHeading = body.slice(startIdx);
     const nextH2 = restAfterHeading.search(/^## /m);
     const faqSection = nextH2 === -1 ? restAfterHeading : restAfterHeading.slice(0, nextH2);
-    qCount = (faqSection.match(/^### Q\./gm) || []).length;
+    // `### Q.` または `:::details Q.`（全角「Q．」「Q：」も許容）を 1 問として数える。
+    qCount = (faqSection.match(/^(### |:::details )Q[.．:：]/gm) || []).length;
   }
   const hasFaq = !!faqHeadingMatch && qCount >= MIN_QA_FOR_FAQ;
 
