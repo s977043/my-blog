@@ -25,6 +25,7 @@
 
 ## Done
 
+- 2026-06-11 zenn ai-review-rate-limit-fallback https://zenn.dev/minewo/articles/ai-review-rate-limit-fallback （queue 外の新規執筆。AIレビューをレート制限で止めない可用性多重化〔L1/L2/L3〕。多段磨き込み（実体験反映→3ペルソナ反復→Gemini L3レビュー→文章推敲→CI文脈除去→de-AI推敲＋3ペルソナ再レビュー）を経て公開。途中 #404 並列セッション衝突を調停。PR #413 main / #414 release/zenn でマージ→Zenn deploy 発火、HTTP 200 反映確認済み）
 - 2026-06-10 qiita design-md-guide-and-adoption-log https://qiita.com/s977043/items/1ce6753867f4b166d74b （queue #4。Zenn「DESIGN.md 導入ガイド」cross-post、Full レビュー済 PR#285。id:1ce6753867f4b166d74b、締切 6/9 から 1 日遅れで公開）
 - 2026-06-05 zenn river-review-plugin-migration https://zenn.dev/minewo/articles/river-review-plugin-migration （River Review の Claude Code/Codex プラグイン対応記事。queue 外の新規執筆、GitHub README を情報源に構成。Round 1/2 レビュー収束〔PR #379-#382〕→ PR #383 main / PR #384 release/zenn でマージ→Zenn deploy 発火、公開反映確認済み）
 - 2026-06-04 note hermes-introduction-note https://note.com/mine_unilabo/n/nc1ac531190c9 （新規 note 公開、WXR インポート→手動公開。`articles_note/new/hermes-introduction-note.md` は編集の正本として残置、次回エクスポート取り込みで `published/nc1ac531190c9.md` が自動生成される）
