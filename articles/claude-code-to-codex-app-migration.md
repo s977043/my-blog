@@ -384,7 +384,9 @@ name = "security-reviewer"
 description = "Review authentication, authorization, and secret handling changes."
 
 # Example only. Check the exact supported keys in your Codex environment.
-instructions = """
+# （Codex の custom agents は instruction 本文を developer_instructions キーで持つ。
+#   キー名はバージョンで変わりうるので手元の ~/.codex/agents/*.toml で確認すること）
+developer_instructions = """
 You are a security reviewer.
 
 Focus on:
