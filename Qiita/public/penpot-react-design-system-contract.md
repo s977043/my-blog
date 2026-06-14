@@ -1,27 +1,18 @@
 ---
-title: "PenpotとReactを同じ契約で運用するデザインシステムの作り方"
+title: PenpotとReactを同じ契約で運用するデザインシステムの作り方
 tags:
-  - AI駆動開発
-  - デザインシステム
-  - Penpot
-  - React
   - フロントエンド
-private: true
-updated_at: ''
-id: null
+  - React
+  - デザインシステム
+  - AI駆動開発
+  - penpot
+private: false
+updated_at: '2026-06-15T07:30:56+09:00'
+id: 8c4802b14352d6412ea5
 organization_url_name: null
 slide: false
-ignorePublish: true
+ignorePublish: false
 ---
-
-<!--
-公開メモ（公開前に削除）:
-- 初期状態: private: true / ignorePublish: true（ローカル下書き）
-- Qiita へ限定共有: private: true / ignorePublish: false
-- 一般公開: private: false / ignorePublish: false
-- 公開当日に updated_at を更新し、本コメントを削除してから npm run check → publish:qiita
-- 元記事(Zenn): https://zenn.dev/minewo/articles/penpot-react-design-system-contract
--->
 
 :::note info
 本記事は、Zenn に掲載した [PenpotとReactを同じ契約で運用するデザインシステムの作り方](https://zenn.dev/minewo/articles/penpot-react-design-system-contract) を Qiita 向けに再構成したものです。
