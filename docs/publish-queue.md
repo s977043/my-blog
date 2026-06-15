@@ -13,7 +13,6 @@
 
 | # | 締切 | platform | path | レビュー | 状態 |
 |---|---|---|---|---|---|
-| 5 | **2026-06-16（火）18:00 JST** | qiita | `Qiita/public/penpot-react-design-system-contract.md` | Full（済 PR#286、予防反映済） | 未公開（ignorePublish:true）|
 | 6 | **2026-06-23（火）18:00 JST** | qiita | `Qiita/public/open-design-design-quality.md` | Full（済 PR#286、予防反映済） | 未公開（ignorePublish:true）／**Zenn 公開（2026-05-26週）後に cross-post note 有効化必須**|
 - #7 (zenn-book) は **2026-06-01 公開完了**（下記 Done 参照）。本文・図・cover・5系統＋ultracode レビュー完了後、release/zenn PR #350 マージで go-live
 - #9 (zenn) は「Bookを多層AIレビューで作った話」。内容は収束済み・公開可。タイミングのみ分離（Book公開→update同期→新規publish の順で間隔を空ける）
@@ -25,6 +24,7 @@
 
 ## Done
 
+- 2026-06-15 qiita penpot-react-design-system-contract https://qiita.com/s977043/items/8c4802b14352d6412ea5 （queue #5。Zenn「PenpotとReactを同じ契約で運用するデザインシステムの作り方」cross-post、Full レビュー済 PR#286。id:8c4802b14352d6412ea5、締切 6/16 から 1 日前倒しで公開。ハイジーン（HTMLコメント削除／private:false・ignorePublish:false／updated_at）→ `npm run check` 全パス → `publish:qiita` → HTTP 200 反映確認済み）
 - 2026-06-11 zenn ai-review-rate-limit-fallback https://zenn.dev/minewo/articles/ai-review-rate-limit-fallback （queue 外の新規執筆。AIレビューをレート制限で止めない可用性多重化〔L1/L2/L3〕。多段磨き込み（実体験反映→3ペルソナ反復→Gemini L3レビュー→文章推敲→CI文脈除去→de-AI推敲＋3ペルソナ再レビュー）を経て公開。途中 #404 並列セッション衝突を調停。PR #413 main / #414 release/zenn でマージ→Zenn deploy 発火、HTTP 200 反映確認済み）
 - 2026-06-10 qiita design-md-guide-and-adoption-log https://qiita.com/s977043/items/1ce6753867f4b166d74b （queue #4。Zenn「DESIGN.md 導入ガイド」cross-post、Full レビュー済 PR#285。id:1ce6753867f4b166d74b、締切 6/9 から 1 日遅れで公開）
 - 2026-06-05 zenn river-review-plugin-migration https://zenn.dev/minewo/articles/river-review-plugin-migration （River Review の Claude Code/Codex プラグイン対応記事。queue 外の新規執筆、GitHub README を情報源に構成。Round 1/2 レビュー収束〔PR #379-#382〕→ PR #383 main / PR #384 release/zenn でマージ→Zenn deploy 発火、公開反映確認済み）
