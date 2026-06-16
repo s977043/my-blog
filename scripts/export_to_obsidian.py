@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
 """
 export_to_obsidian.py
-Zenn / Qiita / note の記事を Obsidian Vault 向けに変換・集約するスクリプト
+my-blog の Zenn / Qiita / note 記事を Obsidian Vault (ai-second-brain) へ集約する。
+
+2026-06-15 の Vault 再編成（origin/main 採用・スペース区切り PARA 構成）に追従:
+- 出力先: <vault>/05 Content/blog/{zenn,qiita,note}/*.md
+- 添付:   <vault>/Attachments/（.obsidian の attachmentFolderPath 準拠）
+- 画像リンクは blog/<platform>/ から見た ../../../Attachments に張り替え
 
 Usage:
     python scripts/export_to_obsidian.py
-    python scripts/export_to_obsidian.py --output /path/to/custom_vault
+    python scripts/export_to_obsidian.py --vault /path/to/ai-second-brain
 """
 
 import argparse
@@ -14,144 +19,133 @@ import shutil
 import yaml
 from pathlib import Path
 
-def ensure_dir(path: Path):
-    path.mkdir(parents=True, exist_ok=True)
+REPO = Path("/home/minewo/github/my-blog")
+DEFAULT_VAULT = Path("/home/minewo/github/ai-second-brain")
+REL_ATTACH = "../../../Attachments"
 
-def safe_write(path: Path, content: str):
-    ensure_dir(path.parent)
-    path.write_text(content, encoding="utf-8")
 
-def parse_frontmatter(content: str):
+def ensure(p: Path):
+    p.mkdir(parents=True, exist_ok=True)
+
+
+def write(p: Path, content: str):
+    ensure(p.parent)
+    p.write_text(content, encoding="utf-8")
+
+
+def parse_fm(content: str):
     if content.startswith("---"):
         parts = content.split("---", 2)
         if len(parts) >= 3:
             try:
-                fm = yaml.safe_load(parts[1]) or {}
-                body = parts[2].lstrip("\n")
-                return fm, body
-            except:
+                return yaml.safe_load(parts[1]) or {}, parts[2].lstrip("\n")
+            except Exception:
                 pass
     return {}, content
 
-def dump_frontmatter(fm: dict, body: str) -> str:
+
+def dump_fm(fm: dict, body: str) -> str:
     if not fm:
         return body
-    fm_str = yaml.dump(fm, allow_unicode=True, sort_keys=False, default_flow_style=False)
-    return f"---\n{fm_str}---\n\n{body}"
+    s = yaml.dump(fm, allow_unicode=True, sort_keys=False, default_flow_style=False)
+    return f"---\n{s}---\n\n{body}"
 
-def convert_zenn_callouts(body: str) -> str:
-    body = re.sub(r":::message\s*\n(.*?)\n:::", r"> [!info]\n> \1", body, flags=re.DOTALL)
+
+def convert_callouts(body: str) -> str:
     body = re.sub(r":::message alert\s*\n(.*?)\n:::", r"> [!warning]\n> \1", body, flags=re.DOTALL)
+    body = re.sub(r":::message\s*\n(.*?)\n:::", r"> [!info]\n> \1", body, flags=re.DOTALL)
     return body
 
-def process_note_article(content: str, slug: str, state: str):
-    fm, body = parse_frontmatter(content)
 
-    title_match = re.search(r"^# (.+)", body, re.MULTILINE)
-    if title_match:
-        fm.setdefault("title", title_match.group(1).strip())
-
-    meta_lines = [line for line in body.splitlines() if line.startswith("> ")]
-    extracted = {}
-    for line in meta_lines:
-        m = re.match(r"> ([^:]+): (.+)", line)
+def process_note(content: str, slug: str, state: str):
+    fm, body = parse_fm(content)
+    tm = re.search(r"^# (.+)", body, re.MULTILINE)
+    if tm:
+        fm.setdefault("title", tm.group(1).strip())
+    meta = [l for l in body.splitlines() if l.startswith("> ")]
+    ext = {}
+    for l in meta:
+        m = re.match(r"> ([^:]+): (.+)", l)
         if m:
-            key, value = m.group(1).strip(), m.group(2).strip()
-            if "出典" in key or "url" in key.lower():
-                extracted["original_url"] = value
-            elif "公開状態" in key or "区分" in key:
-                extracted["state"] = value
-            elif "更新" in key:
-                extracted["updated_at"] = value
-
-    if extracted:
-        fm.update(extracted)
+            k, v = m.group(1).strip(), m.group(2).strip()
+            if "出典" in k or "url" in k.lower():
+                ext["original_url"] = v
+            elif "公開状態" in k or "区分" in k:
+                ext["state"] = v
+            elif "更新" in k:
+                ext["updated_at"] = v
+    if ext:
+        fm.update(ext)
         fm.setdefault("platform", "note")
-        state_value = extracted.get("state", state)
-        fm.setdefault("tags", ["note", state_value.lower()])
-        for line in meta_lines:
-            body = body.replace(line + "\n", "", 1)
+        fm.setdefault("tags", ["note", ext.get("state", state).lower()])
+        for l in meta:
+            body = body.replace(l + "\n", "", 1)
     else:
         fm.setdefault("platform", "note")
         fm.setdefault("tags", ["note", state])
-
     body = re.sub(r"^# .+\n", "", body, count=1).lstrip()
     return fm, body
 
-def process_images(body: str, platform: str, slug: str, source_dir: Path, attachments_dir: Path) -> str:
-    def replacer(match):
-        original_path = match.group(1)
-        if not original_path.startswith(("../images/", "../assets/", "images/", "assets/")):
-            return match.group(0)
-        filename = Path(original_path).name
-        new_filename = f"{platform}_{slug}_{filename}"
-        dest = attachments_dir / new_filename
-        for cand in [source_dir / original_path.lstrip("./"), source_dir.parent / original_path.lstrip("./")]:
+
+def process_images(body: str, platform: str, slug: str, source_dir: Path, attach_dir: Path) -> str:
+    def rep(m):
+        orig = m.group(1)
+        if not orig.startswith(("../images/", "../assets/", "images/", "assets/")):
+            return m.group(0)
+        fn = Path(orig).name
+        newfn = f"{platform}_{slug}_{fn}"
+        for cand in [source_dir / orig.lstrip("./"), source_dir.parent / orig.lstrip("./")]:
             if cand.exists():
-                ensure_dir(attachments_dir)
-                shutil.copy2(cand, dest)
-                return f"![{filename}](../attachments/{new_filename})"
-        return match.group(0)
+                ensure(attach_dir)
+                shutil.copy2(cand, attach_dir / newfn)
+                return f"![{fn}]({REL_ATTACH}/{newfn})"
+        return m.group(0)
 
-    return re.sub(r"!\[[^\]]*\]\(([^)]+)\)", replacer, body)
+    return re.sub(r"!\[[^\]]*\]\(([^)]+)\)", rep, body)
 
-def add_to_gitignore(repo_root: Path):
-    gitignore = repo_root / ".gitignore"
-    entry = "obsidian_vault/"
-    if gitignore.exists() and entry not in gitignore.read_text(encoding="utf-8"):
-        with open(gitignore, "a", encoding="utf-8") as f:
-            f.write(f"\n{entry}\n")
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output", type=Path, default=Path("/home/minewo/github/my-blog/obsidian_vault"))
+    parser.add_argument("--vault", type=Path, default=DEFAULT_VAULT,
+                        help="Obsidian Vault のルート（ai-second-brain）")
     args = parser.parse_args()
 
-    repo_root = Path("/home/minewo/github/my-blog")
-    output_dir = args.output
-    attachments_dir = output_dir / "attachments"
+    out = args.vault / "05 Content" / "blog"
+    attach = args.vault / "Attachments"
+    zenn, qiita, note = REPO / "articles", REPO / "Qiita" / "public", REPO / "articles_note"
+    nz = nq = nn = 0
 
-    sources = {
-        "zenn": repo_root / "articles",
-        "qiita": repo_root / "Qiita" / "public",
-        "note": repo_root / "articles_note",
-    }
-
-    ensure_dir(output_dir)
-    ensure_dir(attachments_dir)
-
-    # Zenn
-    for md in sources["zenn"].glob("*.md"):
-        fm, body = parse_frontmatter(md.read_text(encoding="utf-8"))
+    for md in zenn.glob("*.md"):
+        fm, body = parse_fm(md.read_text(encoding="utf-8"))
         fm.setdefault("platform", "zenn")
         if "topics" in fm:
             fm["tags"] = fm.pop("topics")
         fm["original_url"] = f"https://zenn.dev/minewo/articles/{md.stem}"
-        body = convert_zenn_callouts(body)
-        body = process_images(body, "zenn", md.stem, sources["zenn"], attachments_dir)
-        safe_write(output_dir / "Zenn" / f"{md.stem}.md", dump_frontmatter(fm, body))
+        body = process_images(convert_callouts(body), "zenn", md.stem, zenn, attach)
+        write(out / "zenn" / f"{md.stem}.md", dump_fm(fm, body))
+        nz += 1
 
-    # Qiita
-    for md in sources["qiita"].glob("*.md"):
-        fm, body = parse_frontmatter(md.read_text(encoding="utf-8"))
+    for md in qiita.glob("*.md"):
+        fm, body = parse_fm(md.read_text(encoding="utf-8"))
         fm.setdefault("platform", "qiita")
-        if "id" in fm:
-            fm["original_url"] = f"https://qiita.com/minewo/items/{fm['id']}"
-        body = process_images(body, "qiita", md.stem, sources["qiita"], attachments_dir)
-        safe_write(output_dir / "Qiita" / f"{md.stem}.md", dump_frontmatter(fm, body))
+        if fm.get("id"):
+            fm["original_url"] = f"https://qiita.com/s977043/items/{fm['id']}"
+        body = process_images(body, "qiita", md.stem, qiita, attach)
+        write(out / "qiita" / f"{md.stem}.md", dump_fm(fm, body))
+        nq += 1
 
-    # Note
     for state in ["published", "drafts", "new"]:
-        state_path = sources["note"] / state
-        if not state_path.exists():
+        sp = note / state
+        if not sp.exists():
             continue
-        for md in state_path.glob("*.md"):
-            fm, body = process_note_article(md.read_text(encoding="utf-8"), md.stem, state)
-            body = process_images(body, "note", md.stem, state_path, attachments_dir)
-            safe_write(output_dir / "Note" / f"{md.stem}.md", dump_frontmatter(fm, body))
+        for md in sp.glob("*.md"):
+            fm, body = process_note(md.read_text(encoding="utf-8"), md.stem, state)
+            body = process_images(body, "note", md.stem, sp, attach)
+            write(out / "note" / f"{md.stem}.md", dump_fm(fm, body))
+            nn += 1
 
-    add_to_gitignore(repo_root)
-    print(f"✅ Export completed to: {output_dir}")
+    print(f"✅ Exported zenn={nz} qiita={nq} note={nn} -> {out}")
+
 
 if __name__ == "__main__":
     main()

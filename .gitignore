@@ -28,5 +28,3 @@ __pycache__/
 
 # VS Code Local History 拡張等の IDE 生成物 (ワークツリー状態を汚さない)
 .vscode/
-
-obsidian_vault/
