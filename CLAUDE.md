@@ -177,7 +177,13 @@ git rev-parse "@{u}" 2>/dev/null || echo "NO_UPSTREAM" # 上流 head（未 track
 
 #### `gh pr merge` 直前チェックリスト
 
-並列セッションが先にマージを完了させていたり、ブランチが main に対して stale でリグレッションを含んでいる事例がある。マージ前に以下 2 点を確認する。
+並列セッションが先にマージを完了させていたり、ブランチが main に対して stale でリグレッションを含んでいる事例がある。**まず staleness チェッカーを実行する**（state 確認・fetch・merge シミュレーションによる巻き戻し検知を一括実行。exit 1 = STALE 疑いでマージ中止）。
+
+```bash
+npm run check:pr-staleness -- <PR番号またはブランチ名>
+```
+
+判定困難時（conflict / merge-tree 未対応等）は WARN 止まりなので、その場合は従来の手動 3 点確認へフォールバックする:
 
 ```bash
 gh pr view <n> --json state,mergeStateStatus --jq .   # state=OPEN か
