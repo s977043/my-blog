@@ -114,7 +114,7 @@ gh pr list --state open --json number,title,headRefName   # 同一 slug / releas
 1. マージ確認
 
    ```bash
-   gh pr view <flip-pr#> --json state,mergedAt   # state=MERGED を確認
+   gh pr view chore/publish-$1 --json state,mergedAt   # ブランチ名指定で PR 番号の特定を省略。state=MERGED を確認
    git switch main && git pull --ff-only
    ```
 
@@ -130,7 +130,7 @@ gh pr list --state open --json number,title,headRefName   # 同一 slug / releas
 
    ```bash
    npm run gh:ensure
-   git push -u origin release/zenn-sync-<日時>      # スクリプトが表示するブランチ名
+   git push -u origin HEAD                          # 現在のブランチ（sync スクリプトが作成した release/zenn-sync-*）をそのまま push
    gh pr create --base release/zenn --title "chore(release/zenn): publish $1（公開段）" ...
    ```
 
@@ -207,7 +207,7 @@ git fetch origin main release/zenn && git diff origin/release/zenn..origin/main 
 
 | 状態（確認コマンド）                                                         | 再開位置                                                                                                          |
 | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| flip PR が open（`gh pr list --search "publish-$1 in:title"`）               | 人間ゲート①で待機（マージ依頼を再掲）                                                                             |
+| flip PR が open（`gh pr list --head chore/publish-$1`）               | 人間ゲート①で待機（マージ依頼を再掲）                                                                             |
 | flip PR MERGED / sync PR 未作成（release/zenn 側 `published: false` のまま） | フェーズ2 から                                                                                                    |
 | sync PR が open                                                              | 人間ゲート②で待機                                                                                                 |
 | sync PR MERGED / live URL 200 / queue 未記録                                 | フェーズ3 から                                                                                                    |
