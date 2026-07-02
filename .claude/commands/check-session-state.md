@@ -51,9 +51,15 @@ description: セッション冒頭/節目に実施する状態確認ルーチン
    gh pr list --state merged --limit 5 --json number,title --jq '.[] | "#\(.number) \(.title)"'
    ```
 
+8. **open PR の staleness（このセッションで PR をマージする予定がある場合）**
+   ```bash
+   npm run check:pr-staleness -- <PR番号>
+   ```
+   exit 1（STALE 疑い）はマージ禁止 → rebase して再判定。#404/#405 型の「squash 済み記事の巻き戻しマージ」を機械検知する（手動 3点diff へのフォールバックは CLAUDE.md §gh pr merge 直前チェックリスト参照）
+
 ## 出力フォーマット
 
-ユーザーには上記7項目を**1メッセージ**で要約報告する。各項目を1〜2行に圧縮。問題があれば 🚩 を付ける。
+ユーザーには上記8項目を**1メッセージ**で要約報告する。各項目を1〜2行に圧縮。問題があれば 🚩 を付ける。
 
 ## 関連
 - `CLAUDE.md` §作業開始時のチェックリスト
