@@ -26,7 +26,7 @@
 //   - ローカル（slug 指定）:    npm run check:publish-readiness -- <slug> [<slug>...]
 //   - self-test（fixture）:     npm run test:publish-readiness
 
-const { execSync } = require("child_process");
+const { execFileSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 
@@ -105,14 +105,21 @@ function evaluateTarget(target) {
 
 // ---- git まわり（実行時のみ） ----
 
-function sh(cmd) {
-  return execSync(cmd, { encoding: "utf8" });
+// シェルを介さず git を実行する（baseRef / file にシェル特殊文字が混じっても injection しない）
+function git(...args) {
+  return execFileSync("git", args, { encoding: "utf8" });
 }
 
 // diff モード: BASE...HEAD で変更された articles/*.md のうち、現在 published: true のものを対象にする
 // （published:false→true フリップも、公開済み記事の本文更新も、公開に影響する変更として拾う）。
 function findTargetFilesFromDiff(baseRef) {
-  const files = sh(`git diff ${baseRef}...HEAD --name-only -- 'articles/*.md'`)
+  const files = git(
+    "diff",
+    `${baseRef}...HEAD`,
+    "--name-only",
+    "--",
+    "articles/*.md",
+  )
     .split("\n")
     .filter(Boolean);
   return files.filter(
@@ -122,7 +129,7 @@ function findTargetFilesFromDiff(baseRef) {
 
 function buildTarget(file) {
   const slug = path.basename(file, ".md");
-  const articleHash = sh(`git hash-object '${file}'`).trim();
+  const articleHash = git("hash-object", file).trim();
   const reviewPath = path.join(REVIEWS_DIR, `${slug}.md`);
   const hasReviewFile = fs.existsSync(reviewPath);
   const readiness = hasReviewFile
