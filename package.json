@@ -26,11 +26,13 @@
     "check:internal-links": "node scripts/check-internal-links.js",
     "check:pr-staleness": "bash scripts/check-pr-staleness.sh",
     "test:pr-staleness": "bash scripts/test-check-pr-staleness.sh",
+    "check:publish-readiness": "node scripts/check-publish-readiness.js",
+    "test:publish-readiness": "node scripts/check-publish-readiness.js --self-test",
     "check": "npm run list:articles && npm run list:books && npm run check:qiita && npm run check:note-ref && npm run check:note-images && npm run check:note-tables && npm run check:qiita-publish-hygiene && npm run check:doc-freshness && npm run check:zenn-title && npm run check:fm-title && npm run check:faq-coverage && npm run check:internal-links && npm run check:zenn-pace && npm run check:learnings-index",
     "check:learnings-index": "node scripts/check-learnings-index.js"
   },
   "dependencies": {
-    "zenn-cli": "^0.5.0"
+    "zenn-cli": "^0.5.1"
   },
   "devDependencies": {
     "@qiita/qiita-cli": "^1.8.0"
