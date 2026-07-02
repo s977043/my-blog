@@ -1,36 +1,22 @@
 ---
-title: "Open Designでデザイン品質を上げる：Penpot契約運用とDESIGN.mdの続編"
+title: Open Designでデザイン品質を上げる：Penpot契約運用とDESIGN.mdの続編
 tags:
-  - AI駆動開発
-  - デザインシステム
-  - Penpot
-  - OpenDesign
   - フロントエンド
-private: true
-updated_at: ''
-id: null
+  - デザインシステム
+  - AI駆動開発
+  - penpot
+  - OpenDesign
+private: false
+updated_at: '2026-06-22T09:39:38+09:00'
+id: af06444b664553ecdc8a
 organization_url_name: null
 slide: false
-ignorePublish: true
+ignorePublish: false
 ---
-
-<!--
-公開メモ（公開前に削除）:
-- 初期状態: private: true / ignorePublish: true（ローカル下書き）
-- Qiita へ限定共有: private: true / ignorePublish: false
-- 一般公開: private: false / ignorePublish: false
-- 公開当日に updated_at を更新し、本コメントを削除してから npm run check → publish:qiita
-- 元記事(Zenn): 2026-05-26 週公開予定 https://zenn.dev/minewo/articles/open-design-design-quality
-- Zenn 公開後: 下記の :::note info セクション（コメントアウト中）を有効化して原典リンクを追加
--->
-
-<!--
-Zenn 公開時に有効化する :::note info（壊れリンク回避のため Zenn 公開まで非表示）:
 
 :::note info
 本記事は、Zenn に掲載した [Open Designでデザイン品質を上げる：Penpot契約運用とDESIGN.mdの続編](https://zenn.dev/minewo/articles/open-design-design-quality) を Qiita 向けに再構成したものです。
 :::
--->
 
 ## 想定読者
 

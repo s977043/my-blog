@@ -110,6 +110,7 @@ git config core.hooksPath scripts/hooks
 1. 並列セッション衝突を回避するため `gh pr list --state open` で重複 PR がないか確認
 2. **DRAFT PR の存在確認** — `gh pr list --state open --search "is:draft"` で未完了の Codex / 並列セッション PR を把握（旧 PR の影響範囲を見落とさない）
 3. **`gh auth status` で active account を確認** — `git push` / `gh pr create` / `gh pr merge` の **直前すべて** で s977043 になっている必要あり（kominem-unilabo のままだと push は credential helper 設定次第で通るが PR 操作は `must be a collaborator` で失敗 → 切替 → 再実行の手戻り）。**特に `gh auth setup-git` を実行した直後は active account が切り替わる副作用がある** ため、その後の PR 操作前に必ず再確認。**手戻りを避けるには `npm run gh:ensure`（= `check-gh-account.sh --fix`）を push/PR 操作の直前に走らせると、想定外アカウント時に自動で s977043 へ切替してくれる**（2026-06-11: setup-git 後の反転が push/PR/merge ごとに 403 を起こした実績）
+   - **PreToolUse hook で自動ガード済み**: `.claude/settings.json` の PreToolUse hook（`scripts/hooks/claude-gh-account-guard.sh`）が `git push` / `gh pr create|merge|edit` / `gh api ...merge` の直前に `check-gh-account.sh --fix` を自動実行し、切替不能時のみブロックする（fail-open 設計）
    - ⚠️ **my-blog では `gh-account-guard` / `growth-core:gh-account-guard` スキルを使わない**。これらは Growth-Teams-Agent 用で期待アカウントが **kominem-unilabo**（このリポジトリの正である s977043 と逆）。起動すると再発してきた「kominem-unilabo への反転」を逆に強制しうる。アカウント検証は `npm run gh:ensure` を使う
 4. 対象ファイルがどのプラットフォームか確認（`@AGENTS.md` の配置規約表）
 5. `articles_note/published/` を触る場合は ⚠️ 規約を確認（`@AGENTS.md` 禁止事項）
