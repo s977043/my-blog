@@ -22,6 +22,9 @@ set -u
 # jq が無い環境では解析できないので素通り
 command -v jq >/dev/null 2>&1 || exit 0
 
+# 手動実行・デバッグ時に stdin が TTY だと cat が入力待ちでハングするため素通り
+[ -t 0 ] && exit 0
+
 INPUT=$(cat 2>/dev/null) || exit 0
 [ -n "$INPUT" ] || exit 0
 
@@ -33,9 +36,12 @@ CMD=$(printf '%s' "$INPUT" | jq -r '.tool_input.command // empty' 2>/dev/null) |
 # 書き込み系のみ対象。gh pr list/view/checks 等の読み取り系は対象外。
 is_target() {
   local c="$1"
-  # git push（--no-verify 付き・`git -C <dir> push` 形式含む。
-  # pre-push hook のバイパス経路もカバーする）
-  if printf '%s' "$c" | grep -qE '(^|[;&|[:space:]])git([[:space:]]+-[^[:space:]]+([[:space:]]+[^-][^[:space:]]*)?)*[[:space:]]+push([[:space:]]|$)'; then
+  # git push（--no-verify 付き・`git -C <dir> push`・`git -c a="b c" push` のような
+  # スペース/クォート入りオプション形式も含む。pre-push hook のバイパス経路もカバーする）
+  # オプションを厳密にパースせず広めにマッチし、push ではない `git stash push` のみ除外
+  # （過剰マッチは check が走るだけで無害。すり抜け=undermatch の方が実害がある）
+  if printf '%s' "$c" | grep -qE '(^|[;&|[:space:]])git([[:space:]][^;&|]*)?[[:space:]]push([[:space:]]|$)' \
+     && ! printf '%s' "$c" | grep -qE '(^|[;&|[:space:]])git[[:space:]]+stash[[:space:]]+push([[:space:]]|$)'; then
     return 0
   fi
   # gh pr create / merge / edit

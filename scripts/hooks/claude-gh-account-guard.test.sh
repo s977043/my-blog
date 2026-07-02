@@ -60,6 +60,8 @@ assert "gh pr merge は検証対象"                           0 1 "$STUB_OK" "g
 assert "gh pr edit は検証対象"                            0 1 "$STUB_OK" "gh pr edit 123 --body x"
 assert "gh api + merge は検証対象"                        0 1 "$STUB_OK" "gh api repos/o/r/pulls/1/merge -X PUT"
 assert "複合コマンド中の git push も検証対象"             0 1 "$STUB_OK" "npm run check && git push -u origin feat/x"
+assert "スペース入りオプションの git push も検証対象"     0 1 "$STUB_OK" 'git -c user.name="My Name" push origin main'
+assert "git subtree push も検証対象"                      0 1 "$STUB_OK" "git subtree push --prefix=dist origin gh-pages"
 
 # --- 対象コマンドで検証失敗: exit 2 でブロック ---------------------------
 assert "検証失敗（切替不能）なら exit 2"                  2 1 "$STUB_NG" "git push origin main"
