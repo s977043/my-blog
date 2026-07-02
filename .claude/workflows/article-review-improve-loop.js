@@ -274,7 +274,7 @@ const reviewState = !pendingVerify
 const finalMustHigh = lastReview ? mustHighCount(lastReview) : null
 const publishBlockers = lastReview ? mustCount(lastReview) : null
 const readinessBlocked = publishBlockers == null ? 'unknown' : String(publishBlockers > 0)
-const READINESS_COMMENT = `<!-- publish-readiness: blocked=${readinessBlocked} mustHigh=${finalMustHigh == null ? 'unknown' : finalMustHigh} verified=${verifySucceeded} articleHash=__ARTICLE_HASH__ loops=${improveLoopCount} reviewedAt=${new Date().toISOString()} -->`
+const READINESS_COMMENT = `<!-- publish-readiness: blocked=${readinessBlocked} mustHigh=${finalMustHigh == null ? 'unknown' : finalMustHigh} verified=${verifySucceeded} articleHash=__ARTICLE_HASH__ loops=${improveLoopCount} reviewedAt=__REVIEWED_AT__ -->`
 
 phase('Record')
 const recordAck = await agent(
@@ -284,7 +284,7 @@ const recordAck = await agent(
 
 【必須・機械可読ヘッダ】${REVIEW_OUT} の1行目は必ず次のコメントにする（publish-readiness ゲートが CI で読む。キーと値の改変禁止）:
 ${READINESS_COMMENT}
-ただし __ARTICLE_HASH__ の部分だけは、Bash で \`git hash-object ${ARTICLE}\` を実行した出力（40桁hex）に置換すること。
+ただし __ARTICLE_HASH__ は Bash で \`git hash-object ${ARTICLE}\` を実行した出力（40桁hex）に、__REVIEWED_AT__ は Bash で \`date -u +%Y-%m-%dT%H:%M:%SZ\` を実行した出力に、それぞれ置換すること。
 
 レビュー状態: ${reviewState}
 ${reviewState === 'post-improve-UNVERIFIED' ? '⚠️ 注意: 最終確認レビューが失敗したため、下記レビューは「改善前」の状態を指す。現記事と乖離している可能性がある旨を成果物に明記すること。' : ''}
