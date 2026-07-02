@@ -1,6 +1,6 @@
 # 設計提案: レビュー判定を公開ゲートに接続する（publish-readiness gate / 通称 P5）
 
-> ステータス: **実装済み**（2026-07-03、feat/publish-readiness-gate-p5 の PR）。推奨設計（案A・release/zenn 宛 PR・WARN 開始）どおり実装。
+> ステータス: **実装済み**（PR #447 / 2026-07-03）。推奨設計（案A・release/zenn 宛 PR・WARN 開始）どおり実装。
 > 実装: `scripts/check-publish-readiness.js`（fixture self-test: `scripts/fixtures/publish-readiness/` + `npm run test:publish-readiness`）/ `npm run check:publish-readiness` / `.github/workflows/ci.yml`（release/zenn 宛 PR で WARN 段階・self-test は常時）/ WF Record フェーズの readiness コメント出力。
 > **実装時の乖離（1点）**: 鮮度判定は `reviewedSha`（記事の commit sha）ではなく **`articleHash`（`git hash-object` による記事内容の blob hash）** を記録・比較する。WF は working tree 上で記事を改善した直後にレビューを記録するため、commit sha だと記事とレビューを同一 commit に入れた時点で必ず 1 commit ズレて**全記事が stale 誤検知**になる。blob hash なら「レビュー後に本文が変わったか」を commit 構成に依存せず判定できる（論点2 の意図は維持）。
 > 関連: `/review-improve-loop`（#388）、zenn-pace CI ゲート（#391）、pace diff モード（#393）、公開影響プレビュー（#394）、`AGENT_LEARNINGS.md` 2026-06-08。
