@@ -24,6 +24,7 @@ Claude Code 向けのツールガイド。規約（何が正しいか）は `@AG
 | `/article-pipeline-note <state>/<slug>` | noteレビュー生成→反映を2PR分割で実行 | note記事 |
 | `/check-session-state` | セッション冒頭/節目の状態確認ルーチン（branch/PR/check/rate-limit/直近マージ）| 状態確認 |
 | `/post-merge-verify <pr#またはslug>` | PRマージ後の事後検証（live URL/drift/後片付け） | 公開反映確認 |
+| `/publish-zenn <slug>` | Zenn公開3点セット（flip PR→release/zenn sync PR→queue Done PR）を人間ゲート付きで一括進行。新規publish/既存updateは自動判定 | Zenn記事の公開 |
 
 ## Subagents（`.claude/agents/`）
 
@@ -48,9 +49,10 @@ Claude Code 向けのツールガイド。規約（何が正しいか）は `@AG
 以下は**あえて Slash Command / Agent にしていない**。需要が固まるまで npm script + 手順書で運用する（公開系は禁止事項に触れ事故リスクが高いため）。
 
 - **Qiita 公開・drift・hygiene**: `npm run publish:qiita` / `check:qiita-drift` / `check:qiita-publish-hygiene` を手動実行（レビュー反映コマンドは Zenn/note のみ対象）
-- **release/zenn 公開（Zenn deploy）**: `scripts/sync-release-zenn.sh` + `@AGENTS.md` のZenn公開フロー手順 + pre-push/pre-commit ガードで運用。rate-limit と不可逆性のため自動化しない
 
 需要が出たら PR #366 の wrapper・ガードを土台に拡張する。
+
+> **release/zenn 公開（Zenn deploy）はコマンド化済み**: 直近30日で3完全サイクル（#372-374 / #383-385 / #413-415）の需要が確定したため `/publish-zenn <slug>` に移行（2026-07）。マージは全PRで人間ゲート（自動マージ禁止）のまま。
 
 ## 運用スクリプト（Bash）
 
