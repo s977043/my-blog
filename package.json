@@ -24,6 +24,8 @@
     "check:qiita-drift": "node scripts/check-qiita-drift.js",
     "check:qiita-remote-cache": "node scripts/check-qiita-remote-cache.js",
     "check:internal-links": "node scripts/check-internal-links.js",
+    "check:publish-readiness": "node scripts/check-publish-readiness.js",
+    "test:publish-readiness": "node scripts/check-publish-readiness.js --self-test",
     "check": "npm run list:articles && npm run list:books && npm run check:qiita && npm run check:note-ref && npm run check:note-images && npm run check:note-tables && npm run check:qiita-publish-hygiene && npm run check:doc-freshness && npm run check:zenn-title && npm run check:fm-title && npm run check:faq-coverage && npm run check:internal-links && npm run check:zenn-pace && npm run check:learnings-index",
     "check:learnings-index": "node scripts/check-learnings-index.js"
   },

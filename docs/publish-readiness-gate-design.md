@@ -1,6 +1,8 @@
 # 設計提案: レビュー判定を公開ゲートに接続する（publish-readiness gate / 通称 P5）
 
-> ステータス: **提案（未実装）**。本ドキュメントは設計選択肢を整理し、次セッションでの実装判断を容易にするためのもの。
+> ステータス: **実装済み**（PR #447 / 2026-07-03）。推奨設計（案A・release/zenn 宛 PR・WARN 開始）どおり実装。
+> 実装: `scripts/check-publish-readiness.js`（fixture self-test: `scripts/fixtures/publish-readiness/` + `npm run test:publish-readiness`）/ `npm run check:publish-readiness` / `.github/workflows/ci.yml`（release/zenn 宛 PR で WARN 段階・self-test は常時）/ WF Record フェーズの readiness コメント出力。
+> **実装時の乖離（1点）**: 鮮度判定は `reviewedSha`（記事の commit sha）ではなく **`articleHash`（`git hash-object` による記事内容の blob hash）** を記録・比較する。WF は working tree 上で記事を改善した直後にレビューを記録するため、commit sha だと記事とレビューを同一 commit に入れた時点で必ず 1 commit ズレて**全記事が stale 誤検知**になる。blob hash なら「レビュー後に本文が変わったか」を commit 構成に依存せず判定できる（論点2 の意図は維持）。
 > 関連: `/review-improve-loop`（#388）、zenn-pace CI ゲート（#391）、pace diff モード（#393）、公開影響プレビュー（#394）、`AGENT_LEARNINGS.md` 2026-06-08。
 
 ## 背景・課題
@@ -23,11 +25,11 @@
 
 ### 論点1: 判定結果の保存場所
 
-| 案 | 内容 | 長所 | 短所 |
-|---|---|---|---|
+| 案                                                   | 内容                                                                                                                      | 長所                                 | 短所                                                                            |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------- |
 | **A. reviews/zenn/<slug>.md 先頭に機械可読コメント** | Record フェーズが `<!-- publish-readiness: blocked=false mustHigh=0 verified=true reviewedSha=<sha> -->` を md 先頭に書く | 既存追跡ファイルに同居・追加実装最小 | reviews と記事の鮮度ズレ（後述・論点2）。学び「記事PRにreview同梱しない」と緊張 |
-| B. reviews-cache/（.gitignore） に JSON | WF が機械可読 JSON を gitignore 領域に出力 | 記事PRに混ざらない | CI（他環境）から見えない＝CIゲートに使えない（致命的） |
-| C. 記事 front matter にメタ | 記事自身に `reviewState:` 等を持たせる | 記事と必ず同期 | 記事本文を WF が書き換える＝主張不変原則と緊張・Zenn 無関係 frontmatter 混入 |
+| B. reviews-cache/（.gitignore） に JSON              | WF が機械可読 JSON を gitignore 領域に出力                                                                                | 記事PRに混ざらない                   | CI（他環境）から見えない＝CIゲートに使えない（致命的）                          |
+| C. 記事 front matter にメタ                          | 記事自身に `reviewState:` 等を持たせる                                                                                    | 記事と必ず同期                       | 記事本文を WF が書き換える＝主張不変原則と緊張・Zenn 無関係 frontmatter 混入    |
 
 **推奨: A**（CI から見える＝追跡必須。B は CI 不可視で要件を満たさない。C は記事汚染）。
 
@@ -45,9 +47,9 @@
 
 ### 論点4: 接続点（どの PR の CI で効かせるか）
 
-| 接続点 | 判定 |
-|---|---|
-| published:true 化 PR（main 宛） | 公開意図が確定する地点。ここで WARN すると早期に気づける |
+| 接続点                                | 判定                                                                        |
+| ------------------------------------- | --------------------------------------------------------------------------- |
+| published:true 化 PR（main 宛）       | 公開意図が確定する地点。ここで WARN すると早期に気づける                    |
 | **release/zenn 宛 PR（deploy 直前）** | 実 deploy 直前の最終ゲート。pace ゲートと同じ場所で一元化できる（**推奨**） |
 
 **推奨: release/zenn 宛 PR**（pace と同じ step 群に集約。公開影響プレビュー #394 とも並ぶ）。
