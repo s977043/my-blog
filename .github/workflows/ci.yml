@@ -41,6 +41,11 @@ jobs:
       - name: Check Zenn content
         run: npm run check
 
+      # publish-readiness ゲートの fixture self-test（hermetic・git 不要）。
+      # 新設 check スクリプトの初版バグ対策（#393/#417 の再発防止）として常時実行する。
+      - name: Publish readiness self-test
+        run: npm run test:publish-readiness
+
       # release/zenn 宛 PR のみ: この PR が release/zenn に新規に持ち込む published 数を
       # diff モード(BASE_REF)で直接計測し、二重公開(同一 deploy/24h で 2 記事)を STRICT で fatal 化する。
       # date モード(コミット日付)は「溜めてから sync」運用で見逃す/誤ブロックするため base 比較で計測する。
@@ -49,6 +54,16 @@ jobs:
         run: |
           git fetch origin "${{ github.base_ref }}"
           STRICT=1 BASE_REF="origin/${{ github.base_ref }}" npm run check:zenn-pace
+
+      # release/zenn 宛 PR のみ: この PR で公開/更新される published:true 記事の
+      # publish-readiness（/review-improve-loop の最終判定）を検証する（P5 ゲート）。
+      # 段階導入のため STRICT なし（blocked=true でも WARN 止まり）。誤検知率を見て STRICT=1 に上げる。
+      # 設計: docs/publish-readiness-gate-design.md
+      - name: Publish readiness gate (release/zenn PRs only, WARN phase)
+        if: github.event_name == 'pull_request' && github.base_ref == 'release/zenn'
+        run: |
+          git fetch origin "${{ github.base_ref }}"
+          BASE_REF="origin/${{ github.base_ref }}" npm run check:publish-readiness
 
       - name: Audit production dependencies
         run: npm audit --audit-level=high --omit=dev
