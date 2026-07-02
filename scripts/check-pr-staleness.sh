@@ -72,9 +72,11 @@ if [[ "$TARGET" =~ ^[0-9]+$ ]]; then
   fi
   PR_JSON=$(gh pr view "$TARGET" --json headRefName,state,baseRefName 2>/dev/null) \
     || warn_exit "gh pr view #$TARGET に失敗（存在しない/権限/ネットワーク）。ブランチ名で再実行してください"
-  STATE=$(echo "$PR_JSON" | sed -n 's/.*"state":"\([A-Z]*\)".*/\1/p')
-  BRANCH=$(echo "$PR_JSON" | sed -n 's/.*"headRefName":"\([^"]*\)".*/\1/p')
-  PR_BASE=$(echo "$PR_JSON" | sed -n 's/.*"baseRefName":"\([^"]*\)".*/\1/p')
+  command -v jq >/dev/null 2>&1 \
+    || warn_exit "jq が無く PR JSON を解析できません。ブランチ名で再実行してください"
+  STATE=$(jq -r '.state // empty' <<<"$PR_JSON")
+  BRANCH=$(jq -r '.headRefName // empty' <<<"$PR_JSON")
+  PR_BASE=$(jq -r '.baseRefName // empty' <<<"$PR_JSON")
   if [ "$STATE" != "OPEN" ]; then
     echo "$TAG PR #$TARGET は state=${STATE}（OPEN ではない）。何もしません（並列セッションが処理済みの可能性）"
     exit 0
@@ -142,12 +144,14 @@ MERGE_OUT=$(git merge-tree --write-tree "$BASE_REF" "$HEAD_REF" 2>/dev/null)
 MERGE_STATUS=$?
 set -e
 
-if [ "$MERGE_STATUS" -ne 0 ]; then
+if [ "$MERGE_STATUS" -eq 1 ]; then
   echo "$TAG ⚠️ マージシミュレーションが conflict（GitHub 上でもそのままではマージ不可）" >&2
   echo "$TAG 判定: WARN（conflict 解消時に main 側の変更を必ず採用すること。behind=${BEHIND}）"
   exit 0
+elif [ "$MERGE_STATUS" -ne 0 ]; then
+  warn_exit "git merge-tree が異常終了（status=$MERGE_STATUS、conflict 以外のエラー）。手動で 3点diff を確認してください"
 fi
-MERGED_TREE=$(echo "$MERGE_OUT" | head -1)
+MERGED_TREE=$(printf '%s\n' "$MERGE_OUT" | head -1)
 
 # 正規化: 先頭/末尾空白を除去し、空行と MIN_LINE_LEN 未満の短行をノイズとして落とす
 normalize() {
@@ -173,16 +177,16 @@ MAIN_ADDED=$(
 
 MATCHES=0
 if [ -n "$REMOVED" ] && [ -n "$MAIN_ADDED" ]; then
-  MATCHES=$(comm -12 <(echo "$REMOVED" | sort -u) <(echo "$MAIN_ADDED") | wc -l | tr -d ' ')
+  MATCHES=$(comm -12 <(printf '%s\n' "$REMOVED" | sort -u) <(printf '%s\n' "$MAIN_ADDED") | wc -l | tr -d ' ')
 fi
-MAIN_ADDED_COUNT=$(echo "$MAIN_ADDED" | sed '/^$/d' | wc -l | tr -d ' ')
+MAIN_ADDED_COUNT=$(printf '%s\n' "$MAIN_ADDED" | sed '/^$/d' | wc -l | tr -d ' ')
 
 echo "$TAG 巻き戻し判定: マージで main から消える行のうち、main が直近追加した行と一致 = ${MATCHES} 行（main 側直近追加 ${MAIN_ADDED_COUNT} 行中）"
 
 if [ "$MATCHES" -ge "$ROLLBACK_FAIL_MATCHES" ]; then
   echo "$TAG 🚨 判定: STALE 疑い — このままマージすると main の直近変更が巻き戻ります" >&2
   echo "$TAG 一致行の例（最大5行）:" >&2
-  comm -12 <(echo "$REMOVED" | sort -u) <(echo "$MAIN_ADDED") | head -5 | sed "s/^/$TAG   - /" >&2
+  comm -12 <(printf '%s\n' "$REMOVED" | sort -u) <(printf '%s\n' "$MAIN_ADDED") | head -5 | sed "s/^/$TAG   - /" >&2
   echo "$TAG 対処: PR ブランチを origin/$BASE_BRANCH に rebase / main 側変更を取り込んでから再判定（AGENT_LEARNINGS 2026-06-10 参照）" >&2
   exit 1
 elif [ "$MATCHES" -ge 1 ]; then
