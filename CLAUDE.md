@@ -22,6 +22,7 @@ Claude Code 向けのツールガイド。規約（何が正しいか）は `@AG
 | `/review-note-article <state>/<slug>` | note記事の3ペルソナレビューを生成 | `articles_note/<state>/<slug>.md` |
 | `/apply-review-note <state>/<slug>` | noteレビューを本文に選別反映（PR作成） | `articles_note/<state>/<slug>.md` |
 | `/article-pipeline-note <state>/<slug>` | noteレビュー生成→反映を2PR分割で実行 | note記事 |
+| `/publish-qiita <slug>` | Qiita公開パイプライン一括実行（二重公開チェック→hygiene→人間承認→publish→検証→PR） | `Qiita/public/<slug>.md` |
 | `/check-session-state` | セッション冒頭/節目の状態確認ルーチン（branch/PR/check/rate-limit/直近マージ）| 状態確認 |
 | `/post-merge-verify <pr#またはslug>` | PRマージ後の事後検証（live URL/drift/後片付け） | 公開反映確認 |
 
@@ -47,7 +48,7 @@ Claude Code 向けのツールガイド。規約（何が正しいか）は `@AG
 
 以下は**あえて Slash Command / Agent にしていない**。需要が固まるまで npm script + 手順書で運用する（公開系は禁止事項に触れ事故リスクが高いため）。
 
-- **Qiita 公開・drift・hygiene**: `npm run publish:qiita` / `check:qiita-drift` / `check:qiita-publish-hygiene` を手動実行（レビュー反映コマンドは Zenn/note のみ対象）
+- ~~**Qiita 公開・drift・hygiene**~~: **コマンド化済み** → `/publish-qiita <slug>`（直近30日で3回の同型実施 #400/#425/#443 で需要確定。PR #366 の wrapper `scripts/publish-qiita.sh`・ガード群を土台にコマンド化。手動実行する場合も `npm run publish:qiita` / `check:qiita-drift` / `check:qiita-publish-hygiene` は従来どおり使える）
 - **release/zenn 公開（Zenn deploy）**: `scripts/sync-release-zenn.sh` + `@AGENTS.md` のZenn公開フロー手順 + pre-push/pre-commit ガードで運用。rate-limit と不可逆性のため自動化しない
 
 需要が出たら PR #366 の wrapper・ガードを土台に拡張する。
