@@ -32,7 +32,7 @@
     "check:learnings-index": "node scripts/check-learnings-index.js"
   },
   "dependencies": {
-    "zenn-cli": "^0.5.1"
+    "zenn-cli": "^0.5.2"
   },
   "devDependencies": {
     "@qiita/qiita-cli": "^1.9.0"
