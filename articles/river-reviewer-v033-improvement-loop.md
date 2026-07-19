@@ -128,3 +128,10 @@ audit 当初の「50 over-broad」推定値は実測 13 件と乖離していた
 - [`skills/agent-skills/river-review/references/IMPROVEMENT_LOOP.md`](https://github.com/s977043/river-review/blob/main/skills/agent-skills/river-review/references/IMPROVEMENT_LOOP.md) — 9-step loop
 - [`skills/agent-skills/river-review/references/FEEDBACK_TO_FIXTURE.md`](https://github.com/s977043/river-review/blob/main/skills/agent-skills/river-review/references/FEEDBACK_TO_FIXTURE.md) — feedback type → 変更先の対応表
 
+
+## 関連記事
+
+:::message
+- [AIエージェントを"投げっぱなし"にしない：Agent Skillsと自由度の設計で実現する「評価駆動の開発エコシステム」](https://zenn.dev/minewo/articles/zenn-river-reviewer-architecture) - River Review の設計思想をまとめた思想編です。
+- [テンプレコピーをやめた — River Review を Claude Code / Codex の Plugin にした話](https://zenn.dev/minewo/articles/river-review-plugin-migration) - v0.33 以降に配布形態を Plugin へ移行した話です。
+:::

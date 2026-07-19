@@ -10,38 +10,16 @@ Claude Code 向けのツールガイド。規約（何が正しいか）は `@AG
 2. `@AGENT_LEARNINGS.md` — 過去の失敗・成功パターン（同じ落とし穴を踏まない）
 3. 本ファイル — Claude Code で使えるツールの索引
 
-## Slash Commands（`.claude/commands/`）
+## Slash Commands / Subagents / Skills
 
-| コマンド | 用途 | 対象 |
-|---------|------|------|
-| `/review-article <slug>` | Zenn記事の3ペルソナレビューを生成 | `articles/<slug>.md` |
-| `/apply-review <slug>` | Zennレビューを本文に選別反映（PR作成） | `articles/<slug>.md` |
-| `/article-pipeline <slug>` | Zennレビュー生成→反映を2PR分割で実行 | Zenn記事 |
-| `/review-improve-loop <slug> [loops]` | 3ペルソナレビュー→改善を最大Nループ反復（主張・強調は不変、working tree上で磨く） | Zenn記事 |
-| `/multi-review <target> [観点]` | 対象を多視点（セルフ＋独立Claude＋外部AI）で検証し統合所見を出す（L1→L2→L3 フォールバック設計込み） | 任意（記事/コード/設計/プロセス） |
-| `/review-note-article <state>/<slug>` | note記事の3ペルソナレビューを生成 | `articles_note/<state>/<slug>.md` |
-| `/apply-review-note <state>/<slug>` | noteレビューを本文に選別反映（PR作成） | `articles_note/<state>/<slug>.md` |
-| `/article-pipeline-note <state>/<slug>` | noteレビュー生成→反映を2PR分割で実行 | note記事 |
-| `/check-session-state` | セッション冒頭/節目の状態確認ルーチン（branch/PR/check/rate-limit/直近マージ）| 状態確認 |
-| `/post-merge-verify <pr#またはslug>` | PRマージ後の事後検証（live URL/drift/後片付け） | 公開反映確認 |
+各ツールの一覧と説明文はハーネスが毎セッション自動で読み込む（`.claude/commands/` = 12コマンド、`.claude/agents/` = 5エージェント、`.claude/skills/` = 3スキル）。個別の用途は各定義ファイルの frontmatter description を正とする。
 
-## Subagents（`.claude/agents/`）
+### 公開系コマンドの経緯（旧・意図的非対応）
 
-| エージェント | 役割 |
-|-----------|------|
-| `article-reviewer` | Zenn記事の3ペルソナレビュー生成 |
-| `note-article-reviewer` | note記事の3ペルソナレビュー生成（JTFスタイル準拠） |
-| `review-applier` | Zennレビュー指摘の採用/保留/却下分類と本文反映（`articles/`・`:::message`/`:::details` 前提） |
-| `note-review-applier` | noteレビュー指摘の採用/保留/却下分類と本文反映（`articles_note/<state>/`・JTFスタイル・published手動反映前提） |
-| `note-export-importer` | note公式WXRエクスポートの取り込み/WXR生成 |
+公開系（Zenn / Qiita）は事故リスクの高さから長らく **あえて Slash Command 化せず** npm script + 手順書で運用してきたが、直近30日で需要が確定したため 2026-07 にコマンド化した。**公開・マージの実行は全コマンドで人間ゲート（自動マージ・自動公開の禁止）を維持**している。
 
-## Skills（`.claude/skills/`）
-
-| スキル | トリガー |
-|-------|---------|
-| `article-review-apply` | Zennレビューの反映ワークフロー全般 |
-| `note-article-review` | noteレビューの生成→反映ライフサイクル |
-| `note-export-import` | note公式エクスポートZIPの取り込み/WXR生成 |
+- **Zenn 公開（release/zenn deploy）**: `/publish-zenn <slug>` に移行（3完全サイクル #372-374 / #383-385 / #413-415 で需要確定）。手動運用する場合も `scripts/sync-release-zenn.sh` + `@AGENTS.md` の公開フロー手順は従来どおり有効
+- **Qiita 公開・drift・hygiene**: `/publish-qiita <slug>` に移行（3回の同型実施 #400/#425/#443 で需要確定。PR #366 の wrapper `scripts/publish-qiita.sh`・ガード群が土台）。`npm run publish:qiita` / `check:qiita-drift` / `check:qiita-publish-hygiene` の手動実行も従来どおり使える
 
 ### コマンド/エージェント化していない運用（意図的非対応）
 
@@ -110,6 +88,8 @@ git config core.hooksPath scripts/hooks
 1. 並列セッション衝突を回避するため `gh pr list --state open` で重複 PR がないか確認
 2. **DRAFT PR の存在確認** — `gh pr list --state open --search "is:draft"` で未完了の Codex / 並列セッション PR を把握（旧 PR の影響範囲を見落とさない）
 3. **`gh auth status` で active account を確認** — `git push` / `gh pr create` / `gh pr merge` の **直前すべて** で s977043 になっている必要あり（kominem-unilabo のままだと push は credential helper 設定次第で通るが PR 操作は `must be a collaborator` で失敗 → 切替 → 再実行の手戻り）。**特に `gh auth setup-git` を実行した直後は active account が切り替わる副作用がある** ため、その後の PR 操作前に必ず再確認。**手戻りを避けるには `npm run gh:ensure`（= `check-gh-account.sh --fix`）を push/PR 操作の直前に走らせると、想定外アカウント時に自動で s977043 へ切替してくれる**（2026-06-11: setup-git 後の反転が push/PR/merge ごとに 403 を起こした実績）
+   - **PreToolUse hook で自動ガード済み**: `.claude/settings.json` の PreToolUse hook（`scripts/hooks/claude-gh-account-guard.sh`）が `git push` / `gh pr create|merge|edit` / `gh api ...merge` の直前に `check-gh-account.sh --fix` を自動実行し、切替不能時のみブロックする（fail-open 設計）
+   - ⚠️ **my-blog では `gh-account-guard` / `growth-core:gh-account-guard` スキルを使わない**。これらは Growth-Teams-Agent 用で期待アカウントが **kominem-unilabo**（このリポジトリの正である s977043 と逆）。起動すると再発してきた「kominem-unilabo への反転」を逆に強制しうる。アカウント検証は `npm run gh:ensure` を使う
 4. 対象ファイルがどのプラットフォームか確認（`@AGENTS.md` の配置規約表）
 5. `articles_note/published/` を触る場合は ⚠️ 規約を確認（`@AGENTS.md` 禁止事項）
 6. note 記事に画像を追加する場合: SVG → PNG 変換 → `articles_note/assets/` 配置 → **`file` でサイズ・寸法を確認**（プレースホルダ画像 <10KB を弾く） → main に先にマージ → WXR 生成の順序を守る。**WXR 生成は必ず `--base-url https://raw.githubusercontent.com/s977043/my-blog/main/articles_note/assets` を付ける**（未指定で画像参照が残ると `md_to_wxr.py` が exit 1 で失敗、意図的にローカル参照を残すなら `--allow-local-images`）
@@ -127,6 +107,11 @@ git config core.hooksPath scripts/hooks
 - 各エージェントの**出力先パスを重複しないよう**明示的に指定
 - 出力先ディレクトリは事前に `mkdir -p`（並列 mkdir レースを回避）
 - `TaskCreate` で各ジョブを事前登録すると進捗管理が容易
+
+### 反復駆動・多視点検証は既存コマンドを使う
+
+- 長時間タスクの実行中に「続き」を繰り返し入力して駆動する状況は `/loop` で置き換える（実測: 直近30日で「続き」系入力 raw 55件）
+- セルフレビュー＋Codex/Gemini/ChatGPT 等の多視点検証は、生プロンプトで依頼せず `/multi-review` を使う（同 raw 28件、L1→L2→L3 フォールバック込み）
 
 ### 並列セッション耐性
 
@@ -170,7 +155,13 @@ git rev-parse "@{u}" 2>/dev/null || echo "NO_UPSTREAM" # 上流 head（未 track
 
 #### `gh pr merge` 直前チェックリスト
 
-並列セッションが先にマージを完了させていたり、ブランチが main に対して stale でリグレッションを含んでいる事例がある。マージ前に以下 2 点を確認する。
+並列セッションが先にマージを完了させていたり、ブランチが main に対して stale でリグレッションを含んでいる事例がある。**まず staleness チェッカーを実行する**（state 確認・fetch・merge シミュレーションによる巻き戻し検知を一括実行。exit 1 = STALE 疑いでマージ中止）。
+
+```bash
+npm run check:pr-staleness -- <PR番号またはブランチ名>
+```
+
+判定困難時（conflict / merge-tree 未対応等）は WARN 止まりなので、その場合は従来の手動 3 点確認へフォールバックする:
 
 ```bash
 gh pr view <n> --json state,mergeStateStatus --jq .   # state=OPEN か
