@@ -1,13 +1,13 @@
 ---
 title: Open Designでデザイン品質を上げる：Penpot契約運用とDESIGN.mdの続編
 tags:
-  - フロントエンド
-  - デザインシステム
   - AI駆動開発
-  - penpot
   - OpenDesign
+  - penpot
+  - デザインシステム
+  - フロントエンド
 private: false
-updated_at: '2026-06-22T09:39:38+09:00'
+updated_at: '2026-07-19T12:52:33+09:00'
 id: af06444b664553ecdc8a
 organization_url_name: null
 slide: false

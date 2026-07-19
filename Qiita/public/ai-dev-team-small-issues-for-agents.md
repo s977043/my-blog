@@ -1,12 +1,12 @@
 ---
 title: AIエージェントに任せるIssueは、小さく切るほどチーム開発で扱いやすかった
 tags:
+  - AI駆動開発
   - チーム開発
   - プロジェクト管理
   - 生成AI
-  - AI駆動開発
 private: false
-updated_at: '2026-05-19T07:49:52+09:00'
+updated_at: '2026-07-19T12:51:35+09:00'
 id: b13950837889d97479fc
 organization_url_name: null
 slide: false
