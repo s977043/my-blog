@@ -154,3 +154,9 @@ Issueを小さく切るのは、そのための地味だけど効く準備だと
 
 - 作業コンテキストの外部化など、AIが迷わない構造を4パターンで整理: [AIが迷わないリポジトリ設計――agent legibility を実装に落とす4つのパターン](https://the3396.com/articles/ai-agent-legible-repo-design)（Growth Lab）
 - 「速く作る」と同じくらい「速く確認できる」が効く理由: [AI生産性のパラドックス：なぜ「速くなった」のにチケットが消えないのか](https://the3396.com/articles/ai-productivity-paradox)（Growth Lab）
+
+同じ2025年の実運用から書いたシリーズ記事です。
+
+- 総集編: [2025年、AIコーディングエージェントをチーム開発に入れてわかったこと](https://qiita.com/s977043/items/0a43ef1991769fc07ae8)
+- テスト観点の先出し: [AIに実装させる前にテスト観点を書くと、チーム開発がかなり安定した](https://qiita.com/s977043/items/fd5e5642efb40bfe4198)
+- レビュー可能な変更の作り方: [AIが書いたコードをレビュー可能にするために、先に決めておくこと](https://qiita.com/s977043/items/3ed2cb58d22ac41fe2e1)
