@@ -69,9 +69,9 @@ flowchart TD
     A[記録] --> B{何が起きたか}
     B -->|通常の反復作業| C[棚卸し]
     B -->|重大事故・未遂| D[機械化]
-    C -->|Reuse / Extend / Create| D
+    C -->|Reuse / Extend / Create| F[使用実績を計測]
     C -->|Skip| E[記録のまま残す]
-    D --> F[使用実績を計測]
+    D --> F
     F --> G[剪定]
     G --> A
 ```
