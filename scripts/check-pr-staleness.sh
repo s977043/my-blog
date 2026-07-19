@@ -25,6 +25,9 @@
 #            これ単独では巻き戻しと断定できない（2026-07-19 #456/#459 等の誤検知源）。
 #            そこで「マージ結果が、main が直近削除した古い行を復活させている」
 #            （= resurrection。古い作業コピーによる上書きの痕跡）場合に限り (b) を数える。
+#            resurrection が無い場合でも (b) の一致が閾値以上なら CLEAN ではなく WARN に落とす:
+#            「意図的削除・改稿」と「main が純追記した後の古い作業コピー上書き（#404 変種）」は
+#            行集合レベルで機械判別できないため、exit 0 のまま目視確認を促す（サイレントパス封じ）。
 #      一致 = マージすると main の新しい内容が過去へ戻る = 巻き戻し。
 #      ※ base が古くても git の 3-way merge が main 側変更を保持するケースは CLEAN と判定する
 #        （実際に巻き戻らないため）。逆に「PR 自体が古い本文を丸ごと commit している」#404 型は
@@ -211,6 +214,13 @@ if [ -n "$REMOVED" ] && [ -n "$MAIN_ADDED" ]; then
 fi
 MAIN_ADDED_COUNT=$(printf '%s\n' "$MAIN_ADDED" | sed '/^$/d' | wc -l | tr -d ' ')
 
+# lookback 内で main が追加した行との一致（resurrection 有無に関わらず常時計測。
+# resurrection ゼロ時のサイレント CLEAN 封じに使う）
+LB_MATCHES=0
+if [ -n "$REMOVED" ] && [ -n "$MAIN_ADDED_LB" ]; then
+  LB_MATCHES=$(comm -12 <(printf '%s\n' "$REMOVED" | sort -u) <(printf '%s\n' "$MAIN_ADDED_LB") | wc -l | tr -d ' ')
+fi
+
 echo "$TAG 巻き戻し判定: マージで main から消える行のうち、main が直近追加した行と一致 = ${MATCHES} 行（候補 ${MAIN_ADDED_COUNT} 行中、判定範囲: ${MODE_NOTE}）"
 
 if [ "$MATCHES" -ge "$ROLLBACK_FAIL_MATCHES" ]; then
@@ -221,6 +231,18 @@ if [ "$MATCHES" -ge "$ROLLBACK_FAIL_MATCHES" ]; then
   exit 1
 elif [ "$MATCHES" -ge 1 ]; then
   echo "$TAG ⚠️ 判定: WARN（一致 ${MATCHES} 行。閾値 $ROLLBACK_FAIL_MATCHES 未満だが目視確認を推奨）" >&2
+  exit 0
+fi
+
+# サイレントパス封じ: resurrection が無くても、マージで「lookback 内に main へ入った行」が
+# 閾値以上消えるなら CLEAN とは断定しない。PR による意図的な削除・改稿（#456/#459 型 = 問題なし）と、
+# main が純追記した後の古い作業コピー上書き（#404 変種 = 巻き戻し）は機械判別できないため、
+# exit 0 のまま WARN で目視確認を促す。
+if [ "$RESURRECTED" -lt "$RESURRECT_MIN" ] && [ "$LB_MATCHES" -ge "$ROLLBACK_FAIL_MATCHES" ]; then
+  echo "$TAG ⚠️ 判定: WARN（マージで main の直近追加行（lookback 内）が ${LB_MATCHES} 行消える。復活行なし）" >&2
+  echo "$TAG   この削除・改稿が PR の意図どおりか目視確認してください。PR が古い作業コピーで" >&2
+  echo "$TAG   ファイルを丸ごと上書きしていないか（特に main 側が追記のみの場合）に注意。" >&2
+  echo "$TAG   確認コマンド: git diff $BASE_REF...$HEAD_REF" >&2
   exit 0
 fi
 

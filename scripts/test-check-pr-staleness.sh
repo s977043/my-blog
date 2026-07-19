@@ -199,10 +199,12 @@ run_check "$R" no-such-branch
 assert "case5 warn (不明ブランチ)" 0 "$CHECK_STATUS" "WARN" "$CHECK_OUT"
 
 # ---------------------------------------------------------------------------
-# Case 6: CLEAN（誤検知回帰 / 2026-07-19 #456 型）— PR が「merge-base 以前に
+# Case 6: WARN/exit 0（誤検知回帰 / 2026-07-19 #456 型）— PR が「merge-base 以前に
 #   main へ入った行」（= PR ベースに既存のテーブル）を意図的に削除するだけのケース。
-#   旧実装は lookback の和集合により削除対象行を「巻き戻し」と誤検知していた。
-#   マージ結果は古い行を何も復活させない（resurrection なし）ので CLEAN が正。
+#   旧実装は lookback の和集合により削除対象行を「巻き戻し」と誤検知し exit 1 でブロックしていた。
+#   マージ結果は古い行を復活させない（resurrection なし）ので巻き戻し断定はしないが、
+#   「意図的削除」と「append-only main への古い作業コピー上書き（case9）」は行集合レベルで
+#   機械判別できないため、exit 0 の WARN（目視確認促し）に落とすのが正。
 # ---------------------------------------------------------------------------
 R="$TMPDIR_ROOT/case6"; new_repo "$R"
 article_v1 >"$R/guide.md"
@@ -222,7 +224,7 @@ article_v1 >"$R/guide.md"
 git -C "$R" add guide.md && git -C "$R" commit -qm "remove obsolete command table"
 git -C "$R" switch -q main
 run_check "$R" remove-table
-assert "case6 clean (PR による main 既存行の意図的削除)" 0 "$CHECK_STATUS" "CLEAN" "$CHECK_OUT"
+assert "case6 warn/exit0 (PR による main 既存行の意図的削除)" 0 "$CHECK_STATUS" "WARN" "$CHECK_OUT"
 
 # ---------------------------------------------------------------------------
 # Case 7: STALE（検出力維持回帰 / #404 型・behind>0 変種）— main が磨き込み後、
@@ -272,9 +274,10 @@ run_check "$R" stale-rollback-behind
 assert "case7 stale (#404型 behind>0 でも巻き戻し検知)" 1 "$CHECK_STATUS" "STALE" "$CHECK_OUT"
 
 # ---------------------------------------------------------------------------
-# Case 8: CLEAN（誤検知回帰 / #459 型）— PR が main 既存行（merge-base 以前に入った行）を
+# Case 8: WARN/exit 0（誤検知回帰 / #459 型）— PR が main 既存行（merge-base 以前に入った行）を
 #   意図的に「改稿」する（削除 + 新表現の追加）ケース。新表現は main が過去に削除した行
-#   ではないので resurrection にならず、CLEAN が正。
+#   ではないので resurrection にならず巻き戻し断定（exit 1）はしないが、lookback 内の
+#   main 追加行が消えるため WARN（exit 0・目視確認促し）に落とすのが正。
 # ---------------------------------------------------------------------------
 R="$TMPDIR_ROOT/case8"; new_repo "$R"
 article_v1 >"$R/article.md"
@@ -307,7 +310,51 @@ EOF
 git -C "$R" add article.md && git -C "$R" commit -qm "reword paragraphs forward (intentional)"
 git -C "$R" switch -q main
 run_check "$R" reword-forward
-assert "case8 clean (PR による main 既存行の意図的改稿)" 0 "$CHECK_STATUS" "CLEAN" "$CHECK_OUT"
+assert "case8 warn/exit0 (PR による main 既存行の意図的改稿)" 0 "$CHECK_STATUS" "WARN" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
+# Case 9: WARN/exit 0（サイレントパス封じ回帰 / #404 変種・append-only）— main が
+#   純追記（削除ゼロ）でコミットした後、PR が追記前の古い作業コピーで丸ごと上書き。
+#   「main が削除した行の復活」が構造的に発生しないため resurrection では検知できないが、
+#   マージで lookback 内の main 追加行（追記段落）が消える。無警告 CLEAN にせず
+#   WARN（exit 0・目視確認促し）を出すのが正。
+# ---------------------------------------------------------------------------
+R="$TMPDIR_ROOT/case9"; new_repo "$R"
+cat >"$R/article.md" <<'EOF'
+# サンプル記事
+
+## はじめに
+これは検証用の本文です。
+初版の段落その1。
+初版の段落その2。
+EOF
+git -C "$R" add article.md && git -C "$R" commit -qm "v1"
+# main: 純追記（削除なし）
+cat >>"$R/article.md" <<'EOF'
+
+## レビュー反映追記
+レビュー反映で追加した補足の段落その1です。
+レビュー反映で追加した補足の段落その2です。
+レビュー反映で追加した重要な注意事項です。
+EOF
+git -C "$R" add article.md && git -C "$R" commit -qm "append review notes (pure addition)"
+# PR: 追記後の main から分岐（behind=0）したが、追記前の古い作業コピー + 図で丸ごと上書き
+git -C "$R" switch -qc stale-append-rollback
+cat >"$R/article.md" <<'EOF'
+# サンプル記事
+
+## はじめに
+これは検証用の本文です。
+初版の段落その1。
+初版の段落その2。
+
+## 図解
+（stale セッションが追加した図）
+EOF
+git -C "$R" add article.md && git -C "$R" commit -qm "add diagram (old working copy overwrite)"
+git -C "$R" switch -q main
+run_check "$R" stale-append-rollback
+assert "case9 warn/exit0 (#404変種 append-only 巻き戻しをサイレント CLEAN にしない)" 0 "$CHECK_STATUS" "WARN" "$CHECK_OUT"
 
 echo "---"
 if [ "$FAILURES" -eq 0 ]; then
