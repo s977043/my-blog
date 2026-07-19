@@ -158,7 +158,7 @@ ZennとQiitaの公開パイプラインは、npm scriptと手順書で3サイク
 | 独自チェッカー | ローカル／CI | 複数条件をまとめた状態検証 | 呼び出し経路への組み込みが必要 |
 | CIゲート | GitHub Actionsなど | リモートでの最終検証 | Branch protection等の設定が必要 |
 
-Claude Code Hooksは、特定のライフサイクルイベントで処理を実行する仕組みです。自然言語の指示より決定的な制御に向きますが、発火するイベントと実行環境の範囲を超えては強制できません。`PreToolUse`で操作を止める場合、理由をstderrへ出して `exit 2` にするか、`exit 0`で、`"permissionDecision": "deny"`を含む構造化JSONを返します。`exit 2`ではJSON出力が無視されるため、2つの方法は混在させません。単なる `exit 1` は通常ブロックを意味しません。詳細は[Hooksガイド](https://docs.anthropic.com/en/docs/claude-code/hooks-guide)と[Hooksリファレンス](https://code.claude.com/docs/en/hooks)を参照してください。
+Claude Code Hooksは、特定のライフサイクルイベントで処理を実行する仕組みです。自然言語の指示より決定的な制御に向きますが、発火するイベントと実行環境の範囲を超えては強制できません。`PreToolUse`で操作を止める場合、理由をstderrへ出して`exit 2`にするか、`exit 0`で、`"permissionDecision": "deny"`を含む構造化JSONを返します。`exit 2`ではJSON出力が無視されるため、2つの方法は混在させません。単なる`exit 1`は通常ブロックを意味しません。詳細は[Hooksガイド](https://code.claude.com/docs/en/hooks-guide)と[Hooksリファレンス](https://code.claude.com/docs/en/hooks)を参照してください。
 
 実際に機械化した例です。
 
