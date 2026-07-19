@@ -10,40 +10,9 @@ Claude Code 向けのツールガイド。規約（何が正しいか）は `@AG
 2. `@AGENT_LEARNINGS.md` — 過去の失敗・成功パターン（同じ落とし穴を踏まない）
 3. 本ファイル — Claude Code で使えるツールの索引
 
-## Slash Commands（`.claude/commands/`）
+## Slash Commands / Subagents / Skills
 
-| コマンド | 用途 | 対象 |
-|---------|------|------|
-| `/review-article <slug>` | Zenn記事の3ペルソナレビューを生成 | `articles/<slug>.md` |
-| `/apply-review <slug>` | Zennレビューを本文に選別反映（PR作成） | `articles/<slug>.md` |
-| `/article-pipeline <slug>` | Zennレビュー生成→反映を2PR分割で実行 | Zenn記事 |
-| `/review-improve-loop <slug> [loops]` | 3ペルソナレビュー→改善を最大Nループ反復（主張・強調は不変、working tree上で磨く） | Zenn記事 |
-| `/multi-review <target> [観点]` | 対象を多視点（セルフ＋独立Claude＋外部AI）で検証し統合所見を出す（L1→L2→L3 フォールバック設計込み） | 任意（記事/コード/設計/プロセス） |
-| `/review-note-article <state>/<slug>` | note記事の3ペルソナレビューを生成 | `articles_note/<state>/<slug>.md` |
-| `/apply-review-note <state>/<slug>` | noteレビューを本文に選別反映（PR作成） | `articles_note/<state>/<slug>.md` |
-| `/article-pipeline-note <state>/<slug>` | noteレビュー生成→反映を2PR分割で実行 | note記事 |
-| `/publish-qiita <slug>` | Qiita公開パイプライン一括実行（二重公開チェック→hygiene→人間承認→publish→検証→PR） | `Qiita/public/<slug>.md` |
-| `/check-session-state` | セッション冒頭/節目の状態確認ルーチン（branch/PR/check/rate-limit/直近マージ）| 状態確認 |
-| `/post-merge-verify <pr#またはslug>` | PRマージ後の事後検証（live URL/drift/後片付け） | 公開反映確認 |
-| `/publish-zenn <slug>` | Zenn公開3点セット（flip PR→release/zenn sync PR→queue Done PR）を人間ゲート付きで一括進行。新規publish/既存updateは自動判定 | Zenn記事の公開 |
-
-## Subagents（`.claude/agents/`）
-
-| エージェント | 役割 |
-|-----------|------|
-| `article-reviewer` | Zenn記事の3ペルソナレビュー生成 |
-| `note-article-reviewer` | note記事の3ペルソナレビュー生成（JTFスタイル準拠） |
-| `review-applier` | Zennレビュー指摘の採用/保留/却下分類と本文反映（`articles/`・`:::message`/`:::details` 前提） |
-| `note-review-applier` | noteレビュー指摘の採用/保留/却下分類と本文反映（`articles_note/<state>/`・JTFスタイル・published手動反映前提） |
-| `note-export-importer` | note公式WXRエクスポートの取り込み/WXR生成 |
-
-## Skills（`.claude/skills/`）
-
-| スキル | トリガー |
-|-------|---------|
-| `article-review-apply` | Zennレビューの反映ワークフロー全般 |
-| `note-article-review` | noteレビューの生成→反映ライフサイクル |
-| `note-export-import` | note公式エクスポートZIPの取り込み/WXR生成 |
+各ツールの一覧と説明文はハーネスが毎セッション自動で読み込む（`.claude/commands/` = 12コマンド、`.claude/agents/` = 5エージェント、`.claude/skills/` = 3スキル）。個別の用途は各定義ファイルの frontmatter description を正とする。
 
 ### 公開系コマンドの経緯（旧・意図的非対応）
 
