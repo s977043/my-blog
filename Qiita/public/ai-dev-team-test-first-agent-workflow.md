@@ -1,24 +1,21 @@
 ---
 title: AIに実装させる前にテスト観点を書くと、チーム開発がかなり安定した
 tags:
+  - AI駆動開発
   - TDD
   - テスト
   - 生成AI
-  - AI駆動開発
 private: false
-updated_at: '2026-05-28T12:16:01+09:00'
+updated_at: '2026-07-19T12:51:47+09:00'
 id: fd5e5642efb40bfe4198
 organization_url_name: null
 slide: false
 ignorePublish: false
 ---
 
-<!--
-作業メモ:
-- Qiita公式イベント「2025年、生成AIを使ってみてどうだった？」は 2026-01-19 から 2026-02-27 までで、2026-04-13 時点では募集終了済み。
-- 通常記事として公開する場合は、キャンペーンタグ FindyTeamPlus_AI_2025 を付けない方針で最終確認する。
-- 公開する場合は ignorePublish: false に変更する。
--->
+:::note info
+本記事は、note に掲載した [AITDD実践録：AIエージェント(Claude Code/Gemini CLI)だから「テストが先に動く」開発を日常化する](https://note.com/mine_unilabo/n/nc62d478194d3) と同じテーマ（AI 駆動開発でのテスト先行）を、Qiita 向けに「チーム開発で安定させるための観点」に角度を変えて整理したものです。
+:::
 
 :::note info
 本記事は、note に掲載した [AITDD実践録：AIエージェント(Claude Code/Gemini CLI)だから「テストが先に動く」開発を日常化する](https://note.com/mine_unilabo/n/nc62d478194d3) と同じテーマ（AI 駆動開発でのテスト先行）を、Qiita 向けに「チーム開発で安定させるための観点」に角度を変えて整理したものです。
@@ -245,3 +242,11 @@ AIにまず理解を要約させる。
 実装後に、差分とテスト観点の対応を説明させる。
 
 この小さな順番の変更だけで、AIとのチーム開発はかなり扱いやすくなりました。
+
+## 関連記事（チーム開発×AIエージェント シリーズ）
+
+同じ2025年の実運用から書いたシリーズ記事です。
+
+- 総集編: [2025年、AIコーディングエージェントをチーム開発に入れてわかったこと](https://qiita.com/s977043/items/0a43ef1991769fc07ae8)
+- Issueの切り方: [AIエージェントに任せるIssueは、小さく切るほどチーム開発で扱いやすかった](https://qiita.com/s977043/items/b13950837889d97479fc)
+- レビュー可能な変更の作り方: [AIが書いたコードをレビュー可能にするために、先に決めておくこと](https://qiita.com/s977043/items/3ed2cb58d22ac41fe2e1)

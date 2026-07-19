@@ -211,3 +211,11 @@ River Review は、単なる OSS ツールではなく、「**開発文化をコ
 - **GitHub**: [s977043/river-review](https://github.com/s977043/river-review)
 - **Documentation**: [River Review Docs](https://river-review.the3396.com/)
 - **note**: [AI コードレビューの「投げっぱなし」をやめる](https://note.com/mine_unilabo/n/nd21c3f1df22e)
+
+## 関連記事
+
+:::message
+- [River Review v0.30→v0.33：Improvement Loop と applyTo Scoping 整備の半月](https://zenn.dev/minewo/articles/river-reviewer-v033-improvement-loop) - この記事の設計思想が実装としてどう進化したかの記録です。
+- [テンプレコピーをやめた — River Review を Claude Code / Codex の Plugin にした話](https://zenn.dev/minewo/articles/river-review-plugin-migration) - 配布形態を Plugin に移行した話です。
+- [AI駆動開発の2層ガード設計：PlanGateとRiver Reviewで実装前後を守る](https://zenn.dev/minewo/articles/ai-dev-guardrail-plangate-river-reviewer) - 実装前ガード（PlanGate）との組み合わせ方です。
+:::
