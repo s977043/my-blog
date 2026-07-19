@@ -1,13 +1,13 @@
 ---
 title: 'DESIGN.md 導入ガイド: AI実装のための入口・契約・検証をどう整えるか'
 tags:
-  - ドキュメント
-  - React
-  - デザインシステム
   - AI駆動開発
+  - React
   - penpot
+  - デザインシステム
+  - ドキュメント
 private: false
-updated_at: '2026-06-10T06:16:49+09:00'
+updated_at: '2026-07-19T12:51:57+09:00'
 id: 1ce6753867f4b166d74b
 organization_url_name: null
 slide: false

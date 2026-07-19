@@ -1,12 +1,12 @@
 ---
 title: AIが書いたコードをレビュー可能にするために、先に決めておくこと
 tags:
-  - チーム開発
-  - コードレビュー
-  - 生成AI
   - AI駆動開発
+  - コードレビュー
+  - チーム開発
+  - 生成AI
 private: false
-updated_at: '2026-05-28T12:35:02+09:00'
+updated_at: '2026-07-19T12:50:31+09:00'
 id: 3ed2cb58d22ac41fe2e1
 organization_url_name: null
 slide: false

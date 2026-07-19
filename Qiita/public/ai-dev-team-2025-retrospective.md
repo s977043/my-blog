@@ -1,12 +1,12 @@
 ---
 title: 2025年、AIコーディングエージェントをチーム開発に入れてわかったこと
 tags:
+  - AI駆動開発
   - アジャイル
   - チーム開発
   - 生成AI
-  - AI駆動開発
 private: false
-updated_at: '2026-04-27T00:29:32+09:00'
+updated_at: '2026-07-19T12:49:54+09:00'
 id: 0a43ef1991769fc07ae8
 organization_url_name: null
 slide: false
