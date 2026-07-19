@@ -18,11 +18,17 @@
 #      「PR が触るファイル ∩ main 側が merge-base 以降に触ったファイル」の重なりを報告
 #   4. 巻き戻し検知（本命）: `git merge-tree --write-tree` でマージ結果ツリーを合成し、
 #      `git diff origin/main <merged-tree>` で「マージによって main から消える行」を抽出。
-#      その行が「main が直近（merge-base 以降 + 直近 MAIN_LOOKBACK commits）で追加した行」
-#      と一致する数を数える。一致 = マージすると main の新しい内容が過去へ戻る = 巻き戻し。
+#      巻き戻し候補行は 2 種類に分けて扱う:
+#        (a) merge-base 以降に main へ入った行 — 消えたら無条件で巻き戻し候補
+#        (b) merge-base 以前（直近 MAIN_LOOKBACK commits 内）に main へ入った行 —
+#            PR のベースに既に存在するため「PR が意図的に削除・改稿した行」も含まれる。
+#            これ単独では巻き戻しと断定できない（2026-07-19 #456/#459 等の誤検知源）。
+#            そこで「マージ結果が、main が直近削除した古い行を復活させている」
+#            （= resurrection。古い作業コピーによる上書きの痕跡）場合に限り (b) を数える。
+#      一致 = マージすると main の新しい内容が過去へ戻る = 巻き戻し。
 #      ※ base が古くても git の 3-way merge が main 側変更を保持するケースは CLEAN と判定する
 #        （実際に巻き戻らないため）。逆に「PR 自体が古い本文を丸ごと commit している」#404 型は
-#        merge-base が新しくても検知できる。
+#        merge-base が新しくても、(b) + resurrection の組で検知できる。
 #
 # 終了コード:
 #   0 = CLEAN、または WARN（判定困難・軽微な兆候。誤検知で運用を止めない）
@@ -37,8 +43,15 @@
 #   ROLLBACK_FAIL_MATCHES  巻き戻し一致行数の FAIL 閾値（デフォルト: 2。1 行は WARN 止まり）
 #   MIN_LINE_LEN           一致判定に使う行の最小文字数（デフォルト: 4。短い定型行のノイズ除去）
 #   MAIN_LOOKBACK          「main の直近追加行」を集める遡りコミット数（デフォルト: 30）
+#   RESURRECT_MIN          lookback 由来の一致を巻き戻しに数えるのに必要な「復活行」数（デフォルト: 1）
 
 set -euo pipefail
+
+# sort/comm の行比較をバイト単位に固定する。UTF-8 ロケールの collation では日本語行同士が
+# 「等しい」と誤判定され、comm -12 が無関係な行を一致扱いする（2026-07-19 誤検知の一因）。
+# 副作用: normalize の MIN_LINE_LEN はバイト長判定になる（CJK は 1 文字 3 バイト。短行ノイズ
+# 除去という目的に対しては安全側）。
+export LC_ALL=C
 
 BASE_BRANCH="${BASE_BRANCH:-main}"
 REMOTE="${REMOTE:-origin}"
@@ -47,6 +60,7 @@ BEHIND_WARN="${BEHIND_WARN:-10}"
 ROLLBACK_FAIL_MATCHES="${ROLLBACK_FAIL_MATCHES:-2}"
 MIN_LINE_LEN="${MIN_LINE_LEN:-4}"
 MAIN_LOOKBACK="${MAIN_LOOKBACK:-30}"
+RESURRECT_MIN="${RESURRECT_MIN:-1}"
 
 TAG="[check-pr-staleness]"
 
@@ -165,15 +179,31 @@ while IFS= read -r f; do [ -n "$f" ] && PR_FILES_ARR+=("$f"); done <<<"$PR_FILES
 # マージ後に main から消える行（PR が触るファイルに限定）
 REMOVED=$(git diff "$BASE_REF" "$MERGED_TREE" -- "${PR_FILES_ARR[@]}" | grep '^-' | grep -v '^---' | normalize || true)
 
-# main が「直近」追加した行 = merge-base 以降 + 直近 MAIN_LOOKBACK commits の和集合
-# （#404 型 = merge-base が新しくても PR が古い本文を commit しているケースを拾うため lookback を併用）
+# main が「直近」追加した行を 2 系統で収集する:
+#   (a) MAIN_ADDED_MB: merge-base 以降に main へ入った行。マージ結果から消えたら無条件で巻き戻し候補
+#   (b) MAIN_ADDED_LB: 直近 MAIN_LOOKBACK commits で main へ入った行（merge-base 以前を含む）。
+#       PR のベースに既に存在する行を含むため、「PR が意図的に削除・改稿した行」と区別が付かない。
+#       #404 型（古い作業コピーによる上書き）はマージ結果に「main が直近削除した古い行」が
+#       復活する（resurrection）のが特徴なので、復活行が RESURRECT_MIN 以上ある場合のみ (b) を数える。
 LB_BASE=$(git rev-parse -q --verify "$BASE_REF~$MAIN_LOOKBACK" 2>/dev/null || git rev-list --max-parents=0 "$BASE_REF" | tail -1)
-MAIN_ADDED=$(
-  {
-    git diff "$MB" "$BASE_REF" -- "${PR_FILES_ARR[@]}"
-    git diff "$LB_BASE" "$BASE_REF" -- "${PR_FILES_ARR[@]}"
-  } | grep '^+' | grep -v '^+++' | normalize | sort -u || true
-)
+MAIN_ADDED_MB=$(git diff "$MB" "$BASE_REF" -- "${PR_FILES_ARR[@]}" | grep '^+' | grep -v '^+++' | normalize | sort -u || true)
+MAIN_ADDED_LB=$(git diff "$LB_BASE" "$BASE_REF" -- "${PR_FILES_ARR[@]}" | grep '^+' | grep -v '^+++' | normalize | sort -u || true)
+MAIN_REMOVED_LB=$(git diff "$LB_BASE" "$BASE_REF" -- "${PR_FILES_ARR[@]}" | grep '^-' | grep -v '^---' | normalize | sort -u || true)
+MERGE_ADDED=$(git diff "$BASE_REF" "$MERGED_TREE" -- "${PR_FILES_ARR[@]}" | grep '^+' | grep -v '^+++' | normalize | sort -u || true)
+
+# resurrection: マージ結果が追加する行のうち、main が lookback 内で削除した行と一致するもの
+RESURRECTED=0
+if [ -n "$MERGE_ADDED" ] && [ -n "$MAIN_REMOVED_LB" ]; then
+  RESURRECTED=$(comm -12 <(printf '%s\n' "$MERGE_ADDED") <(printf '%s\n' "$MAIN_REMOVED_LB") | wc -l | tr -d ' ')
+fi
+
+if [ "$RESURRECTED" -ge "$RESURRECT_MIN" ]; then
+  MAIN_ADDED=$(printf '%s\n%s\n' "$MAIN_ADDED_MB" "$MAIN_ADDED_LB" | sed '/^$/d' | sort -u)
+  MODE_NOTE="mb以降 + lookback（復活行 ${RESURRECTED} 行を検出 → #404 型の疑い）"
+else
+  MAIN_ADDED="$MAIN_ADDED_MB"
+  MODE_NOTE="mb以降のみ（復活行なし → PR ベース既存行の削除・改稿は意図的とみなす）"
+fi
 
 MATCHES=0
 if [ -n "$REMOVED" ] && [ -n "$MAIN_ADDED" ]; then
@@ -181,7 +211,7 @@ if [ -n "$REMOVED" ] && [ -n "$MAIN_ADDED" ]; then
 fi
 MAIN_ADDED_COUNT=$(printf '%s\n' "$MAIN_ADDED" | sed '/^$/d' | wc -l | tr -d ' ')
 
-echo "$TAG 巻き戻し判定: マージで main から消える行のうち、main が直近追加した行と一致 = ${MATCHES} 行（main 側直近追加 ${MAIN_ADDED_COUNT} 行中）"
+echo "$TAG 巻き戻し判定: マージで main から消える行のうち、main が直近追加した行と一致 = ${MATCHES} 行（候補 ${MAIN_ADDED_COUNT} 行中、判定範囲: ${MODE_NOTE}）"
 
 if [ "$MATCHES" -ge "$ROLLBACK_FAIL_MATCHES" ]; then
   echo "$TAG 🚨 判定: STALE 疑い — このままマージすると main の直近変更が巻き戻ります" >&2

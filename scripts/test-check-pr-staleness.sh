@@ -198,6 +198,117 @@ assert "case4 warn (conflict)" 0 "$CHECK_STATUS" "conflict" "$CHECK_OUT"
 run_check "$R" no-such-branch
 assert "case5 warn (不明ブランチ)" 0 "$CHECK_STATUS" "WARN" "$CHECK_OUT"
 
+# ---------------------------------------------------------------------------
+# Case 6: CLEAN（誤検知回帰 / 2026-07-19 #456 型）— PR が「merge-base 以前に
+#   main へ入った行」（= PR ベースに既存のテーブル）を意図的に削除するだけのケース。
+#   旧実装は lookback の和集合により削除対象行を「巻き戻し」と誤検知していた。
+#   マージ結果は古い行を何も復活させない（resurrection なし）ので CLEAN が正。
+# ---------------------------------------------------------------------------
+R="$TMPDIR_ROOT/case6"; new_repo "$R"
+article_v1 >"$R/guide.md"
+git -C "$R" add guide.md && git -C "$R" commit -qm "v1"
+cat >>"$R/guide.md" <<'EOF'
+
+## 旧テーブル
+| コマンド | 用途 |
+|---------|------|
+| /review-article | Zenn記事の3ペルソナレビューを生成する |
+| /apply-review | Zennレビューを本文に選別反映してPRを作る |
+EOF
+git -C "$R" add guide.md && git -C "$R" commit -qm "add command table"
+# PR: merge-base（テーブル追加後の main）から分岐し、テーブルを意図的に削除
+git -C "$R" switch -qc remove-table
+article_v1 >"$R/guide.md"
+git -C "$R" add guide.md && git -C "$R" commit -qm "remove obsolete command table"
+git -C "$R" switch -q main
+run_check "$R" remove-table
+assert "case6 clean (PR による main 既存行の意図的削除)" 0 "$CHECK_STATUS" "CLEAN" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
+# Case 7: STALE（検出力維持回帰 / #404 型・behind>0 変種）— main が磨き込み後、
+#   さらに別ファイルの commit で先行（behind=1）。PR は磨き込み後の main から分岐したのに
+#   古い作業コピー（v1 相当）で本文を丸ごと上書き commit している。
+#   マージで「merge-base 以降 + lookback 内に main へ入った磨き込み行」が消え、
+#   かつ main が削除済みの古い行が復活する（resurrection）ため STALE が正。
+# ---------------------------------------------------------------------------
+R="$TMPDIR_ROOT/case7"; new_repo "$R"
+article_v1 >"$R/article.md"
+git -C "$R" add article.md && git -C "$R" commit -qm "v1"
+cat >"$R/article.md" <<'EOF'
+# サンプル記事
+
+## はじめに
+これは検証用の本文です。
+磨き込み後の表現の段落その1です。
+磨き込み後の表現の段落その2です。
+レビュー反映で追加した補足の段落です。
+
+## まとめ
+改訂版のまとめ文（レビュー反映済み）。
+EOF
+git -C "$R" add article.md && git -C "$R" commit -qm "polish article (review applied)"
+# PR ブランチ: 磨き込み後 main から分岐、古い作業コピーで上書き
+git -C "$R" switch -qc stale-rollback-behind
+cat >"$R/article.md" <<'EOF'
+# サンプル記事
+
+## はじめに
+これは検証用の本文です。
+古い表現の段落その1。
+古い表現の段落その2。
+
+## 図解
+（stale セッションが追加した図）
+
+## まとめ
+初版のまとめ文。
+EOF
+git -C "$R" add article.md && git -C "$R" commit -qm "add diagram (overwrites with old content)"
+# main はさらに別ファイルで先行（behind=1。behind>0 でも検知が維持されることを確認）
+git -C "$R" switch -q main
+echo "無関係な別ファイルの更新" >"$R/unrelated.md"
+git -C "$R" add unrelated.md && git -C "$R" commit -qm "advance main with unrelated file"
+run_check "$R" stale-rollback-behind
+assert "case7 stale (#404型 behind>0 でも巻き戻し検知)" 1 "$CHECK_STATUS" "STALE" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
+# Case 8: CLEAN（誤検知回帰 / #459 型）— PR が main 既存行（merge-base 以前に入った行）を
+#   意図的に「改稿」する（削除 + 新表現の追加）ケース。新表現は main が過去に削除した行
+#   ではないので resurrection にならず、CLEAN が正。
+# ---------------------------------------------------------------------------
+R="$TMPDIR_ROOT/case8"; new_repo "$R"
+article_v1 >"$R/article.md"
+git -C "$R" add article.md && git -C "$R" commit -qm "v1"
+cat >"$R/article.md" <<'EOF'
+# サンプル記事
+
+## はじめに
+これは検証用の本文です。
+磨き込み後の表現の段落その1です。
+磨き込み後の表現の段落その2です。
+
+## まとめ
+改訂版のまとめ文（レビュー反映済み）。
+EOF
+git -C "$R" add article.md && git -C "$R" commit -qm "polish article on main"
+# PR: 磨き込み後の main から分岐し、さらに新しい表現へ意図的に改稿
+git -C "$R" switch -qc reword-forward
+cat >"$R/article.md" <<'EOF'
+# サンプル記事
+
+## はじめに
+これは検証用の本文です。
+さらに推敲した最新表現の段落その1です。
+さらに推敲した最新表現の段落その2です。
+
+## まとめ
+最終版のまとめ文（追加推敲済み）。
+EOF
+git -C "$R" add article.md && git -C "$R" commit -qm "reword paragraphs forward (intentional)"
+git -C "$R" switch -q main
+run_check "$R" reword-forward
+assert "case8 clean (PR による main 既存行の意図的改稿)" 0 "$CHECK_STATUS" "CLEAN" "$CHECK_OUT"
+
 echo "---"
 if [ "$FAILURES" -eq 0 ]; then
   echo "self-test: 全ケース PASS"
