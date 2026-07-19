@@ -21,15 +21,6 @@ Claude Code 向けのツールガイド。規約（何が正しいか）は `@AG
 - **Zenn 公開（release/zenn deploy）**: `/publish-zenn <slug>` に移行（3完全サイクル #372-374 / #383-385 / #413-415 で需要確定）。手動運用する場合も `scripts/sync-release-zenn.sh` + `@AGENTS.md` の公開フロー手順は従来どおり有効
 - **Qiita 公開・drift・hygiene**: `/publish-qiita <slug>` に移行（3回の同型実施 #400/#425/#443 で需要確定。PR #366 の wrapper `scripts/publish-qiita.sh`・ガード群が土台）。`npm run publish:qiita` / `check:qiita-drift` / `check:qiita-publish-hygiene` の手動実行も従来どおり使える
 
-### コマンド/エージェント化していない運用（意図的非対応）
-
-以下は**あえて Slash Command / Agent にしていない**。需要が固まるまで npm script + 手順書で運用する（公開系は禁止事項に触れ事故リスクが高いため）。
-
-- **Qiita 公開・drift・hygiene**: `npm run publish:qiita` / `check:qiita-drift` / `check:qiita-publish-hygiene` を手動実行（レビュー反映コマンドは Zenn/note のみ対象）
-- **release/zenn 公開（Zenn deploy）**: `scripts/sync-release-zenn.sh` + `@AGENTS.md` のZenn公開フロー手順 + pre-push/pre-commit ガードで運用。rate-limit と不可逆性のため自動化しない
-
-需要が出たら PR #366 の wrapper・ガードを土台に拡張する。
-
 ## 運用スクリプト（Bash）
 
 ### Zenn / Qiita （npm）
