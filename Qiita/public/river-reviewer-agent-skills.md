@@ -319,3 +319,7 @@ PlanGate v8.6.0 を Metrics v1 で語った [Qiita 記事](https://qiita.com/s97
   - note: [「プロンプトを磨けば勝てる」をやめた：AI レビューを運用に乗せる "Agent Skills" 設計](https://note.com/mine_unilabo/n/nd21c3f1df22e)
   - Qiita: [AIの止まり方を「数字で見る」ようにした体験：PlanGate v8.6.0 で Metrics v1 と Governance を入れた話](https://qiita.com/s977043/items/5ebff79112ecf1af872c)
   - Growth Lab: [プロンプトエンジニアリングの終焉：「スキル定義ファイル」でAIを即戦力にする](https://the3396.com/articles/agent-skill-hub)（本記事の「プロンプトを磨くのをやめた」をシリーズとして体系化した解説）
+
+## 関連記事
+
+- [AIコードレビューはPRだけ見ていていいのか？ 開発の流れ全体をレビューするOSS「River Review」を作った](https://qiita.com/s977043/items/5a4665e78c4bd1a5c1bc) - River Review そのものの紹介編です。
