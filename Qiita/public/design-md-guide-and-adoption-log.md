@@ -7,7 +7,7 @@ tags:
   - デザインシステム
   - ドキュメント
 private: false
-updated_at: '2026-07-19T12:51:57+09:00'
+updated_at: '2026-07-19T19:59:43+09:00'
 id: 1ce6753867f4b166d74b
 organization_url_name: null
 slide: false
@@ -422,8 +422,8 @@ Growth Lab では、`DESIGN.md` を軽量な入口に絞り、詳細を関連ド
 ## 関連ページ
 
 - Growth Lab デザインシステム: https://the3396.com/design-system
-- 実装編: [PenpotとReactを同じ契約で運用するデザインシステムの作り方](https://qiita.com/s977043/items/8c4802b14352d6412ea5)
-- 続編: [Open Designでデザイン品質を上げる：Penpot契約運用とDESIGN.mdの続編](https://qiita.com/s977043/items/af06444b664553ecdc8a)
+- 契約編（三部作の1作目）: [PenpotとReactを同じ契約で運用するデザインシステムの作り方](https://qiita.com/s977043/items/8c4802b14352d6412ea5)
+- 続編（3作目。本記事は2作目・入口編）: [Open Designでデザイン品質を上げる：Penpot契約運用とDESIGN.mdの続編](https://qiita.com/s977043/items/af06444b664553ecdc8a)
 
 ## DESIGN.md 導入のFAQ
 
