@@ -11,7 +11,7 @@
 
 - `finalBlocked`（must が残る＝公開不可）
 - `finalMustHigh` / `publishBlockers`（残件数）
-- `reviewState`（`post-improve-verified` / `post-improve-UNVERIFIED` / `no-improve-or-converged`）
+- `reviewState`（`post-humanize-verified` / `post-humanize-UNVERIFIED`。PR #459 の Humanize ゲート統合で旧 `post-improve-*` / `no-improve-or-converged` の3値から変更）
 
 しかし、これらは**ワークフロー実行時の返り値にしか存在せず、永続化されていない**。そのため公開オペレーション（`published: true` 化 → release/zenn sync）の時点で「この記事は公開可否レビューを通っているか / ブロッカーが残っていないか」を**機械的に判定できない**。
 
