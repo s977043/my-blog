@@ -267,6 +267,7 @@ AIにいきなり実装させず、まず人間が入力を揃えます。
 ## 関連記事
 
 :::note info
+- [AIの止まり方を「数字で見る」ようにした体験：PlanGate v8.6.0でMetrics v1とGovernanceを入れた話](https://qiita.com/s977043/items/5ebff79112ecf1af872c) - この記事の考え方を最新版でどう計測・統制に落としたかの実践編です。
 - [仕様を揃えて止めない：マルチエージェント開発の3原則（SDD・TDD・ノンブロッキング）](https://zenn.dev/minewo/articles/sdd-tdd-nonblocking-agent) - 仕様駆動開発の考え方をAI運用の制御点に落とし込む記事です。
 - [Next.js App Router時代のAI-driven TDD：実践的な最小ループと具体的な実装パターン](https://zenn.dev/minewo/articles/ai-driven-tdd-nextjs) - 実装前にテストを固めるAI-driven TDDの具体例です。
 - [GitHubにAI開発チームメイトを迎えよう — Gemini CLIでレビュー時間を1/3に短縮する方法](https://zenn.dev/minewo/articles/gemini-cli-github-actions-zenn-article) - レビューとIssue対応をAIに任せる運用例です。
