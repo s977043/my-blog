@@ -228,28 +228,13 @@ LoopとGraphも対立しません。**Loopは改善の単位であり、Graphは
 
 Loopを図にすると、次のようになります。
 
-```mermaid
-flowchart LR
-    Plan[Plan] --> Work[Work]
-    Work --> Verify[Verify]
-    Verify -->|NG| Plan
-    Verify -->|OK| Done[Done]
-```
+![Loop：改善の単位](../assets/ai-engineering-loop.svg)
 
 一つの仕事を、品質条件を満たすまで修正する循環です。
 
 Graphは、複数の工程、役割、分岐、差し戻しを含む流れとして表します。
 
-```mermaid
-flowchart TD
-    Research[Research] --> Plan[Plan]
-    Plan --> Implement[Implement]
-    Implement --> Test[Test]
-    Test --> Review[Review]
-    Review -->|Fix| Implement
-    Review -->|Approve| Deploy[Deploy]
-    Deploy --> Learn[Learn]
-```
+![Graph：仕事全体の流れ](../assets/ai-engineering-graph.svg)
 
 このGraphの中にも、`Implement → Test → Review → Implement`というLoopがあります。
 
