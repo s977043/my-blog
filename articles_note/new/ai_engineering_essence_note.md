@@ -228,13 +228,13 @@ LoopとGraphも対立しません。**Loopは改善の単位であり、Graphは
 
 Loopを図にすると、次のようになります。
 
-![Loop：改善の単位](../assets/ai-engineering-loop.svg)
+![Loop：改善の単位](../assets/ai-engineering-loop.png)
 
 一つの仕事を、品質条件を満たすまで修正する循環です。
 
 Graphは、複数の工程、役割、分岐、差し戻しを含む流れとして表します。
 
-![Graph：仕事全体の流れ](../assets/ai-engineering-graph.svg)
+![Graph：仕事全体の流れ](../assets/ai-engineering-graph.png)
 
 このGraphの中にも、`Implement → Test → Review → Implement`というLoopがあります。
 
