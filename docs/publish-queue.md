@@ -22,6 +22,7 @@
 
 ## Done
 
+- 2026-08-02 zenn ai-merge-ready-state-machine https://zenn.dev/minewo/articles/ai-merge-ready-state-machine （queue 外の新規執筆。PlanGate Delivery層〔v8.18〕を題材に「AIにPRを収束させるがマージはさせない」設計。構成案(#493)→ChatGPT執筆→事実検証(コード断片・6ファイル参照が実装と一致)→#495改稿(GitHub権限説明)→一次検証(PRマージ=Contents write をGitHub公式で確認)→/review-improve-loop 2周(Humanize passed)。flip #497 main / sync #498 release/zenn でマージ→Zenn deploy 発火、HTTP 200/API 反映確認済み〔published_at 12:17 JST〕。前回課題だったZenn連携中断は本公開時点で復旧済み）
 - 2026-08-02 note ai_engineering_essence https://note.com/mine_unilabo/n/n103182c44979 （新規 note 公開、WXR インポート→手動公開。図解2枚〔Loop/Graph PNG〕付き。`articles_note/new/ai_engineering_essence_note.md` は編集の正本として残置、次回エクスポート取り込みで `published/n103182c44979.md` が自動生成される）
 - 2026-07-20 zenn ai-agent-self-improvement-loop-design https://zenn.dev/minewo/articles/ai-agent-self-improvement-loop-design （queue 外の新規執筆。AIエージェントの自己改善を記録・棚卸し・機械化・剪定の4機能として設計。全面改稿→3ペルソナ×最大3ループ→Humanize〔論証観点T11〜T15〕→Codex外部レビュー2回で磨き込み。Loop1 が Skills 切り詰め仕様の事実誤りを検出〔セルフ/Codex 見落とし〕→公式仕様と自環境観測を分離。flip PR #484 main / sync PR #486 release/zenn でマージ→Zenn deploy 発火。デプロイ時に Zenn 側で「リポジトリの参照でエラー」バナーが出たが 1ファイル更新は反映され HTTP 200 / API 出現確認済み〔published_at 09:34 JST〕）
 - 2026-06-22 qiita open-design-design-quality https://qiita.com/s977043/items/af06444b664553ecdc8a （queue #6。Zenn「Open Designでデザイン品質を上げる：Penpot契約運用とDESIGN.mdの続編」cross-post、Full レビュー済 PR#286。id:af06444b664553ecdc8a、締切 6/23 から 1 日前倒しで公開。ハイジーン（HTMLコメント削除／private:false・ignorePublish:false／cross-post `:::note info` 有効化）→ `npm run check` 全パス → `publish:qiita` → HTTP 200 反映確認済み）
