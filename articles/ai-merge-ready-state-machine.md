@@ -26,6 +26,14 @@ PlanGateでは、AIが制御する状態機械を `MERGE_READY` で停止させ�
 この記事では、その設計と、実装を通して見えてきた限界を紹介します。
 
 :::message
+**想定読者と前提**
+
+- 想定読者: AIコーディングエージェントにPR運用（CI修正・レビュー対応・マージ）を任せる設計に関心がある方
+- 前提: GitHubのPR / CI / `gh` CLIの基本と、AIエージェントがPRを操作する運用を把握していること
+- PlanGateは、筆者が開発しているAIコーディングエージェント向けの軽量ガバナンス基盤（OSS）です
+:::
+
+:::message
 **この記事で得られること**
 
 - 「マージ可能」と「マージする」を分離する理由
@@ -83,7 +91,7 @@ PlanGate全体では、Deliveryの状態として `PR_CREATED`、`MERGE_READY`�
 
 ただし、AIが担当するのは `PR_CREATED` から `MERGE_READY` までです。その区間を制御する内部状態機械には、`MERGED` への遷移を置いていません。
 
-主な内部状態は次のとおりです。
+主な内部状態は次のとおりです。`PR_CREATED` は入口、`MERGED` はAIの状態機械外なので、以下では内部の中間状態のみを示します。
 
 | 状態 | 意味 |
 |---|---|
@@ -92,7 +100,7 @@ PlanGate全体では、Deliveryの状態として `PR_CREATED`、`MERGE_READY`�
 | `CHECKS_FAILED` | CIが失敗し、修正が必要 |
 | `REVIEW_REPAIR` | レビュー指摘への対応が必要 |
 | `CONFLICT` | コンフリクトの解消が必要 |
-| `MERGE_READY_CANDIDATE` | 条件はほぼ揃ったが、完了条件の再評価が必要 |
+| `MERGE_READY_CANDIDATE` | 条件はほぼ揃ったが、`MERGE_READY`確定前に完了条件を再評価する中間状態 |
 | `MERGE_READY` | 機械ゲートを通過し、人間の最終判断を待つ |
 
 実装では、正常終了地点を `MERGE_READY` と定義し、そこから先の遷移を空にしています。
@@ -121,9 +129,15 @@ flowchart LR
     H --> B
 
     B -->|全ゲート通過| I[MERGE_READY]
-    I --> J[人間が最終確認]
-    J --> K[MERGED]
+
+    I -.->|ここから先はAIの状態機械外| J
+
+    subgraph human[人間の領域]
+        J[人間が最終確認] --> K[MERGED]
+    end
 ```
+
+破線から先（`人間が最終確認` と `MERGED`）は、AIが担当する状態機械の外側です。AI側は `MERGE_READY` で正常終了し、`MERGED` への遷移を実装から持ちません。
 
 ここで大切なのは、「AIへマージしないよう指示した」ことではありません。
 
@@ -174,19 +188,20 @@ CI結果が対象とするSHA
 - Git履歴上の祖先関係を確認できない
 - 未知のCI conclusionが返された
 - CI失敗の分類ができない
-- required checkの集合を取得できない
+- required check（マージ前に成功が必須と設定されたCI）の集合を取得できない
 - snapshotの必須フィールドが欠けている
 - 外部作用の記録に不整合がある
 
 これらを「おそらく問題ない」と解釈すると、PRを誤って `MERGE_READY` へ進める可能性があります。
 
-反対に、すべてを「待機中」と解釈すると、状態が永久に進まないlivelockが起こります。
+反対に、すべてを「待機中」と解釈すると、状態が永久に進まないlivelock（遷移は試みるのに前進しない膠着）が起こります。
 
 PlanGateでは、不確実な入力を優先的に評価し、人間へ返します。
 
 概念的には次の順序です。
 
-```python
+```text
+# 疑似コード: 評価順序を示す（真偽値フラグや定数returnは実装名ではない）
 if snapshot_is_invalid:
     stop_with_error()
 
@@ -208,6 +223,9 @@ if review_has_findings:
 if checks_are_pending:
     return WAITING_FOR_CHECKS
 
+if completion_needs_recheck:
+    return MERGE_READY_CANDIDATE
+
 if all_gates_passed:
     return MERGE_READY
 ```
@@ -224,7 +242,7 @@ if all_gates_passed:
 
 状態機械からマージ遷移を消しても、別のコードが自由にGitHub CLIを実行できれば、AIはそちらからマージできます。
 
-そこでPlanGateでは、GitHub CLIとGitの実行経路を一つのモジュールへ集約しています。
+そこでPlanGateでは、GitHub CLIとGitの実行経路を一つのモジュール（後述するExecutor）へまとめ、外部作用をそこへ集約します。
 
 この実行境界では、禁止コマンドを一つずつ列挙するのではなく、**実行してよいコマンドだけをallowlistへ登録**します。
 
@@ -365,7 +383,7 @@ receipt
 
 これにより、receiptが記録済みのactionを誤って二度実行することを防げます。
 
-ただし、intent／receiptだけで厳密なexactly-onceを保証できるわけではありません。
+ただし、intent／receiptだけで厳密なexactly-once（各操作をちょうど1回だけ実行する保証）を保証できるわけではありません。
 
 外部作用が成功した直後、receiptを書き込む前にプロセスが停止すると、再実行される可能性があります。
 
@@ -382,7 +400,7 @@ receipt
 
 ## 実装から得た3つの設計原則
 
-PlanGate固有の状態名やファイル構成を外すと、今回の設計は次の3原則に整理できます。
+ここまでの各章を、PlanGate固有の状態名やファイル構成を外して一般原則へ畳むと、今回の設計は次の3原則に蒸留できます。
 
 ### 1. 「禁止する」より「経路を持たない」
 
@@ -443,6 +461,8 @@ AIエージェントの自律性を高める設計では、「何をできるよ
 自律性の設計は、能力を追加する設計であると同時に、終了地点を決める設計でもあります。
 
 ## 実装への参照
+
+なお、本記事で示した設計（状態機械、allowlist、判定と外部作用の分離）は、Claude Code / Codex CLIなど特定のAIコーディングエージェントに依存しません。
 
 - [Delivery状態機械](https://github.com/s977043/PlanGate/blob/main/docs/workflows/ai-loop/delivery-state-machine.md)
 - [純粋な状態判定器 delivery.py](https://github.com/s977043/PlanGate/blob/main/scripts/ai-loop/delivery.py)
