@@ -2,7 +2,7 @@
 title: "AIにマージさせない。PRをMERGE_READYまで運ぶ状態機械の設計"
 emoji: "🔀"
 type: "tech"
-topics: ["ai駆動開発", "aiagent", "github", "設計", "自動化"]
+topics: ["ai駆動開発", "aiagent", "github", "生成ai", "codereview"]
 published: false
 ---
 
@@ -12,7 +12,7 @@ CIが失敗したら原因を調べて修正する。レビューで指摘され
 
 では、すべてのチェックを通過した後、そのPRをマージするところまでAIに任せるべきでしょうか。
 
-私が開発しているPlanGateでは、次の境界を置きました。
+PlanGateでは、次の境界を置きました。
 
 > **PRをマージ可能な状態まで収束させるのは自動化する。  
 > ただし、マージするかを判断し、実際にマージするのは人間に残す。**
@@ -85,6 +85,7 @@ PlanGate全体では、Deliveryの状態として `PR_CREATED`、`MERGE_READY`�
 
 | 種別 | 状態 / exit | 意味 |
 |---|---|---|
+| 入口 | `PR_CREATED` | AIが担当を開始する起点 |
 | 中間 | `WAITING_FOR_CHECKS` | 最新コミットのCI結果を待っている |
 | 中間 | `WAITING_FOR_REVIEW` | 最新コミットに対するレビューを待っている |
 | 中間 | `CHECKS_FAILED` | CIが失敗し、修正が必要 |
@@ -94,6 +95,7 @@ PlanGate全体では、Deliveryの状態として `PR_CREATED`、`MERGE_READY`�
 | 終端 | `MERGE_READY` | 機械ゲートを通過し、人間の最終判断を待つ |
 | exit | `HUMAN_ESCALATED` | 検証不能、上限超過、不可逆操作などを人間へ返す |
 | exit | `EXEC_RETURN` | 計画外の変更を実行工程へ差し戻す |
+| exit | `ERROR` / `STOP` | snapshotの必須フィールド欠落など、判定入力自体が不正で評価を続行できない |
 
 実装では、正常終了地点を `MERGE_READY` と定義し、そこから先の遷移を空にしています。
 
@@ -147,10 +149,12 @@ flowchart LR
 
 1. AIがPRを作成し、最新のhead SHAを含むsnapshot（判定入力）を作る
 2. CI失敗を検出して `CHECKS_FAILED` へ進み、修正actionを要求する
-3. AIが修正をpushするとhead SHAが変わり、古いCI結果とレビュー承認をstaleとして除外する
+3. AIが修正をpushするとhead SHAが変わり、古いCI結果とレビュー承認をstale（古くなって現在のコードに対応しない状態）として除外する
 4. 新しいheadへのCIとレビューを再評価し、未解決の指摘があれば `REVIEW_REPAIR` へ戻す
 5. 指摘への対応記録が揃った後、`MERGE_READY_CANDIDATE` で完了条件を再評価する
 6. 条件を満たしたら `MERGE_READY` recordを残し、人間へ最終判断を渡す
+
+`MERGE_READY_CANDIDATE` を独立した状態として挟むのは、全ゲート通過の判定と、head SHAが評価の途中で更新されていないか等の再確認を分けるためです。評価中に新しいコミットが入った場合の取りこぼしを防ぐよう、確定前にもう一度だけ完了条件を照合します。
 
 この流れでは、AIは失敗を修正して前進できますが、古い証跡を使い回せず、最終的なマージにも進めません。
 
@@ -218,7 +222,7 @@ GitHubにも、新しいコミットがpushされたときに古い承認を却�
 
 PlanGateでは、不確実な入力を優先的に評価し、人間へ返します。概念的には次の順序です。
 
-```text
+```python
 # 疑似コード: 評価順序を示す（真偽値フラグや定数returnは実装名ではない）
 if snapshot_is_invalid:
     stop_with_error()
@@ -300,13 +304,13 @@ gh pr merge 123
 
 これは**責務境界**であり、それだけで強制的な**権限境界**になるわけではありません。AIが利用する認証情報にマージ権限が残っていれば、標準経路の外から越境できる余地は残ります。
 
-GitHubのfine-grained tokenでは、操作ごとに必要な権限が異なります。たとえば、PRレビューやレビューコメントの作成には `Pull requests: write`、REST APIによるPRマージには `Contents: write` が必要です。
+GitHubのfine-grained tokenでは、操作ごとに必要な権限が異なります。たとえば、PRレビューやレビューコメントの作成には `Pull requests: write`、REST APIによるPRマージには `Contents: write` が必要です（各エンドポイントの必要権限は[GitHub REST API公式リファレンス](https://docs.github.com/en/rest/pulls)の各「Fine-grained access tokens for this endpoint」節に記載があります）。
 
 一方、AIにPR headへのpushを許可する認証情報は、リポジトリ内容への書き込み能力を持ちます。REST APIによるマージにも `Contents: write` が必要なため、同じ認証情報のまま「pushは許可するが、マージは禁止する」という境界をトークンスコープだけで作るのは困難です。
 
 そのため、単一の防御で完全性を主張するのではなく、標準実行経路のallowlistに加え、GitHubの実行主体や権限の分離、ruleset、required review、branch protection、人間が所有する最終操作を組み合わせます。
 
-なお、**2026年8月2日時点**のPlanGateリポジトリでは、required approving reviewを防衛線としてまだ利用していません。この記事で説明している中心的な境界は、状態機械、標準実行経路のallowlist、人間による最終確認です。
+なお、**本記事執筆時点（2026年8月）**のPlanGateリポジトリでは、required approving reviewを防衛線としてまだ利用していません（今後追加する可能性があります）。この記事で説明している中心的な境界は、状態機械、標準実行経路のallowlist、人間による最終確認です。
 
 ## 判定と外部作用を分離する
 
@@ -384,7 +388,7 @@ receipt
 
 ## 実装から得た3つの設計原則
 
-ここまでの各章を、PlanGate固有の状態名やファイル構成を外して一般原則へ畳むと、今回の設計は次の3原則に整理できます。
+ここまでの各章を、PlanGate固有の状態名やファイル構成を外して一般原則へ畳むと、今回の設計は次の3原則に整理できます（原則を一般化した形。次章はこの原則を自リポジトリへ導入するときのチェックリストです）。
 
 ### 1. 「禁止する」より「経路を持たない」
 
@@ -419,7 +423,7 @@ receipt
 
 ## 自分の環境へ転用するときの確認項目
 
-同じ考え方を自分のリポジトリへ導入するときは、次を確認します。
+前章の3原則を実際の作業手順へ落とすと、自分のリポジトリへ導入するときは次を確認します。
 
 - AIが担当する状態機械の正常終了地点を定義したか
 - `MERGED` に相当する不可逆操作が、AI側の遷移やコマンドに残っていないか
