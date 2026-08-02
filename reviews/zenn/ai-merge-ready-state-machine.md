@@ -1,12 +1,12 @@
-<!-- publish-readiness: blocked=false mustHigh=0 verified=true articleHash=06072c8ffa126e9f3576000e926bfb142a7d1768 loops=3 reviewedAt=2026-08-02T02:14:26Z -->
+<!-- publish-readiness: blocked=false mustHigh=0 verified=true articleHash=460151a2e13b651a27a8555ae38633bb0a1bf838 loops=4 reviewedAt=2026-08-02T02:28:00Z -->
 
 # レビュー成果物: ai-merge-ready-state-machine
 
 - **対象記事**: `articles/ai-merge-ready-state-machine.md`
 - **実施日**: 2026-08-02
-- **改善ループ数**: 3
+- **改善ループ数**: 4（初回3ループ＋マージ後の最終レビュー1回）
 - **レビュー視点**: director（論旨・読者価値）/ editor（構成・文章）/ engineer（実装整合）/ security（脅威モデル・過大保証）
-- **レビュー状態**: 3ループ改善後・最終確認済み
+- **レビュー状態**: マージ後レビューの指摘反映済み
 - **総合判定**: 公開可能（must/high なし、`published: false` 維持）
 
 ---
@@ -114,7 +114,6 @@ must/highは解消。抽象的な設計解説から、実装の保証範囲と�
 ### 反映内容
 
 - `main` を「対象ブランチ」へ一般化
-- PR更新とマージをトークンスコープだけで分けられない場合があることを明記
 - 実行主体・権限分離に加え、ruleset、required review、branch protectionを多層防御として整理
 - 「自分の環境へ転用するときの確認項目」を7項目で追加
 - 導入順を「停止地点の定義 → 最新headへの証跡束縛 → 外部作用の集約」と提示
@@ -126,21 +125,43 @@ must/highは解消。抽象的な設計解説から、実装の保証範囲と�
 
 ---
 
-## 5. 最終レビュー
+## 5. Loop 4: マージ後の仕様確認と公開前調整
+
+### レビュー結果
+
+| ID | 視点 | 優先度 | 指摘 |
+|---|---|---|---|
+| L4-01 | security | high | PR更新とマージが同じGitHub権限に含まれるという説明は不正確。レビュー系は `Pull requests: write`、REST APIのマージは `Contents: write` |
+| L4-02 | engineer | medium | GitHubのstale approval却下と、PlanGateのhead SHA束縛の役割差が未説明 |
+| L4-03 | editor | medium | 「現在のリポジトリ設定」は時間とともに古くなるため基準日が必要 |
+| L4-04 | director | medium | topicsのClaude Code / Codex依存が、本文の汎用的な主張と一致しない |
+| L4-05 | editor | low | 冒頭のメッセージ内で想定読者と得られることが同じリストに混在 |
+
+### 反映内容
+
+- GitHub公式仕様に合わせ、レビュー系とマージ系のfine-grained token権限を分離して説明
+- PR headへのpushとREST APIマージがともにContents書き込み能力と関係するため、トークンスコープだけでは「push可・merge不可」を分離しにくい点へ主張を修正
+- GitHubのstale approval却下はリポジトリ側のマージ制約、PlanGateのhead SHA束縛は判定入力の内部整合性チェックと整理
+- PlanGateのrequired approving review設定に `2026年8月2日時点` を付記
+- topicsを `ai駆動開発 / aiagent / github / 設計 / 自動化` へ変更
+- 冒頭メッセージを「想定読者」「この記事で得られること」に分割
+
+### 判定
+
+GitHub権限モデルに関する事実誤認を解消した。記事の中心主張は維持し、外部仕様とPlanGate内部設計の境界がより明確になった。
+
+---
+
+## 6. 最終レビュー
 
 ### 複数視点の判定
 
 | 視点 | 判定 | コメント |
 |---|---|---|
 | director | pass | 問題提起、設計判断、限界、転用手順が一貫している |
-| editor | pass | 導入の重複を解消し、表・図・具体例・チェックリストで長文を分節化している |
-| engineer | pass | 状態集合、exit、head SHA束縛、record、intent／receiptの説明が現行設計と整合 |
-| security | pass | 完全なsandboxやexactly-onceを主張せず、責務境界と権限境界を分離している |
-
-### 残るlow指摘
-
-- 記事は長めだが、Zenn向けの技術深掘りとして、状態図・保証範囲・脅威モデル・導入チェックリストを省略しない方を優先した
-- 英語の実装用語は残るが、主要語は初出で日本語説明を加えた
+| editor | pass | 冒頭の情報分類、用語、基準日の明示により公開時の読みやすさが向上した |
+| engineer | pass | 状態集合、head SHA束縛、record、intent／receiptの説明が現行設計と整合 |
+| security | pass | GitHubの権限モデルを正確に記述し、責務境界と強制的な権限境界を混同していない |
 
 ### 公開可否
 
@@ -152,4 +173,4 @@ must/highは解消。抽象的な設計解説から、実装の保証範囲と�
 - 過大保証: なし
 - `published`: `false` のまま
 - 記事参照リンク: 維持
-- 3ループの各改善を個別コミットとして記録
+- GitHub権限モデル: 公式仕様と照合済み
