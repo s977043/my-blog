@@ -3,7 +3,7 @@ title: "AIにマージさせない。PRをMERGE_READYまで運ぶ状態機械の
 emoji: "🔀"
 type: "tech"
 topics: ["ai駆動開発", "aiagent", "github", "生成ai", "codereview"]
-published: false
+published: true
 ---
 
 **AIにPRの修正を任せるなら、どこまでをAIの責任にするべきでしょうか。**
