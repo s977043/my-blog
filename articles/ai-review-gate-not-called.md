@@ -3,7 +3,7 @@ title: "品質ゲートは効かなかったのではなく、「呼ばれたか
 emoji: "📉"
 type: "tech"
 topics: ["ai駆動開発", "claudecode", "aiエージェント", "品質管理", "開発生産性"]
-published: false
+published: true
 ---
 
 :::message
