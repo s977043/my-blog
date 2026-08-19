@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="670" viewBox="0 0 1280 670" role="img" aria-labelledby="title desc">
+  <title id="title">Shaping the Build</title>
+  <desc id="desc">Problem, Shape, Build, Learn を循環するシンプルなタイトル画像</desc>
+  <rect width="1280" height="670" fill="#f8f8f6"/>
+  <style>
+    text { font-family: Inter, "Noto Sans JP", system-ui, sans-serif; }
+    .title { font-size: 64px; font-weight: 700; fill: #191919; letter-spacing: 1px; }
+    .sub { font-size: 30px; fill: #666; }
+    .label { font-size: 28px; font-weight: 700; fill: #191919; }
+    .shape { fill: #354f42; }
+    .small { font-size: 20px; font-weight: 700; fill: #666; letter-spacing: 2px; }
+  </style>
+  <text x="110" y="165" class="title">SHAPING THE BUILD</text>
+  <text x="112" y="222" class="sub">What should we build — and why?</text>
+
+  <g transform="translate(120 400)">
+    <rect x="0" y="0" width="195" height="94" rx="24" fill="#fff" stroke="#bebeb8" stroke-width="2"/>
+    <text x="97.5" y="58" text-anchor="middle" class="label">Problem</text>
+
+    <line x1="205" y1="47" x2="253" y2="47" stroke="#666" stroke-width="3"/>
+    <path d="M253 47 l-12 -8 M253 47 l-12 8" fill="none" stroke="#666" stroke-width="3"/>
+
+    <rect x="265" y="0" width="195" height="94" rx="24" fill="#e8eeeA" stroke="#354f42" stroke-width="3"/>
+    <text x="362.5" y="58" text-anchor="middle" class="label shape">Shape</text>
+
+    <line x1="470" y1="47" x2="518" y2="47" stroke="#666" stroke-width="3"/>
+    <path d="M518 47 l-12 -8 M518 47 l-12 8" fill="none" stroke="#666" stroke-width="3"/>
+
+    <rect x="530" y="0" width="195" height="94" rx="24" fill="#fff" stroke="#bebeb8" stroke-width="2"/>
+    <text x="627.5" y="58" text-anchor="middle" class="label">Build</text>
+
+    <line x1="735" y1="47" x2="783" y2="47" stroke="#666" stroke-width="3"/>
+    <path d="M783 47 l-12 -8 M783 47 l-12 8" fill="none" stroke="#666" stroke-width="3"/>
+
+    <rect x="795" y="0" width="195" height="94" rx="24" fill="#fff" stroke="#bebeb8" stroke-width="2"/>
+    <text x="892.5" y="58" text-anchor="middle" class="label">Learn</text>
+
+    <path d="M892 125 v50 H105 v-50" fill="none" stroke="#666" stroke-width="3"/>
+    <path d="M105 125 l-8 12 M105 125 l8 12" fill="none" stroke="#666" stroke-width="3"/>
+    <text x="498" y="205" text-anchor="middle" class="small">DECIDE</text>
+  </g>
+</svg>
