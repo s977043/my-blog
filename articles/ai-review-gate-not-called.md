@@ -299,6 +299,26 @@ Skill定義書には「誤検知・過剰指摘」という記録欄がありま
 
 測る手段のない完了条件は、条件ではなく願望です。
 
+### 次に作る状態遷移
+
+ここまでの失敗を状態として表すと、次に何を観測すべきかが整理できます。重要なのは、Humanizeが起動する前に `eligible` を作り、正常系だけでなく未観測・保存失敗・未確認も状態として残すことです。
+
+```mermaid
+flowchart LR
+    A["eligible<br/>レビュー対象"] --> B["started<br/>Humanize起動"]
+    B --> C["result_received<br/>結果受領"]
+    C --> D["persisted<br/>生JSON保存"]
+    D --> E["validated<br/>schema / ID検証"]
+    E --> F["decided<br/>採否記録"]
+    F --> G["verified"]
+
+    A -. "実行証跡なし" .-> U["unobserved"]
+    C -. "保存失敗" .-> X["failed"]
+    F -. "採否未記録" .-> V["unverified"]
+```
+
+この図の左端にある `eligible` をゲートの外側で生成できれば、「呼ばれなかった」と「呼ばれたが途中で失敗した」を初めて別々に測れます。
+
 ---
 
 ## 次に変える8点 — 分母をゲートの外に置く
