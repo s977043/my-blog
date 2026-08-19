@@ -11,7 +11,6 @@
 
 ## Queue（締切順）
 
-- **#10 (zenn) 締切 2026-08-24**: 「品質ゲートは効かなかったのではなく、『呼ばれたか』を測れていなかった」（slug `ai-review-gate-not-called`、執筆済み・published:false）。一次情報: `.claude/skills/article-humanizer-ja` の実装＋`/review-improve-loop`。**実装 = #459/#476、実行証跡 = #477/#480/#496 系**。当初は「review-only の設計論」で企画したが、複数視点レビューで中心主張を差し替え。再現可能な実測は **1か月・変更記事8本・Humanize実行証跡2本＝証跡カバレッジ25%**。成果物がないことを未実行と同一視せず、対象/起動/結果/永続化/検証/採否/実効権限を独立に観測する設計へ一般化した。Claude Code Skillの `allowed-tools` を排他的な権限制限だと誤認していた点も公式仕様照合で訂正し、失敗事例として本文へ反映。差別化: Humanizerの紹介ではなく、**ゲート自身の外側に分母を置いて観測可能性を設計する**実運用記事
 - **#11 (zenn) 締切 2026-09-07**: 「worktree 分離だけでは防げない — 並列AIセッションのGit事故を"事後検知"で機械化する」（仮）。一次情報: `scripts/check-pr-staleness.sh`＋テスト、`scripts/hooks/pre-commit|pre-push`、Round 3〜5 の実測インシデント（#404/#405 の squash 済み記事巻き戻し等、`memory/project_parallel_session_metrics.md`）。差別化: 市場は git worktree による事前分離記事が多数だが、同一 working tree での実事故観測データと検知系（staleness チェック・hooks）は空白（theme-discovery 2026-08-10、スコア 17/20）
 - #7 (zenn-book) は **2026-06-01 公開完了**（下記 Done 参照）。本文・図・cover・5系統＋ultracode レビュー完了後、release/zenn PR #350 マージで go-live
 - #9 (zenn) は「Bookを多層AIレビューで作った話」。内容は収束済み・公開可。タイミングのみ分離（Book公開→update同期→新規publish の順で間隔を空ける）
@@ -22,6 +21,8 @@
 - 補充は手動。次テーマが決まったら行を追加（Rolling/テンプレは凍結中のため使わない）
 
 ## Done
+
+- 2026-08-20 zenn ai-review-gate-not-called https://zenn.dev/minewo/articles/ai-review-gate-not-called （queue #10、締切 8/24 から4日前倒し。Humanize ゲートの運用実測記事。当初「review-only Humanizer の設計論」で企画したが、多段レビューで中心主張を2回差し替え: ①4視点構成レビュー〔読者/スクラム・EM/編集/敵対的〕が初期の単一原因論を棄却し n=3 → n=8 の運用実測へ ②ChatGPT/GPT-5.6 Sol が Critical 2件を検出〔Skill の `allowed-tools` を排他的権限制限と誤認・公式仕様照合で訂正／「成果物がない」から「未実行」を推論〕。Codex CLI は事実誤認4件を検出、Gemini CLI は IneligibleTierError で実行不能。セルフ Humanize は passed:false〔F02〕→太字76→45。flip #510 main / sync #511 release/zenn でマージ→deploy 発火、HTTP 200・og:title・API 出現確認済み〔published_at 01:39 JST、id 636381〕）
 
 - 2026-08-02 zenn ai-merge-ready-state-machine https://zenn.dev/minewo/articles/ai-merge-ready-state-machine （queue 外の新規執筆。PlanGate Delivery層〔v8.18〕を題材に「AIにPRを収束させるがマージはさせない」設計。構成案(#493)→ChatGPT執筆→事実検証(コード断片・6ファイル参照が実装と一致)→#495改稿(GitHub権限説明)→一次検証(PRマージ=Contents write をGitHub公式で確認)→/review-improve-loop 2周(Humanize passed)。flip #497 main / sync #498 release/zenn でマージ→Zenn deploy 発火、HTTP 200/API 反映確認済み〔published_at 12:17 JST〕。前回課題だったZenn連携中断は本公開時点で復旧済み）
 - 2026-08-02 note ai_engineering_essence https://note.com/mine_unilabo/n/n103182c44979 （新規 note 公開、WXR インポート→手動公開。図解2枚〔Loop/Graph PNG〕付き。`articles_note/new/ai_engineering_essence_note.md` は編集の正本として残置、次回エクスポート取り込みで `published/n103182c44979.md` が自動生成される）
