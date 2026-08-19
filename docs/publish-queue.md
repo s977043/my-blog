@@ -11,7 +11,7 @@
 
 ## Queue（締切順）
 
-- **#10 (zenn) 締切 2026-08-24**: 「品質ゲートは効かなかったのではなく、呼ばれなかった」（slug `ai-review-gate-not-called`、執筆済み・published:false）。一次情報: `.claude/skills/article-humanizer-ja` の実装＋`/review-improve-loop`。**実装 = #459/#476、実行 = #477/#480/#496**（従来ここに記載していた #494 は Humanize を通しておらず誤り。その事実自体が記事の「迂回」実例になった）。当初は「review-only の設計論」で企画したが、4視点レビューで中心主張を差し替え: 設計論ではなく **運用実測（1か月・記事8本・ゲート通過2本＝採用率25%）** を主軸に、ゲートが呼び出し/迂回/完走/集計/判断の5段階で漏れる構造を書いた。差別化: 市場は書き換えツール紹介ばかりで、「呼ばれた回数を測る」観点は空白
+- **#10 (zenn) 締切 2026-08-24**: 「品質ゲートは効かなかったのではなく、『呼ばれたか』を測れていなかった」（slug `ai-review-gate-not-called`、執筆済み・published:false）。一次情報: `.claude/skills/article-humanizer-ja` の実装＋`/review-improve-loop`。**実装 = #459/#476、実行証跡 = #477/#480/#496 系**。当初は「review-only の設計論」で企画したが、複数視点レビューで中心主張を差し替え。再現可能な実測は **1か月・変更記事8本・Humanize実行証跡2本＝証跡カバレッジ25%**。成果物がないことを未実行と同一視せず、対象/起動/結果/永続化/検証/採否/実効権限を独立に観測する設計へ一般化した。Claude Code Skillの `allowed-tools` を排他的な権限制限だと誤認していた点も公式仕様照合で訂正し、失敗事例として本文へ反映。差別化: Humanizerの紹介ではなく、**ゲート自身の外側に分母を置いて観測可能性を設計する**実運用記事
 - **#11 (zenn) 締切 2026-09-07**: 「worktree 分離だけでは防げない — 並列AIセッションのGit事故を"事後検知"で機械化する」（仮）。一次情報: `scripts/check-pr-staleness.sh`＋テスト、`scripts/hooks/pre-commit|pre-push`、Round 3〜5 の実測インシデント（#404/#405 の squash 済み記事巻き戻し等、`memory/project_parallel_session_metrics.md`）。差別化: 市場は git worktree による事前分離記事が多数だが、同一 working tree での実事故観測データと検知系（staleness チェック・hooks）は空白（theme-discovery 2026-08-10、スコア 17/20）
 - #7 (zenn-book) は **2026-06-01 公開完了**（下記 Done 参照）。本文・図・cover・5系統＋ultracode レビュー完了後、release/zenn PR #350 マージで go-live
 - #9 (zenn) は「Bookを多層AIレビューで作った話」。内容は収束済み・公開可。タイミングのみ分離（Book公開→update同期→新規publish の順で間隔を空ける）
