@@ -55,13 +55,13 @@ AI時代に速くしたいのは、コードを書く時間だけではありま
 
 しかし、実装が速くなったからこそ、その前に確認したいことがあります。
 
-- **Problem** — 本当に解くべき問題は何か
-- **Evidence** — その問題が存在する証拠はあるか
-- **Outcome** — 何が変われば成功なのか
-- **Scope** — 今回どこまで作るのか
-- **Trade-off** — 速度、品質、コスト、リスクをどう配分するか
-- **Verification** — 結果を何で確認するのか
-- **Stop** — どの条件なら止めるのか
+- **Problem**: 本当に解くべき問題は何か
+- **Evidence**: その問題が存在する証拠はあるか
+- **Outcome**: 何が変われば成功なのか
+- **Scope**: 今回どこまで作るのか
+- **Trade-off**: 速度、品質、コスト、リスクをどう配分するか
+- **Verification**: 結果を何で確認するのか
+- **Stop**: どの条件なら止めるのか
 
 これはAndrew NgのSkills Mapをそのまま分解したものではありません。
 
@@ -335,7 +335,5 @@ AIによって本当に速くしたいのは、コードを書く時間だけで
 
 - Andrew Ng, The AI Engineering Skills Map / DeepLearning.AI
   - https://www.deeplearning.ai/the-batch/issue-366/
-- Andrew Ngによる紹介投稿
-  - https://x.com/AndrewYNg/status/2088302050706686198
 - 前の記事: AIがコードを書くほど、エンジニアリングは「何を作るか」に戻っていく
   - https://note.com/mine_unilabo/n/n103182c44979
