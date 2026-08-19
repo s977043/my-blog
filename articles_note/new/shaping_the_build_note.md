@@ -144,11 +144,7 @@ AIが速く実装できるからこそ、「AI回答機能を作る」というS
 
 だけではなく、
 
-```text
-Shape → Build → Verify → Learn
-  ↑                         ↓
-  └──────── Decide ────────┘
-```
+![Shapingの意思決定ループ](../assets/shaping-decision-loop.svg)
 
 という循環を、より小さく回しやすくなります。
 
@@ -277,19 +273,7 @@ AI Codingの生産性を考えるとき、「実装に何時間かかったか�
 
 ただ、プロダクト開発全体で見れば、本当に短くしたい時間はもう少し長いはずです。
 
-```text
-Problem observed
-  ↓
-Hypothesis
-  ↓
-Shape
-  ↓
-Build / Experiment
-  ↓
-Evidence
-  ↓
-Next Decision
-```
+![Time to CodeとTime to Learning](../assets/time-to-learning.svg)
 
 ここでは、最初のProblemを観測してから、**次の意思決定に使えるEvidenceを得るまでの時間**を便宜上 **Time to Learning** と呼びます。
 
