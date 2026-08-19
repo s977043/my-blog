@@ -11,7 +11,7 @@
 
 ## Queue（締切順）
 
-- **#10 (zenn) 締切 2026-08-24**: 「技術記事の"AIっぽさ"を書き換えずに検出する — review-only Humanizer の設計」（仮）。一次情報: `.claude/skills/article-humanizer-ja` の実装＋論証観点 T11〜T15＋`/review-improve-loop` での実運用実績（#459/#476/#494 系）。差別化: 市場は書き換えツール紹介ばかりで、「主張・事実・コード・URL を保護リストで守り、修正案を low/medium/high で返す」設計論は空白（theme-discovery 2026-08-10、スコア 18/20）。自己改善ループ記事（2026-07-20 公開）とのシリーズ導線を張る
+- **#10 (zenn) 締切 2026-08-24**: 「品質ゲートは効かなかったのではなく、呼ばれなかった」（slug `ai-review-gate-not-called`、執筆済み・published:false）。一次情報: `.claude/skills/article-humanizer-ja` の実装＋`/review-improve-loop`。**実装 = #459/#476、実行 = #477/#480/#496**（従来ここに記載していた #494 は Humanize を通しておらず誤り。その事実自体が記事の「迂回」実例になった）。当初は「review-only の設計論」で企画したが、4視点レビューで中心主張を差し替え: 設計論ではなく **運用実測（1か月・記事8本・ゲート通過2本＝採用率25%）** を主軸に、ゲートが呼び出し/迂回/完走/集計/判断の5段階で漏れる構造を書いた。差別化: 市場は書き換えツール紹介ばかりで、「呼ばれた回数を測る」観点は空白
 - **#11 (zenn) 締切 2026-09-07**: 「worktree 分離だけでは防げない — 並列AIセッションのGit事故を"事後検知"で機械化する」（仮）。一次情報: `scripts/check-pr-staleness.sh`＋テスト、`scripts/hooks/pre-commit|pre-push`、Round 3〜5 の実測インシデント（#404/#405 の squash 済み記事巻き戻し等、`memory/project_parallel_session_metrics.md`）。差別化: 市場は git worktree による事前分離記事が多数だが、同一 working tree での実事故観測データと検知系（staleness チェック・hooks）は空白（theme-discovery 2026-08-10、スコア 17/20）
 - #7 (zenn-book) は **2026-06-01 公開完了**（下記 Done 参照）。本文・図・cover・5系統＋ultracode レビュー完了後、release/zenn PR #350 マージで go-live
 - #9 (zenn) は「Bookを多層AIレビューで作った話」。内容は収束済み・公開可。タイミングのみ分離（Book公開→update同期→新規publish の順で間隔を空ける）
