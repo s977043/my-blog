@@ -55,6 +55,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-06-07 — Zenn 二重公開ガードは CI 未 wire だと無意味（STRICT=1 を release/zenn 宛 PR に繋ぐ。詳細は G 節）
 - 2026-07-20 — Zenn デプロイの中断/バナーは表示を信じず HTTP 200・API で実反映を確認。トークン発行失敗の連続は連携再接続が必要
 
+- 2026-08-20 — `sync-release-zenn.sh` の公開影響プレビューは新規ファイル追加を検知しない。deploy 実差分を直接照合する
 ### B. Qiita publish / drift / 重複公開
 **現行正本**: `CLAUDE.md` §公開前ガード（`check:qiita-remote-cache` / `publish:qiita` wrapper）
 - 2026-06-03 — `qiita publish` は冒頭で全記事 pull。`.remote/` 手編集でローカル改変が巻き戻る
@@ -112,6 +113,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-05-26 — 既存ガイド系記事への FAQ セクション横展開は SEO/可読性に効く
 - 2026-06-07 — 記事公開 PR に中間レビュー成果物(reviews/)を同梱しない（改善で陳腐化する）
 
+- 2026-08-20 — Skill の `allowed-tools` は事前承認であって排他的な権限制限ではない（排他制限は Custom Subagent の `tools`）
 ### G. CI / tooling / マルチAI
 - 2026-05-21 — 媒体実測の取得は `scripts/fetch-channel-metrics.mjs` に集約
 - 2026-05-15 — CI run が runner を掴めず長時間 queued なら空コミットで re-trigger
@@ -128,10 +130,61 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-07-19 — Workflow の args 未注入バグが1セッションで3回再発。回避は確立済みだが恒久修正の検討価値あり
 - 2026-07-19 — codex-rescue にBG切り離しさせると worktree 掃除でタスク孤児化・成果物消失。general-purpose+worktree 同期実行にする
 - 2026-07-23 — Bash ツールが ~/Documents 配下へ EPERM（macOS TCC）。ローカル git 不能時は gh -R / curl で外形確認、復旧は権限再付与かセッション再起動
+- 2026-08-20 — 同系統モデルだけのレビューでは仕様誤認を検出できない。検証手段（再実行・公式ドキュメント突合）で分ける
+- 2026-08-20 — Gemini CLI の個人無料枠が停止（IneligibleTierError）。L3 で Gemini を当てにしない
 
 ---
 
 ## 🧭 学びエントリ
+
+### 2026-08-20 — `sync-release-zenn.sh` の公開影響プレビューは新規ファイル追加を検知しない [Gotcha][Tooling]
+
+**観察**: `ai-review-gate-not-called` の公開時、sync スクリプトの公開影響プレビューが「新規 published: false → true: **0 件**」と表示した。しかし実際には `articles/ai-review-gate-not-called.md` が `published: true` の**新規ファイル**として release/zenn へ入り、1 本が公開された。checker は `false → true` の**切替**を数える実装のため、release/zenn 側にファイルが存在しない（＝最初から true で追加される）ケースをカウントしない。
+
+**対策/学び**: プレビューの件数を鵜呑みにせず、**deploy 対象の実差分を直接照合する**。release/zenn 側にファイルが無い記事は必ずこの経路になる（新規記事はすべて該当）。
+
+```bash
+git diff origin/release/zenn...HEAD --stat -- articles/ books/
+for f in $(git diff origin/release/zenn...HEAD --name-only -- articles/ books/); do
+  git show origin/release/zenn:$f 2>/dev/null | grep -m1 '^published:' || echo "$f: ファイル無し"
+  grep -m1 '^published:' $f
+done
+```
+
+プレビューが 0 件でも「公開されるものが無い」とは限らない。逆に、対象 slug 以外の flip 混入チェックにはプレビューが有効なので、**両方を実行する**。
+
+**根拠**: PR #511（sync）、公開反映は HTTP 200 / Zenn API id 636381 で確認済み
+
+### 2026-08-20 — Skill の `allowed-tools` は事前承認であって排他的な権限制限ではない [Convention][Gotcha]
+
+**観察**: `article-humanizer-ja` の frontmatter に `allowed-tools: Read / Grep / Glob` のみを記載し、「`Edit` / `Write` を渡していない＝書き換え能力を持たない」と解釈して記事の中核主張として書いた。Claude Code 公式ドキュメントを確認すると、Skill の `allowed-tools` は**列挙したツールを事前承認する**設定であり、利用可能なツールを排他的に制限するものではない。
+
+- 事前承認: https://code.claude.com/docs/en/skills#pre-approve-tools-for-a-skill
+- 排他制限が必要なら Custom Subagent の `tools` allowlist: https://code.claude.com/docs/en/subagents#available-tools
+
+**対策/学び**: 「設定に X が無い＝X ができない」という推論は、**その設定の意味論を公式ドキュメントで確認しない限り成立しない**。実装ファイル（frontmatter）を読んだだけでは裏取りにならない。read-only 境界を実効化したいなら、Custom Subagent の `tools` allowlist か permission deny を使い、書き込み能力が存在しないことをテストする。
+
+**根拠**: 公開記事 `ai-review-gate-not-called` の改稿（外部レビューで検出、公式仕様照合で訂正）
+
+### 2026-08-20 — 同系統モデルだけのレビューでは仕様の誤認を検出できない [Workflow][Pattern]
+
+**観察**: 記事レビューで Claude 系 4 視点（読者 / スクラム・EM / 編集 / 敵対的）＋ Codex CLI を実施したが、**5 系統すべてが `allowed-tools` の仕様誤認を見逃した**。検出したのは ChatGPT で、公式ドキュメントとの突合という手段を取ったため。一方 Codex は数値の再現性（計測日の欠落、件数の自己矛盾）で 4 件を検出しており、Claude 系 4 視点はそちらも見逃していた。
+
+**対策/学び**: 検出できる誤りの種類は**モデル系統ではなく検証手段**に依存する。同系統を増やしても、同じ手段しか取らなければ同じ穴が残る。重要な記事では次を分けて依頼する:
+
+- **論理・構成** → 同系統の複数視点で足りる
+- **数値・コマンドの再現性** → 実際に再実行させる（Codex が有効だった）
+- **仕様・API の意味** → 公式ドキュメントとの突合を明示的に指示する（これを指示しないと誰もやらない）
+
+**根拠**: 公開記事 `ai-review-gate-not-called` のレビュー履歴（`reviews/zenn/ai-review-gate-not-called.md`）
+
+### 2026-08-20 — Gemini CLI の個人無料枠が停止、多視点レビューの L3 が 1 系統減った [Tooling][Gotcha]
+
+**観察**: `gemini -p` が `IneligibleTierError: This client is no longer supported for Gemini Code Assist for individuals` で実行不能（CLI 0.42.0）。Antigravity への移行を案内される。`--skip-trust` で trusted-directory の警告を回避しても、認証段階で同じエラーになる。`GEMINI_API_KEY` / `GOOGLE_API_KEY` 未設定のため API キー経由のフォールバックも不可。
+
+**対策/学び**: 2026-06-07 エントリの「L1: 独立Claude → L2: bot → L3: CLI(Gemini/Codex)」の前提が変わった。**L3 で Gemini を当てにしない**。復旧は API キー設定（`export GEMINI_API_KEY=...`）か Antigravity 移行で、いずれも環境側＝ユーザー対応。実行不能だった事実自体をレビュー記録に残し、「外部視点が何系統確保できたか」を明示する。
+
+**根拠**: 2026-08-20 の `/multi-review` 相当実行（Codex 0.144.1 は正常動作、Gemini 0.42.0 のみ失敗）
 
 ### 2026-08-10 — Dependabot alerts API の 403 はスコープ不足とは限らず、まず `gh auth refresh` を試す [Gotcha][Auth]
 
