@@ -97,6 +97,8 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-04-20 — Stale PR は `git diff main..branch` で事前にリグレッション検出する
 - 2026-06-11 — `gh auth setup-git` 後に account が kominem-unilabo へ反転、push/PR/merge が 403。各操作直前に switch + 確認
 - 2026-06-11 — このリポジトリは merge commit 不可・squash only。`gh pr merge` は常に `--squash` を使う
+- 2026-08-10 — Dependabot alerts API の 403 はスコープ不足とは限らない。まず `gh auth refresh`
+- 2026-08-12 — squash 自動削除設定下では `push origin --delete` が空振り。掃除は `git fetch --prune`
 
 ### F. review / 記事品質 / convention
 **現行正本**: `.claude/agents/*` / `AGENTS.md` §表現規約
@@ -130,6 +132,22 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 ---
 
 ## 🧭 学びエントリ
+
+### 2026-08-10 — Dependabot alerts API の 403 はスコープ不足とは限らず、まず `gh auth refresh` を試す [Gotcha][Auth]
+
+**観察**: Dependabot の脆弱性アラートを `gh api repos/:owner/:repo/dependabot/alerts` で取得しようとしたところ 403。エラーメッセージは特定スコープの不足を示唆していたが、`gh auth status` で確認すると**当該スコープは既に保持済み**だった。`gh auth refresh` でトークンを再発行すると、**同一スコープのまま**同じ API が成功した。7月中旬に発行した古いトークンが原因で、スコープ表示と実際にトークンへ焼き込まれた権限が乖離していた。
+
+**対策/学び**: gh CLI の 403 でエラーメッセージが「needs スコープ X」と言っていても、`gh auth status` にそのスコープが出ているなら**メッセージは誤誘導**。スコープを追加する前に `gh auth refresh` を先に試すほうが速い。長期間ローテーションしていないトークンでは、表示上のスコープと実権限がずれうると考えておく。
+
+**根拠**: 2026-08-10 の Dependabot 対応セッション（後続の PR #503 で js-yaml DoS 2 件を解消）
+
+### 2026-08-12 — squash マージでリモートブランチが自動削除される設定下では `git push origin --delete` が空振りする [Gotcha][Workflow]
+
+**観察**: PR マージ後の掃除で `git push origin --delete <branch>` を実行したところ、リモート参照が既に存在せずエラーになった。このリポジトリは squash マージ時にリモートブランチが自動削除される設定で、`gh pr merge --squash --delete-branch` の時点で削除が完了していた。ローカルに残っていたのは**追跡参照（remote-tracking ref）だけ**で、実体はなかった。
+
+**対策/学び**: マージ後の掃除は `git fetch --prune` だけで足りる。削除コマンドを打つ前に `git ls-remote --heads origin <branch>` で実体の有無を確認すると、無駄なエラーを踏まない。ローカルブランチの削除（`git branch -d`）は別途必要。
+
+**根拠**: 2026-08-12 のセッション（#503 マージ後の掃除）
 
 ### 2026-07-20 — Zenn デプロイの「中断」バナーは実反映と一致しないことがある [Platform][Gotcha]
 
