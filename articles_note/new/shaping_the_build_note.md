@@ -55,19 +55,11 @@ AI時代に速くしたいのは、コードを書く時間だけではありま
 
 しかし、実装が速くなったからこそ、その前に確認したいことがあります。
 
-- **Problem**: 本当に解くべき問題は何か
-- **Evidence**: その問題が存在する証拠はあるか
-- **Outcome**: 何が変われば成功なのか
-- **Scope**: 今回どこまで作るのか
-- **Trade-off**: 速度、品質、コスト、リスクをどう配分するか
-- **Verification**: 結果を何で確認するのか
-- **Stop**: どの条件なら止めるのか
+私はShaping the buildを、普段の開発で行っている判断に置き換えると、次の7つの問いになると考えています。
 
 ![Shapingを考える7つの問い](../assets/shaping-decision-loop.png)
 
-これはAndrew NgのSkills Mapをそのまま分解したものではありません。
-
-Shaping the buildという考え方を、自分が普段の開発で行っている判断へ置き換えると、この7つの問いになります。
+これはAndrew NgのSkills Mapをそのまま分解したものではありません。Shaping the buildという考え方を、自分の実務に引き寄せて整理したものです。
 
 先ほどの「AI回答機能」を例にすると、最初の要望をそのままSolutionとして実装する前に、問いを具体化できます。
 
@@ -137,6 +129,8 @@ Shaping the buildという考え方を、自分が普段の開発で行ってい
 動かしてみて初めて制約が分かる。既存システムへ接続して初めてデータの不足に気づく。ユーザーに触ってもらって初めて仮説が間違っていたと分かる。
 
 すると開発は、「考える → 作る」で終わる一方向の流れではなくなります。
+
+**Shape → Build → Verify → Learn → Decide → Shape**
 
 Shapeした内容をBuildし、Verifyで証拠を取り、そこからLearnする。その結果によって次のDecisionを変え、再びShapeへ戻す。
 
@@ -259,7 +253,9 @@ AI Codingの生産性を考えるとき、「実装に何時間かかったか�
 
 ここでは、最初のProblemを観測してから、**次の意思決定に使えるEvidenceを得るまでの時間**を便宜上 **Time to Learning** と呼びます。
 
-![Time to CodeとTime to Learning](../assets/time-to-learning.png)
+**Problem → Hypothesis → Shape → Build / Experiment → Evidence → Next Decision**
+
+この流れで見ると、Time to CodeはBuild / Experimentの一部分です。
 
 Evidenceは、成功を示す証拠だけではありません。
 
@@ -269,7 +265,7 @@ Evidenceは、成功を示す証拠だけではありません。
 
 Buildだけが10倍速くなっても、何を作るかを決めるまでに何週間もかかり、結果の検証にも何週間もかかるなら、プロダクトとしての学習速度は大きく変わりません。
 
-逆に、Problemを観察し、Hypothesisを置き、Shapeし、小さくBuild / Experimentし、Evidenceを得てNext Decisionを変えるところまでを短くできれば、AIが生み出す速度を価値へつなげやすくなります。
+逆に、Problemを観察し、Hypothesisを置き、Shapeし、小さくBuild / Experimentし、次の判断に使えるEvidenceを得るまでを短くできれば、そのEvidenceをもとにNext Decisionを変えられます。
 
 AIによって本当に速くしたいのは、コードを書く時間だけではない。
 
