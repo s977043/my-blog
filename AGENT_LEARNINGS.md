@@ -56,6 +56,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-07-20 — Zenn デプロイの中断/バナーは表示を信じず HTTP 200・API で実反映を確認。トークン発行失敗の連続は連携再接続が必要
 
 - 2026-08-20 — `sync-release-zenn.sh` の公開影響プレビューは新規ファイル追加を検知しない。deploy 実差分を直接照合する
+- 2026-08-20 — Zenn `/api/articles` は約23件しか返さない。全件突合は `zenn.dev/<user>` の `articlesCount`
 ### B. Qiita publish / drift / 重複公開
 **現行正本**: `CLAUDE.md` §公開前ガード（`check:qiita-remote-cache` / `publish:qiita` wrapper）
 - 2026-06-03 — `qiita publish` は冒頭で全記事 pull。`.remote/` 手編集でローカル改変が巻き戻る
@@ -136,6 +137,29 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 ---
 
 ## 🧭 学びエントリ
+
+### 2026-08-20 — Zenn の `/api/articles` は全件を返さない。件数の突合には `articlesCount` を使う [Gotcha][Tooling]
+
+**観察**: 公開記事の総数を突合しようとして `https://zenn.dev/api/articles?username=minewo&count=100` を叩いたところ、**23 件しか返らず** `next_page` も `total_count` も `null` だった。リポジトリ側の `published: true` は 37 件あり、一見すると 14 件が未反映（rate-limit hit 等）に見える。しかし実際には drift は無く、`https://zenn.dev/minewo` の HTML に埋まる `"articlesCount":37` と一致していた。**`count` パラメータは効かず、このエンドポイントは全件取得に使えない。**
+
+**対策/学び**: 用途で使い分ける。
+
+| 目的 | 使うもの |
+|---|---|
+| **特定記事**の反映確認（公開直後） | `/api/articles?username=X` に slug が出現するか（最近の記事は含まれる） |
+| **全件数**の突合（drift 検知） | `curl -s https://zenn.dev/<user>` から `"articlesCount":N` を抽出 |
+
+```bash
+# 公開記事数（Zenn 実サイト）
+curl -s "https://zenn.dev/minewo" -A "Mozilla/5.0" | grep -oE '"articlesCount":[0-9]+'
+# リポジトリ側（release/zenn を正とする）
+n=0; for f in $(git ls-tree -r --name-only origin/release/zenn -- articles/); do
+  git show "origin/release/zenn:$f" | grep -qm1 "^published: true" && n=$((n+1)); done; echo $n
+```
+
+古い記事は API の 23 件に含まれないため、**API の不在をもって「未公開」と判定してはいけない**。2026-05-22 エントリの「API で記事一覧に出現するかを確認」は、公開直後の新規記事に限って有効。
+
+**根拠**: 2026-08-20 の公開後確認（main 37 / release/zenn 37 / Zenn 実サイト 37 で一致、API のみ 23）
 
 ### 2026-08-20 — `sync-release-zenn.sh` の公開影響プレビューは新規ファイル追加を検知しない [Gotcha][Tooling]
 
@@ -366,7 +390,7 @@ done
 **対策/学び**:
 - **Zenn の rate-limit は文書の「24h/5本」より厳しい**。実観測では `release/zenn` の publish:true 切替が 24h 以内 2件目で hit。実効値は **24h/1本に近い**か、特定のシグナル（連続マージ間隔・ファイルパス・本文長など）で決まる可能性
 - **判断基準を緩めない**: 内部基準「24h/3本」も楽観値だった。実運用上の安全マージンは **24h/1本** に倒す
-- **公開後の Web 反映確認を必須化**: deploy log（Zenn 管理画面）または API（`/api/articles?username=X`）で記事一覧に出現するかを公開作業の最終ステップとして確認する。出現しない場合は deploy 失敗 / rate-limit hit を疑う
+- **公開後の Web 反映確認を必須化**: deploy log（Zenn 管理画面）または API（`/api/articles?username=X`）で記事一覧に出現するかを公開作業の最終ステップとして確認する。出現しない場合は deploy 失敗 / rate-limit hit を疑う（⚠️ 2026-08-20 追記: この API は**最近の 23 件程度しか返さない**。公開直後の新規記事には有効だが、**古い記事の不在を未公開の証拠にしてはいけない**。全件の突合は `zenn.dev/<user>` の `articlesCount` を使う）
 - **rate-limit hit からの復旧**:
   - 24h 待って release/zenn に empty commit（`git commit --allow-empty`）or 既存ファイル touch して再 push、deploy 再トリガー
   - または Zenn お問い合わせフォーム経由で緩和申請（memory `reference_zenn_rate_limit_spec.md` 参照）
