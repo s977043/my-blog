@@ -22,6 +22,8 @@
 
 ## Done
 
+- 2026-08-20 note shaping_the_build_note https://note.com/mine_unilabo/n/n5070e13232ce （queue 外の新規執筆、WXR インポート→手動公開。id n5070e13232ce、publishAt 18:37 JST。前記事 `ai_engineering_essence`〔n103182c44979〕の続編として Andrew Ng の Skills Map を起点に企画したが、複数視点レビューで主題を2回転換: ①#517 で Time to Learning を中心に再構成しタイトルを「AIがコードを書く時代、エンジニアは『何を作るか』をどう決めるのか」→「AI時代の開発で短くすべきは、Time to CodeではなくTime to Learning」へ変更②#518 で冒頭に自己紹介と問題提起を加筆〔6,154→7,156字〕。図版は #504 で3点追加後、#517 の再構成で本文参照が1点〔shaping-decision-loop.png〕に減り、#519 でヒーロー画像を新タイトル版へ差し替え。WXR は改稿のたびに再生成が必要で、実際に2回作り直した〔16:02版→18:37版〕。`--base-url` 付き生成→verify_wxr 合格→インポート→手動公開。HTTP 200・note API 出現・eyecatch 設定を確認済み）
+
 - 2026-08-20 zenn ai-review-gate-not-called https://zenn.dev/minewo/articles/ai-review-gate-not-called （queue #10、締切 8/24 から4日前倒し。Humanize ゲートの運用実測記事。当初「review-only Humanizer の設計論」で企画したが、多段レビューで中心主張を2回差し替え: ①4視点構成レビュー〔読者/スクラム・EM/編集/敵対的〕が初期の単一原因論を棄却し n=3 → n=8 の運用実測へ ②ChatGPT/GPT-5.6 Sol が Critical 2件を検出〔Skill の `allowed-tools` を排他的権限制限と誤認・公式仕様照合で訂正／「成果物がない」から「未実行」を推論〕。Codex CLI は事実誤認4件を検出、Gemini CLI は IneligibleTierError で実行不能。セルフ Humanize は passed:false〔F02〕→太字76→45。flip #510 main / sync #511 release/zenn でマージ→deploy 発火、HTTP 200・og:title・API 出現確認済み〔published_at 01:39 JST、id 636381〕）
 
 - 2026-08-02 zenn ai-merge-ready-state-machine https://zenn.dev/minewo/articles/ai-merge-ready-state-machine （queue 外の新規執筆。PlanGate Delivery層〔v8.18〕を題材に「AIにPRを収束させるがマージはさせない」設計。構成案(#493)→ChatGPT執筆→事実検証(コード断片・6ファイル参照が実装と一致)→#495改稿(GitHub権限説明)→一次検証(PRマージ=Contents write をGitHub公式で確認)→/review-improve-loop 2周(Humanize passed)。flip #497 main / sync #498 release/zenn でマージ→Zenn deploy 発火、HTTP 200/API 反映確認済み〔published_at 12:17 JST〕。前回課題だったZenn連携中断は本公開時点で復旧済み）
