@@ -47,7 +47,9 @@ AI Codingの生産性を考えるとき、「実装に何時間かかったか�
 
 ただ、プロダクト開発全体で見ると、Time to Codeはもっと長い流れの一部分です。
 
-**Problem → Hypothesis → Shape → Build / Experiment → Evidence → Next Decision**
+**Problem → Hypothesis → Shape → Build / Experiment → Evidence**
+
+Evidenceを得たあと、その結果を使ってNext Decisionへ進みます。この記事でいうTime to Learningの終点は、その判断に使えるEvidenceを得た時点です。
 
 コードを書く時間は、主にBuild / Experimentに含まれます。
 
@@ -207,19 +209,11 @@ AIによってBuildが速くなるほど、この接続が遅いこと自体が�
 
 ## 前の記事とSkills Mapを重ねると
 
-前の記事では、Problem、Intent、Specから、Context、Harness、Verification、Learningまで、AIと仕事をするために **何を設計する必要があるのか** を整理しました。
+前の記事は、AIと仕事をするために **何を設計する必要があるのか** を整理しました。一方、Andrew NgのSkills Mapが描いているのは **人間が何をできる必要があるのか** です。
 
-一方、Andrew NgのSkills Mapが描いているのは **人間が何をできる必要があるのか** です。
+両者を重ねると、ShapingでProblem、Outcome、Scope、Specを形づくり、Coding AgentへContextやHarnessを通じて実行を任せ、その結果をVerificationで観測して次のShapingへ戻す、という関係が見えてきます。
 
-前の記事をDesign Target、Skills MapをHuman Capabilityの地図と見ると、両者を重ねられます。
-
-ShapingでProblem、Outcome、Scope、Specを形づくる。Software engineering fundamentalsでTrade-offやSafetyを判断する。Coding AgentにはContextやHarnessを通じて実行を任せ、その結果をVerificationで観測して次のShapingへ戻す。
-
-これはAndrew Ngの公式な対応表ではなく、前の記事の設計対象とSkills Mapを私なりに重ねた見方です。
-
-Coding Agentを使うことは、AI駆動開発の一部分にすぎません。
-
-Buildを任せられる範囲が広がるほど、その前後にあるShaping、Verification、Learningの質が効いてきます。
+これはAndrew Ngの公式な対応表ではなく、前の記事とSkills Mapを私なりに重ねた見方です。Buildを任せられる範囲が広がるほど、その前後にあるShaping、Verification、Learningの質が効いてきます。
 
 ---
 
@@ -235,7 +229,7 @@ AIによってBuildが速くなることには、大きな価値があります�
 
 だから、AI時代の開発で短くすべきは、**Time to CodeではなくTime to Learning**です。
 
-Problemを観測する。Hypothesisを置く。Shapeする。小さくBuild / Experimentする。Evidenceを得る。そして次のDecisionを変える。
+Problemを観測する。Hypothesisを置く。Shapeする。小さくBuild / Experimentする。Evidenceを得る。**ここまでが、この記事でいうTime to Learningです。** そのEvidenceを使って、次のDecisionを変える。
 
 重要なのはBuildの回数を増やすことではありません。
 
