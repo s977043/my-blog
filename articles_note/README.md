@@ -119,5 +119,5 @@ python3 .claude/skills/note-export-import/scripts/md_to_wxr.py \
 ## 現状のスナップショット（2026-08-24時点）
 
 - `export/2026-08-24/` に公式ZIP保管（`export/` は .gitignore 対象。ZIP原本はローカル保管のみ）
-- `published/` 33記事 / `drafts/` 4記事 / `new/` 0記事
+- `published/` 33記事 / `drafts/` 3記事 / `new/` 0記事
 - `assets/` 画像263枚
