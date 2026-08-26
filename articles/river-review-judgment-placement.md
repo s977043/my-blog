@@ -1,5 +1,5 @@
 ---
-title: "AIに全部レビューさせない。River Reviewで「判断」を適切な層に置く"
+title: "AIに全部レビューさせない。River Reviewの「Judgment Placement」を実装から解説"
 emoji: "🌊"
 type: "tech"
 topics: ["ai駆動開発", "codereview", "claudecode", "aiエージェント", "自動化"]
@@ -7,37 +7,23 @@ published: false
 ---
 
 :::message
-この記事で得られること
+**この記事で得られること**
 
-- なぜ「AIに全部レビューさせる」設計がスケールしにくいのか
-- Lint / 静的解析 / AI / 人間をどう使い分けるか
-- River Reviewで実装している `Judgment Placement` の考え方
-- AIレビューで繰り返す判断を、Rule / Test / Checkerへ移していく方法
+- Lint / 静的解析 / AI / 人間へ、レビュー判断をどう振り分けるか
+- River Reviewで実装している `Judgment Placement` の設計と具体的なコード上の境界
+- Deterministic Gateを安全に実行するためのTrust Boundary
+- AIレビューで繰り返す判断を、Rule / Test / Checkerへ移していく考え方
 
-この記事は、私が個人で開発しているOSS「River Review」の設計・実装を題材にしています。
+対象読者は、Claude CodeやCodexなどのCoding Agentを使い、レビューの自動化・品質・コストのバランスを考えている人です。
+
+本文は **2026-08-27時点のRiver Review `main`** を確認して書いています。実装済みの機能と、設計原則・拡張中の機能は分けて記載します。
 :::
 
-## きっかけは「Stop burning tokens on code review」
+## TL;DR
 
-先日、Swizec Teller氏の [Stop burning tokens on code review](https://swizec.com/blog/stop-burning-tokens-on-code-review) という記事を読みました。
+AIコードレビューで重要なのは、Reviewerを増やすことより、**その判断を本当にLLMへ置くべきかを決めること**だと考えています。
 
-AIでコード生成が速くなる一方、AIコードレビューを全PRに広げると、レビューコストとノイズが新しいボトルネックになる。そこで、LLMが繰り返し見つける決定論的な問題をCustom Linterへ移していく、という内容です。
-
-特に印象に残ったのは、この考え方でした。
-
-**LLMでレビューできることと、LLMでレビューすべきことは同じではない。**
-
-型エラー、禁止API、依存方向、既知パターンのように機械的に判定できることまで、毎回LLMへ問い合わせる必要はありません。
-
-この記事を読んで、自分が開発しているRiver Reviewでも、かなり近い問題を別の角度から扱っていることに気づきました。
-
-River Reviewではこの問題を「AIレビューのコスト削減」だけではなく、**レビュー判断をどこで実行するべきか**という設計問題として整理しています。
-
-この設計原則を **Judgment Placement** と呼んでいます。
-
-## 先に結論：レビューではなく「判断」を分解する
-
-River Reviewでは、レビュー判断を次の4層に分けます。
+River Reviewでは、この設計原則を **Judgment Placement** と呼んでいます。
 
 ```text
 Can it be proven?
@@ -57,241 +43,200 @@ Does it require responsibility or value judgment?
 Human Judgment
 ```
 
-ざっくり言えば、こうです。
+例えば、依存方向を機械的に検査できるならAIへ聞かない。PlanとDiffの意味的な整合はAIへ任せる。課金や個人情報のように責任を伴う変更はHuman Judgmentへ残す、という分け方です。
 
-| 判断 | 主な担当 |
-| --- | --- |
-| 型・schema・test・依存境界など、機械的に証明できる | Deterministic |
-| temporary codeや既知smellなど、明示ルールで高精度に拾える | Heuristic |
-| Plan-Diff整合、設計意図、テスト妥当性など、意味理解が必要 | Agentic Review |
-| Security Boundary、個人情報、課金、不可逆変更など、責任が必要 | Human Judgment |
-
-重要なのは、**すべてのレビュー項目を同じAI Reviewerに投げないこと**です。
-
-レビューの目的を「AIにコメントを書かせること」から、「必要な判断を、最も適した場所で実行すること」へ変えます。
-
-## なぜAIレビューを増やすだけでは足りないのか
-
-AIコードレビューは便利です。
-
-人間が見落としたバグや、テスト不足、設計上の違和感まで拾えることがあります。
-
-しかし、運用を続けると次の問題が出てきます。
-
-- Lintで拾える問題までAIが指摘する
-- 同じチェックのために毎回LLMを呼ぶ
-- 同じ変更でもモデルやContextで判断が揺れる
-- 軽微な指摘が増え、重要なFindingが埋もれる
-- AIのレビューを人間がレビューする時間が増える
-
-例えば、次のようなチェックです。
+さらに、Agentic ReviewやHuman Reviewで同じ判断が繰り返されるなら、条件を明文化し、より再現可能な層へ移します。
 
 ```text
-unused import
-型エラー
-formatting
-禁止API
-schema violation
-dependency boundary
-既知の危険パターン
+Review
+  ↓
+Learn
+  ↓
+Codify
+  ↓
+Rule / Test / Checker
+  ↓
+Less Review
 ```
 
-これらの多くは、LLMよりも次の仕組みのほうが得意です。
+ただし、2026-08-27時点で「AIの指摘から自動でLintルールを生成・昇格するパイプライン」まで完成しているわけではありません。**Promotionは現在の設計原則であり、実装済みの評価層・Gate・fixture / evaluationなどを使って段階的に実現している領域**です。
 
-```text
-compiler
-linter
-static analysis
-schema validator
-architecture test
-test
-```
+## きっかけは「LLMでレビューできる ≠ LLMでレビューすべき」
 
-理由は単純です。
+Swizec Teller氏の [Stop burning tokens on code review](https://swizec.com/blog/stop-burning-tokens-on-code-review) を読みました。
 
-- 同じ入力なら同じ結果になる
-- 速い
-- LLMトークンを使わない
-- CIやEditorで早く検出できる
-- 「なぜ落ちたか」を説明しやすい
+AIでコード生成が速くなる一方、AIコードレビューを全PRへ広げると、コストやノイズが新しいボトルネックになる。そこで、LLMが繰り返し見つける決定論的な問題をCustom Linterへ移していく、という内容です。
 
-そこでRiver Reviewでは、新しいレビュー観点を増やす前に、まずこう考えます。
+自分の言葉で一文にすると、こうなります。
 
-> この判断、本当にLLMが必要なのか？
+> **LLMでレビューできることと、LLMでレビューすべきことは同じではない。**
 
-## 1. Deterministic：証明できるなら、AIに聞かない
+これは、自分が開発しているOSS [River Review](https://github.com/s977043/river-review) で整理してきた問題とかなり近いものでした。
 
-最初の層は `Deterministic` です。
+ただし、River Reviewでは「LLMレビューをLintへ置き換える」だけでは足りないと考えています。
 
-例えば、
+レビューには、そもそも性質の違う判断が混ざっているからです。
+
+- 型エラーがないか
+- 依存方向が規約を守っているか
+- temporary codeの兆候がないか
+- PlanとDiffの意図が一致しているか
+- 認証境界の変更を受け入れてよいか
+
+これらをすべて同じReviewerへ投げる必要はありません。
+
+そこで、**「レビューするか」ではなく「判断をどこへ置くか」**を先に設計するようにしました。
+
+## 設計上の制約：全部をLintにも、全部をAIにも寄せない
+
+Judgment Placementを考えるとき、River Reviewでは次の制約を置いています。
+
+1. **既存Checkerを再実装しない**  
+   compiler / test / linter / architecture checkerで判定できるものは、それらをSource of Truthとして使う。
+2. **意味的判断を無理にDeterministic化しない**  
+   Regexや依存ルールへ落とすことで安全性や説明可能性が下がるならAgentic Reviewへ残す。
+3. **責任をAIへ委譲しない**  
+   River ReviewはFinding / Evidence / Verdictを提供するが、最終承認やmergeはCaller / Humanの責務とする。
+4. **レビュー対象側の設定を無条件に信頼しない**  
+   deterministicなcommandを実行する場合でも、PR側が自分で許可ルールを書き換えられないTrust Boundaryを作る。
+5. **同じ判断を永遠にAIへ繰り返させない**  
+   条件が安定して明文化できた判断は、より再現可能な評価層へのPromotionを検討する。
+
+この制約があるため、「AIレビューの精度を上げる」だけではなく、レビューシステム全体の責務分離が必要になります。
+
+## Judgment Placement：4つの判断層
+
+4層を整理すると次のようになります。
+
+| 層 | 向いている判断 | 主な手段 |
+| --- | --- | --- |
+| Deterministic | 機械的に証明・検査できる事実 | compiler / test / schema / checker |
+| Heuristic | 明示ルールで高精度に兆候を拾える | pure-code detector / rule |
+| Agentic Review | 複数Artifactや意味理解が必要 | LLM Reviewer |
+| Human Judgment | 責任・価値・不可逆性を伴う | Human / Caller |
+
+### Deterministic：証明できるならAIに聞かない
+
+例えば、次のような判断です。
 
 - type check
 - test
 - schema validation
 - dependency boundary
 - architecture test
-- migration invariant
 
-のように、機械的に合否を決められる領域です。
+同じ入力なら同じ結果になる領域で、LLMを使う理由はほとんどありません。
 
-River ReviewのSkill Schemaには、評価方法を示す `evaluationType` があります。
-
-```yaml
----
-id: architecture-boundary
-name: Architecture Boundary
-description: dependency boundaryを検査する
-category: midstream
-evaluationType: deterministic
----
-```
-
-さらに、決定論的なチェックをGateとして扱う場合は `deterministicGate` を宣言できます。
-
-```yaml
----
-id: architecture-boundary
-name: Architecture Boundary
-description: dependency boundaryを検査する
-category: midstream
-evaluationType: deterministic
-
-deterministicGate:
-  command: "<host-approved-checker>"
-  failSeverity: strict_block
----
-```
-
-ここで重要なのは、Deterministicな結果を**AIに再判定させない**ことです。
-
-例えば静的解析がArchitecture Rule違反を検出した後に、LLMへ「今回は例外として許可してよいですか？」ともう一度聞く設計にはしません。
-
-```text
-Static Analysis
-      ↓
-  violation
-      ↓
-Deterministic Gate
-      ↓
-     block
-```
-
-River Reviewでは、`strict_block` として設定された決定論的Findingをhard blockとして扱えます。
-
-これは「AIよりルールのほうが偉い」という話ではありません。
-
-**機械的に証明できた事実を、確率的な推論で上書きしない**という責務分離です。
-
-## 2. Heuristic：LLMほどの意味理解は要らない判断
-
-すべてが完全なDeterministicになるわけではありません。
-
-そこで次に `Heuristic` があります。
+### Heuristic：完全な証明までは要らない
 
 例えば、
 
 - temporary code
 - suspicious pattern
 - known smell
-- 撤去条件のない暫定実装
-- 特定条件で危険になりやすい書き方
+- 撤去条件のない暫定実装の候補
 
 などです。
 
-完全な証明は難しいものの、明示的なルールやDetectorでかなり高い精度で候補を絞れます。
+完全に正しい / 間違いを証明できなくても、明示ルールで候補を高精度に絞れるなら、まずpure-code detectorへ置けます。
 
-```text
-Code
- ↓
-Heuristic Detector
- ↓
-Candidate Finding
-```
+### Agentic Review：意味理解が必要になってからLLMを使う
 
-これも、何でもLLMへ渡すより、候補検出を安定させられる領域があります。
-
-River ReviewのSkill Schemaでは `evaluationType: heuristic` として区別しています。
-
-## 3. Agentic Review：ここでLLMを使う
-
-意味理解が必要になったところで、初めて `Agentic Review` が中心になります。
-
-例えば、次の判断です。
-
-- 実装Diffが承認されたPlanの意図を維持しているか
-- テストがPlanで約束された境界条件を満たしているか
-- 責務分離が設計意図と一致しているか
-- 複数Artifactの間に矛盾がないか
-- 変更同士にsemantic conflictがないか
-
-これらは単純な正規表現やLintでは扱いにくい領域です。
-
-River Reviewは、PR diffだけを入力にするのではなく、
-
-```text
-plan
-diff
-tests
-JUnit
-ADR
-PR description
-past review
-```
-
-といった複数Artifactをまたいで判断することを前提にしています。
-
-ここでは、LLMの意味理解やContextを使う価値があります。
-
-```text
-Plan ──────┐
-Diff ──────┤
-Tests ─────┤
-ADR ───────┤
-           ↓
-     Agentic Review
-           ↓
- Finding / Evidence / Verdict
-```
-
-つまり、AIレビューを減らしたいのではありません。
-
-**AIにしかできない判断へ、AIレビューを集中させたい**のです。
-
-## 4. Human Judgment：責任までAIへ渡さない
-
-そして、AIにも置かない判断があります。
+ここで初めてLLMが中心になります。
 
 例えば、
 
-- Security Boundaryを変更してよいか
+- 実装DiffがPlanの意図を維持しているか
+- テストが要求された境界条件を十分に扱っているか
+- 責務分離が設計意図と一致しているか
+- 複数Artifactの間に矛盾がないか
+
+といった判断です。
+
+River ReviewはDiffだけでなく、`plan` / `test-cases` / `review-self` / `review-external` / `junit` / `coverage` / `lint` / `typecheck` など複数の入力Artifactを扱います。
+
+LLMのContextと意味理解を使う価値があるのは、この層です。
+
+### Human Judgment：責任までAIへ渡さない
+
+例えば、
+
+- Security Boundaryの変更を受け入れるか
 - 個人情報の扱いを変えてよいか
 - 課金ロジックを変更してよいか
 - irreversible migrationを実行してよいか
-- 事業としてトレードオフを受け入れるか
+- 事業としてそのトレードオフを受け入れるか
 
 です。
 
-これはモデル性能の問題だけではありません。
+これはモデル性能だけの問題ではありません。
 
-**責任を引き受ける主体が必要な判断**だからです。
+**責任を引き受ける主体が必要な判断**です。
 
-River Reviewでは、ReviewerがFindingやEvidence、Verdictを出しても、最終的な承認やmergeまでReviewer自身へ持たせる設計にはしていません。
+River ReviewがFinding / Evidence / Verdictを出しても、GO / NO-GO、反復、停止、承認、mergeをReviewer自身の責務にはしていません。
 
 ```text
 River Review
    ↓
 Finding / Evidence / Verdict
    ↓
-Caller / PlanGate / Human
+Caller / Human
    ↓
 GO / NO-GO / Approval / Merge
 ```
 
-人間レビューをなくすのではなく、機械的に処理できる定型確認から人間を外し、**人間にしか引き受けられない判断へ注意力を移す**ことを目指しています。
+## 実装1：Skill自身に `evaluationType` を持たせる
 
-## Static AnalysisとAI Reviewを競合させない
+Judgment Placementはドキュメント上の考え方だけではありません。
 
-River Reviewのレビュー基準では、静的解析とAIレビューの責務も分けています。
+River ReviewのSkill Schemaには、評価層を表す `evaluationType` があります。
+
+```text
+deterministic
+heuristic
+agentic
+```
+
+例えば、決定論的なArchitecture CheckをSkillとして宣言するなら、概念的には次のようになります。
+
+```yaml
+---
+id: architecture-boundary
+name: Architecture Boundary
+description: dependency boundaryを検査する
+category: midstream
+applyTo:
+  - "src/**/*.ts"
+evaluationType: deterministic
+
+deterministicGate:
+  command: "architecture-check"
+  args: []
+  failSeverity: strict_block
+---
+```
+
+`applyTo` を含めているのは、現在のSkill Schemaではレビュー対象を示すフィールドが必要だからです。
+
+また、`evaluationType: deterministic` と書いただけで必ずhard blockになるわけではありません。`deterministicGate` を明示したSkillだけがGateとして強制され、Gateを持たないdeterministic Skillはadvisoryとして扱えます。
+
+`failSeverity: strict_block` のFindingは、AI Reviewerが「今回は問題ない」と再判定して解除する対象にはしません。
+
+```text
+Deterministic Detector
+        ↓
+      Finding
+        ↓
+   strict_block
+        ↓
+     hard block
+```
+
+**機械的に確認できた事実を、確率的推論で上書きしない**ためです。
+
+## 実装2：Static AnalysisとAI Reviewを競合させない
+
+River Reviewのレビュー基準では、静的解析とAI Reviewの責務も明示的に分けています。
 
 ```text
 Static Analysis
@@ -300,153 +245,162 @@ Static Analysis
 
 AI Review
   ↓
-設計・スコープ・要求・意味的整合性
+設計・スコープ・受入基準・意味的整合性
 ```
 
-例えば、ESLintで拾える問題をAIにも指摘させると、こうなります。
+例えばESLintやCustom Linterで確実に検出できる問題をAIにも指摘させると、
 
 ```text
-ESLint
+Linter
   ↓
-同じ問題をAIも指摘
+AIも同じ問題を指摘
   ↓
-人間が両方確認
+Humanが両方を確認
 ```
 
-レビュー工程が増えただけです。
+となり、レビュー工程を増やしただけです。
 
-理想は、
+River Reviewでは、Custom Linterのfalse positiveもAIに都度判断させるのではなく、既知の誤検出パターンをcanary testへ戻して回帰防止する方針にしています。
+
+つまり、静的解析の領域は静的解析自身を改善し、AIは意味的な判断へ集中させます。
+
+## 実装3：Deterministic GateにもTrust Boundaryを置く
+
+「LLMを使わずcommandを実行すれば安全」とは限りません。
+
+AI Coding Agentが変更できるリポジトリで、レビュー対象のPRが任意commandを宣言できるなら、その実行機構自体が攻撃面になります。
+
+River ReviewのDeterministic Command実行は、概念的に次の構造です。
 
 ```text
-ESLint
-  ↓
-自動修正 / block
-  ↓
-AIはこの領域を見ない
+PR側のSkill
+   ↓
+deterministicGate command / args
+   ↓
+Host-trusted base checkout
+   ↓
+approved allowlistとexact argv match
+   ↓
+clean cwd + empty HOME + scrubbed env
+   ↓
+changed filesをstage
+   ↓
+executor
 ```
 
-です。
+重要なのは、**PR head側のallowlistを実行許可の根拠にしない**ことです。
 
-一方、
+現在の実装では、
 
-> この実装はPlanで意図した責務分離を維持しているか？
-
-のような問いはLintでは判断できません。
-
-そこではじめてAgentic Reviewを使います。
-
-## Deterministic Gate自体にもTrust Boundaryが必要だった
-
-ここまでだと、「それならLintコマンドをたくさん実行すればよい」と見えるかもしれません。
-
-しかし、AI Coding Agentが変更できるリポジトリで任意commandを実行するのは、それ自体が攻撃面になります。
-
-例えばPR側で、
-
-```yaml
-deterministicGate:
-  command: "npm run lint:ci"
-```
-
-と宣言できるとしても、`package.json` の `lint:ci` 自体をPRから書き換えられるなら、そのGateを信頼できません。
-
-River Reviewではこの問題をTrust Boundaryとして扱いました。
-
-現在のDeterministic Command実行は、概念的には次の流れです。
-
-```text
-Trusted Base
-   ↓
-approved allowlist
-   ↓
-exact command matching
-   ↓
-clean sandbox
-   ↓
-changed files
-   ↓
-deterministic result
-```
-
-実装では、
-
-- host側のtrusted treeからallowlistを読む
-- PR側のallowlistは実行判断に使わない
-- command / argsをexact matchする
-- clean working directoryを使う
-- HOMEを分離する
+- allowlistはhost-trustedなbase checkoutから読む
+- PR headの `.river/deterministic-allowlist.yaml` は読まない
+- `command` と `args` をexact matchする
+- clean working directoryを作る
+- HOMEを空の一時ディレクトリへ分離する
 - environmentを制限する
-- 未承認commandは実行しない
+- allowlistがない / trusted treeがない場合は何も実行しない
 
-といった制約を入れています。
+というsafe-defaultを取っています。
 
-レビューを決定論的にしても、**その判定器を誰が書き換えられるか**を設計しないと、Gateそのものが信頼できません。
+Deterministicにするほど信頼できる、ではありません。
 
-これは実装してみて強く意識するようになった点です。
+**「誰がその判定器と実行条件を書き換えられるのか」まで含めてDeterministic Gate**です。
 
-## 一番重要なのは「Review → Rule Promotion」
+## 最新実装例：AI Reviewerの判断自体をDeterministicな骨格で囲う
 
-Judgment Placementで一番重要なのは、最初に4層へ分類することではありません。
+2026-08-26のRiver Review `main` には、`Evidence-Grounded Adversarial Review` のPhase 1aとして `src/lib/finding-critic.mjs` が追加されました。
 
-**判断の置き場所が変化すること**です。
+ここはJudgment Placementを実装で考えるうえで、かなり分かりやすい例です。
 
-例えば、AI Reviewerが何度も、
+目的は「LLM ReviewerのFindingを、別のCritic視点で検証する」ことですが、**現在追加されているPhase 1aのモジュール自体はLLMを呼びません**。
 
-> presentation layerからrepositoryを直接参照しています
+先に、決定論で扱える部分だけをstate machineとして切り出しています。
+
+```text
+Finding
+  ↓
+Deterministic pre-verification
+  ├─ evidence不足 / diff外 → Criticへ送らない
+  └─ verified
+        ↓
+    Critic response
+        ↓
+Deterministic parser / state machine
+        ↓
+  ┌─────┴────────────────────┐
+  │ timeout / parse failure │
+  │ evidence contradiction  │
+  │ inner-loop cap          │
+  └──────────┬───────────────┘
+             ↓
+Findingを保持 + HumanへEscalate
+```
+
+実装には、例えば次のfail-safeがあります。
+
+- deterministic pre-verificationがない → HumanへEscalate
+- Critic timeout → Findingを消さずHumanへEscalate
+- Critic responseをparseできない → clean扱いにしない
+- deterministic verifierとCritic evidenceが矛盾 → HumanへEscalate
+- inner loopが収束しない → hard capで停止しHumanへEscalate
+
+デフォルトのinner roundは2、protocol上のhard capは5です。
+
+ここで面白いのは、「AIを二重化した」ことではありません。
+
+```text
+意味的な反論     → Agentic Review
+Evidenceの成立   → Deterministic
+収束制御         → Deterministic
+壊れた状態       → fail-safe
+解消できない競合 → Human Judgment
+```
+
+と、**AIレビューの内部でも判断を分解している**ことです。
+
+なお、2026-08-27時点ではこれは **Phase 1aのdeterministic skeleton** です。LLM境界はこのモジュールの外にあり、`src/cli/**` から到達する完成済み機能ではありません。ここを「すでに本番のAdversarial Reviewが全面稼働している」とは扱いません。
+
+## Review → Rule Promotion：同じ判断を何度もAIへさせない
+
+Judgment Placementで最も重要だと考えているのは、最初の4分類よりも**判断の置き場所を変え続けること**です。
+
+例えば、Agentic Reviewerが何度も、
+
+> presentation layerからrepositoryを直接参照している
 
 と指摘しているとします。
 
-最初はAgentic Reviewでも構いません。
-
-しかし、何度も同じ判断をしているなら考えます。
-
-```text
-Repeated Agentic Finding
-        ↓
-条件を明文化できるか？
-        ↓ yes
-Architecture Rule
-        ↓
-Deterministic Checker
-```
-
-次回から、AIが気づかなくてもCheckerが守ります。
-
-別の例として、
-
-> temporary codeには撤去条件を書く
-
-というルールなら、完全なDeterministicにはできなくてもHeuristic Detectorへ移せるかもしれません。
+最初は意味理解が必要でも、繰り返すうちに条件が明確になるかもしれません。
 
 ```text
 Repeated Human / Agentic Judgment
             ↓
-    Can it be explicit?
-      ├─ no  → stay semantic / human
-      └─ yes
-           ↓
-  Can it be deterministic?
-      ├─ yes → test / schema / checker
-      └─ no  → heuristic rule
+Can the condition be explicit?
+   ├─ no  → semantic / humanに残す
+   └─ yes
+        ↓
+Can it be deterministic?
+   ├─ yes → test / schema / checker
+   └─ no  → heuristic rule / skill
 ```
 
-つまり、レビューで得た知識を、**次回のレビューを不要にする仕組みへ変換する**わけです。
+条件が安定したら、次からAIが気づかなくても守れる仕組みへ移します。
 
-私はこの動きを、ReviewからRuleへのPromotionとして捉えています。
+これは「AI Reviewerをもっと賢くする」とは別の改善です。
 
-## Review Judgment as Code：コメントではなく判断を資産にする
+**AI Reviewerが覚えていなくても、リポジトリ側が守れる状態を増やす**改善です。
 
-River Reviewのもう一つの中心概念が **Review Judgment as Code** です。
+River Reviewでは、この考え方をfixture / evaluation / Riverbedなどの改善ループと接続しています。
 
-一般的なAIレビューでは、レビュー基準がProvider側のプロンプトやモデル挙動に閉じることがあります。
+一方で、ここは現在の実装境界を明確にしておく必要があります。
 
-```text
-Diff
- ↓
-AI Reviewer
- ↓
-Comment
-```
+**Findingを観測すると自動でLintルールを生成し、自動承認して有効化する仕組みまで実装済みではありません。** Promotionは判断原則であり、ルール化した結果が本当に安全性・説明可能性・保守性を上げるかを評価しながら進める領域です。
+
+## Review Judgment as Code：判断基準をProviderから切り離す
+
+Judgment Placementとセットになるのが、River Reviewの中心概念 **Review Judgment as Code** です。
+
+一般的なAIレビューでは、判断基準がProvider側のpromptやモデル挙動に閉じることがあります。
 
 River Reviewでは、チーム固有の判断をrepo-ownedなSkillとして持ちます。
 
@@ -460,173 +414,95 @@ version control
 Review
 ```
 
-Security、Accessibility、Migration Safety、Dependency Policy、Plan Conformanceなどの判断基準をリポジトリ側で所有することで、
+これにより、
 
-- 誰が基準を変えたか分かる
+- 誰が判断基準を変えたか追跡できる
 - PRで基準そのものをレビューできる
-- version管理できる
 - fixture / golden outputで回帰確認できる
-- 複数のCoding Agentから再利用できる
+- モデルやCoding Agentを変えても基準を再利用できる
 
-ようになります。
+状態を作ります。
 
-AI Reviewerを賢くするだけではなく、**組織がレビュー判断を所有できる状態を作る**ことを重視しています。
+Review Judgment as Codeが「**何を判断するか**」を資産化する考え方なら、Judgment Placementは「**その判断をどこで実行するか**」を決める原則です。
 
-## レビュー結果を次の仕組みに戻す
+## 4層にはそれぞれ別の失敗モードがある
 
-Skillを作って終わりでもありません。
+Judgment Placementは「上の層ほど正しい」という成熟度モデルではありません。
 
-レビュー結果、suppression、過去判断、fixture、evaluationを次の改善へ戻します。
+| 層 | 強み | 主な失敗モード |
+| --- | --- | --- |
+| Deterministic | 高速・再現可能 | ルール自体が間違う、実行境界が危険 |
+| Heuristic | 安価に候補抽出できる | false positive / false negative |
+| Agentic Review | 意味・Contextを扱える | 揺らぎ、hallucination、コスト |
+| Human Judgment | 責任・価値判断を扱える | 待ち時間、認知負荷、属人化 |
 
-```text
-Review
-  ↓
-Finding
-  ↓
-Human / Agent decision
-  ↓
-Memory / Fixture / Evaluation
-  ↓
-Skill / Rule improvement
-  ↓
-Next Review
-```
+そのため、判断をよりDeterministicな層へ移すのは、**同等以上の安全性・説明可能性・保守性を維持できる場合だけ**です。
 
-同じfalse positiveが繰り返されるなら、毎回AIを訂正するのではなくfixtureやcanaryへ戻す。
+意味的な判断を無理にRegexへ落とす必要はありません。
 
-同じFindingが繰り返されるなら、HeuristicやDeterministicへPromotionできないか考える。
+逆に、機械的に証明できる事実をLLMへ戻して再審査する必要もありません。
 
-そうして、レビューシステム自体を少しずつ変えていきます。
+## 2026-08-27時点：どこまで実装済みか
 
-## 目指しているレビューの流れ
+記事内の設計と現在のRiver Reviewを混同しないため、状態を整理します。
 
-最終的に、レビュー判断は次のように流れるのが理想だと考えています。
+| 項目 | 状態 |
+| --- | --- |
+| Judgment Placementの4層定義 | ドキュメント化済み |
+| Skill `evaluationType` | 実装済み |
+| `deterministicGate` schema | 実装済み |
+| deterministic `strict_block` | 実装済み |
+| 静的解析とAI Reviewの責務分離 | review ruleとして運用済み |
+| host-trusted allowlist / sandbox | 実装済み |
+| Review → Rule Promotion | 設計原則として定義済み |
+| FindingからRuleを自動生成・自動有効化 | 未完成 / 自動化対象 |
+| Evidence-Grounded Adversarial Review | Phase 1a deterministic skeletonまでmainへ導入済み |
+| Semantic Change Conflict Review | 拡張検討中 |
+| Agent Trajectory Review | 拡張検討中 |
 
-```text
-Implementation
-      ↓
-────────────────────────
-Deterministic
-────────────────────────
-compiler
-typecheck
-lint
-test
-schema
-architecture rule
-      ↓
-────────────────────────
-Heuristic
-────────────────────────
-known smell
-temporary code
-suspicious pattern
-      ↓
-────────────────────────
-Agentic Review
-────────────────────────
-Plan-Diff consistency
-architecture intent
-test adequacy
-semantic conflict
-      ↓
-────────────────────────
-Human Judgment
-────────────────────────
-security boundary
-privacy
-billing
-irreversible change
-business trade-off
-```
+この区別はかなり重要です。
 
-上ほど速く、安く、再現しやすい。
+設計思想が先行している領域を「すでに完成した機能」として説明すると、OSSの記事として再現性を失います。
 
-下へ行くほど意味理解や責任が必要になります。
+## 自分のレビュー基準へ取り入れるなら
 
-ただし、全部を一番上へ移せばよいわけではありません。
+River Reviewを導入しなくても、Judgment Placement自体は使えます。
 
-判断をより決定論的な層へ移すのは、**同等以上の安全性・説明可能性・保守性を維持できる場合だけ**です。
+新しいレビュー観点を追加するとき、次の順で考えるだけでもかなり整理できます。
 
-意味的な判断を無理にRegexへ落とせば、誤検出と抜け漏れが増えます。
+1. **既存のcompiler / test / linter / checkerで検査できないか**
+2. **deterministicなrule / schema / commandにできないか**
+3. **heuristic detectorで高精度に候補抽出できないか**
+4. **複数Artifactの意味理解が必要ならAgentic Reviewへ置く**
+5. **責任・価値・不可逆性を伴うならHuman Judgmentを残す**
+6. **繰り返す判断は、より再現可能な層へ移せないか定期的に見直す**
 
-人間が責任を持つべき変更をAI Verdictだけで通すのも違います。
+レビュー項目を増やす前に、次の1行を置くのがおすすめです。
 
-重要なのは、最も安い層ではなく、**安全に扱える最も再現可能な層へ判断を置くこと**です。
+> **この判断、本当にLLMが必要なのか？**
 
-## River Reviewがやらないこと
+## まとめ
 
-この設計を明確にするため、意図的にやらないことも決めています。
+Swizec Teller氏の記事は、「LLMが繰り返し指摘する決定論的な問題をLinterへ移す」という非常に実践的な問題提起でした。
 
-### LinterやArchitecture Checkerを再実装しない
-
-ESLint、compiler、Semgrep、architecture testなど、既存のCheckerが正しく判断できるなら、それをSource of Truthとして使います。
-
-River Reviewは、その結果をFinding / Evidence / Verdictとして扱います。
-
-### Human approvalをAIで置き換えない
-
-Reviewerは判断材料を提供します。
-
-最終承認やmergeの責任までReviewer自身に持たせることは目的にしていません。
-
-### すべてをDeterministicにしない
-
-Contextや意味理解が必要な判断はAgentic Reviewへ残します。
-
-責任や価値判断を含むものはHuman Judgmentへ残します。
-
-## まとめ：レビューするほど、次のレビューを減らしたい
-
-AI駆動開発では、コード生成速度は今後も上がっていくと思います。
-
-するとレビューの課題は、
-
-> AI Reviewerを何人増やすか
-
-ではなく、
-
-> どの判断を、どこへ置くか
-
-へ変わります。
-
-River Reviewでは、その答えの一つとしてJudgment Placementを使っています。
+River Reviewで取り組んでいるJudgment Placementは、その問いをもう少し広く捉えています。
 
 ```text
-Can it be proven?
-    → Deterministic
-
-Can it be detected by rules?
-    → Heuristic
-
-Does it require semantic understanding?
-    → Agentic Review
-
-Does it require responsibility?
-    → Human Judgment
+証明できる      → Deterministic
+ルールで拾える  → Heuristic
+意味理解が必要  → Agentic Review
+責任が必要      → Human Judgment
 ```
 
-そして、同じ判断を何度も繰り返すなら、その判断をより再現可能な仕組みへPromotionします。
+そして、分類して終わりではありません。
 
-```text
-Review
- ↓
-Learn
- ↓
-Codify
- ↓
-Automate
- ↓
-Less Review
-```
+レビューで同じ判断を繰り返すなら、条件を明文化し、より再現可能な仕組みへ移していく。
 
-目指しているのは、AIにより多くレビューさせる仕組みではありません。
+目指しているのは、AIにより多くレビューさせることではなく、**AI・ルール・テスト・人間が、それぞれ得意な判断だけを担当できる状態を作ること**です。
 
-**レビューを通じてチームの判断を学習し、Rule / Test / Checker / Skillとして残し、次から人間やLLMが気づかなくても守れる状態を増やすことです。**
+レビューを毎回消費されるコメントから、次の判断を減らす組織の資産へ変える。
 
-レビューを、毎回消費される作業から、組織に残る判断資産へ変える。
-
-それがRiver Reviewで実装している **Review Judgment as Code** の方向性です。
+それが、現在のRiver ReviewでJudgment Placementを実装している理由です。
 
 ## 参考
 
@@ -634,5 +510,8 @@ Less Review
 - [River Review - GitHub](https://github.com/s977043/river-review)
 - [Judgment Placement - River Review](https://river-review.the3396.com/explanation/judgment-placement/)
 - [River Review Skill Schema](https://river-review.the3396.com/reference/skill-schema/)
-- [River Review deterministic-gate.mjs](https://github.com/s977043/river-review/blob/main/src/lib/deterministic-gate.mjs)
-- [River Review deterministic-command-orchestrator.mjs](https://github.com/s977043/river-review/blob/main/src/lib/deterministic-command-orchestrator.mjs)
+- [Artifact Input Contract - River Review](https://river-review.the3396.com/reference/artifact-input-contract/)
+- [deterministic-gate.mjs](https://github.com/s977043/river-review/blob/main/src/lib/deterministic-gate.mjs)
+- [deterministic-command-orchestrator.mjs](https://github.com/s977043/river-review/blob/main/src/lib/deterministic-command-orchestrator.mjs)
+- [finding-critic.mjs](https://github.com/s977043/river-review/blob/main/src/lib/finding-critic.mjs)
+- [AIコードレビューを仕組みにする: 指摘の分類・記録・改善の回し方](https://zenn.dev/mine_take/articles/ai-code-review-feedback-ops)
