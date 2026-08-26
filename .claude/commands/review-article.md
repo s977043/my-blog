@@ -30,7 +30,7 @@ argument-hint: <article-slug> (articles/ 配下のファイル名 .md 抜き)
 
 3. `article-reviewer` エージェントを起動し、以下を委譲:
    - `articles/$1.md` を読む
-   - **構成の正本として `articles/guides/zenn-structure-best-practices.md` を必ず読む**
+   - **構成の正本として `docs/article-guides/zenn-structure-best-practices.md` を必ず読む**
    - Front Matter の `type: tech | idea` が Zenn 公式のカテゴリー定義に合っているか確認する
    - `type` とは別に、記事の構成タイプを「実装/ハウツー・トラブルシュート・設計/アーキテクチャ・概念/考察/まとめ・混合」から判定する
    - 対象読者 / 得られること / 再現条件 / 先出し結論 / 見出し構造 / 実体験 / 失敗・判断 / 適用範囲を確認する
