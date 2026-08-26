@@ -8,7 +8,6 @@ Zenn CLIは`articles/`配下のMarkdownを記事として認識する（サブ�
 ```text
 articles/
 ├── README.md                 このファイル
-├── guides/                   Zenn記事の構成・執筆ベストプラクティス
 ├── .keep                     空ディレクトリ保持用（削除しない）
 └── <slug>.md                 記事本体。ファイル名がそのままZenn URLのslugになる
 ```
@@ -18,10 +17,11 @@ articles/
 ## 執筆・レビューの正本
 
 - **媒体役割・多媒体展開**: `docs/content-channel-strategy.md`
-- **Zenn記事の構成判断**: `guides/zenn-structure-best-practices.md`
+- **Zenn記事の構成判断**: `docs/article-guides/zenn-structure-best-practices.md`
 - **レビュー実行・出力形式**: `.claude/agents/article-reviewer.md` / `.claude/commands/review-article.md`
 - 構成ガイドは固定テンプレートではなく、記事の目的・検索意図・読者・検証内容に応じて使い分ける
 - Zennの `type: tech | idea` と、実装/トラブルシュート/設計/考察などの構成タイプは別に判定する
+- **`articles/` には公開対象の記事以外のMarkdownを置かない**。ガイドや運用資料は `docs/` 等に置く
 
 ## ファイル名（slug）の規約
 
@@ -70,7 +70,7 @@ npm run check            # articles / books / Qiita CLIのまとめ確認
 - レビュー反映: `/apply-review <slug>` → `articles/<slug>.md`に反映
 - 一括実行: `/article-pipeline <slug>`
 
-`/review-article` は `guides/zenn-structure-best-practices.md` を読んだうえで、既存の `article-reviewer` の観点と組み合わせ、再現性・技術的正確性・一次情報・読者の検索意図を確認する。
+`/review-article` は `docs/article-guides/zenn-structure-best-practices.md` を読んだうえで、既存の `article-reviewer` の観点と組み合わせ、再現性・技術的正確性・一次情報・読者の検索意図を確認する。
 
 Slash Commandの実体は`.claude/commands/`配下、反映ロジックのスキル本体は`.claude/skills/article-review-apply/`を参照。
 
