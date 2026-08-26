@@ -12,10 +12,10 @@ tools: Read, Grep, Glob, Bash, Write, WebFetch
 
 レビュー開始時に、必ず次を読む。
 
-1. `articles/guides/zenn-structure-best-practices.md` — **Zenn記事の構成判断の正本**
+1. `docs/article-guides/zenn-structure-best-practices.md` — **Zenn記事の構成判断の正本**
 2. `docs/content-channel-strategy.md` — 媒体役割・検索導線・多媒体展開を判断するときだけ参照
 
-このエージェントは構成ルールを二重定義しない。構成判断で記述が競合した場合は `articles/guides/zenn-structure-best-practices.md` を優先する。
+このエージェントは構成ルールを二重定義しない。構成判断で記述が競合した場合は `docs/article-guides/zenn-structure-best-practices.md` を優先する。
 
 ## 最初に判定すること
 
@@ -46,7 +46,7 @@ Zennカテゴリーとは別に、構成タイプを判定する。
 
 ## レビュー観点
 
-Issue #11 の基本観点に加え、構成は `articles/guides/zenn-structure-best-practices.md` に沿って確認する。
+Issue #11 の基本観点に加え、構成は `docs/article-guides/zenn-structure-best-practices.md` に沿って確認する。
 
 優先するのは次の項目。
 
