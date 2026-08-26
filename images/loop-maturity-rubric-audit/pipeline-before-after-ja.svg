@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">後工程だけが機械化されていた</title>
+  <desc id="desc">記事公開パイプラインの6工程について、Before と After で担当が人間・エージェント・決定論的ゲートのどれかを色分けした比較図</desc>
+  <defs>
+    <filter id="sh" x="-10%" y="-10%" width="120%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+    <marker id="ar" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#64748b"/>
+    </marker>
+    <marker id="arg" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#16a34a"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" fill="#fbfcfd"/>
+  <text x="800" y="70" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="42" font-weight="800" fill="#142033">後工程だけが機械化されていた</text>
+  <text x="800" y="114" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="22" font-weight="400" fill="#475569">採点で C に落ちた 4 軸は、いずれもパイプライン前半に集中していた</text>
+  <rect x="240" y="150" width="20" height="20" rx="5" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="270" y="167" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="19" font-weight="500" fill="#475569">人間の判断</text>
+  <rect x="480" y="150" width="20" height="20" rx="5" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="510" y="167" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="19" font-weight="500" fill="#475569">エージェント</text>
+  <rect x="720" y="150" width="20" height="20" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="750" y="167" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="19" font-weight="500" fill="#475569">決定論的ゲート</text>
+  <rect x="960" y="150" width="20" height="20" rx="5" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+  <text x="990" y="167" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="19" font-weight="500" fill="#475569">異常停止の集約</text>
+  <text x="342.5" y="228" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="20" font-weight="700" fill="#475569">1. テーマ発見</text>
+  <text x="565.5" y="228" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="20" font-weight="700" fill="#475569">2. 執筆</text>
+  <text x="788.5" y="228" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="20" font-weight="700" fill="#475569">3. レビュー</text>
+  <text x="1011.5" y="228" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="20" font-weight="700" fill="#475569">4. 公開判断</text>
+  <text x="1234.5" y="228" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="20" font-weight="700" fill="#475569">5. 公開実行</text>
+  <text x="1457.5" y="228" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="20" font-weight="700" fill="#475569">6. Done 記録</text>
+  <text x="210" y="321" text-anchor="end" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="26" font-weight="800" fill="#142033">Before</text>
+  <rect x="240" y="255" width="205" height="115" rx="14" fill="#fef3c7" stroke="#d97706" stroke-width="2" filter="url(#sh)"/>
+  <text x="342.5" y="301" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="23" font-weight="700" fill="#142033">人間</text>
+  <text x="342.5" y="335" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="17" font-weight="400" fill="#475569">頭の中にある</text>
+  <rect x="463" y="255" width="205" height="115" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="2" filter="url(#sh)"/>
+  <text x="565.5" y="301" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="23" font-weight="700" fill="#142033">エージェント</text>
+  <text x="565.5" y="335" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="17" font-weight="400" fill="#475569">都度の指示</text>
+  <rect x="686" y="255" width="205" height="115" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="2" filter="url(#sh)"/>
+  <text x="788.5" y="301" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="23" font-weight="700" fill="#142033">エージェント</text>
+  <text x="788.5" y="335" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="17" font-weight="400" fill="#475569">3ペルソナ</text>
+  <rect x="909" y="255" width="205" height="115" rx="14" fill="#fef3c7" stroke="#d97706" stroke-width="2" filter="url(#sh)"/>
+  <text x="1011.5" y="301" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="23" font-weight="700" fill="#142033">人間</text>
+  <text x="1011.5" y="335" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="17" font-weight="400" fill="#475569">勘と記憶</text>
+  <rect x="1132" y="255" width="205" height="115" rx="14" fill="#dcfce7" stroke="#16a34a" stroke-width="2" filter="url(#sh)"/>
+  <text x="1234.5" y="301" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="23" font-weight="700" fill="#142033">機械判定</text>
+  <text x="1234.5" y="335" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="17" font-weight="400" fill="#475569">著者ゲート 2 箇所</text>
+  <rect x="1355" y="255" width="205" height="115" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="2" filter="url(#sh)"/>
+  <text x="1457.5" y="301" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="23" font-weight="700" fill="#142033">エージェント</text>
+  <text x="1457.5" y="335" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="17" font-weight="400" fill="#475569">手動で追記</text>
+  <text x="800" y="415" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="21" font-weight="700" fill="#d97706">次に何をやるか決める仕組みと、異常を自分で申告する仕組みが無い</text>
+  <line x1="120" y1="450" x2="1560" y2="450" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="7 7"/>
+  <text x="210" y="561" text-anchor="end" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="26" font-weight="800" fill="#142033">After</text>
+  <rect x="240" y="495" width="205" height="115" rx="14" fill="#dcfce7" stroke="#16a34a" stroke-width="2" filter="url(#sh)"/>
+  <text x="342.5" y="541" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="23" font-weight="700" fill="#142033">機械が起票</text>
+  <text x="342.5" y="575" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="17" font-weight="400" fill="#475569">人間は採否のみ</text>
+  <rect x="379" y="482" width="60" height="26" rx="13" fill="#16a34a" stroke="#16a34a" stroke-width="1"/>
+  <text x="409" y="500" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="16" font-weight="800" fill="#ffffff">C→B</text>
+  <rect x="463" y="495" width="205" height="115" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="2" filter="url(#sh)"/>
+  <text x="565.5" y="541" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="23" font-weight="700" fill="#142033">エージェント</text>
+  <text x="565.5" y="575" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="17" font-weight="400" fill="#475569">都度の指示</text>
+  <rect x="686" y="495" width="205" height="115" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="2" filter="url(#sh)"/>
+  <text x="788.5" y="541" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="23" font-weight="700" fill="#142033">エージェント</text>
+  <text x="788.5" y="575" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="17" font-weight="400" fill="#475569">3ペルソナ</text>
+  <rect x="909" y="495" width="205" height="115" rx="14" fill="#dcfce7" stroke="#16a34a" stroke-width="2" filter="url(#sh)"/>
+  <text x="1011.5" y="541" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="23" font-weight="700" fill="#142033">機械判定</text>
+  <text x="1011.5" y="575" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="17" font-weight="400" fill="#475569">state 遷移条件</text>
+  <rect x="1048" y="482" width="60" height="26" rx="13" fill="#16a34a" stroke="#16a34a" stroke-width="1"/>
+  <text x="1078" y="500" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="16" font-weight="800" fill="#ffffff">C→B</text>
+  <rect x="1132" y="495" width="205" height="115" rx="14" fill="#dcfce7" stroke="#16a34a" stroke-width="2" filter="url(#sh)"/>
+  <text x="1234.5" y="541" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="23" font-weight="700" fill="#142033">機械判定</text>
+  <text x="1234.5" y="575" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="17" font-weight="400" fill="#475569">著者ゲート 2 箇所</text>
+  <rect x="1355" y="495" width="205" height="115" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="2" filter="url(#sh)"/>
+  <text x="1457.5" y="541" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="23" font-weight="700" fill="#142033">エージェント</text>
+  <text x="1457.5" y="575" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="17" font-weight="400" fill="#475569">手動で追記</text>
+  <line x1="788.5" y1="610" x2="788.5" y2="676" stroke="#dc2626" stroke-width="2.5" marker-end="url(#ar)" opacity="0.8"/>
+  <line x1="1011.5" y1="610" x2="1011.5" y2="676" stroke="#dc2626" stroke-width="2.5" marker-end="url(#ar)" opacity="0.8"/>
+  <line x1="1234.5" y1="610" x2="1234.5" y2="676" stroke="#dc2626" stroke-width="2.5" marker-end="url(#ar)" opacity="0.8"/>
+  <rect x="240" y="686" width="1320" height="84" rx="14" fill="#fee2e2" stroke="#dc2626" stroke-width="2" filter="url(#sh)"/>
+  <text x="268" y="722" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="24" font-weight="800" fill="#dc2626">requires-human</text>
+  <text x="268" y="752" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="18" font-weight="400" fill="#475569">改善ループ 5 回超 / 2 回連続で改善なし / pace FAIL / レビュー後に本文が変わった / 参照先が実在しない</text>
+  <text x="800" y="832" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="21" font-weight="500" fill="#475569">変わったのは 2 工程だけ。どちらも「実行」ではなく「決める」側にあった</text>
+</svg>

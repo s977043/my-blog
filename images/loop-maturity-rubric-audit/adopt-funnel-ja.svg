@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">34 件の backlog は 0 件と同じ</title>
+  <desc id="desc">自動起票された34件がスコア足切りで15件に、件数上限で5件に絞られる過程を示したファネル図</desc>
+  <defs>
+    <filter id="sh" x="-10%" y="-10%" width="120%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+    <marker id="ar" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#64748b"/>
+    </marker>
+    <marker id="arg" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#16a34a"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" fill="#fbfcfd"/>
+  <text x="800" y="70" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="42" font-weight="800" fill="#142033">34 件の backlog は 0 件と同じ</text>
+  <text x="800" y="114" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="22" font-weight="400" fill="#475569">「起票できること」と「起票すべきこと」は別問題だった</text>
+  <text x="300" y="208" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="24" font-weight="800" fill="#142033">検出</text>
+  <rect x="141.0" y="240" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="188.0" y="240" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="235.0" y="240" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="282.0" y="240" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="329.0" y="240" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="376.0" y="240" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="423.0" y="240" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="141.0" y="287" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="188.0" y="287" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="235.0" y="287" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="282.0" y="287" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="329.0" y="287" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="376.0" y="287" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="423.0" y="287" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="141.0" y="334" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="188.0" y="334" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="235.0" y="334" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="282.0" y="334" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="329.0" y="334" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="376.0" y="334" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="423.0" y="334" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="141.0" y="381" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="188.0" y="381" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="235.0" y="381" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="282.0" y="381" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="329.0" y="381" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="376.0" y="381" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="423.0" y="381" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="141.0" y="428" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="188.0" y="428" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="235.0" y="428" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="282.0" y="428" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="329.0" y="428" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="376.0" y="428" width="36" height="36" rx="7" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <text x="300" y="520" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="40" font-weight="800" fill="#94a3b8">34 件</text>
+  <text x="300" y="556" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="18" font-weight="400" fill="#475569">S1 学び 8 / S2 道具 20 / S3 クラスタ 6</text>
+  <text x="800" y="208" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="24" font-weight="800" fill="#142033">スコア 3 以上</text>
+  <rect x="641.0" y="240" width="36" height="36" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <rect x="688.0" y="240" width="36" height="36" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <rect x="735.0" y="240" width="36" height="36" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <rect x="782.0" y="240" width="36" height="36" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <rect x="829.0" y="240" width="36" height="36" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <rect x="876.0" y="240" width="36" height="36" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <rect x="923.0" y="240" width="36" height="36" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <rect x="641.0" y="287" width="36" height="36" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <rect x="688.0" y="287" width="36" height="36" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <rect x="735.0" y="287" width="36" height="36" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <rect x="782.0" y="287" width="36" height="36" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <rect x="829.0" y="287" width="36" height="36" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <rect x="876.0" y="287" width="36" height="36" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <rect x="923.0" y="287" width="36" height="36" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <rect x="641.0" y="334" width="36" height="36" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="800" y="520" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="40" font-weight="800" fill="#2563eb">15 件</text>
+  <text x="800" y="556" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="18" font-weight="400" fill="#475569">ADOPT_SCORE = 3</text>
+  <text x="1300" y="208" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="24" font-weight="800" fill="#142033">1 回の起票上限</text>
+  <rect x="1141.0" y="240" width="36" height="36" rx="7" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <rect x="1188.0" y="240" width="36" height="36" rx="7" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <rect x="1235.0" y="240" width="36" height="36" rx="7" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <rect x="1282.0" y="240" width="36" height="36" rx="7" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <rect x="1329.0" y="240" width="36" height="36" rx="7" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="1300" y="520" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="40" font-weight="800" fill="#16a34a">5 件</text>
+  <text x="1300" y="556" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="18" font-weight="400" fill="#475569">ADOPT_LIMIT = 5</text>
+  <line x1="470" y1="330" x2="630" y2="330" stroke="#64748b" stroke-width="3" marker-end="url(#ar)"/>
+  <text x="550.0" y="306" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="24" font-weight="800" fill="#dc2626">−19 件</text>
+  <text x="550.0" y="366" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="17" font-weight="400" fill="#475569">シグナルが弱い</text>
+  <line x1="970" y1="330" x2="1130" y2="330" stroke="#64748b" stroke-width="3" marker-end="url(#ar)"/>
+  <text x="1050.0" y="306" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="24" font-weight="800" fill="#dc2626">−10 件</text>
+  <text x="1050.0" y="366" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="17" font-weight="400" fill="#475569">1 回に届ける上限</text>
+  <rect x="180" y="620" width="1240" height="152" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2" filter="url(#sh)"/>
+  <text x="216" y="668" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="26" font-weight="800" fill="#142033">自動化されたのは起票まで。取捨選択はそのまま人間に転嫁されていた</text>
+  <text x="216" y="712" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="21" font-weight="400" fill="#475569">足切り基準を入れて初めて、人間の判断が「5 件のうちどれをやるか」に縮んだ。</text>
+  <text x="216" y="746" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="21" font-weight="400" fill="#475569">自動化の設計で決めるべきなのは、何を自動化するかよりも、人間に何件届けるかのほうだった。</text>
+</svg>

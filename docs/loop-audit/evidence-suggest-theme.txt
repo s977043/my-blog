@@ -1,0 +1,17 @@
+# suggest:theme 実行ログ（記事の再現用証拠）
+# 測定日: 2026-08-26 / commit: e888b9f + 作業ツリー
+# コマンド: npm run suggest:theme
+# 注: 台帳に既存の [backlog] 行があると重複除外で raw が減る。
+# 注: 34 → 15 → 5 は S1 の一次情報実在チェック追加前・台帳が空だった初回スナップショットで、現在コードの再実行値ではない。
+# 現在の self-test: npm run test:suggest-theme = 20/20 PASS
+
+[suggest:theme] raw=21 scored=6 adopted=5 (ADOPT_SCORE=3, ADOPT_LIMIT=5)
+[suggest:theme] 5 件の候補を検出
+
+- `[backlog]` **(zenn) 締切 未設定**: 「媒体実測の取得は scripts/fetch-channel-metrics.mjs に集約」（自動起票 2026-08-26 / signal:S1:learning:2026-05-21 / score:3）。一次情報: `scripts/fetch-channel-metrics.mjs`
+- `[backlog]` **(zenn) 締切 未設定**: 「固有名詞は .cspell.json に集約する」（自動起票 2026-08-26 / signal:S1:learning:2026-04-17 / score:3）。一次情報: `.cspell.json`
+- `[backlog]` **(zenn) 締切 未設定**: 「[Workflow] に分類された学び 32 件のシリーズ化」（自動起票 2026-08-26 / signal:S3:cluster:32 / score:3）。一次情報: `AGENT_LEARNINGS.md [Workflow]`
+- `[backlog]` **(zenn) 締切 未設定**: 「[Gotcha] に分類された学び 31 件のシリーズ化」（自動起票 2026-08-26 / signal:S3:cluster:31 / score:3）。一次情報: `AGENT_LEARNINGS.md [Gotcha]`
+- `[backlog]` **(zenn) 締切 未設定**: 「[Tooling] に分類された学び 25 件のシリーズ化」（自動起票 2026-08-26 / signal:S3:cluster:25 / score:3）。一次情報: `AGENT_LEARNINGS.md [Tooling]`
+
+（dry-run。追記するには --apply）
