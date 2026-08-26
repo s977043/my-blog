@@ -124,7 +124,7 @@ Judgment Placementを考えるとき、River Reviewでは次の制約を置い�
 - dependency boundary
 - architecture test
 
-同じ入力なら同じ結果になる領域で、LLMを使う理由はほとんどありません。
+River Reviewでは、こうした機械的に判定できる結果をSource of Truthとして扱い、同じ合否をLLMに再判定させません。
 
 ### Heuristic：完全な証明までは要らない
 
@@ -303,7 +303,7 @@ Deterministicにするほど自動的に信頼できる、ではありません�
 
 **「誰がその判定器と実行条件を書き換えられるのか」まで含めてDeterministic Gate**です。
 
-## 最新実装例：AI Reviewerの判断自体をDeterministicな骨格で囲う
+## 検証対象commitの実装例：AI Reviewerの判断自体をDeterministicな骨格で囲う
 
 検証対象commitには、`Evidence-Grounded Adversarial Review` のPhase 1aとして `src/lib/finding-critic.mjs` が追加されています。
 
@@ -393,7 +393,7 @@ River Reviewでは、この考え方をRiverbed、fixture、evaluation、Review 
 
 Judgment Placementとセットになるのが、River Reviewの中心概念 **Review Judgment as Code** です。
 
-一般的なAIレビューでは、判断基準がProvider側のpromptやモデル挙動に閉じることがあります。
+判断基準をProvider側のpromptやモデル挙動に置く構成では、チーム固有の基準をProviderから独立して版管理・検証しにくくなります。
 
 River Reviewでは、チーム固有の判断をrepo-ownedなSkillとして持ちます。
 
