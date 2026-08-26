@@ -21,8 +21,8 @@ argument-hint: <state>/<slug> （例: published/n3aae6b5467b9、drafts/n17c899de
    STATE=$(dirname $1)   # new | drafts | published
    SLUG=$(basename $1)
    case "$STATE" in new|drafts|published) ;; *) echo "state は new|drafts|published のいずれか: $STATE"; exit 1;; esac
-   # 並列セッション衝突回避: 対象 slug の既存 open PR があれば停止して報告
-   gh pr list --state open --search "review-note-$SLUG in:title" --json number,title
+   # 並列セッション衝突回避: このレビュー用ブランチを head に持つ open PR があれば停止して報告
+   gh pr list --state open --head "docs/review-note-$SLUG" --json number,title,headRefName
    ```
    既存 PR があれば作成せず報告して終了。
 
@@ -47,7 +47,7 @@ argument-hint: <state>/<slug> （例: published/n3aae6b5467b9、drafts/n17c899de
    - 3ペルソナ（noteディレクター/note編集者/想定読者）でレビュー
    - `reviews/note/$1.md` を生成（既存があれば差分提示後に上書き）
    - フォーマットは `.claude/agents/note-article-reviewer.md` 準拠
-   - JTFスタイル違反（ダッシュ等）は個別指摘として必ず含める
+   - JTFスタイル違反があれば指摘に含め、同種の表記違反は統合する
    - 構成ガイドは固定テンプレートとして機械適用せず、記事タイプ・読者・目的を優先する
    - **`published/` の記事をレビューする場合**、PR本文に ⚠️ バナー（将来の本文反映時の注意喚起）を含める
 
@@ -59,8 +59,9 @@ argument-hint: <state>/<slug> （例: published/n3aae6b5467b9、drafts/n17c899de
 
 6. push & PR作成
    ```bash
-   # push/PR 直前に active account を確認（s977043 でなければ switch）
-   gh auth status | grep -q "Active account: true" && gh auth status | grep "s977043" || gh auth switch --user s977043
+   # push/PR 直前に実際の active login を確認（s977043 でなければ switch）
+   test "$(gh api user --jq .login)" = "s977043" || gh auth switch --hostname github.com --user s977043
+   test "$(gh api user --jq .login)" = "s977043" || { echo "GitHub active account を s977043 に切り替えられませんでした"; exit 1; }
    git push -u origin docs/review-note-$SLUG
    gh pr create --title "docs(reviews): add note review for $1" --body "note.com記事の3ペルソナレビューを生成しました。
 
