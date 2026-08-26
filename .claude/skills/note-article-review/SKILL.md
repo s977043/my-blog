@@ -1,6 +1,6 @@
 ---
 name: note-article-review
-description: note.com記事（articles_note/<state>/<slug>.md、<state>は new/drafts/published）のレビュー成果物を生成・反映するワークフロー。構成ガイド、3ペルソナ観点、JTFスタイル、スマホ可読性、note内発見性を重視する。
+description: note.com記事（articles_note/<state>/<slug>.md、<state>は new/drafts/published）のレビュー成果物を生成し、編集可能な状態では指摘を反映するワークフロー。drafts は読み取り専用ミラーのためレビューのみ行う。
 ---
 
 # note-article-review
@@ -21,6 +21,7 @@ note.com記事のレビュー → 指摘反映 のライフサイクルを扱う
 - 品質チェック: `articles_note/checklists/note-article-quality-checklist.md`
 - レビュー生成: `.claude/agents/note-article-reviewer.md`
 - レビュー反映: `.claude/agents/note-review-applier.md`
+- note状態管理の正本: `articles_note/README.md`
 - 媒体役割: `docs/content-channel-strategy.md`
 - main ブランチが最新 (`git pull origin main`)
 - git identity がリポジトリ規約どおり (`mine_take <s977043@users.noreply.github.com>`)
@@ -33,9 +34,9 @@ note.com記事のレビュー → 指摘反映 のライフサイクルを扱う
 articles_note/
 ├── guides/     # 構成判断の正本
 ├── checklists/ # 品質確認
-├── new/        # 未投稿の新規原稿
-├── drafts/     # note上の下書きミラー
-└── published/  # note公開済み記事
+├── new/        # 未投稿。編集の正
+├── drafts/     # note上の下書きミラー。読み取り専用
+└── published/  # note公開済み記事。修正はnote側へ手動反映
 
 reviews/note/
 ├── new/
@@ -58,8 +59,10 @@ reviews/note/
 ## 状態別の扱い
 
 - **`new/`**: 未投稿。本文反映・編集が自由
-- **`drafts/`**: note上に下書きとして存在。note側との整合確認が必要
-- **`published/`**: note公開済み。反映PR時は **⚠️ 公開済み記事** バナー必須
+- **`drafts/`**: noteエクスポートから再生成される**読み取り専用ミラー**。レビュー生成は可、**指摘反映は不可**
+- **`published/`**: note公開済み。ローカルで修正提案を作る場合は ⚠️ 公開済み記事 バナー必須。マージ後はnote管理画面へ手動反映する
+
+`drafts/` に対応する `new/` の編集正本が存在する場合は、反映対象をその `new/` へ切り替えて明示的にレビューし直す。対応する `new/` がない場合はnote管理画面で修正し、次回バックアップで同期する。
 
 ## レビュー生成フェーズ
 
@@ -111,23 +114,34 @@ git push -u origin docs/review-note-<slug>
 gh pr create --title "docs(reviews): add note review for <state>/<slug>" --body "(レビュー要約)"
 ```
 
+`drafts/` もレビュー成果物の生成までは可能。記事本文は変更しない。
+
 ## 反映フェーズ
 
-### 6. 採否分類
+### 6. state gate
 
-**`note-review-applier`** を使用する。Zenn版 `review-applier` は使わない。
+反映前に `<state>` を確認する。
+
+- `new` → 続行
+- `published` → 続行。ただし公開済みバナー + note管理画面への手動反映が必須
+- **`drafts` → ここで停止。`note-review-applier` に記事編集をさせず、commit / push / 反映PRを作らない**
+
+### 7. 採否分類
+
+`new/` / `published/` のみ、**`note-review-applier`** を使用する。Zenn版 `review-applier` は使わない。
 
 - 採用: 誤字脱字、明白な表記揺れ、JTFスタイル、壊れたリンクなど客観修正
 - 保留: タイトル/リード、構成変更、追記、トーンなど著者判断が必要なもの
 - 却下: 事実誤認、コンテキスト違い、Zenn固有観点の誤混入
 
-### 7. 採用分の反映
+### 8. 採用分の反映
 
-- 対象: `articles_note/<state>/<slug>.md`
+- 対象: `articles_note/new/<slug>.md` または `articles_note/published/<slug>.md`
 - 最小差分でEdit
 - `reviews/note/**` は記録として変更しない
+- **`articles_note/drafts/**` はEditしない**
 
-### 8. 検証
+### 9. 検証
 
 - Markdown見出し階層
 - 段落・改行のリズム
@@ -135,13 +149,15 @@ gh pr create --title "docs(reviews): add note review for <state>/<slug>" --body 
 - 記事タイプに応じた中心主張の一貫性
 - `published/` の場合、note管理画面での手動反映が必要とPRに明記したか
 
-### 9. コミット & PR
+### 10. コミット & PR
 
 ```bash
 git add articles_note/<state>/<slug>.md
 git commit -m "docs(articles_note): apply review feedback to <state>/<slug>"
 gh pr create --title "docs(articles_note): apply note review feedback to <state>/<slug>" --body "$(採否一覧テンプレート)"
 ```
+
+この手順は `new/` / `published/` のみ。`drafts/` では実行しない。
 
 `published/` 記事の場合、PR本文冒頭に必ず次を含める。
 
@@ -154,6 +170,7 @@ gh pr create --title "docs(articles_note): apply note review feedback to <state>
 ## ガードレール
 
 - [ ] レビュー生成では `articles_note/**/*.md` を変更しない
+- [ ] **`articles_note/drafts/**` はレビューのみ。反映時にEdit / commit / PRしない**
 - [ ] 反映時は `note-review-applier` を使い、Zenn固有記法を混入させない
 - [ ] `published/` の反映PRには ⚠️ バナー必須
 - [ ] 自動マージ禁止
@@ -162,6 +179,7 @@ gh pr create --title "docs(articles_note): apply note review feedback to <state>
 
 ## エラー回復
 
+- `drafts/` を反映対象に渡された: 本文を変更せず停止し、`new/` 正本またはnote管理画面での修正を案内
 - Edit conflict: 該当指摘を保留にして理由を記録
 - URL検証失敗: 未検証として扱う
 - JTF修正が文意を変えそう: 自動反映せず保留
@@ -170,11 +188,12 @@ gh pr create --title "docs(articles_note): apply note review feedback to <state>
 ## 成果物
 
 - レビュー: `reviews/note/<state>/<slug>.md`
-- 反映: `articles_note/<state>/<slug>.md` への差分
-- 採否一覧を含むPR本文
+- 反映: `new/` / `published/` のみ記事差分 + 採否一覧を含むPR
+- `drafts/`: レビュー成果物のみ。本文反映成果物は作らない
 
 ## 参考
 
+- `articles_note/README.md`
 - `articles_note/guides/note-structure-best-practices.md`
 - `articles_note/checklists/note-article-quality-checklist.md`
 - `.claude/agents/note-article-reviewer.md`
