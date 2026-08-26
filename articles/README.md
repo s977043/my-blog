@@ -8,11 +8,21 @@ Zenn CLIは`articles/`配下のMarkdownを記事として認識する（サブ�
 ```text
 articles/
 ├── README.md                 このファイル
+├── guides/                   Zenn記事の構成・執筆ベストプラクティス
+├── checklists/               Zenn記事の品質チェックリスト
 ├── .keep                     空ディレクトリ保持用（削除しない）
 └── <slug>.md                 記事本体。ファイル名がそのままZenn URLのslugになる
 ```
 
 画像は本ディレクトリではなく、リポジトリルートの`images/<slug>/*.png`に配置する（Zennの推奨構成に合わせてある）。
+
+## 執筆・レビューの正本
+
+- **Zenn構成ベストプラクティス**: `guides/zenn-structure-best-practices.md`
+- **Zenn記事品質チェックリスト**: `checklists/zenn-article-quality-checklist.md`
+- 新規記事の構成検討と `/review-article` 実行時は、両方を参照する
+- 構成ガイドは固定テンプレートではなく、実装/ハウツー・トラブルシュート・設計/アーキテクチャ・Idea/考察など記事タイプに応じて使い分ける
+- 媒体役割そのものは `docs/content-channel-strategy.md` を正本とする
 
 ## ファイル名（slug）の規約
 
@@ -61,6 +71,8 @@ npm run check            # articles / books / Qiita CLIのまとめ確認
 - レビュー反映: `/apply-review <slug>` → `articles/<slug>.md`に反映
 - 一括実行: `/article-pipeline <slug>`
 
+`/review-article` は、`guides/zenn-structure-best-practices.md` と `checklists/zenn-article-quality-checklist.md` を読んだうえで、再現性・技術的正確性・一次情報・読者の検索意図を確認する。
+
 Slash Commandの実体は`.claude/commands/`配下、反映ロジックのスキル本体は`.claude/skills/article-review-apply/`を参照。
 
 ## 書き分け方針
@@ -77,6 +89,8 @@ Slash Commandの実体は`.claude/commands/`配下、反映ロジックのスキ
 
 ## 参考
 
+- [Zenn Community Guideline](https://zenn.dev/guideline)
+- [Zenn Markdown guide](https://zenn.dev/zenn/articles/markdown-guide)
 - [Zenn CLI guide](https://zenn.dev/zenn/articles/zenn-cli-guide)
 - [Zennの記事・本の公開方法（GitHub連携）](https://zenn.dev/zenn/articles/connect-to-github)
 - ルートREADME: [../README.md](../README.md)
