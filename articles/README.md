@@ -18,6 +18,7 @@ articles/
 
 - **媒体役割・多媒体展開**: `docs/content-channel-strategy.md`
 - **Zenn記事の構成判断**: `docs/article-guides/zenn-structure-best-practices.md`
+- **新規記事の構成検討入口**: `.claude/skills/tech-blog-writing/SKILL.md`
 - **レビュー実行・出力形式**: `.claude/agents/article-reviewer.md` / `.claude/commands/review-article.md`
 - 構成ガイドは固定テンプレートではなく、記事の目的・検索意図・読者・検証内容に応じて使い分ける
 - Zennの `type: tech | idea` と、実装/トラブルシュート/設計/考察などの構成タイプは別に判定する
@@ -60,7 +61,7 @@ npm run list:articles    # 認識されている記事一覧
 npm run check            # articles / books / Qiita CLIのまとめ確認
 ```
 
-新規記事は任意のエディタで`articles/<slug>.md`を作成する（`zenn new:article`を使うなら別途Zenn CLIのコマンドを利用）。
+新規記事は任意のエディタで`articles/<slug>.md`を作成する（`zenn new:article`を使うなら別途Zenn CLIのコマンドを利用）。構成から検討する場合は `.claude/skills/tech-blog-writing/SKILL.md` が対象媒体の構成ガイドを参照する。
 
 ## レビュー成果物との対応
 
