@@ -84,10 +84,10 @@ git commit -m "docs(articles): apply review feedback to <slug>
 Apply <N> accepted findings from reviews/zenn/<slug>.md:
 - <簡潔なサマリ>
 
-Pending (<M> items) and rejected (<K> items) are captured in the PR body.
-
-Co-Authored-By: <利用中モデル名> <noreply@anthropic.com>"
+Pending (<M> items) and rejected (<K> items) are captured in the PR body."
 ```
+
+コミット作者は実行環境のgit identityを使用する。特定LLMベンダーのCo-Author情報を固定で付与しない。
 
 ### 7. push & PR作成
 ```bash
