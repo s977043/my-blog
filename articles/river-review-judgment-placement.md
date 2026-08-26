@@ -433,6 +433,17 @@ Judgment Placementは「Deterministicへ寄せるほど成熟している」と�
 
 意味的な判断を無理にRegexへ落とす必要はありません。逆に、機械的に証明できる事実をLLMへ戻して再審査する必要もありません。
 
+### Promotionを見送る条件
+
+判断をよりDeterministicな層へ移せそうに見えても、次のような場合はPromotionを急ぎません。
+
+- 条件をまだ安定して明文化できない
+- rule / checkerへ落とすと、元の意味や重要な例外を失う
+- deterministic化によって安全性・説明可能性・保守性が下がる
+- 責任・価値・不可逆性を伴い、人間が判断主体である必要がある
+
+この場合はAgentic ReviewやHuman Judgmentへ残し、fixture / evaluationや実運用のEvidenceを増やします。**「機械化できそう」ではなく、「より再現可能な層へ安全に移せる」ことがPromotionの条件**です。
+
 ## 検証結果：どこまで実装済みか
 
 記事内の設計と現在のRiver Reviewを混同しないため、検証対象commit `56e0ae4c4e03efd7f5b254fbe2eabde22edbd7c9` で確認した状態を整理します。
@@ -457,11 +468,11 @@ Judgment Placementは「Deterministicへ寄せるほど成熟している」と�
 
 この区別は重要です。設計思想が先行している領域を「すでに完成した機能」として説明すると、OSSの記事として追試性を失います。
 
-## 自分のレビュー基準へ取り入れるなら
+## 最小導入：レビュー観点を1つ分類してみる
 
-River Reviewを導入しなくても、Judgment Placement自体は使えます。
+River Reviewを導入しなくても、Judgment Placement自体は使えます。最初からレビュー全体を作り替える必要はありません。
 
-新しいレビュー観点を追加するときは、次の順で考えます。
+まず、繰り返し出ているレビュー観点を1つ選び、次の順で考えます。
 
 1. **既存のcompiler / test / linter / checkerで検査できないか**
 2. **deterministicなrule / schema / commandで検査できないか**
