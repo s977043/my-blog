@@ -28,8 +28,13 @@ description: テックブログのネタ発見、一次経験の整理、媒体�
 最初に次を読む。
 
 1. `AGENTS.md` — 全媒体共通の規約
-2. `docs/content-channel-strategy.md` — 媒体役割、書き分け、記事骨子の正本
-3. 対象媒体固有のREADME・Skill・チェックリスト
+2. `docs/content-channel-strategy.md` — 媒体役割、書き分け、多媒体展開の正本
+3. 対象媒体の構成・運用ルール
+   - **Zenn**: `docs/article-guides/zenn-structure-best-practices.md` と `articles/README.md`
+   - **note**: `articles_note/guides/note-structure-best-practices.md`、`articles_note/checklists/note-article-quality-checklist.md`、`articles_note/README.md`
+   - **Qiita**: `Qiita/README.md` など既存の媒体固有ルール
+
+媒体選定後に構成案を作る場合は、**対象媒体の構成ガイドを先に読み、その判断基準を構成案へ反映する**。ガイドは固定テンプレートとして機械適用せず、記事の目的・読者・検索意図・一次経験を優先する。
 
 本スキルは媒体別レビューを置き換えない。
 
@@ -215,6 +220,8 @@ AIが追加した一般論を残すこと自体を品質とみなさない。
 
 多媒体展開は、同一本文の転載ではなく、別の読者意図へ再構成する場合だけ提案する。
 
+媒体を決めた後に構成案を出す場合は、「正本と関連ルール」で指定した**媒体別構成ガイドを必ず読み直す**。
+
 ### Mode B: 既存記事を確認する
 
 対象パス:
@@ -232,9 +239,9 @@ AIが追加した一般論を残すこと自体を品質とみなさない。
 - 想定読者
 - 読者の問題
 - 中心主張
-- 読後に取れる行動
+- 読後に残す理解・判断・行動
 
-抽出できない場合は欠落として指摘する。
+抽出できない場合は欠落として指摘する。ただし、すべての記事に明示的なCTAや行動を要求しない。
 
 #### B-2. 6ゲートで確認する
 
@@ -300,7 +307,7 @@ PASS | NEEDS_REVISION | BLOCKED
 - 想定読者:
 - 読者課題:
 - 中心主張:
-- 読後行動:
+- 読後価値:
 
 ## Gate Results
 | Gate | 判定 | 根拠 |
@@ -333,6 +340,8 @@ PASS | NEEDS_REVISION | BLOCKED
 
 - `AGENTS.md`
 - `docs/content-channel-strategy.md`
+- `docs/article-guides/zenn-structure-best-practices.md`
+- `articles_note/guides/note-structure-best-practices.md`
 - `articles_note/checklists/note-article-quality-checklist.md`
 - `.claude/skills/article-humanizer-ja/SKILL.md`
 - `.claude/skills/article-review-apply/SKILL.md`
