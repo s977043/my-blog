@@ -21,7 +21,6 @@ argument-hint: <state>/<slug> （例: published/n3aae6b5467b9、drafts/n17c899de
    STATE=$(dirname $1)   # new | drafts | published
    SLUG=$(basename $1)
    case "$STATE" in new|drafts|published) ;; *) echo "state は new|drafts|published のいずれか: $STATE"; exit 1;; esac
-   # 並列セッション衝突回避: 対象 slug の既存 open PR があれば停止して報告
    gh pr list --state open --search "review-note-$SLUG in:title" --json number,title
    ```
    既存 PR があれば作成せず報告して終了。
@@ -30,9 +29,9 @@ argument-hint: <state>/<slug> （例: published/n3aae6b5467b9、drafts/n17c899de
    ```bash
    git checkout main && git pull origin main
    git checkout -b docs/review-note-$SLUG
-   git branch --show-current   # 期待ブランチ docs/review-note-$SLUG と一致するか確認
+   git branch --show-current
    ```
-   不一致なら **commit を作らず停止**（並列セッション干渉。memory/ はリポジトリ外の個人領域）。
+   不一致なら **commit を作らず停止**。
 
 3. 出力先ディレクトリ準備
    ```bash
@@ -41,11 +40,14 @@ argument-hint: <state>/<slug> （例: published/n3aae6b5467b9、drafts/n17c899de
 
 4. `note-article-reviewer` エージェントを起動し、以下を委譲:
    - `articles_note/$1.md` を読み、記事タイプを判定
-   - `articles_note/checklists/note-article-quality-checklist.md` を参照し、まず「必須確認」を見たうえで、テーマ設計・サムネ/タイトル設計・本文構成・読者体験を確認
+   - **構成の正本として `articles_note/guides/note-structure-best-practices.md` を必ず読む**
+   - `articles_note/checklists/note-article-quality-checklist.md` を参照する
+   - 構成ガイドでは、価値の先出し / 見出しだけで追えるストーリー / 具体→失敗→学び→一般化 / 保存できる持ち帰り / スマホ読了設計を確認する
    - 3ペルソナ（noteディレクター/note編集者/想定読者）でレビュー
    - `reviews/note/$1.md` を生成（既存があれば差分提示後に上書き）
    - フォーマットは `.claude/agents/note-article-reviewer.md` 準拠
    - JTFスタイル違反（ダッシュ等）は個別指摘として必ず含める
+   - 構成ガイドは固定テンプレートとして機械適用せず、記事タイプ・読者・目的を優先する
    - **`published/` の記事をレビューする場合**、PR本文に ⚠️ バナー（将来の本文反映時の注意喚起）を含める
 
 5. コミット
@@ -56,7 +58,6 @@ argument-hint: <state>/<slug> （例: published/n3aae6b5467b9、drafts/n17c899de
 
 6. push & PR作成
    ```bash
-   # push/PR 直前に active account を確認（s977043 でなければ switch）
    gh auth status | grep -q "Active account: true" && gh auth status | grep "s977043" || gh auth switch --user s977043
    git push -u origin docs/review-note-$SLUG
    gh pr create --title "docs(reviews): add note review for $1" --body "note.com記事の3ペルソナレビューを生成しました。
@@ -65,7 +66,7 @@ argument-hint: <state>/<slug> （例: published/n3aae6b5467b9、drafts/n17c899de
    Output: reviews/note/$1.md
    State: $STATE
 
-   記事タイプ判定・JTFスタイル・note内発見性・スマホ可読性を重点観点としてレビューしています。"
+   note構成ガイド・記事タイプ判定・JTFスタイル・note内発見性・スマホ可読性を重点観点としてレビューしています。"
    ```
 
 7. 結果報告（PR URL、記事タイプ判定、指摘件数、state）
