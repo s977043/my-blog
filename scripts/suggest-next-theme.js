@@ -281,7 +281,9 @@ function selfTest() {
 
 // ---- main ----
 
-if (process.argv.includes("--self-test")) {
+if (require.main !== module) {
+  // ライブラリとして読み込まれたときは何も実行しない
+} else if (process.argv.includes("--self-test")) {
   selfTest();
 } else {
   const cands = build();

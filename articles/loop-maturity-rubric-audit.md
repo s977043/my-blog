@@ -169,6 +169,8 @@ B が 2、C が 4。
 
 パイプラインの後半、つまり「公開する」という工程だけが徹底的に機械化されていて、前半の「何を書くか決める」と、全体を横断する「今どこで止まっているか」が、人間の頭の中にしか無かった。
 
+![記事公開パイプライン6工程の担当を Before / After で色分けした比較図](/images/loop-maturity-rubric-audit/pipeline-before-after-ja.svg)
+
 部品の数を増やす方向にはずっと投資してきたが、それは全部後工程だった。
 
 ### 却下した採点案
@@ -283,7 +285,9 @@ function scoreCandidate(c, facts = {}) {
 }
 ```
 
-`ADOPT_SCORE = 3` 未満を捨て、1 回の起票を `ADOPT_LIMIT = 5` 件に制限した。34 件が 5 件になった。
+`ADOPT_SCORE = 3` 未満を捨てると 34 件が 15 件になり、そこに 1 回の起票上限 `ADOPT_LIMIT = 5` を掛けて 5 件になった。
+
+![34件がスコア足切りで15件に、件数上限で5件に絞られるファネル図](/images/loop-maturity-rubric-audit/adopt-funnel-ja.svg)
 
 ```
 [suggest:theme] 5 件の候補を検出
@@ -300,6 +304,8 @@ function scoreCandidate(c, facts = {}) {
 ## 5. 同じルーブリックで測り直す
 
 軸は変えていない。`rubric.md` は v1 のままだ。
+
+![6軸それぞれのBefore/Afterのグレードと、Aに届かなかった理由の比較図](/images/loop-maturity-rubric-audit/score-before-after-ja.svg)
 
 | モジュール | Before | After | 変化の根拠 |
 |---|:-:|:-:|---|
