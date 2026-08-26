@@ -15,8 +15,8 @@ argument-hint: <article-slug> (articles/ 配下のファイル名 .md 抜き)
 1. 引数検証 & 重複 PR 確認
    ```bash
    test -f articles/$1.md || { echo "記事が存在しません: articles/$1.md"; exit 1; }
-   # 並列セッション衝突回避: 対象 slug の既存 open PR があれば停止して報告
-   gh pr list --state open --search "review-$1 in:title" --json number,title
+   # 並列セッション衝突回避: このレビュー用ブランチを head に持つ open PR があれば停止して報告
+   gh pr list --state open --head "docs/review-$1" --json number,title,headRefName
    ```
    既存 PR があれば作成せず報告して終了。
 
@@ -49,8 +49,9 @@ argument-hint: <article-slug> (articles/ 配下のファイル名 .md 抜き)
 
 5. push & PR作成
    ```bash
-   # push/PR 直前に active account を確認（s977043 でなければ switch）
-   gh auth status | grep -q "Active account: true" && gh auth status | grep "s977043" || gh auth switch --user s977043
+   # push/PR 直前に実際の active login を確認（s977043 でなければ switch）
+   test "$(gh api user --jq .login)" = "s977043" || gh auth switch --hostname github.com --user s977043
+   test "$(gh api user --jq .login)" = "s977043" || { echo "GitHub active account を s977043 に切り替えられませんでした"; exit 1; }
    git push -u origin docs/review-$1
    gh pr create --title "docs(reviews): add review for $1" --body "$(printf '3ペルソナでZenn記事レビューを生成しました。\n\nTarget: articles/%s.md\nOutput: reviews/zenn/%s.md\n\n構成ガイド・再現性・技術的正確性・一次情報の検証を重点観点としてレビューしています。' "$1" "$1")"
    ```
