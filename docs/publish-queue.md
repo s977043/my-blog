@@ -9,16 +9,48 @@
 - 公開したら下の Done へ移動し、公開日を記録
 - Zenn は `published_at` を締切日 18:00 JST に設定 → release/zenn へ反映（rate-limit 24h/3本厳守）
 
+## 状態遷移（機械可読）
+
+各 Queue 行は先頭に `[state]` を持つ。**エージェントはこの表の遷移条件だけで状態を進め、`requires-human` に入ったら停止して通知する。**
+
+| state | 意味 | 次へ進む条件（機械判定） |
+|---|---|---|
+| `backlog` | 候補として起票済み。着手可否は未判定 | 締切が設定され、一次情報の参照先が1つ以上ある |
+| `ready` | 着手可能。一次情報が揃っている | 対応する `articles/<slug>.md` が存在する |
+| `drafting` | 本文執筆中 | `npm run check` が通る |
+| `in-review` | レビュー中 | `reviews/zenn/<slug>.md` の `publish-readiness` が `blocked=false` かつ `mustHigh=0` |
+| `ready-to-publish` | 公開待ち | `npm run check:zenn-pace` が FAIL でない |
+| `requires-human` | **異常停止**。人間の確認が必要 | （機械では進めない。人間が原因を解消して前の state へ戻す） |
+| `done` | 公開済み。live URL と HTTP 200 を記録 | — |
+
+### `requires-human` への遷移条件（異常停止の定義）
+
+以下のいずれかを満たしたら、state を `requires-human` に落として**理由を行末に追記し停止する**。
+
+- `in-review` で改善ループが **5 回**を超えても `mustHigh > 0` が残る
+- 改善ループ **2 回連続で `mustHigh` が減少しない**（収束していない）
+- `check:zenn-pace` が FAIL（rate-limit 抵触。公開は翌日以降）
+- `check:publish-readiness` が `stale`（レビュー後に本文が変わった）
+- 一次情報の参照先が実在しない（リンク切れ・削除済みスクリプト）
+
+> **なぜ数値を決め打ちするか**: 「収束しなければ人間へ」だけでは、エージェントは収束していないことを自分で認めない。回数という**外形的な基準**にすることで、判定に主観が入る余地を消す。5 回 / 2 回連続は現時点の暫定値で、実測が溜まったら見直す（この数値自体が仮説）。
+
 ## Queue（締切順）
 
-- **#11 (zenn) 締切 2026-09-07**: 「worktree 分離だけでは防げない — 並列AIセッションのGit事故を"事後検知"で機械化する」（仮）。一次情報: `scripts/check-pr-staleness.sh`＋テスト、`scripts/hooks/pre-commit|pre-push`、Round 3〜5 の実測インシデント（#404/#405 の squash 済み記事巻き戻し等、`memory/project_parallel_session_metrics.md`）。差別化: 市場は git worktree による事前分離記事が多数だが、同一 working tree での実事故観測データと検知系（staleness チェック・hooks）は空白（theme-discovery 2026-08-10、スコア 17/20）
-- #7 (zenn-book) は **2026-06-01 公開完了**（下記 Done 参照）。本文・図・cover・5系統＋ultracode レビュー完了後、release/zenn PR #350 マージで go-live
-- #9 (zenn) は「Bookを多層AIレビューで作った話」。内容は収束済み・公開可。タイミングのみ分離（Book公開→update同期→新規publish の順で間隔を空ける）
-- #2 公開時、本文「関連記事」の scope-creep 参照に下記 Done の実 Qiita URL を差し込む（相互リンク確定）
-- #3〜#6 はデザイン三部作 Qiita 化＋PlanGate Qiita 化。Codex 助言に基づく段階公開（PlanGate → DESIGN.md → penpot-react → open-design）。1週ペース・初動の反応とタイトル調整余地を確保
-- #6（open-design）は Zenn 原典が 2026-05-26 週公開予定のため、Zenn 公開後の cross-post `:::note info` 有効化を**公開作業の前段**に組み込む（コメントアウト退避済み、手順は記事内 HTML コメントに記載）
-- #8 (open-design) は memory `project_open_design_article_scheduled` で記録済みの予定日。release/zenn rate-limit（24h/5本・1PR3本・24h間隔）を遵守
-- 補充は手動。次テーマが決まったら行を追加（Rolling/テンプレは凍結中のため使わない）
+- `[backlog]` **(zenn) 締切 未設定**: 「check-article-humanizer.js が解いている問題」（自動起票 2026-08-26 / signal:S2:tool / score:4）。一次情報: `scripts/check-article-humanizer.js`
+- `[backlog]` **(zenn) 締切 未設定**: 「check-publish-readiness.js が解いている問題」（自動起票 2026-08-26 / signal:S2:tool / score:4）。一次情報: `scripts/check-publish-readiness.js`
+- `[backlog]` **(zenn) 締切 未設定**: 「suggest-next-theme.js が解いている問題」（自動起票 2026-08-26 / signal:S2:tool / score:4）。一次情報: `scripts/suggest-next-theme.js`
+- `[backlog]` **(zenn) 締切 未設定**: 「Zenn の /api/articles は全件を返さない。件数の突合には articlesCount を使う」（自動起票 2026-08-26 / signal:S1:learning:2026-08-20 / score:3）。一次情報: `/api/articles`、`articlesCount`
+- `[backlog]` **(zenn) 締切 未設定**: 「sync-release-zenn.sh の公開影響プレビューは新規ファイル追加を検知しない」（自動起票 2026-08-26 / signal:S1:learning:2026-08-20 / score:3）。一次情報: `sync-release-zenn.sh`
+
+- `[ready]` **#11 (zenn) 締切 2026-09-07**: 「worktree 分離だけでは防げない — 並列AIセッションのGit事故を"事後検知"で機械化する」（仮）。一次情報: `scripts/check-pr-staleness.sh`＋テスト、`scripts/hooks/pre-commit|pre-push`、Round 3〜5 の実測インシデント（#404/#405 の squash 済み記事巻き戻し等、`memory/project_parallel_session_metrics.md`）。差別化: 市場は git worktree による事前分離記事が多数だが、同一 working tree での実事故観測データと検知系（staleness チェック・hooks）は空白（theme-discovery 2026-08-10、スコア 17/20）
+- `[done]` #7 (zenn-book) は **2026-06-01 公開完了**（下記 Done 参照）。本文・図・cover・5系統＋ultracode レビュー完了後、release/zenn PR #350 マージで go-live
+- `[ready-to-publish]` #9 (zenn) は「Bookを多層AIレビューで作った話」。内容は収束済み・公開可。タイミングのみ分離（Book公開→update同期→新規publish の順で間隔を空ける）
+- `[done]` #2 公開時、本文「関連記事」の scope-creep 参照に下記 Done の実 Qiita URL を差し込む（相互リンク確定）
+- `[done]` #3〜#6 はデザイン三部作 Qiita 化＋PlanGate Qiita 化。Codex 助言に基づく段階公開（PlanGate → DESIGN.md → penpot-react → open-design）。1週ペース・初動の反応とタイトル調整余地を確保
+- `[done]` #6（open-design）は Zenn 原典が 2026-05-26 週公開予定のため、Zenn 公開後の cross-post `:::note info` 有効化を**公開作業の前段**に組み込む（コメントアウト退避済み、手順は記事内 HTML コメントに記載）
+- `[done]` #8 (open-design) は memory `project_open_design_article_scheduled` で記録済みの予定日。release/zenn rate-limit（24h/5本・1PR3本・24h間隔）を遵守
+- 補充は `npm run suggest:theme` が自動で行う（シグナルから `[backlog]` 行を起票）。`[backlog]` の採否だけが人間の判断で、行の作成そのものは人間の仕事にしない。
 
 ## Done
 
