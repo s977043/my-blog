@@ -1,72 +1,52 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
   <title id="title">同じルーブリックで測り直す</title>
-  <desc id="desc">6軸それぞれの Before と After のグレード、および A に届かなかった理由を並べた比較表</desc>
+  <desc id="desc">6軸それぞれの Before と After のグレード、および変化の理由を並べた比較表。Automations は C のまま、Memory / State は C から B に改善した。</desc>
   <defs>
-    <filter id="sh" x="-10%" y="-10%" width="120%" height="140%">
-      <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#0f172a" flood-opacity="0.10"/>
-    </filter>
-    <marker id="ar" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
-      <path d="M0,0 L12,6 L0,12 z" fill="#64748b"/>
-    </marker>
-    <marker id="arg" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
-      <path d="M0,0 L12,6 L0,12 z" fill="#16a34a"/>
-    </marker>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#64748b"/></marker>
+    <marker id="arrowUp" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#16a34a"/></marker>
   </defs>
   <rect width="1600" height="900" fill="#fbfcfd"/>
   <text x="800" y="70" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="42" font-weight="800" fill="#142033">同じルーブリックで測り直す</text>
-  <text x="800" y="114" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="22" font-weight="400" fill="#475569">軸は変えていない。rubric.md は v1 のまま</text>
-  <text x="150" y="202" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="19" font-weight="700" fill="#475569">モジュール</text>
-  <text x="672" y="202" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="19" font-weight="700" fill="#475569">Before</text>
-  <text x="872" y="202" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="19" font-weight="700" fill="#475569">After</text>
-  <text x="990" y="202" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="19" font-weight="700" fill="#475569">A に届かなかった理由 / 変化</text>
-  <rect x="120" y="220" width="1360" height="88" rx="12" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
-  <text x="150" y="274" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="26" font-weight="800" fill="#142033">Automations</text>
-  <rect x="634" y="236" width="76" height="56" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
-  <text x="672" y="276" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="32" font-weight="800" fill="#d97706">C</text>
-  <rect x="834" y="236" width="76" height="56" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-  <text x="872" y="276" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="32" font-weight="800" fill="#2563eb">B</text>
-  <line x1="722" y1="264" x2="822" y2="264" stroke="#16a34a" stroke-width="3" marker-end="url(#arg)"/>
-  <text x="990" y="272" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="20" font-weight="400" fill="#475569">A に届かない: 稼働監視と通知が無い</text>
-  <rect x="120" y="312" width="1360" height="88" rx="12" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
-  <text x="150" y="366" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="26" font-weight="800" fill="#142033">Memory / State</text>
-  <rect x="634" y="328" width="76" height="56" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
-  <text x="672" y="368" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="32" font-weight="800" fill="#d97706">C</text>
-  <rect x="834" y="328" width="76" height="56" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-  <text x="872" y="368" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="32" font-weight="800" fill="#2563eb">B</text>
-  <line x1="722" y1="356" x2="822" y2="356" stroke="#16a34a" stroke-width="3" marker-end="url(#arg)"/>
-  <text x="990" y="364" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="20" font-weight="400" fill="#475569">A に届かない: state を読んで動く機械が 0 本</text>
-  <rect x="120" y="404" width="1360" height="88" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
-  <text x="150" y="458" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="26" font-weight="600" fill="#142033">Sub-agents</text>
-  <rect x="634" y="420" width="76" height="56" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-  <text x="672" y="460" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="32" font-weight="800" fill="#2563eb">B</text>
-  <rect x="834" y="420" width="76" height="56" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-  <text x="872" y="460" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="32" font-weight="800" fill="#2563eb">B</text>
-  <line x1="722" y1="448" x2="822" y2="448" stroke="#94a3b8" stroke-width="3" marker-end="url(#ar)"/>
-  <text x="990" y="456" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="20" font-weight="400" fill="#475569">A に届かない: エスカレーションが人間判断</text>
-  <rect x="120" y="496" width="1360" height="88" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
-  <text x="150" y="550" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="26" font-weight="600" fill="#142033">Skills</text>
-  <rect x="634" y="512" width="76" height="56" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-  <text x="672" y="552" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="32" font-weight="800" fill="#2563eb">B</text>
-  <rect x="834" y="512" width="76" height="56" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-  <text x="872" y="552" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="32" font-weight="800" fill="#2563eb">B</text>
-  <line x1="722" y1="540" x2="822" y2="540" stroke="#94a3b8" stroke-width="3" marker-end="url(#ar)"/>
-  <text x="990" y="548" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="20" font-weight="400" fill="#475569">self-test は 3 → 4 本（check は 17 本）</text>
-  <rect x="120" y="588" width="1360" height="88" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
-  <text x="150" y="642" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="26" font-weight="600" fill="#142033">Connectors</text>
-  <rect x="634" y="604" width="76" height="56" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
-  <text x="672" y="644" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="32" font-weight="800" fill="#d97706">C</text>
-  <rect x="834" y="604" width="76" height="56" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
-  <text x="872" y="644" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="32" font-weight="800" fill="#d97706">C</text>
-  <line x1="722" y1="632" x2="822" y2="632" stroke="#94a3b8" stroke-width="3" marker-end="url(#ar)"/>
-  <text x="990" y="640" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="20" font-weight="400" fill="#475569">note のインポートと公開が管理画面の手作業</text>
-  <rect x="120" y="680" width="1360" height="88" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
-  <text x="150" y="734" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="26" font-weight="600" fill="#142033">Isolation</text>
-  <rect x="634" y="696" width="76" height="56" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
-  <text x="672" y="736" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="32" font-weight="800" fill="#d97706">C</text>
-  <rect x="834" y="696" width="76" height="56" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
-  <text x="872" y="736" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="32" font-weight="800" fill="#d97706">C</text>
-  <line x1="722" y1="724" x2="822" y2="724" stroke="#94a3b8" stroke-width="3" marker-end="url(#ar)"/>
-  <text x="990" y="732" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="20" font-weight="400" fill="#475569">worktree 分離なし。事後検知ガードで C を維持</text>
+  <text x="800" y="112" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="22" fill="#475569">改善しても、条件を満たさなければ点数は上げない</text>
+  <text x="150" y="192" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="19" font-weight="700" fill="#475569">モジュール</text>
+  <text x="672" y="192" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="19" font-weight="700" fill="#475569">Before</text>
+  <text x="872" y="192" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="19" font-weight="700" fill="#475569">After</text>
+  <text x="990" y="192" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="19" font-weight="700" fill="#475569">判定理由</text>
+
+  <rect x="120" y="210" width="1360" height="88" rx="12" fill="#fff7ed" stroke="#fdba74" stroke-width="2"/>
+  <text x="150" y="264" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="26" font-weight="800" fill="#142033">Automations</text>
+  <rect x="634" y="226" width="76" height="56" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="2"/><text x="672" y="266" text-anchor="middle" font-family="sans-serif" font-size="32" font-weight="800" fill="#d97706">C</text>
+  <rect x="834" y="226" width="76" height="56" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="2"/><text x="872" y="266" text-anchor="middle" font-family="sans-serif" font-size="32" font-weight="800" fill="#d97706">C</text>
+  <line x1="722" y1="254" x2="822" y2="254" stroke="#64748b" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="990" y="262" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="20" fill="#475569">発見ロジックは機械化。起動が人間なので C のまま</text>
+
+  <rect x="120" y="302" width="1360" height="88" rx="12" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+  <text x="150" y="356" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="26" font-weight="800" fill="#142033">Memory / State</text>
+  <rect x="634" y="318" width="76" height="56" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="2"/><text x="672" y="358" text-anchor="middle" font-family="sans-serif" font-size="32" font-weight="800" fill="#d97706">C</text>
+  <rect x="834" y="318" width="76" height="56" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="872" y="358" text-anchor="middle" font-family="sans-serif" font-size="32" font-weight="800" fill="#2563eb">B</text>
+  <line x1="722" y1="346" x2="822" y2="346" stroke="#16a34a" stroke-width="3" marker-end="url(#arrowUp)"/>
+  <text x="990" y="354" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="20" fill="#475569">7 state と遷移条件、requires-human を定義</text>
+
+  <rect x="120" y="394" width="1360" height="88" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="150" y="448" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="26" font-weight="600" fill="#142033">Sub-agents</text>
+  <text x="672" y="450" text-anchor="middle" font-family="sans-serif" font-size="32" font-weight="800" fill="#2563eb">B</text><text x="872" y="450" text-anchor="middle" font-family="sans-serif" font-size="32" font-weight="800" fill="#2563eb">B</text>
+  <text x="990" y="446" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="20" fill="#475569">自動エスカレーションは未実装</text>
+
+  <rect x="120" y="486" width="1360" height="88" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="150" y="540" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="26" font-weight="600" fill="#142033">Skills</text>
+  <text x="672" y="542" text-anchor="middle" font-family="sans-serif" font-size="32" font-weight="800" fill="#2563eb">B</text><text x="872" y="542" text-anchor="middle" font-family="sans-serif" font-size="32" font-weight="800" fill="#2563eb">B</text>
+  <text x="990" y="538" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="20" fill="#475569">self-test は 3 → 4 本</text>
+
+  <rect x="120" y="578" width="1360" height="88" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="150" y="632" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="26" font-weight="600" fill="#142033">Connectors</text>
+  <text x="672" y="634" text-anchor="middle" font-family="sans-serif" font-size="32" font-weight="800" fill="#d97706">C</text><text x="872" y="634" text-anchor="middle" font-family="sans-serif" font-size="32" font-weight="800" fill="#d97706">C</text>
+  <text x="990" y="630" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="20" fill="#475569">note のインポートと公開は手作業</text>
+
+  <rect x="120" y="670" width="1360" height="88" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="150" y="724" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="26" font-weight="600" fill="#142033">Isolation</text>
+  <text x="672" y="726" text-anchor="middle" font-family="sans-serif" font-size="32" font-weight="800" fill="#d97706">C</text><text x="872" y="726" text-anchor="middle" font-family="sans-serif" font-size="32" font-weight="800" fill="#d97706">C</text>
+  <text x="990" y="722" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="20" fill="#475569">worktree 分離なし</text>
+
   <rect x="120" y="786" width="1360" height="74" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
-  <text x="800" y="834" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="24" font-weight="700" fill="#142033">B:2 / C:4  →  B:4 / C:2　　npm run check exit=0 ／ self-test 17 項目すべて通過</text>
+  <text x="800" y="834" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="24" font-weight="700" fill="#142033">B:2 / C:4  →  B:3 / C:3　　npm run check exit=0 ／ self-test 20/20</text>
 </svg>
