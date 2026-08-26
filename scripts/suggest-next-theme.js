@@ -89,7 +89,7 @@ function formatQueueLine(c) {
 // 「起票できること」と「起票すべきこと」は別物なので、シグナルの強さで足切りする。
 //   S1 実インシデント由来 = 強い（既に痛みが発生している）
 //   S2 道具の存在だけ     = 弱い（誰かが困った証拠がない）。自己テストや規模で補強されて初めて強い
-//   S3 クラスタ           = 件数が閾値の 2 倍を超えたらシリーズとして強い
+//   S3 クラスタ           = 件数が閾値の 2 倍以上ならシリーズとして強い
 function scoreCandidate(c, facts = {}) {
   if (c.signal.startsWith("S1")) return 3;
   if (c.signal.startsWith("S2")) {
@@ -100,6 +100,14 @@ function scoreCandidate(c, facts = {}) {
     return n >= CLUSTER_THRESHOLD * 2 ? 3 : 1;
   }
   return 0;
+}
+
+// 候補の一次情報が「実在するもの」を指しているか判定する。
+// S1 の識別子は学習ログの見出しから抜いた文字列でしかなく、`<figure>` のような
+// 一般語も混じる。リポジトリ内に実体を確認できたものだけを一次情報として認める。
+// （学習ログ自身への出現は根拠にしない。そこに書いてあるのは当たり前だから）
+function isVerifiableEvidence(facts) {
+  return Boolean(facts.existsOnDisk || facts.occursOutsideLearnings);
 }
 
 // 既に Queue / Done に同じ一次情報が載っているなら重複として弾く。
@@ -114,6 +122,20 @@ function readSafe(p) {
     return fs.readFileSync(p, "utf8");
   } catch {
     return "";
+  }
+}
+
+// 識別子が AGENT_LEARNINGS.md 以外の追跡ファイルに出現するか。
+function occursOutsideLearnings(keyword) {
+  try {
+    const out = execFileSync(
+      "git",
+      ["grep", "-l", "--fixed-strings", "--", keyword, "--", ".", `:(exclude)${LEARNINGS}`],
+      { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }
+    );
+    return out.trim().length > 0;
+  } catch {
+    return false; // git grep は不一致で exit 1。検証できなければ不成立に倒す
   }
 }
 
@@ -152,10 +174,18 @@ function build() {
     if (kws.length === 0) continue; // 検証不能 → 捨てる
     const uncovered = kws.filter((k) => isUncovered(k, corpora));
     if (uncovered.length === 0) continue;
+    // 一次情報が実在することを検証できないものは、ここで捨てる
+    const verifiedKws = uncovered.filter((k) =>
+      isVerifiableEvidence({
+        existsOnDisk: fs.existsSync(k),
+        occursOutsideLearnings: occursOutsideLearnings(k),
+      })
+    );
+    if (verifiedKws.length === 0) continue;
     candidates.push({
       channel: "zenn",
       title: e.title.replace(/`/g, ""),
-      evidence: uncovered,
+      evidence: verifiedKws,
       signal: `S1:learning:${e.date}`,
       foundAt: today,
     });
@@ -191,19 +221,30 @@ function build() {
     });
   }
 
-  // 一次情報が実在することを検証できないものは落とす（S3 を除く）
+  // 一次情報の実在検証。S1 は起票時点で検証済み、S2 はパスの実在、
+  // S3 は学習ログ内のタグ集計そのものが根拠なので対象外。
   const verified = candidates.filter((c) => {
-    if (c.signal.startsWith("S3")) return true;
     if (c.signal.startsWith("S2")) return fs.existsSync(c.evidence[0]);
     return true;
   });
 
-  return verified
+  const fresh = verified
     .filter((c) => !isDuplicate(queueMd, c.evidence))
-    .map((c) => ({ ...c, score: scoreCandidate(c, c.facts) }))
-    .filter((c) => c.score >= ADOPT_SCORE)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, ADOPT_LIMIT);
+    .map((c) => ({ ...c, score: scoreCandidate(c, c.facts) }));
+  const scored = fresh.filter((c) => c.score >= ADOPT_SCORE);
+  const adopted = scored.sort((a, b) => b.score - a.score).slice(0, ADOPT_LIMIT);
+
+  // 足切りの中間件数を残す（記事・採点の証拠として後から追試できるようにする）
+  console.log(
+    "[suggest:theme] raw=%d scored=%d adopted=%d (ADOPT_SCORE=%d, ADOPT_LIMIT=%d)",
+    fresh.length,
+    scored.length,
+    adopted.length,
+    ADOPT_SCORE,
+    ADOPT_LIMIT,
+  );
+
+  return adopted;
 }
 
 function apply(lines) {
@@ -251,6 +292,13 @@ function selfTest() {
     isDuplicate("... `scripts/foo.sh` ...", ["scripts/foo.sh"]),
     true
   );
+
+  eq("ディスクに実在すれば一次情報として認める",
+     isVerifiableEvidence({ existsOnDisk: true, occursOutsideLearnings: false }), true);
+  eq("学習ログ以外に出現すれば認める",
+     isVerifiableEvidence({ existsOnDisk: false, occursOutsideLearnings: true }), true);
+  eq("どちらも確認できなければ捨てる",
+     isVerifiableEvidence({ existsOnDisk: false, occursOutsideLearnings: false }), false);
 
   eq("S1 は無条件で採用圏", scoreCandidate({ signal: "S1:learning:2026-01-01" }), 3);
   eq("S2 は自己テストなしなら足切り", scoreCandidate({ signal: "S2:tool" }, { hasSelfTest: false, lines: 40 }), 1);
@@ -302,4 +350,4 @@ if (require.main !== module) {
   }
 }
 
-module.exports = { parseLearnings, keywordsOf, isUncovered, clusterTags, scoreCandidate, formatQueueLine, isDuplicate };
+module.exports = { parseLearnings, keywordsOf, isUncovered, clusterTags, scoreCandidate, isVerifiableEvidence, formatQueueLine, isDuplicate };
