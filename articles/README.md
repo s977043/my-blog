@@ -14,6 +14,16 @@ articles/
 
 画像は本ディレクトリではなく、リポジトリルートの`images/<slug>/*.png`に配置する（Zennの推奨構成に合わせてある）。
 
+## 執筆・レビューの正本
+
+- **媒体役割・多媒体展開**: `docs/content-channel-strategy.md`
+- **Zenn記事の構成判断**: `docs/article-guides/zenn-structure-best-practices.md`
+- **新規記事の構成検討入口**: `.claude/skills/tech-blog-writing/SKILL.md`
+- **レビュー実行・出力形式**: `.claude/agents/article-reviewer.md` / `.claude/commands/review-article.md`
+- 構成ガイドは固定テンプレートではなく、記事の目的・検索意図・読者・検証内容に応じて使い分ける
+- Zennの `type: tech | idea` と、実装/トラブルシュート/設計/考察などの構成タイプは別に判定する
+- **`articles/` には公開対象の記事以外のMarkdownを置かない**。ガイドや運用資料は `docs/` 等に置く
+
 ## ファイル名（slug）の規約
 
 - 半角英小文字 + 数字 + ハイフン、12〜50文字を推奨（Zennの制約）
@@ -51,7 +61,7 @@ npm run list:articles    # 認識されている記事一覧
 npm run check            # articles / books / Qiita CLIのまとめ確認
 ```
 
-新規記事は任意のエディタで`articles/<slug>.md`を作成する（`zenn new:article`を使うなら別途Zenn CLIのコマンドを利用）。
+新規記事は任意のエディタで`articles/<slug>.md`を作成する（`zenn new:article`を使うなら別途Zenn CLIのコマンドを利用）。構成から検討する場合は `.claude/skills/tech-blog-writing/SKILL.md` が対象媒体の構成ガイドを参照する。
 
 ## レビュー成果物との対応
 
@@ -60,6 +70,8 @@ npm run check            # articles / books / Qiita CLIのまとめ確認
 - レビュー生成: `/review-article <slug>` → `reviews/zenn/<slug>.md`
 - レビュー反映: `/apply-review <slug>` → `articles/<slug>.md`に反映
 - 一括実行: `/article-pipeline <slug>`
+
+`/review-article` は `docs/article-guides/zenn-structure-best-practices.md` を読んだうえで、既存の `article-reviewer` の観点と組み合わせ、再現性・技術的正確性・一次情報・読者の検索意図を確認する。
 
 Slash Commandの実体は`.claude/commands/`配下、反映ロジックのスキル本体は`.claude/skills/article-review-apply/`を参照。
 
@@ -77,6 +89,9 @@ Slash Commandの実体は`.claude/commands/`配下、反映ロジックのスキ
 
 ## 参考
 
+- [Zenn Community Guideline](https://zenn.dev/guideline)
+- [Zenn Markdown guide](https://zenn.dev/zenn/articles/markdown-guide)
+- [Zenn Tech / Idea](https://zenn.dev/tech-or-idea)
 - [Zenn CLI guide](https://zenn.dev/zenn/articles/zenn-cli-guide)
 - [Zennの記事・本の公開方法（GitHub連携）](https://zenn.dev/zenn/articles/connect-to-github)
 - ルートREADME: [../README.md](../README.md)
