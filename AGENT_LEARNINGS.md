@@ -116,6 +116,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 
 - 2026-08-20 — Skill の `allowed-tools` は事前承認であって排他的な権限制限ではない（排他制限は Custom Subagent の `tools`）
 ### G. CI / tooling / マルチAI
+- 2026-08-27 — `catch` が ReferenceError を握りつぶすと実装の誤りが「検証したが不一致」に化ける（純関数テストは依存欠落を検出しない）
 - 2026-05-21 — 媒体実測の取得は `scripts/fetch-channel-metrics.mjs` に集約
 - 2026-05-15 — CI run が runner を掴めず長時間 queued なら空コミットで re-trigger
 - 2026-05-18 — 同一結論へ収束したマルチAI相談は2回目以降スキップ
@@ -137,6 +138,19 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 ---
 
 ## 🧭 学びエントリ
+
+### 2026-08-27 — `catch` が ReferenceError を握りつぶすと、実装の誤りが「検証したが不一致」に化ける [Gotcha][Tooling]
+
+**事象**: `scripts/suggest-next-theme.js` の `occursOutsideLearnings()` が常に `false` を返していた。原因は `execFileSync` の import 漏れで、発生した ReferenceError を `catch { return false }` が飲み込んでいたこと。呼び出し側からは「git grep したが見つからなかった」と区別がつかず、S1 の一次情報検証が丸ごと無効化されたまま main にマージされた（PR #523）。
+
+**なぜ検出できなかったか**: self-test は純関数 `isVerifiableEvidence(facts)` に値を注入して検査していたため、`facts` を作る側の依存欠落は素通りした。「テストを追加した」と「欠陥を検出できる」は別。
+
+**対策**:
+- `catch` は**想定内の失敗だけ**を扱う。`git grep` なら不一致の `exit 1`（`e.status === 1`）のみを `false` に倒し、それ以外は再 throw する
+- 外部コマンドに依存する関数は、純関数テストとは別に **hit / miss の両方を実際に 1 回叩く** テストを持つ
+- テスト用の「存在しない文字列」はソースに直書きしない。リテラルがファイル内に出現して自分自身に hit する（実際に踏んだ）。実行時に連結して作る
+
+**関連**: 同 PR で、パス解決が cwd 相対だったためサブディレクトリから実行すると入力を 1 バイトも読めず「候補なし」で exit 0 する沈黙の失敗も同時に修正した。ルートは `__dirname` 起点の `git rev-parse --show-toplevel` で解決する。
 
 ### 2026-08-20 — Zenn の `/api/articles` は全件を返さない。件数の突合には `articlesCount` を使う [Gotcha][Tooling]
 

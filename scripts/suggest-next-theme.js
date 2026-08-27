@@ -21,14 +21,23 @@
 //   npm run suggest:theme              # dry-run。起票案を表示するだけ
 //   npm run suggest:theme -- --apply   # publish-queue.md の Queue セクションに追記
 //   npm run test:suggest-theme         # self-test（純関数のみ・I/O なし）
+//
+// リポジトリ内であれば cwd はどこでもよい。git リポジトリ外で起動した場合や
+// 必須入力を読めない場合は、0 件と報告せず exit 1 で停止する。
 
 const fs = require("fs");
 const path = require("path");
+const { execFileSync } = require("child_process");
 
-const LEARNINGS = "AGENT_LEARNINGS.md";
-const QUEUE = "docs/publish-queue.md";
-const ARTICLES_DIR = "articles";
-const SCRIPTS_DIR = "scripts";
+// パスはすべてリポジトリルート基準で解決する。
+// cwd 相対にすると、サブディレクトリや別ディレクトリから起動したときに
+// 入力を 1 バイトも読めないまま「候補なし」と報告して正常終了してしまう。
+const ROOT = repoRoot();
+const LEARNINGS_REL = "AGENT_LEARNINGS.md";
+const LEARNINGS = path.join(ROOT, LEARNINGS_REL);
+const QUEUE = path.join(ROOT, "docs/publish-queue.md");
+const ARTICLES_DIR = path.join(ROOT, "articles");
+const SCRIPTS_DIR = path.join(ROOT, "scripts");
 const CLUSTER_THRESHOLD = 4;
 const ADOPT_SCORE = 3; // これ未満は起票しない（台帳を候補で埋めない）
 const ADOPT_LIMIT = 5; // 1 回の起票上限。人間が一度に判断できる量に合わせる
@@ -117,6 +126,44 @@ function isDuplicate(queueMd, evidence) {
 
 // ---- I/O ----
 
+// リポジトリルートを求める。ここで失敗したら続行しない。
+// 「読めなかった」を空扱いで飲み込むと、沈黙が成功に見える。
+function repoRoot() {
+  try {
+    // cwd ではなくスクリプト自身の位置を起点にする。
+    // cwd 起点だとリポジトリ外から呼べなくなり、呼び出し側に暗黙の前提が生まれる。
+    return execFileSync("git", ["rev-parse", "--show-toplevel"], {
+      encoding: "utf8",
+      cwd: __dirname,
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+  } catch (e) {
+    // git の非ゼロ終了（= リポジトリ外）だけを想定内とする。
+    // それ以外（git が無い・実装の誤りなど）は握りつぶさず、そのまま投げる。
+    if (typeof e.status === "number") {
+      die("git リポジトリの中で実行してください（git rev-parse --show-toplevel が非ゼロ終了）");
+    }
+    throw e;
+  }
+}
+
+function die(msg) {
+  console.error(`[suggest:theme] ${msg}`);
+  process.exit(1);
+}
+
+// 必須入力。読めなければ黙って 0 件にせず、その場で止める。
+function mustRead(p) {
+  let content;
+  try {
+    content = fs.readFileSync(p, "utf8");
+  } catch (e) {
+    die(`必須入力を読めません: ${p} (${e.code})`);
+  }
+  if (content.trim().length === 0) die(`必須入力が空です: ${p}`);
+  return content;
+}
+
 function readSafe(p) {
   try {
     return fs.readFileSync(p, "utf8");
@@ -130,22 +177,27 @@ function occursOutsideLearnings(keyword) {
   try {
     const out = execFileSync(
       "git",
-      ["grep", "-l", "--fixed-strings", "--", keyword, "--", ".", `:(exclude)${LEARNINGS}`],
-      { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }
+      ["grep", "-l", "--fixed-strings", "--", keyword, "--", ".", `:(exclude)${LEARNINGS_REL}`],
+      { encoding: "utf8", cwd: ROOT, stdio: ["ignore", "pipe", "ignore"] }
     );
     return out.trim().length > 0;
-  } catch {
-    return false; // git grep は不一致で exit 1。検証できなければ不成立に倒す
+  } catch (e) {
+    // git grep は「不一致」を exit 1 で返す。これだけが想定内。
+    // それ以外を false に倒すと、実装の誤りが「検証したが見つからなかった」に化ける
+    // （実際、execFileSync の import 漏れが ReferenceError → 常に false になっていた）。
+    if (e.status === 1) return false;
+    throw e;
   }
 }
 
 function collectArticles() {
-  let files = [];
+  let files;
   try {
     files = fs.readdirSync(ARTICLES_DIR).filter((f) => f.endsWith(".md"));
-  } catch {
-    return [];
+  } catch (e) {
+    die(`記事ディレクトリを読めません: ${ARTICLES_DIR} (${e.code})`);
   }
+  if (files.length === 0) die(`記事ディレクトリが空です: ${ARTICLES_DIR}`);
   return files.map((f) => readSafe(path.join(ARTICLES_DIR, f)));
 }
 
@@ -161,8 +213,8 @@ function collectScripts() {
 }
 
 function build() {
-  const learningsMd = readSafe(LEARNINGS);
-  const queueMd = readSafe(QUEUE);
+  const learningsMd = mustRead(LEARNINGS);
+  const queueMd = mustRead(QUEUE);
   const articles = collectArticles();
   const corpora = [...articles, queueMd];
   const today = new Date().toISOString().slice(0, 10);
@@ -177,7 +229,7 @@ function build() {
     // 一次情報が実在することを検証できないものは、ここで捨てる
     const verifiedKws = uncovered.filter((k) =>
       isVerifiableEvidence({
-        existsOnDisk: fs.existsSync(k),
+        existsOnDisk: fs.existsSync(path.resolve(ROOT, k)),
         occursOutsideLearnings: occursOutsideLearnings(k),
       })
     );
@@ -224,7 +276,7 @@ function build() {
   // 一次情報の実在検証。S1 は起票時点で検証済み、S2 はパスの実在、
   // S3 は学習ログ内のタグ集計そのものが根拠なので対象外。
   const verified = candidates.filter((c) => {
-    if (c.signal.startsWith("S2")) return fs.existsSync(c.evidence[0]);
+    if (c.signal.startsWith("S2")) return fs.existsSync(path.resolve(ROOT, c.evidence[0]));
     return true;
   });
 
@@ -316,6 +368,25 @@ function selfTest() {
     score: 3,
   });
   eq("backlog 行になる", line.startsWith("- `[backlog]` **(zenn) 締切 未設定**: 「T」"), true);
+
+  // 純関数だけを検査していると、依存の欠落（import 漏れ等）を検出できない。
+  // 実際に git grep を 1 回叩いて、hit / miss の両方が返ることを確かめる。
+  eq("git grep が実在文字列を hit と判定する", occursOutsideLearnings("CLUSTER_THRESHOLD"), true);
+  // トークンをソースに直書きすると、そのリテラル自身が git grep に hit してしまう。
+  // 実行時に連結して、ファイル内に完全一致が存在しない文字列を作る。
+  const absent = ["__absent", "token", "9f3a2b__"].join("_");
+  eq("git grep が実在しない文字列を miss と判定する", occursOutsideLearnings(absent), false);
+
+  // cwd 非依存の回帰テスト。パス解決を cwd 相対に戻すとここで落ちる。
+  // （元の実装はサブディレクトリから実行すると入力を読めず「候補なし」と報告していた）
+  const cwdBefore = process.cwd();
+  try {
+    process.chdir("/");
+    eq("cwd を変えても必須入力を読める", mustRead(LEARNINGS).length > 0, true);
+    eq("cwd を変えても記事を読める", collectArticles().length > 0, true);
+  } finally {
+    process.chdir(cwdBefore);
+  }
 
   const failed = t.filter((x) => !x.ok);
   for (const x of t) console.log(`  ${x.ok ? "ok  " : "FAIL"} ${x.name}`);
