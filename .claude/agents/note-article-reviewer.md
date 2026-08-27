@@ -18,8 +18,6 @@ tools: Read, Grep, Glob, Bash, Write, WebFetch
 
 このエージェントは構成ルールを二重定義しない。構成判断で記述が競合した場合は `articles_note/guides/note-structure-best-practices.md` を優先する。
 
-レビュー時は `articles_note/checklists/note-article-quality-checklist.md` も参照する。このチェックリストは note記事品質の正本であり、Codex など他エージェントとも共有する。
-
 ## 状態別の扱い
 
 - **`new/`**: 未投稿の新規原稿。本文反映・編集が自由

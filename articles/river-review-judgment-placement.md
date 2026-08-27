@@ -523,3 +523,7 @@ River Reviewで取り組んでいるJudgment Placementは、その問いをも�
 - [deterministic-command-orchestrator.mjs - 検証対象commit](https://github.com/s977043/river-review/blob/56e0ae4c4e03efd7f5b254fbe2eabde22edbd7c9/src/lib/deterministic-command-orchestrator.mjs)
 - [finding-critic.mjs - 検証対象commit](https://github.com/s977043/river-review/blob/56e0ae4c4e03efd7f5b254fbe2eabde22edbd7c9/src/lib/finding-critic.mjs)
 - [AIコードレビューを仕組みにする: 指摘の分類・記録・改善の回し方](https://zenn.dev/mine_take/articles/ai-code-review-feedback-ops)
+
+---
+
+普段は X（[@mine_take](https://x.com/mine_take)）で、AIコーディングをチーム開発に乗せる運用設計について発信している。
