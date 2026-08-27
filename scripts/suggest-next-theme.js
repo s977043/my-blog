@@ -20,7 +20,7 @@
 // ■ 使い方
 //   npm run suggest:theme              # dry-run。起票案を表示するだけ
 //   npm run suggest:theme -- --apply   # publish-queue.md の Queue セクションに追記
-//   npm run test:suggest-theme         # self-test（純関数のみ・I/O なし）
+//   npm run test:suggest-theme         # self-test（純関数 + git grep / パス解決の実挙動）
 //
 // リポジトリ内であれば cwd はどこでもよい。git リポジトリ外で起動した場合や
 // 必須入力を読めない場合は、0 件と報告せず exit 1 で停止する。
@@ -138,18 +138,26 @@ function repoRoot() {
       stdio: ["ignore", "pipe", "ignore"],
     }).trim();
   } catch (e) {
-    // git の非ゼロ終了（= リポジトリ外）だけを想定内とする。
-    // それ以外（git が無い・実装の誤りなど）は握りつぶさず、そのまま投げる。
+    // 想定内は 2 つだけ。どちらも「環境がそうなっている」だけで実装の誤りではない。
+    //   - git の非ゼロ終了 = リポジトリ外から起動した
+    //   - ENOENT           = git が入っていない
+    // それ以外（実装の誤りなど）は握りつぶさず、そのまま投げる。
     if (typeof e.status === "number") {
       die("git リポジトリの中で実行してください（git rev-parse --show-toplevel が非ゼロ終了）");
+    }
+    if (e.code === "ENOENT") {
+      die("git が見つかりません。git をインストールして PATH に通してください");
     }
     throw e;
   }
 }
 
+// 戻らない。process.exit が差し替えられた場合でも呼び出し元が続行しないよう、
+// 到達しない throw を置いて「die の後ろは無い」ことを構造で示す。
 function die(msg) {
   console.error(`[suggest:theme] ${msg}`);
   process.exit(1);
+  throw new Error(msg);
 }
 
 // 必須入力。読めなければ黙って 0 件にせず、その場で止める。
@@ -371,6 +379,8 @@ function selfTest() {
 
   // 純関数だけを検査していると、依存の欠落（import 漏れ等）を検出できない。
   // 実際に git grep を 1 回叩いて、hit / miss の両方が返ることを確かめる。
+  // hit 側はこのファイル自身に含まれる語で足りる。狙いは「git grep が実際に走るか」で、
+  // どのファイルに当たるかではない（import 漏れならここが false になる）。
   eq("git grep が実在文字列を hit と判定する", occursOutsideLearnings("CLUSTER_THRESHOLD"), true);
   // トークンをソースに直書きすると、そのリテラル自身が git grep に hit してしまう。
   // 実行時に連結して、ファイル内に完全一致が存在しない文字列を作る。
