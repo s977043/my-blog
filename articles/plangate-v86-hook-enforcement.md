@@ -67,7 +67,7 @@ v8.5.0 までは「危ない条件をどれだけ止められるか」が課題�
 
 この役割分担を図にすると、v8.6.0 は Hook enforcement の置き換えではなく、Hook が止めた事実を改善材料に変える層です。
 
-![PlanGate v8.5.0 と v8.6.0 の役割分担](/images/plangate-v86-hook-enforcement/v85-to-v86-ja.svg)
+![PlanGate v8.5.0 と v8.6.0 の役割分担](/images/plangate-v86-hook-enforcement/v85-to-v86-ja.png)
 
 ## v8.6.0 で追加された 4 本柱
 
@@ -124,7 +124,7 @@ bin/plangate metrics --aggregate --json
 
 Metrics v1 の使い方は、単発の集計で終わらせず、次の改善へ戻すところまでを 1 つのループとして見ると理解しやすくなります。
 
-![PlanGate Metrics v1 のイベント改善ループ](/images/plangate-v86-hook-enforcement/metrics-event-loop-ja.svg)
+![PlanGate Metrics v1 のイベント改善ループ](/images/plangate-v86-hook-enforcement/metrics-event-loop-ja.png)
 
 ### Privacy はスキーマで強制する
 
