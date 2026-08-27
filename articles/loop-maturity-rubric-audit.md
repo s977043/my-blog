@@ -3,7 +3,7 @@ title: "AIに開発フローを採点させたら、採点基準のほうが壊�
 emoji: "📐"
 type: "tech"
 topics: ["ai駆動開発", "claudecode", "aiエージェント", "開発生産性", "自動化"]
-published: false
+published: true
 ---
 
 :::message
