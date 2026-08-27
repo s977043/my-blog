@@ -40,7 +40,6 @@
 - `[ready-to-publish]` **#12 (note) 締切 2026-09-03**: 「AI駆動開発を「個人技」で終わらせない。チームの仕組みに変えるまで」（`articles_note/new/plangate-team-rollout.md`。PR #524 マージ済み・構成レビュー完了〔P1/P2 指摘なし〕）。一次情報: Growth-Teams-Agent の `docs/team-onboarding/CHANGELOG.md`・`improvement-backlog.md`〔FB-001/031/032〕・`.agents/metrics/`、plangate README。**公開前に人間判断が要る残件**: ①チーム統計・GTA内部情報・改善バックログ由来の実数の公開可否 ②note公開時に目次をON ③ASCII図の実表示確認（2026-08-27 に code block の最大表示幅を 67→38 に圧縮済み。崩れる場合は全体図のみ画像化）
 
 - `[ready-to-publish]` **#13 (zenn) 締切 2026-08-29**: 「AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計」（`articles/river-review-judgment-placement.md`、14,209字）。`reviews/zenn/river-review-judgment-placement.md` が `blocked=false mustHigh=0`（2026-08-26 実測）。release/zenn へは #535 で `published: false` のまま同期済み。公開手順は flip PR（main）→ sync PR（release/zenn）の2本
-- `[ready-to-publish]` **#14 (zenn) 締切 2026-08-31**: 「AIに開発フローを採点させたら、採点基準のほうが壊れていた」（`articles/loop-maturity-rubric-audit.md`、9,784字）。`reviews/zenn/loop-maturity-rubric-audit.md` が `blocked=false mustHigh=0`（PR #534 で must-high F1 を解消）。同じく #535 で同期済み。**#13 とは 24h 以上あけてマージする**（実効 rate-limit 24h/1本）
 - `[ready]` **#11 (zenn) 締切 2026-09-07**: 「worktree 分離だけでは防げない — 並列AIセッションのGit事故を"事後検知"で機械化する」（仮）。一次情報: `scripts/check-pr-staleness.sh`＋テスト、`scripts/hooks/pre-commit|pre-push`、Round 3〜5 の実測インシデント（#404/#405 の squash 済み記事巻き戻し等、`memory/project_parallel_session_metrics.md`）。差別化: 市場は git worktree による事前分離記事が多数だが、同一 working tree での実事故観測データと検知系（staleness チェック・hooks）は空白（theme-discovery 2026-08-10、スコア 17/20）
 - `[done]` #7 (zenn-book) は **2026-06-01 公開完了**（下記 Done 参照）。本文・図・cover・5系統＋ultracode レビュー完了後、release/zenn PR #350 マージで go-live
 - `[ready-to-publish]` #9 (zenn) は「Bookを多層AIレビューで作った話」。内容は収束済み・公開可。タイミングのみ分離（Book公開→update同期→新規publish の順で間隔を空ける）
@@ -59,6 +58,8 @@
 <!-- suggest:theme:insert-here 自動起票はこの行の直前に追記される。締切未設定の候補が締切つきの行より上に来ないよう、位置を固定している。移動・削除するとスクリプトが停止する。 -->
 
 ## Done
+
+- 2026-08-27 zenn loop-maturity-rubric-audit https://zenn.dev/minewo/articles/loop-maturity-rubric-audit （queue #14、締切 8/31 から 4 日前倒し。ループ成熟度ルーブリックによる自己採点と改善の記録。公開3点セット: X導線追加 #539 → flip #540 main → sync #541 release/zenn でマージし deploy 発火。HTTP 200・og:title・Zenn API 出現を確認済み〔id 640688、published_at 14:45 JST〕。レビュー経緯は /review-improve-loop 2ループ〔Humanize PASS〕＋ Codex CLI の独立ファクトチェック10件＋セルフレビュー。指摘由来の追随PRが #532 #533 #534。公開時 check:publish-readiness は stale WARN〔recorded=598f2ddb / current=64441e91〕だったが、レビュー後の差分は #539 のX導線4行の追記のみと全件確認のうえ公開した）
 
 - 2026-08-20 note shaping_the_build_note https://note.com/mine_unilabo/n/n5070e13232ce （queue 外の新規執筆、WXR インポート→手動公開。id n5070e13232ce、publishAt 18:37 JST。前記事 `ai_engineering_essence`〔n103182c44979〕の続編として Andrew Ng の Skills Map を起点に企画したが、複数視点レビューで主題を2回転換: ①#517 で Time to Learning を中心に再構成しタイトルを「AIがコードを書く時代、エンジニアは『何を作るか』をどう決めるのか」→「AI時代の開発で短くすべきは、Time to CodeではなくTime to Learning」へ変更②#518 で冒頭に自己紹介と問題提起を加筆〔6,154→7,156字〕。図版は #504 で3点追加後、#517 の再構成で本文参照が1点〔shaping-decision-loop.png〕に減り、#519 でヒーロー画像を新タイトル版へ差し替え。WXR は改稿のたびに再生成が必要で、実際に2回作り直した〔16:02版→18:37版〕。`--base-url` 付き生成→verify_wxr 合格→インポート→手動公開。HTTP 200・note API 出現・eyecatch 設定を確認済み）
 
