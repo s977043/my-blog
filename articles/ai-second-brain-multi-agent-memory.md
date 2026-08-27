@@ -198,3 +198,7 @@ Hermes の仕事は、自分で実装を抱え込むことではありません�
 - 関連: [ObsidianとSupermemory MCPをつなぐ知識管理ワークフロー](https://zenn.dev/minewo/articles/obsidian-supermemory-mcp) — 外部 MCP サービスで横断共有する案。本記事は「自前 Vault を正本に固定し指示ベースで集約する」点が異なる
 - 関連: [AIエージェントの『進めて』問題：自走と確認の境界をmemoryで永続化する](https://zenn.dev/minewo/articles/ai-agent-autonomy-boundary-with-memory)
 - 関連: [推測で書いた学びが次の罠になった — AGENT_LEARNINGS.md の運用設計](https://zenn.dev/minewo/articles/agent-learnings-md-operation)
+
+---
+
+普段は X（[@mine_take](https://x.com/mine_take)）で、AIコーディングをチーム開発に乗せる運用設計について発信している。
