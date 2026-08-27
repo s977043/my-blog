@@ -203,7 +203,7 @@ v1 はまだ粗い。E を定義していないモジュールもあり、万能
 
 > 工程を実行する仕組みはある。しかし、次に何をやるかを決める仕組みと、今どこで止まっているかを機械が扱う仕組みが弱い。
 
-![記事公開パイプライン6工程の担当を Before / After で色分けした比較図](/images/loop-maturity-rubric-audit/pipeline-before-after-ja.svg)
+![記事公開パイプライン6工程の担当を Before / After で色分けした比較図](/images/loop-maturity-rubric-audit/pipeline-before-after-ja.png)
 
 後工程の「公開する」はかなり機械化していた。一方、前工程の「何を書くか」と、横断的な「今どの状態か」は人間の頭に残っていた。
 
@@ -293,7 +293,7 @@ S1 が 8 件、S2 が 20 件、S3 が 6 件。
 
 34 → 15 → 5 まで絞った。
 
-![34件がスコア足切りで15件に、件数上限で5件に絞られるファネル図](/images/loop-maturity-rubric-audit/adopt-funnel-ja.svg)
+![34件がスコア足切りで15件に、件数上限で5件に絞られるファネル図](/images/loop-maturity-rubric-audit/adopt-funnel-ja.png)
 
 ここで重要な注意がある。
 
@@ -349,7 +349,7 @@ S1 が 8 件、S2 が 20 件、S3 が 6 件。
 
 自分に都合よく「改善したから B」と付けるのではなく、条件を読み直した結果 C に留まった。評価器を作った意味が、成功した軸よりこちらに出た。
 
-![6軸それぞれのBefore/Afterのグレードと、Aに届かなかった理由の比較図](/images/loop-maturity-rubric-audit/score-before-after-ja.svg)
+![6軸それぞれのBefore/Afterのグレードと、Aに届かなかった理由の比較図](/images/loop-maturity-rubric-audit/score-before-after-ja.png)
 
 次に B へ上げるなら、`suggest:theme` を schedule / hook / CI などから起動し、人間が「候補を探す処理を開始する」役割からも抜ける必要がある。
 
@@ -424,13 +424,6 @@ Human-in-the-loop を置くなら、「どこで人間に戻すか」だけで�
 ただ、少なくとも「AI の印象で採点する」状態から、条件・証拠・反証を残せるところまでは進めた。
 
 そして公開前レビューでもう一度採点が壊れたことで、このアプローチの価値を逆に確認できた。
-
-実物はリポジトリに置いている。
-
-- [ループ成熟度ルーブリック](https://github.com/s977043/my-blog/blob/main/docs/loop-audit/rubric.md)
-- [Before の採点結果](https://github.com/s977043/my-blog/blob/main/docs/loop-audit/result-before.md)
-- [After の採点結果](https://github.com/s977043/my-blog/blob/main/docs/loop-audit/result-after.md)
-- [仕事の発見スクリプト](https://github.com/s977043/my-blog/blob/main/scripts/suggest-next-theme.js)
 
 ---
 
