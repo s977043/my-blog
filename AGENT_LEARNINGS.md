@@ -57,6 +57,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 
 - 2026-08-20 — `sync-release-zenn.sh` の公開影響プレビューは新規ファイル追加を検知しない。deploy 実差分を直接照合する
 - 2026-08-20 — Zenn `/api/articles` は約23件しか返さない。全件突合は `zenn.dev/<user>` の `articlesCount`
+- 2026-08-27 — Zenn は SVG を配信できない（Cloudinary `/image/fetch/` が 400）。図版は PNG 1600x900 で置く
 ### B. Qiita publish / drift / 重複公開
 **現行正本**: `CLAUDE.md` §公開前ガード（`check:qiita-remote-cache` / `publish:qiita` wrapper）
 - 2026-06-03 — `qiita publish` は冒頭で全記事 pull。`.remote/` 手編集でローカル改変が巻き戻る
@@ -88,6 +89,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-05-16 — `M AGENTS.md` は claude-mem 自動注入ブロックで WIP ではない
 - 2026-06-10 — 並列セッションが squash 済み記事を別 base で再マージし磨き込みを巻き戻す（`git diff main...branch` 3点比較で実害確認）
 - 2026-07-19 — check:pr-staleness 誤検知が1日4件。原因は lookback 和集合の過剰計上と macOS collation。#464 で resurrection 判定＋LC_ALL=C 修正
+- 2026-08-27 — ゲートは実行直前に最新の状態で測る（古い checkout の readiness は OK に化ける）
 
 ### E. GitHub account / gh CLI / PR 運用
 **現行正本**: `CLAUDE.md` §作業開始時のチェックリスト / `scripts/hooks/pre-push`
@@ -101,6 +103,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-06-11 — このリポジトリは merge commit 不可・squash only。`gh pr merge` は常に `--squash` を使う
 - 2026-08-10 — Dependabot alerts API の 403 はスコープ不足とは限らない。まず `gh auth refresh`
 - 2026-08-12 — squash 自動削除設定下では `push origin --delete` が空振り。掃除は `git fetch --prune`
+- 2026-08-27 — Dependabot alerts API の 403 はスコープが揃っていても発生。まず `gh auth refresh`
 
 ### F. review / 記事品質 / convention
 **現行正本**: `.claude/agents/*` / `AGENTS.md` §表現規約
@@ -115,6 +118,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-06-07 — 記事公開 PR に中間レビュー成果物(reviews/)を同梱しない（改善で陳腐化する）
 
 - 2026-08-20 — Skill の `allowed-tools` は事前承認であって排他的な権限制限ではない（排他制限は Custom Subagent の `tools`）
+- 2026-08-27 — レビュー成果物は `articleHash` を `git hash-object` と突き合わせてから信じる
 ### G. CI / tooling / マルチAI
 - 2026-08-27 — `catch` が ReferenceError を握りつぶすと実装の誤りが「検証したが不一致」に化ける（純関数テストは依存欠落を検出しない）
 - 2026-05-21 — 媒体実測の取得は `scripts/fetch-channel-metrics.mjs` に集約
@@ -138,6 +142,52 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 ---
 
 ## 🧭 学びエントリ
+
+### 2026-08-27 — Zenn は SVG 画像を配信できない。図版は PNG で置く [Platform][Gotcha]
+
+**観察**: Zenn は記事内の画像を Cloudinary 経由で配信するが、**SVG は `/image/fetch/...` で HTTP 400（0 bytes）を返し表示されない**。PNG は `/image/upload/...` で HTTP 200（`image/png`）を返す。Referer / User-Agent を付けても結果は変わらないため、ホットリンク防止ではなく**形式が原因**。影響したのは `loop-maturity-rubric-audit`（3枚）/ `multi-ai-discussion-roadmap-rewrite`（2枚）/ `plangate-v86-hook-enforcement`（2枚）で、**Zenn 記事で SVG を使ったものは 1 つも図が表示されたことがなかった**。
+
+**なぜ検出できなかったか**: `check:internal-links` は参照先ファイルの**実在**しか見ておらず、表示可否を検証しない。「存在すること」と「表示されること」は別。さらに、既存記事が `.svg` を使っていたのでそれを前例として踏襲したが、**その前例自体が壊れていた**（壊れた前例は前例にならない）。
+
+**対策/学び**:
+- Zenn の図版は **PNG（1600x900）** で置く。SVG は使わない
+- cairosvg でラスタライズする場合、フォントスタック `-apple-system,...,'Yu Gothic',...` は解決できず**日本語が豆腐（□）になる**。`YuGothic` へ差し替えてから変換する
+- PNG 化後は live で **HTTP 200** と `static.zenn.studio/user-upload/deployed-images/` からの配信を確認する（ファイルを置いただけで終わりにしない）
+
+**根拠**: 2026-08-27 の実測（SVG: `/image/fetch/` → 400 / 0 bytes、PNG: `/image/upload/` → 200 / image/png）
+
+### 2026-08-27 — レビュー成果物は `articleHash` を突き合わせてから信じる [Workflow][Gotcha]
+
+**観察**: 未追跡のレビュー成果物が `mustHigh=2` を主張していたが、その `articleHash` は**削除済みブランチ系統の版**のものだった。main の記事は既に指摘の一部を織り込み済みで、実際に残っていたブロッカーは **1 件だけ**。古い hash の成果物をそのまま信じると、解決済みの指摘へ対応工数を払うことになる。
+
+**対策/学び**:
+- レビュー結果を採用する前に、記録された `articleHash` と `git hash-object <記事>` を突き合わせる。不一致なら「当時の版に対する指摘」として再検証してから採否を決める
+- 本文を変更すると readiness 記録は**必ず**陳腐化する。公開直前に本文を触るなら、readiness の再取得か stale の許容判断を**明示的に**行う（実例: X 導線を後から追記して stale WARN になった）
+
+**根拠**: 2026-08-27 の公開準備セッション（未追跡レビュー成果物の hash 不一致を検出）
+
+### 2026-08-27 — ゲートは実行直前に最新の状態で測る [Workflow][Gotcha]
+
+**観察**: 共有ワーキングツリーが **1 コミット古い**状態で `check:publish-readiness` を実行し「OK」と出た。最新 `origin/main` の worktree で測り直すと `stale WARN` だった。ゲートの出力は「いつの状態を測ったか」に完全に依存する。
+
+**対策/学び**: 並列セッションが同一チェックアウトを触る環境では、ゲート実行前に以下のいずれかを行う。
+
+```bash
+# A: HEAD が origin/main と一致しているか確認してから測る
+git fetch origin main && [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ] || echo "STALE"
+# B: 測定専用の worktree を切って測る
+git worktree add --detach /tmp/gate-check origin/main
+```
+
+**根拠**: 2026-08-27 の公開準備セッション（同一 slug に対し古い checkout で OK / 最新で stale WARN）
+
+### 2026-08-27 — Dependabot alerts API はスコープが揃っていても古いトークンで 403 になる [Tooling][Gotcha]
+
+**観察**: `gh api /repos/.../dependabot/alerts` が 403 を返した。`gh auth status` 上のスコープは要件を満たしており、スコープ不足を疑って権限を洗い直したが原因ではなかった。実際にはトークンが古く、`gh auth refresh` で解消した。
+
+**対策/学び**: Dependabot alerts API の 403 は、**スコープ不足を疑う前に `gh auth refresh` を先に試す**。スコープ表示は「そのトークンに付いている権限」であって「そのトークンが今も有効か」を示さない。
+
+**根拠**: 2026-08-27 の実測。2026-08-10 の同型エントリ（E 節）の再発
 
 ### 2026-08-27 — `catch` が ReferenceError を握りつぶすと、実装の誤りが「検証したが不一致」に化ける [Gotcha][Tooling]
 
