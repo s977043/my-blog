@@ -1,6 +1,6 @@
 ---
 name: note-article-review
-description: note.com記事（articles_note/<state>/<slug>.md、<state>は new/drafts/published）のレビュー成果物を生成・反映するワークフロー。記事タイプ判定、3ペルソナ観点、JTFスタイル準拠、スマホ可読性、note内発見性を重視する。
+description: note.com記事（articles_note/<state>/<slug>.md、<state>は new/drafts/published）のレビュー成果物を生成し、編集可能な状態では指摘を反映するワークフロー。drafts は読み取り専用ミラーのためレビューのみ行う。
 ---
 
 # note-article-review
@@ -8,177 +8,194 @@ description: note.com記事（articles_note/<state>/<slug>.md、<state>は new/d
 note.com記事のレビュー → 指摘反映 のライフサイクルを扱うスキル。Zenn向けの `article-review-apply` スキルに対応する note版。
 
 ## トリガー
-- `/review-note-article <state>/<slug>` コマンド経由（レビュー生成）
-- または `note-article-reviewer` エージェントから参照
 
-## 前提条件
+- `/review-note-article <state>/<slug>` コマンド経由（レビュー生成）
+- `note-article-reviewer` エージェントから参照
+- 本スキルを直接利用する場合
+
+## 正本と前提条件
+
 - 対象記事: `articles_note/<state>/<slug>.md`（`<state>` は `new` / `drafts` / `published`）
 - 出力先: `reviews/note/<state>/<slug>.md`
-- 品質チェックリスト: `articles_note/checklists/note-article-quality-checklist.md`
+- **構成判断の正本**: `articles_note/guides/note-structure-best-practices.md`
+- 品質チェック: `articles_note/checklists/note-article-quality-checklist.md`
+- レビュー生成: `.claude/agents/note-article-reviewer.md`
+- レビュー反映: `.claude/agents/note-review-applier.md`
+- note状態管理の正本: `articles_note/README.md`
+- 媒体役割: `docs/content-channel-strategy.md`
 - main ブランチが最新 (`git pull origin main`)
 - git identity がリポジトリ規約どおり (`mine_take <s977043@users.noreply.github.com>`)
 
+構成ガイドを固定テンプレートとして機械適用しない。記事タイプ・読者・目的を優先する。
+
 ## ディレクトリ構成
-```
+
+```text
 articles_note/
-├── new/        # 未投稿の新規原稿
-├── drafts/     # noteに下書きとして存在する記事
-└── published/  # noteで公開済みの記事
+├── guides/     # 構成判断の正本
+├── checklists/ # 品質確認
+├── new/        # 未投稿。編集の正
+├── drafts/     # note上の下書きミラー。読み取り専用
+└── published/  # note公開済み記事。修正はnote側へ手動反映
 
-reviews/
-├── zenn/       # Zenn記事のレビュー
-├── note/
-│   ├── new/
-│   ├── drafts/
-│   └── published/
-└── qiita/      # Qiita記事のレビュー（将来用）
+reviews/note/
+├── new/
+├── drafts/
+└── published/
 ```
 
-## note と Zenn の差分（スキル設計上の重要ポイント）
+## note と Zenn の前提差分
+
 | 項目 | Zenn | note |
-|------|------|------|
+|---|---|---|
 | Front Matter | 必須 (`published`, `title`, `topics`, `type`, `emoji`) | なし（本文冒頭） |
-| 配置規約 | `articles/<slug>.md` | `articles_note/<state>/<slug>.md` |
-| コードブロック | 中心的要素 | 補助的要素 |
-| 検索流入 | Google中心 | Google + note内検索/おすすめ/マガジン |
-| 画像・埋め込み | Zenn CLI対応 | note埋め込みカード前提 |
-| 表現規約 | Markdown中心 | JTFスタイル準拠を意識 |
-| 読者端末 | PC比率高め | スマホ比率高め |
-| 記事タイプ | 技術ガイド中心 | オピニオン/体験/解説が混在 |
-| 公開判定 | `published: true` フラグ | ディレクトリ (`published/`) |
+| 配置 | `articles/<slug>.md` | `articles_note/<state>/<slug>.md` |
+| コード | 中心になり得る | 補助的要素 |
+| 構成の主眼 | 再現性・技術判断 | 一次体験・背景・読者体験 |
+| 表現 | Markdown / Zenn記法 | JTFスタイル・スマホ可読性 |
+| 公開判定 | `published: true` | ディレクトリ (`published/`) |
+| 公開済み修正 | release/zennへ反映 | note管理画面で手動反映 |
 
 ## 状態別の扱い
-- **`new/`**: 本文反映・編集が自由。通常PR
-- **`drafts/`**: note上に下書きとして存在。反映はnote側との整合確認が必要
-- **`published/`**: note で公開済み。反映PR時は **⚠️ 公開済み記事** バナー必須
 
-## 手順（レビュー生成フェーズ）
+- **`new/`**: 未投稿。本文反映・編集が自由
+- **`drafts/`**: noteエクスポートから再生成される**読み取り専用ミラー**。レビュー生成は可、**指摘反映は不可**
+- **`published/`**: note公開済み。ローカルで修正提案を作る場合は ⚠️ 公開済み記事 バナー必須。マージ後はnote管理画面へ手動反映する
+
+`drafts/` に対応する `new/` の編集正本が存在する場合は、反映対象をその `new/` へ切り替えて明示的にレビューし直す。対応する `new/` がない場合はnote管理画面で修正し、次回バックアップで同期する。
+
+## レビュー生成フェーズ
 
 ### 1. ブランチ作成
+
 ```bash
 git checkout main
 git pull origin main
 git checkout -b docs/review-note-<slug>
 ```
 
-### 2. 出力先ディレクトリ準備
+### 2. 出力先準備
+
 ```bash
 mkdir -p reviews/note/<state>
 ```
 
 ### 3. 記事タイプ判定
-`articles_note/<state>/<slug>.md` を読み、以下のいずれかに分類:
-- **オピニオン記事**: 主張・意見・問題提起が中心
-- **体験/振り返り記事**: 実体験・時系列の出来事が中心
-- **解説/ハウツー記事**: 手順・仕組み・技術解説が中心
-- **混合**: 複数タイプを併せ持つ
 
-判定結果を想定読者ペルソナに反映する。
+`articles_note/<state>/<slug>.md` を読み、主タイプを判定する。
 
-### 4. 3ペルソナでレビュー生成
-`note-article-reviewer` エージェントのフォーマット準拠:
-- a) noteディレクター視点
-- b) note編集者視点
-- c) 想定読者視点（記事タイプに応じて動的ロール）
+- オピニオン / 考察
+- 体験 / 振り返り
+- 解説 / ハウツー
+- 混合
 
-`articles_note/checklists/note-article-quality-checklist.md` も参照する。まず「必須確認」を見たうえで、テーマ設計 / サムネ・タイトル設計 / 本文構成 / 読者体験の観点から、記事に対して実質的な改善余地があるものだけを指摘化する。全項目を機械的に列挙しない。
+### 4. 3ペルソナレビュー
 
-### 5. JTFスタイル個別チェック（必須指摘項目）
-- ダッシュ（—、――、——、―）の混入 → 括弧/句点への置換提案
-- 三点リーダー記号の統一
-- 英数字の半角統一
-- 全角カッコ使用
-- 敬体/常体の混在
+`note-article-reviewer` に委譲する。エージェント自身が次を読むため、同じ構成ルールをここで重複定義しない。
 
-### 6. note特有チェック
-- タイトルフック（30文字前後でのインパクト）
-- リード（冒頭3段落）が検索意図と一致しているか
-- 段落が全角100文字・3〜5行以内か
-- 2スペース改行の使い方が意図的か
-- ハッシュタグ候補が記事意図と一致するか
-- マガジン適合性
-- テーマ、タイトル、リード、CTAが同じ読者像に向いているか
-- 誰の悩みに向けた記事か、読後に何が変わるかが冒頭で伝わるか
+- `articles_note/guides/note-structure-best-practices.md`
+- `articles_note/checklists/note-article-quality-checklist.md`
 
-### 7. コミット
+レビュー観点:
+
+- noteディレクター
+- note編集者
+- 記事タイプに応じた想定読者
+- 事実・リンク・数値の確認
+
+問題が少ない記事に件数合わせの指摘を作らない。指摘0件でも総合評価と未検証事項を残す。
+
+### 5. コミット & PR
+
 ```bash
 git add reviews/note/<state>/<slug>.md
-git commit -m "docs(reviews): add 3-persona note review for <state>/<slug>
-
-Generate review with persona mapping and JTF-style checks:
-- State: <state>
-- Type: <記事タイプ>
-- Findings: <件数>件
-
-Co-Authored-By: <利用中モデル名> <noreply@anthropic.com>"
-```
-
-### 8. push & PR作成
-```bash
+git commit -m "docs(reviews): add 3-persona note review for <state>/<slug>"
 git push -u origin docs/review-note-<slug>
 gh pr create --title "docs(reviews): add note review for <state>/<slug>" --body "(レビュー要約)"
 ```
 
-## 手順（反映フェーズ）
+`drafts/` もレビュー成果物の生成までは可能。記事本文は変更しない。
 
-### 9. 分類
-`review-applier` エージェントの分類基準に沿って採用/保留/却下に仕分け。note特有の追加基準:
-- **採用追加**: JTFスタイル違反、明白な表記揺れ
-- **保留追加**: タイトル/リードの変更、ハッシュタグ提案、マガジン移動（運用判断）
-- **却下追加**: Zenn基準の指摘（front matter、コードブロック言語指定など）がnote記事に誤って付いた場合
+## 反映フェーズ
 
-### 10. 採用分の反映
-- 対象は `articles_note/<state>/<slug>.md`
-- 最小差分で Edit
-- JTFスタイル違反は一括で置換
+### 6. state gate
 
-### 11. 検証
-- Markdown見出し階層が保たれているか
-- 記事全体のリズム（段落長・改行）が崩れていないか
-- 編集後に再度 JTFスタイルに沿っているか
-- 記事タイプに応じた中核語の一貫性
+反映前に `<state>` を確認する。
 
-### 12. コミット & PR
+- `new` → 続行
+- `published` → 続行。ただし公開済みバナー + note管理画面への手動反映が必須
+- **`drafts` → ここで停止。`note-review-applier` に記事編集をさせず、commit / push / 反映PRを作らない**
+
+### 7. 採否分類
+
+`new/` / `published/` のみ、**`note-review-applier`** を使用する。Zenn版 `review-applier` は使わない。
+
+- 採用: 誤字脱字、明白な表記揺れ、JTFスタイル、壊れたリンクなど客観修正
+- 保留: タイトル/リード、構成変更、追記、トーンなど著者判断が必要なもの
+- 却下: 事実誤認、コンテキスト違い、Zenn固有観点の誤混入
+
+### 8. 採用分の反映
+
+- 対象: `articles_note/new/<slug>.md` または `articles_note/published/<slug>.md`
+- 最小差分でEdit
+- `reviews/note/**` は記録として変更しない
+- **`articles_note/drafts/**` はEditしない**
+
+### 9. 検証
+
+- Markdown見出し階層
+- 段落・改行のリズム
+- JTFスタイル
+- 記事タイプに応じた中心主張の一貫性
+- `published/` の場合、note管理画面での手動反映が必要とPRに明記したか
+
+### 10. コミット & PR
+
 ```bash
 git add articles_note/<state>/<slug>.md
-git commit -m "docs(articles_note): apply review feedback to <state>/<slug>
-
-Apply <N> accepted findings from reviews/note/<state>/<slug>.md.
-
-Co-Authored-By: <利用中モデル名> <noreply@anthropic.com>"
-
+git commit -m "docs(articles_note): apply review feedback to <state>/<slug>"
 gh pr create --title "docs(articles_note): apply note review feedback to <state>/<slug>" --body "$(採否一覧テンプレート)"
 ```
 
-**`published/` 記事の場合**、PR本文冒頭に必ず以下を含める:
-```
+この手順は `new/` / `published/` のみ。`drafts/` では実行しない。
+
+`published/` 記事の場合、PR本文冒頭に必ず次を含める。
+
+```markdown
 > ⚠️ **公開済み記事** (`articles_note/published/`)
 > 本PRは既にnote.com上で公開されている記事への修正提案を含みます。
 > note はインポートで既存記事を上書き更新できないため、マージ後はnote管理画面で手動反映が必要です。
 ```
 
 ## ガードレール
-- [ ] 記事本文以外のファイル（reviews/ 配下）を勝手に変更しない
-- [ ] レビュー生成フェーズでは `articles_note/**/*.md` を変更しない
-- [ ] `published/` 配下の記事に反映PRを作る場合は ⚠️ バナー必須
-- [ ] JTFスタイル違反（特にダッシュ）の指摘を意図的に却下する場合は理由を明記
+
+- [ ] レビュー生成では `articles_note/**/*.md` を変更しない
+- [ ] **`articles_note/drafts/**` はレビューのみ。反映時にEdit / commit / PRしない**
+- [ ] 反映時は `note-review-applier` を使い、Zenn固有記法を混入させない
+- [ ] `published/` の反映PRには ⚠️ バナー必須
 - [ ] 自動マージ禁止
-- [ ] 採否一覧が空の場合はPRを作らず報告で終える
+- [ ] URL検証失敗をリンク切れと断定しない
+- [ ] 構成ガイドを固定テンプレートとして強制しない
 
 ## エラー回復
-- Edit が conflict した場合: 該当指摘は保留に降格し、PR本文に理由記載
-- URL 検証失敗時: 技術指摘は保留に降格
-- JTFスタイル置換が意図を破壊しそうな場合: 保留に降格し、著者判断を仰ぐ
+
+- `drafts/` を反映対象に渡された: 本文を変更せず停止し、`new/` 正本またはnote管理画面での修正を案内
+- Edit conflict: 該当指摘を保留にして理由を記録
+- URL検証失敗: 未検証として扱う
+- JTF修正が文意を変えそう: 自動反映せず保留
+- ブランチ不一致: commitせず停止
 
 ## 成果物
-- レビューフェーズ: `reviews/note/<state>/<slug>.md`（PR: `docs/review-note-<slug>`）
-- 反映フェーズ: `articles_note/<state>/<slug>.md` への差分（PR: `chore/apply-review-note-<slug>`）
-- 採否一覧を含むPR本文
+
+- レビュー: `reviews/note/<state>/<slug>.md`
+- 反映: `new/` / `published/` のみ記事差分 + 採否一覧を含むPR
+- `drafts/`: レビュー成果物のみ。本文反映成果物は作らない
 
 ## 参考
-- `.claude/agents/note-article-reviewer.md` (エージェント定義)
-- `.claude/agents/article-reviewer.md` (Zenn版、対応関係の確認用)
-- `.claude/skills/article-review-apply/SKILL.md` (Zenn版、反映フェーズ設計の参考)
-- `articles_note/checklists/note-article-quality-checklist.md` (note記事品質チェックリスト)
-- `reviews/note/new/ai_agent_operations_opinion_note.md` (new/ の既存レビューフォーマット)
-- `reviews/note/published/n3aae6b5467b9.md` (published/ の既存レビューフォーマット)
+
+- `articles_note/README.md`
+- `articles_note/guides/note-structure-best-practices.md`
+- `articles_note/checklists/note-article-quality-checklist.md`
+- `.claude/agents/note-article-reviewer.md`
+- `.claude/agents/note-review-applier.md`
+- `.claude/agents/article-reviewer.md`（Zenn版との比較用）

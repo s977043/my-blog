@@ -9,19 +9,56 @@
 - 公開したら下の Done へ移動し、公開日を記録
 - Zenn は `published_at` を締切日 18:00 JST に設定 → release/zenn へ反映（rate-limit 24h/3本厳守）
 
+## 状態遷移（機械可読）
+
+各 Queue 行は先頭に `[state]` を持つ。**エージェントはこの表の遷移条件だけで状態を進め、`requires-human` に入ったら停止して通知する。**
+
+| state | 意味 | 次へ進む条件（機械判定） |
+|---|---|---|
+| `backlog` | 候補として起票済み。着手可否は未判定 | 締切が設定され、一次情報の参照先が1つ以上ある |
+| `ready` | 着手可能。一次情報が揃っている | 対応する `articles/<slug>.md` が存在する |
+| `drafting` | 本文執筆中 | `npm run check` が通る |
+| `in-review` | レビュー中 | `reviews/zenn/<slug>.md` の `publish-readiness` が `blocked=false` かつ `mustHigh=0` |
+| `ready-to-publish` | 公開待ち | `npm run check:zenn-pace` が FAIL でない |
+| `requires-human` | **異常停止**。人間の確認が必要 | （機械では進めない。人間が原因を解消して前の state へ戻す） |
+| `done` | 公開済み。live URL と HTTP 200 を記録 | — |
+
+### `requires-human` への遷移条件（異常停止の定義）
+
+以下のいずれかを満たしたら、state を `requires-human` に落として**理由を行末に追記し停止する**。
+
+- `in-review` で改善ループが **5 回**を超えても `mustHigh > 0` が残る
+- 改善ループ **2 回連続で `mustHigh` が減少しない**（収束していない）
+- `check:zenn-pace` が FAIL（rate-limit 抵触。公開は翌日以降）
+- `check:publish-readiness` が `stale`（レビュー後に本文が変わった）
+- 一次情報の参照先が実在しない（リンク切れ・削除済みスクリプト）
+
+> **なぜ数値を決め打ちするか**: 「収束しなければ人間へ」だけでは、エージェントは収束していないことを自分で認めない。回数という**外形的な基準**にすることで、判定に主観が入る余地を消す。5 回 / 2 回連続は現時点の暫定値で、実測が溜まったら見直す（この数値自体が仮説）。
+
 ## Queue（締切順）
 
-- **#10 (zenn) 締切 2026-08-24**: 「品質ゲートは効かなかったのではなく、『呼ばれたか』を測れていなかった」（slug `ai-review-gate-not-called`、執筆済み・published:false）。一次情報: `.claude/skills/article-humanizer-ja` の実装＋`/review-improve-loop`。**実装 = #459/#476、実行証跡 = #477/#480/#496 系**。当初は「review-only の設計論」で企画したが、複数視点レビューで中心主張を差し替え。再現可能な実測は **1か月・変更記事8本・Humanize実行証跡2本＝証跡カバレッジ25%**。成果物がないことを未実行と同一視せず、対象/起動/結果/永続化/検証/採否/実効権限を独立に観測する設計へ一般化した。Claude Code Skillの `allowed-tools` を排他的な権限制限だと誤認していた点も公式仕様照合で訂正し、失敗事例として本文へ反映。差別化: Humanizerの紹介ではなく、**ゲート自身の外側に分母を置いて観測可能性を設計する**実運用記事
-- **#11 (zenn) 締切 2026-09-07**: 「worktree 分離だけでは防げない — 並列AIセッションのGit事故を"事後検知"で機械化する」（仮）。一次情報: `scripts/check-pr-staleness.sh`＋テスト、`scripts/hooks/pre-commit|pre-push`、Round 3〜5 の実測インシデント（#404/#405 の squash 済み記事巻き戻し等、`memory/project_parallel_session_metrics.md`）。差別化: 市場は git worktree による事前分離記事が多数だが、同一 working tree での実事故観測データと検知系（staleness チェック・hooks）は空白（theme-discovery 2026-08-10、スコア 17/20）
-- #7 (zenn-book) は **2026-06-01 公開完了**（下記 Done 参照）。本文・図・cover・5系統＋ultracode レビュー完了後、release/zenn PR #350 マージで go-live
-- #9 (zenn) は「Bookを多層AIレビューで作った話」。内容は収束済み・公開可。タイミングのみ分離（Book公開→update同期→新規publish の順で間隔を空ける）
-- #2 公開時、本文「関連記事」の scope-creep 参照に下記 Done の実 Qiita URL を差し込む（相互リンク確定）
-- #3〜#6 はデザイン三部作 Qiita 化＋PlanGate Qiita 化。Codex 助言に基づく段階公開（PlanGate → DESIGN.md → penpot-react → open-design）。1週ペース・初動の反応とタイトル調整余地を確保
-- #6（open-design）は Zenn 原典が 2026-05-26 週公開予定のため、Zenn 公開後の cross-post `:::note info` 有効化を**公開作業の前段**に組み込む（コメントアウト退避済み、手順は記事内 HTML コメントに記載）
-- #8 (open-design) は memory `project_open_design_article_scheduled` で記録済みの予定日。release/zenn rate-limit（24h/5本・1PR3本・24h間隔）を遵守
-- 補充は手動。次テーマが決まったら行を追加（Rolling/テンプレは凍結中のため使わない）
+- `[backlog]` **(zenn) 締切 未設定**: 「check-article-humanizer.js が解いている問題」（自動起票 2026-08-26 / signal:S2:tool / score:4）。一次情報: `scripts/check-article-humanizer.js`
+- `[backlog]` **(zenn) 締切 未設定**: 「check-publish-readiness.js が解いている問題」（自動起票 2026-08-26 / signal:S2:tool / score:4）。一次情報: `scripts/check-publish-readiness.js`
+- `[backlog]` **(zenn) 締切 未設定**: 「suggest-next-theme.js が解いている問題」（自動起票 2026-08-26 / signal:S2:tool / score:4）。一次情報: `scripts/suggest-next-theme.js`
+- `[backlog]` **(zenn) 締切 未設定**: 「Zenn の /api/articles は全件を返さない。件数の突合には articlesCount を使う」（自動起票 2026-08-26 / signal:S1:learning:2026-08-20 / score:3）。一次情報: `/api/articles`、`articlesCount`
+- `[backlog]` **(zenn) 締切 未設定**: 「sync-release-zenn.sh の公開影響プレビューは新規ファイル追加を検知しない」（自動起票 2026-08-26 / signal:S1:learning:2026-08-20 / score:3）。一次情報: `sync-release-zenn.sh`
+
+- `[ready-to-publish]` **#12 (note) 締切 2026-09-03**: 「AI駆動開発を「個人技」で終わらせない。チームの仕組みに変えるまで」（`articles_note/new/plangate-team-rollout.md`。PR #524 マージ済み・構成レビュー完了〔P1/P2 指摘なし〕）。一次情報: Growth-Teams-Agent の `docs/team-onboarding/CHANGELOG.md`・`improvement-backlog.md`〔FB-001/031/032〕・`.agents/metrics/`、plangate README。**公開前に人間判断が要る残件**: ①チーム統計・GTA内部情報・改善バックログ由来の実数の公開可否 ②note公開時に目次をON ③ASCII図の実表示確認（2026-08-27 に code block の最大表示幅を 67→38 に圧縮済み。崩れる場合は全体図のみ画像化）
+
+- `[ready]` **#11 (zenn) 締切 2026-09-07**: 「worktree 分離だけでは防げない — 並列AIセッションのGit事故を"事後検知"で機械化する」（仮）。一次情報: `scripts/check-pr-staleness.sh`＋テスト、`scripts/hooks/pre-commit|pre-push`、Round 3〜5 の実測インシデント（#404/#405 の squash 済み記事巻き戻し等、`memory/project_parallel_session_metrics.md`）。差別化: 市場は git worktree による事前分離記事が多数だが、同一 working tree での実事故観測データと検知系（staleness チェック・hooks）は空白（theme-discovery 2026-08-10、スコア 17/20）
+- `[done]` #7 (zenn-book) は **2026-06-01 公開完了**（下記 Done 参照）。本文・図・cover・5系統＋ultracode レビュー完了後、release/zenn PR #350 マージで go-live
+- `[ready-to-publish]` #9 (zenn) は「Bookを多層AIレビューで作った話」。内容は収束済み・公開可。タイミングのみ分離（Book公開→update同期→新規publish の順で間隔を空ける）
+- `[done]` #2 公開時、本文「関連記事」の scope-creep 参照に下記 Done の実 Qiita URL を差し込む（相互リンク確定）
+- `[done]` #3〜#6 はデザイン三部作 Qiita 化＋PlanGate Qiita 化。Codex 助言に基づく段階公開（PlanGate → DESIGN.md → penpot-react → open-design）。1週ペース・初動の反応とタイトル調整余地を確保
+- `[done]` #6（open-design）は Zenn 原典が 2026-05-26 週公開予定のため、Zenn 公開後の cross-post `:::note info` 有効化を**公開作業の前段**に組み込む（コメントアウト退避済み、手順は記事内 HTML コメントに記載）
+- `[done]` #8 (open-design) は memory `project_open_design_article_scheduled` で記録済みの予定日。release/zenn rate-limit（24h/5本・1PR3本・24h間隔）を遵守
+- 補充は `npm run suggest:theme` が自動で行う（シグナルから `[backlog]` 行を起票）。`[backlog]` の採否だけが人間の判断で、行の作成そのものは人間の仕事にしない。
 
 ## Done
+
+- 2026-08-20 note shaping_the_build_note https://note.com/mine_unilabo/n/n5070e13232ce （queue 外の新規執筆、WXR インポート→手動公開。id n5070e13232ce、publishAt 18:37 JST。前記事 `ai_engineering_essence`〔n103182c44979〕の続編として Andrew Ng の Skills Map を起点に企画したが、複数視点レビューで主題を2回転換: ①#517 で Time to Learning を中心に再構成しタイトルを「AIがコードを書く時代、エンジニアは『何を作るか』をどう決めるのか」→「AI時代の開発で短くすべきは、Time to CodeではなくTime to Learning」へ変更②#518 で冒頭に自己紹介と問題提起を加筆〔6,154→7,156字〕。図版は #504 で3点追加後、#517 の再構成で本文参照が1点〔shaping-decision-loop.png〕に減り、#519 でヒーロー画像を新タイトル版へ差し替え。WXR は改稿のたびに再生成が必要で、実際に2回作り直した〔16:02版→18:37版〕。`--base-url` 付き生成→verify_wxr 合格→インポート→手動公開。HTTP 200・note API 出現・eyecatch 設定を確認済み）
+
+- 2026-08-20 zenn ai-review-gate-not-called https://zenn.dev/minewo/articles/ai-review-gate-not-called （queue #10、締切 8/24 から4日前倒し。Humanize ゲートの運用実測記事。当初「review-only Humanizer の設計論」で企画したが、多段レビューで中心主張を2回差し替え: ①4視点構成レビュー〔読者/スクラム・EM/編集/敵対的〕が初期の単一原因論を棄却し n=3 → n=8 の運用実測へ ②ChatGPT/GPT-5.6 Sol が Critical 2件を検出〔Skill の `allowed-tools` を排他的権限制限と誤認・公式仕様照合で訂正／「成果物がない」から「未実行」を推論〕。Codex CLI は事実誤認4件を検出、Gemini CLI は IneligibleTierError で実行不能。セルフ Humanize は passed:false〔F02〕→太字76→45。flip #510 main / sync #511 release/zenn でマージ→deploy 発火、HTTP 200・og:title・API 出現確認済み〔published_at 01:39 JST、id 636381〕）
 
 - 2026-08-02 zenn ai-merge-ready-state-machine https://zenn.dev/minewo/articles/ai-merge-ready-state-machine （queue 外の新規執筆。PlanGate Delivery層〔v8.18〕を題材に「AIにPRを収束させるがマージはさせない」設計。構成案(#493)→ChatGPT執筆→事実検証(コード断片・6ファイル参照が実装と一致)→#495改稿(GitHub権限説明)→一次検証(PRマージ=Contents write をGitHub公式で確認)→/review-improve-loop 2周(Humanize passed)。flip #497 main / sync #498 release/zenn でマージ→Zenn deploy 発火、HTTP 200/API 反映確認済み〔published_at 12:17 JST〕。前回課題だったZenn連携中断は本公開時点で復旧済み）
 - 2026-08-02 note ai_engineering_essence https://note.com/mine_unilabo/n/n103182c44979 （新規 note 公開、WXR インポート→手動公開。図解2枚〔Loop/Graph PNG〕付き。`articles_note/new/ai_engineering_essence_note.md` は編集の正本として残置、次回エクスポート取り込みで `published/n103182c44979.md` が自動生成される）
