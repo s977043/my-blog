@@ -52,7 +52,9 @@
 - `[done]` #3〜#6 はデザイン三部作 Qiita 化＋PlanGate Qiita 化。Codex 助言に基づく段階公開（PlanGate → DESIGN.md → penpot-react → open-design）。1週ペース・初動の反応とタイトル調整余地を確保
 - `[done]` #6（open-design）は Zenn 原典が 2026-05-26 週公開予定のため、Zenn 公開後の cross-post `:::note info` 有効化を**公開作業の前段**に組み込む（コメントアウト退避済み、手順は記事内 HTML コメントに記載）
 - `[done]` #8 (open-design) は memory `project_open_design_article_scheduled` で記録済みの予定日。release/zenn rate-limit（24h/5本・1PR3本・24h間隔）を遵守
-- 補充は `npm run suggest:theme` が自動で行う（シグナルから `[backlog]` 行を起票）。`[backlog]` の採否だけが人間の判断で、行の作成そのものは人間の仕事にしない。
+- 補充は `npm run suggest:theme -- --apply` が自動で行う（引数なしは dry-run）。`[backlog]` の採否だけが人間の判断で、行の作成そのものは人間の仕事にしない。
+
+<!-- suggest:theme:insert-here 自動起票はこの行の直前に追記される。締切未設定の候補が締切つきの行より上に来ないよう、位置を固定している。移動・削除するとスクリプトが停止する。 -->
 
 ## Done
 

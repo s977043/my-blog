@@ -38,6 +38,9 @@ const LEARNINGS = path.join(ROOT, LEARNINGS_REL);
 const QUEUE = path.join(ROOT, "docs/publish-queue.md");
 const ARTICLES_DIR = path.join(ROOT, "articles");
 const SCRIPTS_DIR = path.join(ROOT, "scripts");
+// 起票の挿入位置。Queue セクションは「締切順」を名乗っているので、締切未設定の候補を
+// 先頭に積むと宣言した順序を機械が壊す。位置は台帳側のマーカーで明示的に決める。
+const INSERT_MARKER = "<!-- suggest:theme:insert-here";
 const CLUSTER_THRESHOLD = 4;
 const ADOPT_SCORE = 3; // これ未満は起票しない（台帳を候補で埋めない）
 const ADOPT_LIMIT = 5; // 1 回の起票上限。人間が一度に判断できる量に合わせる
@@ -122,6 +125,15 @@ function isVerifiableEvidence(facts) {
 // 既に Queue / Done に同じ一次情報が載っているなら重複として弾く。
 function isDuplicate(queueMd, evidence) {
   return evidence.some((e) => queueMd.includes(e));
+}
+
+// 台帳にマーカーがあれば、その直前へ lines を差し込んだ全文を返す。
+// マーカーが無ければ null（呼び出し元が停止する。位置を推測して書き込まない）。
+function insertIntoQueue(md, lines) {
+  const idx = md.indexOf(INSERT_MARKER);
+  if (idx === -1) return null;
+  const lineStart = md.lastIndexOf("\n", idx) + 1;
+  return md.slice(0, lineStart) + lines.join("\n") + "\n\n" + md.slice(lineStart);
 }
 
 // ---- I/O ----
@@ -308,10 +320,11 @@ function build() {
 }
 
 function apply(lines) {
-  const md = readSafe(QUEUE);
-  const anchor = "## Queue（締切順）\n";
-  if (!md.includes(anchor)) throw new Error("Queue セクションが見つからない");
-  const next = md.replace(anchor, anchor + "\n" + lines.join("\n") + "\n");
+  const md = mustRead(QUEUE);
+  const next = insertIntoQueue(md, lines);
+  if (next === null) {
+    die(`${QUEUE} に挿入マーカー ${INSERT_MARKER} ...> が見つかりません`);
+  }
   fs.writeFileSync(QUEUE, next);
 }
 
@@ -366,6 +379,9 @@ function selfTest() {
   eq("S2 は規模でも加点", scoreCandidate({ signal: "S2:tool" }, { hasSelfTest: true, lines: 200 }), 4);
   eq("S3 は閾値2倍未満なら足切り", scoreCandidate({ signal: "S3:cluster:5" }), 1);
   eq("S3 は閾値2倍以上で採用圏", scoreCandidate({ signal: "S3:cluster:32" }), 3);
+  // 境界そのものを踏む。これが無いと >= を > に変える変異が生き残る。
+  eq("S3 の境界 1 つ手前は足切り", scoreCandidate({ signal: `S3:cluster:${CLUSTER_THRESHOLD * 2 - 1}` }), 1);
+  eq("S3 の境界ちょうどは採用圏", scoreCandidate({ signal: `S3:cluster:${CLUSTER_THRESHOLD * 2}` }), 3);
 
   const line = formatQueueLine({
     channel: "zenn",
@@ -397,6 +413,25 @@ function selfTest() {
   } finally {
     process.chdir(cwdBefore);
   }
+
+  // 挿入位置。締切つきの行より下、マーカーの直前に入ること。
+  const queueFixture = [
+    "## Queue（締切順）",
+    "",
+    "- `[ready]` **#11 締切 2026-09-07**: 既存",
+    "- 補充は自動",
+    "",
+    "<!-- suggest:theme:insert-here 説明 -->",
+    "",
+    "## Done",
+    "",
+  ].join("\n");
+  const inserted = insertIntoQueue(queueFixture, ["- `[backlog]` 新規A", "- `[backlog]` 新規B"]);
+  const rows = inserted.split("\n");
+  eq("既存の締切つき行より下に入る", rows.indexOf("- `[backlog]` 新規A") > rows.indexOf("- `[ready]` **#11 締切 2026-09-07**: 既存"), true);
+  eq("マーカーより上に入る", rows.indexOf("- `[backlog]` 新規B") < rows.findIndex((l) => l.startsWith("<!-- suggest:theme:insert-here")), true);
+  eq("Done セクションを侵さない", rows.indexOf("- `[backlog]` 新規B") < rows.indexOf("## Done"), true);
+  eq("マーカーが無ければ null（位置を推測しない）", insertIntoQueue("## Queue（締切順）\n\n- 既存\n", ["- 新規"]), null);
 
   const failed = t.filter((x) => !x.ok);
   for (const x of t) console.log(`  ${x.ok ? "ok  " : "FAIL"} ${x.name}`);
@@ -431,4 +466,4 @@ if (require.main !== module) {
   }
 }
 
-module.exports = { parseLearnings, keywordsOf, isUncovered, clusterTags, scoreCandidate, isVerifiableEvidence, formatQueueLine, isDuplicate };
+module.exports = { parseLearnings, keywordsOf, isUncovered, clusterTags, scoreCandidate, isVerifiableEvidence, formatQueueLine, isDuplicate, insertIntoQueue };
