@@ -5,8 +5,8 @@
     <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
       <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0f172a" flood-opacity="0.13"/>
     </filter>
-    <marker id="arrow" markerWidth="16" markerHeight="16" refX="12" refY="8" orient="auto">
-      <path d="M0,0 L16,8 L0,16 z" fill="#0f8f88"/>
+    <marker id="arrow" markerUnits="userSpaceOnUse" markerWidth="36" markerHeight="26" refX="30" refY="13" orient="auto">
+      <path d="M0,0 L36,13 L0,26 z" fill="#0f8f88"/>
     </marker>
   </defs>
   <rect width="1600" height="900" fill="#fbfcfd"/>
