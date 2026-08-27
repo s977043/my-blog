@@ -29,8 +29,10 @@
     "check:publish-readiness": "node scripts/check-publish-readiness.js",
     "test:publish-readiness": "node scripts/check-publish-readiness.js --self-test",
     "check:article-humanizer": "node scripts/check-article-humanizer.js",
+    "check:zenn-image-format": "node scripts/check-zenn-image-format.js",
+    "test:zenn-image-format": "node scripts/check-zenn-image-format.js --self-test",
     "test:article-humanizer": "node scripts/check-article-humanizer.js --self-test",
-    "check": "npm run list:articles && npm run list:books && npm run check:qiita && npm run check:note-ref && npm run check:note-images && npm run check:note-tables && npm run check:qiita-publish-hygiene && npm run check:doc-freshness && npm run check:zenn-title && npm run check:fm-title && npm run check:faq-coverage && npm run check:internal-links && npm run check:zenn-pace && npm run check:learnings-index && npm run check:article-humanizer",
+    "check": "npm run list:articles && npm run list:books && npm run check:qiita && npm run check:note-ref && npm run check:note-images && npm run check:note-tables && npm run check:qiita-publish-hygiene && npm run check:doc-freshness && npm run check:zenn-title && npm run check:fm-title && npm run check:faq-coverage && npm run check:internal-links && npm run check:zenn-pace && npm run check:learnings-index && npm run check:article-humanizer && npm run check:zenn-image-format",
     "check:learnings-index": "node scripts/check-learnings-index.js",
     "suggest:theme": "node scripts/suggest-next-theme.js",
     "test:suggest-theme": "node scripts/suggest-next-theme.js --self-test"
