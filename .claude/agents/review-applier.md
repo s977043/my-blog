@@ -118,20 +118,6 @@ ls -1 articles/<slug>.md reviews/zenn/<slug>.md
 > mainへのマージではZenn deployは発火しません。内容確認後、別途 `release/zenn` へ取り込むことでZennへ反映します。
 ```
 
-### Round 5 パターン: `git switch -c` 後の commit 混入対策（2026-05-07 追加）
-
-`git switch -c <new>` で新規ブランチを作成した直後に、実際には並列セッションが先に作成・push 済の別ブランチに切り替わっている事例が観測（PR #203）。検知方法:
-
-```bash
-git switch -c chore/apply-review-<slug>
-git branch --show-current   # 期待した <new> と一致しなければ即停止
-```
-
-不一致の場合:
-- **commit を作らずに停止**（commit すると並列セッションのブランチに混入）
-- 状況を呼び出し元へ報告し、対応をユーザー判断に委ねる
-- 詳細: `memory/project_parallel_session_metrics.md` Round 5、`AGENT_LEARNINGS.md` 2026-05-07 「並列セッションによるブランチ切替頻度」
-
 ## PR本文テンプレート
 
 ```markdown
