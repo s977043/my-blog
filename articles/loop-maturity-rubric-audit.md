@@ -431,3 +431,7 @@ Human-in-the-loop を置くなら、「どこで人間に戻すか」だけで�
 - [Before の採点結果](https://github.com/s977043/my-blog/blob/main/docs/loop-audit/result-before.md)
 - [After の採点結果](https://github.com/s977043/my-blog/blob/main/docs/loop-audit/result-after.md)
 - [仕事の発見スクリプト](https://github.com/s977043/my-blog/blob/main/scripts/suggest-next-theme.js)
+
+---
+
+普段は X（[@mine_take](https://x.com/mine_take)）で、AIコーディングをチーム開発に乗せる運用設計について発信している。

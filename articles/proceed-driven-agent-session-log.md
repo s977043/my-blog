@@ -82,3 +82,7 @@ published: false
 <!-- 下記は ai-second-brain-multi-agent-memory が published になってから復活させる（現状 published:false で 404 になるためリンク切れ防止に一時退避）:
 - 関連: [AIエージェントの記憶を1つのObsidian Vaultに集約する — Hermes司令塔のmulti-agent設計](https://zenn.dev/minewo/articles/ai-second-brain-multi-agent-memory)
 -->
+
+---
+
+普段は X（[@mine_take](https://x.com/mine_take)）で、AIコーディングをチーム開発に乗せる運用設計について発信している。
