@@ -522,7 +522,7 @@ River Reviewで取り組んでいるJudgment Placementは、その問いをも�
 - [deterministic-gate.mjs - 検証対象commit](https://github.com/s977043/river-review/blob/56e0ae4c4e03efd7f5b254fbe2eabde22edbd7c9/src/lib/deterministic-gate.mjs)
 - [deterministic-command-orchestrator.mjs - 検証対象commit](https://github.com/s977043/river-review/blob/56e0ae4c4e03efd7f5b254fbe2eabde22edbd7c9/src/lib/deterministic-command-orchestrator.mjs)
 - [finding-critic.mjs - 検証対象commit](https://github.com/s977043/river-review/blob/56e0ae4c4e03efd7f5b254fbe2eabde22edbd7c9/src/lib/finding-critic.mjs)
-- [AIコードレビューを仕組みにする: 指摘の分類・記録・改善の回し方](https://zenn.dev/mine_take/articles/ai-code-review-feedback-ops)
+- [AIコードレビューを仕組みにする: 指摘の分類・記録・改善の回し方](https://zenn.dev/minewo/articles/ai-code-review-feedback-ops)
 
 ---
 
