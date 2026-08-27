@@ -40,7 +40,7 @@ v8.7.0 では「自己進化フレーム（Steering Loop / Trace Timeline / Dogf
 
 全体像を先に図にすると、今回の議論は次のような流れでした。
 
-![5ラウンドのマルチエージェント議論フロー](/images/multi-ai-discussion-roadmap-rewrite/round-flow-ja.svg)
+![5ラウンドのマルチエージェント議論フロー](/images/multi-ai-discussion-roadmap-rewrite/round-flow-ja.png)
 
 ## Round 1-2：Codex で Steering Loop と自己進化軸を詰める
 
@@ -130,7 +130,7 @@ Round 5 までの結論を反映して、v8.7.0 milestone を組み替えまし�
 
 この変化は、単なる優先順位の入れ替えではなく、価値の届け先が変わった結果です。
 
-![Option B から Option D へロードマップ主軸が変わった比較図](/images/multi-ai-discussion-roadmap-rewrite/option-b-to-d-ja.svg)
+![Option B から Option D へロードマップ主軸が変わった比較図](/images/multi-ai-discussion-roadmap-rewrite/option-b-to-d-ja.png)
 
 ロードマップ書き換えと README / philosophy への本質的価値メッセージ反映は別 PR に分けてマージ済みで、押し出された PBI は次のマイルストーンへ移しました。
 
