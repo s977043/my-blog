@@ -6,20 +6,22 @@ note.com (`@mine_unilabo`) の記事を、公式エクスポートを正とし�
 
 ```
 articles_note/
-├── README.md                        このファイル
-├── assets/                          画像（実体）。Markdownから ../assets/... で参照
+├── README.md                         このファイル
+├── assets/                           画像（実体）。Markdownから ../assets/... で参照
 ├── checklists/                       note記事の品質チェックリスト
+├── guides/                           note記事の構成・執筆ベストプラクティス
 ├── export/
 │   └── YYYY-MM-DD/
-│       └── *.zip                    公式エクスポートZIP原本（日時別バックアップ）
-├── published/                       note公開中記事 (.md) — 参照・編集用コピー
-├── drafts/                          note下書き記事 (.md) — 参照・編集用コピー
-└── new/                             未投稿の新規原稿 (.md)
+│       └── *.zip                     公式エクスポートZIP原本（日時別バックアップ）
+├── published/                        note公開中記事 (.md) — 参照・編集用コピー
+├── drafts/                           note下書き記事 (.md) — 参照・編集用コピー
+└── new/                              未投稿の新規原稿 (.md)
 ```
 
 - **`export/YYYY-MM-DD/`** — noteから落とした公式WXRのZIPを**そのまま**保管。履歴として残す
 - **`assets/`** — 最新エクスポートに含まれる画像を展開した実体
 - **`checklists/`** — 記事作成前・執筆中・公開前レビューで使う品質チェックリスト
+- **`guides/`** — note向けの構成・タイトル・リード・読了設計などの再利用可能な知識
 - **`published/` / `drafts/`** — ZIPから展開・Markdown化した編集用ビュー。`wp:status` で振り分け
 - **`new/`** — これから書く記事の原稿置き場。noteには未投稿
 
@@ -30,6 +32,7 @@ articles_note/
 - **`new/<slug>.md`** = 編集の正（canonical）。Markdown テーブル等の原形を保持。以後の本文修正はここで行う
 - **`drafts/<guid>.md`** = note 実体のミラー（読み取り専用扱い）。テーブルは note 仕様で平坦化済み。**手で編集しない**（次回エクスポート取り込みで上書き再生成される）
 - インポート完了後も `new/<slug>.md` は削除しない（編集の正として残す）。重複は許容し、`drafts/` 側を信頼源にしない
+- ただし **note で公開された時点でこの原則は終了する**。記事が `published/<guid>.md` として降りてきたら、対応する `new/<slug>.md` は削除する（以後はサーバ状態＝エクスポートが唯一の正）
 
 ## note仕様上の重要な制約
 
@@ -42,10 +45,12 @@ articles_note/
 
 ## 品質チェック
 
+- **note記事構成ベストプラクティス**: `guides/note-structure-best-practices.md`
 - **note記事品質チェックリスト**: `checklists/note-article-quality-checklist.md`
-- 用途: 記事作成前、執筆中、公開前レビューで、テーマ設計 / サムネ・タイトル設計 / 本文構成 / 読者体験を確認する
-- Codex などのエージェントも、note記事の作成・レビュー時はこのチェックリストを参照する
-- 短時間レビューでは、まず「必須確認」を見る
+- 構成ガイドは、タイトル / リード / 見出し / 具体→失敗→一般化 / 保存できる持ち帰り / スマホ読了設計の正本
+- 品質チェックリストは、記事作成前・執筆中・公開前レビューで、テーマ設計 / サムネ・タイトル設計 / 本文構成 / 読者体験を確認する
+- Codex などのエージェントも、note記事の新規作成・構成レビュー時は**構成ガイドと品質チェックリストの両方**を参照する
+- 短時間レビューでは、まずチェックリストの「必須確認」と「note構成ベストプラクティス」を見る
 
 ## 運用フロー
 
@@ -58,15 +63,16 @@ articles_note/
 
 ### ② 新規記事の作成・投稿
 
-1. `checklists/note-article-quality-checklist.md` でテーマ・読者・読後変化を確認
-2. `new/<slug>.md` に執筆
-3. 公開前に同チェックリストでタイトル・リード・本文構成・読者体験を確認
-4. 記事で使う画像が `articles_note/assets/` にある場合は、**先に GitHub `main` に公開**
-5. `.claude/skills/note-export-import/scripts/md_to_wxr.py` で単一記事WXRを `articles_note/build/import-<slug>-YYYYMMDD-HHMM.xml` に変換（`--out` 省略時は日時自動付与）
+1. `guides/note-structure-best-practices.md` で、タイトル・リード・見出し・持ち帰りの構成方針を決める
+2. `checklists/note-article-quality-checklist.md` でテーマ・読者・読後変化を確認
+3. `new/<slug>.md` に執筆
+4. 公開前に構成ガイドと品質チェックリストで、タイトル・リード・本文構成・読者体験を確認
+5. 記事で使う画像が `articles_note/assets/` にある場合は、**先に GitHub `main` に公開**
+6. `.claude/skills/note-export-import/scripts/md_to_wxr.py` で単一記事WXRを `articles_note/build/import-<slug>-YYYYMMDD-HHMM.xml` に変換（`--out` 省略時は日時自動付与）
    - 画像を note に自動取り込みさせる場合は `--base-url https://raw.githubusercontent.com/s977043/my-blog/main/articles_note/assets` を付ける
-6. noteインポート → 下書きとして作成される
-7. noteエディタで確認・画像差し替え → 公開
-8. 公開後は次回バックアップ時に `published/` に反映される
+7. noteインポート → 下書きとして作成される
+8. noteエディタで確認・画像差し替え → 公開
+9. 公開後は次回バックアップ時に `published/` に反映される
 
 ### ③ 既存記事の更新
 
@@ -115,8 +121,8 @@ python3 .claude/skills/note-export-import/scripts/md_to_wxr.py \
 - **個人**: 本文に「個人の活動による」「会社の公式見解では」「公式見解とは異なる」の免責あり
 - **公式寄り**: 上記免責なし、かつ「ユニラボ」「PRONI」「アイミツ」等の社名言及あり
 
-## 現状のスナップショット（2026-04-16時点）
+## 現状のスナップショット（2026-08-24時点）
 
-- `export/2026-04-16/` に公式ZIP保管
-- `published/` 22記事 / `drafts/` 10記事 / `new/` 1記事
-- `assets/` 画像90枚
+- `export/2026-08-24/` に公式ZIP保管（`export/` は .gitignore 対象。ZIP原本はローカル保管のみ）
+- `published/` 33記事 / `drafts/` 3記事 / `new/` 0記事
+- `assets/` 画像263枚

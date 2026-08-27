@@ -55,6 +55,8 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-06-07 — Zenn 二重公開ガードは CI 未 wire だと無意味（STRICT=1 を release/zenn 宛 PR に繋ぐ。詳細は G 節）
 - 2026-07-20 — Zenn デプロイの中断/バナーは表示を信じず HTTP 200・API で実反映を確認。トークン発行失敗の連続は連携再接続が必要
 
+- 2026-08-20 — `sync-release-zenn.sh` の公開影響プレビューは新規ファイル追加を検知しない。deploy 実差分を直接照合する
+- 2026-08-20 — Zenn `/api/articles` は約23件しか返さない。全件突合は `zenn.dev/<user>` の `articlesCount`
 ### B. Qiita publish / drift / 重複公開
 **現行正本**: `CLAUDE.md` §公開前ガード（`check:qiita-remote-cache` / `publish:qiita` wrapper）
 - 2026-06-03 — `qiita publish` は冒頭で全記事 pull。`.remote/` 手編集でローカル改変が巻き戻る
@@ -112,7 +114,9 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-05-26 — 既存ガイド系記事への FAQ セクション横展開は SEO/可読性に効く
 - 2026-06-07 — 記事公開 PR に中間レビュー成果物(reviews/)を同梱しない（改善で陳腐化する）
 
+- 2026-08-20 — Skill の `allowed-tools` は事前承認であって排他的な権限制限ではない（排他制限は Custom Subagent の `tools`）
 ### G. CI / tooling / マルチAI
+- 2026-08-27 — `catch` が ReferenceError を握りつぶすと実装の誤りが「検証したが不一致」に化ける（純関数テストは依存欠落を検出しない）
 - 2026-05-21 — 媒体実測の取得は `scripts/fetch-channel-metrics.mjs` に集約
 - 2026-05-15 — CI run が runner を掴めず長時間 queued なら空コミットで re-trigger
 - 2026-05-18 — 同一結論へ収束したマルチAI相談は2回目以降スキップ
@@ -128,10 +132,97 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-07-19 — Workflow の args 未注入バグが1セッションで3回再発。回避は確立済みだが恒久修正の検討価値あり
 - 2026-07-19 — codex-rescue にBG切り離しさせると worktree 掃除でタスク孤児化・成果物消失。general-purpose+worktree 同期実行にする
 - 2026-07-23 — Bash ツールが ~/Documents 配下へ EPERM（macOS TCC）。ローカル git 不能時は gh -R / curl で外形確認、復旧は権限再付与かセッション再起動
+- 2026-08-20 — 同系統モデルだけのレビューでは仕様誤認を検出できない。検証手段（再実行・公式ドキュメント突合）で分ける
+- 2026-08-20 — Gemini CLI の個人無料枠が停止（IneligibleTierError）。L3 で Gemini を当てにしない
 
 ---
 
 ## 🧭 学びエントリ
+
+### 2026-08-27 — `catch` が ReferenceError を握りつぶすと、実装の誤りが「検証したが不一致」に化ける [Gotcha][Tooling]
+
+**事象**: `scripts/suggest-next-theme.js` の `occursOutsideLearnings()` が常に `false` を返していた。原因は `execFileSync` の import 漏れで、発生した ReferenceError を `catch { return false }` が飲み込んでいたこと。呼び出し側からは「git grep したが見つからなかった」と区別がつかず、S1 の一次情報検証が丸ごと無効化されたまま main にマージされた（PR #523）。
+
+**なぜ検出できなかったか**: self-test は純関数 `isVerifiableEvidence(facts)` に値を注入して検査していたため、`facts` を作る側の依存欠落は素通りした。「テストを追加した」と「欠陥を検出できる」は別。
+
+**対策**:
+- `catch` は**想定内の失敗だけ**を扱う。`git grep` なら不一致の `exit 1`（`e.status === 1`）のみを `false` に倒し、それ以外は再 throw する
+- 外部コマンドに依存する関数は、純関数テストとは別に **hit / miss の両方を実際に 1 回叩く** テストを持つ
+- テスト用の「存在しない文字列」はソースに直書きしない。リテラルがファイル内に出現して自分自身に hit する（実際に踏んだ）。実行時に連結して作る
+
+**関連**: 同 PR で、パス解決が cwd 相対だったためサブディレクトリから実行すると入力を 1 バイトも読めず「候補なし」で exit 0 する沈黙の失敗も同時に修正した。ルートは `__dirname` 起点の `git rev-parse --show-toplevel` で解決する。
+
+### 2026-08-20 — Zenn の `/api/articles` は全件を返さない。件数の突合には `articlesCount` を使う [Gotcha][Tooling]
+
+**観察**: 公開記事の総数を突合しようとして `https://zenn.dev/api/articles?username=minewo&count=100` を叩いたところ、**23 件しか返らず** `next_page` も `total_count` も `null` だった。リポジトリ側の `published: true` は 37 件あり、一見すると 14 件が未反映（rate-limit hit 等）に見える。しかし実際には drift は無く、`https://zenn.dev/minewo` の HTML に埋まる `"articlesCount":37` と一致していた。**`count` パラメータは効かず、このエンドポイントは全件取得に使えない。**
+
+**対策/学び**: 用途で使い分ける。
+
+| 目的 | 使うもの |
+|---|---|
+| **特定記事**の反映確認（公開直後） | `/api/articles?username=X` に slug が出現するか（最近の記事は含まれる） |
+| **全件数**の突合（drift 検知） | `curl -s https://zenn.dev/<user>` から `"articlesCount":N` を抽出 |
+
+```bash
+# 公開記事数（Zenn 実サイト）
+curl -s "https://zenn.dev/minewo" -A "Mozilla/5.0" | grep -oE '"articlesCount":[0-9]+'
+# リポジトリ側（release/zenn を正とする）
+n=0; for f in $(git ls-tree -r --name-only origin/release/zenn -- articles/); do
+  git show "origin/release/zenn:$f" | grep -qm1 "^published: true" && n=$((n+1)); done; echo $n
+```
+
+古い記事は API の 23 件に含まれないため、**API の不在をもって「未公開」と判定してはいけない**。2026-05-22 エントリの「API で記事一覧に出現するかを確認」は、公開直後の新規記事に限って有効。
+
+**根拠**: 2026-08-20 の公開後確認（main 37 / release/zenn 37 / Zenn 実サイト 37 で一致、API のみ 23）
+
+### 2026-08-20 — `sync-release-zenn.sh` の公開影響プレビューは新規ファイル追加を検知しない [Gotcha][Tooling]
+
+**観察**: `ai-review-gate-not-called` の公開時、sync スクリプトの公開影響プレビューが「新規 published: false → true: **0 件**」と表示した。しかし実際には `articles/ai-review-gate-not-called.md` が `published: true` の**新規ファイル**として release/zenn へ入り、1 本が公開された。checker は `false → true` の**切替**を数える実装のため、release/zenn 側にファイルが存在しない（＝最初から true で追加される）ケースをカウントしない。
+
+**対策/学び**: プレビューの件数を鵜呑みにせず、**deploy 対象の実差分を直接照合する**。release/zenn 側にファイルが無い記事は必ずこの経路になる（新規記事はすべて該当）。
+
+```bash
+git diff origin/release/zenn...HEAD --stat -- articles/ books/
+for f in $(git diff origin/release/zenn...HEAD --name-only -- articles/ books/); do
+  git show origin/release/zenn:$f 2>/dev/null | grep -m1 '^published:' || echo "$f: ファイル無し"
+  grep -m1 '^published:' $f
+done
+```
+
+プレビューが 0 件でも「公開されるものが無い」とは限らない。逆に、対象 slug 以外の flip 混入チェックにはプレビューが有効なので、**両方を実行する**。
+
+**根拠**: PR #511（sync）、公開反映は HTTP 200 / Zenn API id 636381 で確認済み
+
+### 2026-08-20 — Skill の `allowed-tools` は事前承認であって排他的な権限制限ではない [Convention][Gotcha]
+
+**観察**: `article-humanizer-ja` の frontmatter に `allowed-tools: Read / Grep / Glob` のみを記載し、「`Edit` / `Write` を渡していない＝書き換え能力を持たない」と解釈して記事の中核主張として書いた。Claude Code 公式ドキュメントを確認すると、Skill の `allowed-tools` は**列挙したツールを事前承認する**設定であり、利用可能なツールを排他的に制限するものではない。
+
+- 事前承認: https://code.claude.com/docs/en/skills#pre-approve-tools-for-a-skill
+- 排他制限が必要なら Custom Subagent の `tools` allowlist: https://code.claude.com/docs/en/subagents#available-tools
+
+**対策/学び**: 「設定に X が無い＝X ができない」という推論は、**その設定の意味論を公式ドキュメントで確認しない限り成立しない**。実装ファイル（frontmatter）を読んだだけでは裏取りにならない。read-only 境界を実効化したいなら、Custom Subagent の `tools` allowlist か permission deny を使い、書き込み能力が存在しないことをテストする。
+
+**根拠**: 公開記事 `ai-review-gate-not-called` の改稿（外部レビューで検出、公式仕様照合で訂正）
+
+### 2026-08-20 — 同系統モデルだけのレビューでは仕様の誤認を検出できない [Workflow][Pattern]
+
+**観察**: 記事レビューで Claude 系 4 視点（読者 / スクラム・EM / 編集 / 敵対的）＋ Codex CLI を実施したが、**5 系統すべてが `allowed-tools` の仕様誤認を見逃した**。検出したのは ChatGPT で、公式ドキュメントとの突合という手段を取ったため。一方 Codex は数値の再現性（計測日の欠落、件数の自己矛盾）で 4 件を検出しており、Claude 系 4 視点はそちらも見逃していた。
+
+**対策/学び**: 検出できる誤りの種類は**モデル系統ではなく検証手段**に依存する。同系統を増やしても、同じ手段しか取らなければ同じ穴が残る。重要な記事では次を分けて依頼する:
+
+- **論理・構成** → 同系統の複数視点で足りる
+- **数値・コマンドの再現性** → 実際に再実行させる（Codex が有効だった）
+- **仕様・API の意味** → 公式ドキュメントとの突合を明示的に指示する（これを指示しないと誰もやらない）
+
+**根拠**: 公開記事 `ai-review-gate-not-called` のレビュー履歴（`reviews/zenn/ai-review-gate-not-called.md`）
+
+### 2026-08-20 — Gemini CLI の個人無料枠が停止、多視点レビューの L3 が 1 系統減った [Tooling][Gotcha]
+
+**観察**: `gemini -p` が `IneligibleTierError: This client is no longer supported for Gemini Code Assist for individuals` で実行不能（CLI 0.42.0）。Antigravity への移行を案内される。`--skip-trust` で trusted-directory の警告を回避しても、認証段階で同じエラーになる。`GEMINI_API_KEY` / `GOOGLE_API_KEY` 未設定のため API キー経由のフォールバックも不可。
+
+**対策/学び**: 2026-06-07 エントリの「L1: 独立Claude → L2: bot → L3: CLI(Gemini/Codex)」の前提が変わった。**L3 で Gemini を当てにしない**。復旧は API キー設定（`export GEMINI_API_KEY=...`）か Antigravity 移行で、いずれも環境側＝ユーザー対応。実行不能だった事実自体をレビュー記録に残し、「外部視点が何系統確保できたか」を明示する。
+
+**根拠**: 2026-08-20 の `/multi-review` 相当実行（Codex 0.144.1 は正常動作、Gemini 0.42.0 のみ失敗）
 
 ### 2026-08-10 — Dependabot alerts API の 403 はスコープ不足とは限らず、まず `gh auth refresh` を試す [Gotcha][Auth]
 
@@ -313,7 +404,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 **対策/学び**:
 - **Zenn の rate-limit は文書の「24h/5本」より厳しい**。実観測では `release/zenn` の publish:true 切替が 24h 以内 2件目で hit。実効値は **24h/1本に近い**か、特定のシグナル（連続マージ間隔・ファイルパス・本文長など）で決まる可能性
 - **判断基準を緩めない**: 内部基準「24h/3本」も楽観値だった。実運用上の安全マージンは **24h/1本** に倒す
-- **公開後の Web 反映確認を必須化**: deploy log（Zenn 管理画面）または API（`/api/articles?username=X`）で記事一覧に出現するかを公開作業の最終ステップとして確認する。出現しない場合は deploy 失敗 / rate-limit hit を疑う
+- **公開後の Web 反映確認を必須化**: deploy log（Zenn 管理画面）または API（`/api/articles?username=X`）で記事一覧に出現するかを公開作業の最終ステップとして確認する。出現しない場合は deploy 失敗 / rate-limit hit を疑う（⚠️ 2026-08-20 追記: この API は**最近の 23 件程度しか返さない**。公開直後の新規記事には有効だが、**古い記事の不在を未公開の証拠にしてはいけない**。全件の突合は `zenn.dev/<user>` の `articlesCount` を使う）
 - **rate-limit hit からの復旧**:
   - 24h 待って release/zenn に empty commit（`git commit --allow-empty`）or 既存ファイル touch して再 push、deploy 再トリガー
   - または Zenn お問い合わせフォーム経由で緩和申請（memory `reference_zenn_rate_limit_spec.md` 参照）
