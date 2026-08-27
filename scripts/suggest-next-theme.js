@@ -130,9 +130,12 @@ function isDuplicate(queueMd, evidence) {
 // 台帳にマーカーがあれば、その直前へ lines を差し込んだ全文を返す。
 // マーカーが無ければ null（呼び出し元が停止する。位置を推測して書き込まない）。
 function insertIntoQueue(md, lines) {
-  const idx = md.indexOf(INSERT_MARKER);
-  if (idx === -1) return null;
-  const lineStart = md.lastIndexOf("\n", idx) + 1;
+  // マーカーは台帳にちょうど 1 つ。0 個なら位置が決まらず、2 個以上ならどちらか決められない。
+  // どちらの場合も推測せず null を返し、呼び出し元を停止させる。
+  const first = md.indexOf(INSERT_MARKER);
+  if (first === -1) return null;
+  if (md.indexOf(INSERT_MARKER, first + INSERT_MARKER.length) !== -1) return null;
+  const lineStart = md.lastIndexOf("\n", first) + 1;
   return md.slice(0, lineStart) + lines.join("\n") + "\n\n" + md.slice(lineStart);
 }
 
@@ -323,7 +326,7 @@ function apply(lines) {
   const md = mustRead(QUEUE);
   const next = insertIntoQueue(md, lines);
   if (next === null) {
-    die(`${QUEUE} に挿入マーカー ${INSERT_MARKER} ...> が見つかりません`);
+    die(`${QUEUE} に挿入マーカー \`${INSERT_MARKER} ... -->\` が 1 つだけ存在する必要があります`);
   }
   fs.writeFileSync(QUEUE, next);
 }
@@ -421,7 +424,7 @@ function selfTest() {
     "- `[ready]` **#11 締切 2026-09-07**: 既存",
     "- 補充は自動",
     "",
-    "<!-- suggest:theme:insert-here 説明 -->",
+    `${INSERT_MARKER} 説明 -->`,
     "",
     "## Done",
     "",
@@ -429,9 +432,14 @@ function selfTest() {
   const inserted = insertIntoQueue(queueFixture, ["- `[backlog]` 新規A", "- `[backlog]` 新規B"]);
   const rows = inserted.split("\n");
   eq("既存の締切つき行より下に入る", rows.indexOf("- `[backlog]` 新規A") > rows.indexOf("- `[ready]` **#11 締切 2026-09-07**: 既存"), true);
-  eq("マーカーより上に入る", rows.indexOf("- `[backlog]` 新規B") < rows.findIndex((l) => l.startsWith("<!-- suggest:theme:insert-here")), true);
+  eq("マーカーより上に入る", rows.indexOf("- `[backlog]` 新規B") < rows.findIndex((l) => l.startsWith(INSERT_MARKER)), true);
   eq("Done セクションを侵さない", rows.indexOf("- `[backlog]` 新規B") < rows.indexOf("## Done"), true);
   eq("マーカーが無ければ null（位置を推測しない）", insertIntoQueue("## Queue（締切順）\n\n- 既存\n", ["- 新規"]), null);
+  eq(
+    "マーカーが 2 つあれば null（どちらか決めない）",
+    insertIntoQueue(`${INSERT_MARKER} a -->\n- 既存\n${INSERT_MARKER} b -->\n`, ["- 新規"]),
+    null
+  );
 
   const failed = t.filter((x) => !x.ok);
   for (const x of t) console.log(`  ${x.ok ? "ok  " : "FAIL"} ${x.name}`);
