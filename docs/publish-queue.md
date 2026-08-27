@@ -37,12 +37,6 @@
 
 ## Queue（締切順）
 
-- `[backlog]` **(zenn) 締切 未設定**: 「check-article-humanizer.js が解いている問題」（自動起票 2026-08-26 / signal:S2:tool / score:4）。一次情報: `scripts/check-article-humanizer.js`
-- `[backlog]` **(zenn) 締切 未設定**: 「check-publish-readiness.js が解いている問題」（自動起票 2026-08-26 / signal:S2:tool / score:4）。一次情報: `scripts/check-publish-readiness.js`
-- `[backlog]` **(zenn) 締切 未設定**: 「suggest-next-theme.js が解いている問題」（自動起票 2026-08-26 / signal:S2:tool / score:4）。一次情報: `scripts/suggest-next-theme.js`
-- `[backlog]` **(zenn) 締切 未設定**: 「Zenn の /api/articles は全件を返さない。件数の突合には articlesCount を使う」（自動起票 2026-08-26 / signal:S1:learning:2026-08-20 / score:3）。一次情報: `/api/articles`、`articlesCount`
-- `[backlog]` **(zenn) 締切 未設定**: 「sync-release-zenn.sh の公開影響プレビューは新規ファイル追加を検知しない」（自動起票 2026-08-26 / signal:S1:learning:2026-08-20 / score:3）。一次情報: `sync-release-zenn.sh`
-
 - `[ready-to-publish]` **#12 (note) 締切 2026-09-03**: 「AI駆動開発を「個人技」で終わらせない。チームの仕組みに変えるまで」（`articles_note/new/plangate-team-rollout.md`。PR #524 マージ済み・構成レビュー完了〔P1/P2 指摘なし〕）。一次情報: Growth-Teams-Agent の `docs/team-onboarding/CHANGELOG.md`・`improvement-backlog.md`〔FB-001/031/032〕・`.agents/metrics/`、plangate README。**公開前に人間判断が要る残件**: ①チーム統計・GTA内部情報・改善バックログ由来の実数の公開可否 ②note公開時に目次をON ③ASCII図の実表示確認（2026-08-27 に code block の最大表示幅を 67→38 に圧縮済み。崩れる場合は全体図のみ画像化）
 
 - `[ready]` **#11 (zenn) 締切 2026-09-07**: 「worktree 分離だけでは防げない — 並列AIセッションのGit事故を"事後検知"で機械化する」（仮）。一次情報: `scripts/check-pr-staleness.sh`＋テスト、`scripts/hooks/pre-commit|pre-push`、Round 3〜5 の実測インシデント（#404/#405 の squash 済み記事巻き戻し等、`memory/project_parallel_session_metrics.md`）。差別化: 市場は git worktree による事前分離記事が多数だが、同一 working tree での実事故観測データと検知系（staleness チェック・hooks）は空白（theme-discovery 2026-08-10、スコア 17/20）
@@ -53,6 +47,12 @@
 - `[done]` #6（open-design）は Zenn 原典が 2026-05-26 週公開予定のため、Zenn 公開後の cross-post `:::note info` 有効化を**公開作業の前段**に組み込む（コメントアウト退避済み、手順は記事内 HTML コメントに記載）
 - `[done]` #8 (open-design) は memory `project_open_design_article_scheduled` で記録済みの予定日。release/zenn rate-limit（24h/5本・1PR3本・24h間隔）を遵守
 - 補充は `npm run suggest:theme -- --apply` が自動で行う（引数なしは dry-run）。`[backlog]` の採否だけが人間の判断で、行の作成そのものは人間の仕事にしない。
+
+- `[backlog]` **(zenn) 締切 未設定**: 「check-article-humanizer.js が解いている問題」（自動起票 2026-08-26 / signal:S2:tool / score:4）。一次情報: `scripts/check-article-humanizer.js`
+- `[backlog]` **(zenn) 締切 未設定**: 「check-publish-readiness.js が解いている問題」（自動起票 2026-08-26 / signal:S2:tool / score:4）。一次情報: `scripts/check-publish-readiness.js`
+- `[backlog]` **(zenn) 締切 未設定**: 「suggest-next-theme.js が解いている問題」（自動起票 2026-08-26 / signal:S2:tool / score:4）。一次情報: `scripts/suggest-next-theme.js`
+- `[backlog]` **(zenn) 締切 未設定**: 「Zenn の /api/articles は全件を返さない。件数の突合には articlesCount を使う」（自動起票 2026-08-26 / signal:S1:learning:2026-08-20 / score:3）。一次情報: `/api/articles`、`articlesCount`
+- `[backlog]` **(zenn) 締切 未設定**: 「sync-release-zenn.sh の公開影響プレビューは新規ファイル追加を検知しない」（自動起票 2026-08-26 / signal:S1:learning:2026-08-20 / score:3）。一次情報: `sync-release-zenn.sh`
 
 <!-- suggest:theme:insert-here 自動起票はこの行の直前に追記される。締切未設定の候補が締切つきの行より上に来ないよう、位置を固定している。移動・削除するとスクリプトが停止する。 -->
 
