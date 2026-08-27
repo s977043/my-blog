@@ -39,6 +39,8 @@
 
 - `[ready-to-publish]` **#12 (note) 締切 2026-09-03**: 「AI駆動開発を「個人技」で終わらせない。チームの仕組みに変えるまで」（`articles_note/new/plangate-team-rollout.md`。PR #524 マージ済み・構成レビュー完了〔P1/P2 指摘なし〕）。一次情報: Growth-Teams-Agent の `docs/team-onboarding/CHANGELOG.md`・`improvement-backlog.md`〔FB-001/031/032〕・`.agents/metrics/`、plangate README。**公開前に人間判断が要る残件**: ①チーム統計・GTA内部情報・改善バックログ由来の実数の公開可否 ②note公開時に目次をON ③ASCII図の実表示確認（2026-08-27 に code block の最大表示幅を 67→38 に圧縮済み。崩れる場合は全体図のみ画像化）
 
+- `[ready-to-publish]` **#13 (zenn) 締切 2026-08-29**: 「AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計」（`articles/river-review-judgment-placement.md`、14,209字）。`reviews/zenn/river-review-judgment-placement.md` が `blocked=false mustHigh=0`（2026-08-26 実測）。release/zenn へは #535 で `published: false` のまま同期済み。公開手順は flip PR（main）→ sync PR（release/zenn）の2本
+- `[ready-to-publish]` **#14 (zenn) 締切 2026-08-31**: 「AIに開発フローを採点させたら、採点基準のほうが壊れていた」（`articles/loop-maturity-rubric-audit.md`、9,784字）。`reviews/zenn/loop-maturity-rubric-audit.md` が `blocked=false mustHigh=0`（PR #534 で must-high F1 を解消）。同じく #535 で同期済み。**#13 とは 24h 以上あけてマージする**（実効 rate-limit 24h/1本）
 - `[ready]` **#11 (zenn) 締切 2026-09-07**: 「worktree 分離だけでは防げない — 並列AIセッションのGit事故を"事後検知"で機械化する」（仮）。一次情報: `scripts/check-pr-staleness.sh`＋テスト、`scripts/hooks/pre-commit|pre-push`、Round 3〜5 の実測インシデント（#404/#405 の squash 済み記事巻き戻し等、`memory/project_parallel_session_metrics.md`）。差別化: 市場は git worktree による事前分離記事が多数だが、同一 working tree での実事故観測データと検知系（staleness チェック・hooks）は空白（theme-discovery 2026-08-10、スコア 17/20）
 - `[done]` #7 (zenn-book) は **2026-06-01 公開完了**（下記 Done 参照）。本文・図・cover・5系統＋ultracode レビュー完了後、release/zenn PR #350 マージで go-live
 - `[ready-to-publish]` #9 (zenn) は「Bookを多層AIレビューで作った話」。内容は収束済み・公開可。タイミングのみ分離（Book公開→update同期→新規publish の順で間隔を空ける）
