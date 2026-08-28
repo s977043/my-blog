@@ -38,7 +38,7 @@
 - [x] Markdown Tableを本文に使っていない
 - [x] 横幅の大きいASCII図を避け、スマホで縦に読める構成にしている
 - [x] JTFスタイルで禁止されている長音ダッシュ記号を本文に使っていない
-- [x] 自作ツール名より、読者にも起こるFailure / Evaluation / Securityの問題を先に説明している
+- [x] 固有ツール名の初出を遅らせ、読者にも起こるFailure / Evaluation / Securityの問題を先に説明している
 - [x] 最後に「Harness Control Plane」という筆者独自の次の仮説まで進んでいる
 - [x] Harness EngineeringをSoftware Engineeringの既存原則の再適用として明示し、記事全体の一般化ができている
 
@@ -219,6 +219,67 @@ OpenAIのSingle Agent firstを先に置き、Multi-Agentの価値をContext / Re
 
 ---
 
+### F7: 8層のContract位置表現が番号と食い違う
+
+**重要度: medium / 対応済み**
+
+「一番下に置いたContract」という表現は、番号上は1番目であるため誤読を招く。
+
+本文を「土台に置いたContract」へ修正した。
+
+**判定: 解消。**
+
+---
+
+### F8: 8層モデルと既存仕組みの写像で用語が揺れる
+
+**重要度: high / 対応済み**
+
+本文の8層に存在しないVerification / Evolutionを対応先として使っていたため、独自分類の整合性が崩れていた。
+
+対応先を次の層名に統一した。
+
+- Context & Tools
+- Orchestration
+- Trust & Security
+- Evaluation
+- State & Memory
+- Observability
+
+Retrospective / Weekly Improvementは特定の1層へ押し込まず、ObservabilityとEvaluationのEvidenceをHarness Changeへ戻す改善ループとして整理した。
+
+**判定: 解消。**
+
+---
+
+### F9: Learning Loopの図が中盤で重複する
+
+**重要度: medium / 対応済み**
+
+冒頭のProduct Loop、中盤のProduct / Agentの小図、終盤の統合図で同じ関係を繰り返していた。
+
+中盤の2つの小図を文章へ圧縮し、
+
+- 冒頭: Product Learning Loop
+- 中盤: Production FailureからHarness Changeへの改善ループ
+- 終盤: Product / Harnessの統合図
+
+という役割分担にした。
+
+**判定: 解消。**
+
+---
+
+### F10: 固有ツール名の初出が読者課題より早い
+
+**重要度: low / 対応済み**
+
+Harnessに気づいた経緯の段階ではPlanGate / River Reviewという固有名詞を一般語へ置き換え、後半の8層への写像で初めて固有名詞を出す構成へ変更した。
+
+**判定: 解消。**
+
+---
+
 ## 良い点
 
 ### 1. AWSの紹介記事で終わらず、自分の思考の変化が主役になっている
@@ -259,6 +320,7 @@ Harness Engineeringを新しい複雑性の正当化にせず、AblationとSimpl
 
 1. **図版を1枚入れるなら、2つのLearning Loopを選ぶ**
    - Product Learning LoopとHarness Improvement Loopの関係が記事の独自主張なので、ヒーロー画像以外に図を1枚だけ入れるならここが最も効果的。
+   - 本文内のLearning Loop図は役割ごとに整理済みで、追加の図を増やす必要はない。
 2. **note公開時は目次をONにする**
    - H2が多い長文記事なので、スマホで途中から戻りやすくする。
 3. **タグ候補**
@@ -281,6 +343,6 @@ Harness Engineeringを新しい複雑性の正当化にせず、AblationとSimpl
 3. 前記事のTime to Learningを、Agent System自身のLearning Loopへ発展させる
 4. Harness EngineeringをSoftware Engineeringの既存原則の再適用として一般化する
 
-この3点によって、一般的な「Harness Engineeringとは何か」という解説記事ではなく、**筆者が最近考えていることを既存の実践と一次情報で整理したnote記事**として成立している。
+この4点によって、一般的な「Harness Engineeringとは何か」という解説記事ではなく、**筆者が最近考えていることを既存の実践と一次情報で整理したnote記事**として成立している。
 
 PRマージ後は `articles_note/new/agent-harness-engineering-note.md` をcanonicalとしてWXR生成し、noteへ新規下書きとしてインポートする運用が適切。
