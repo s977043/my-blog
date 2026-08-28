@@ -356,6 +356,65 @@ AIに「やってはいけない」とお願いするのではなく、**そも�
 
 ---
 
+## Harness Engineeringを考えるほど、Software Engineeringに戻っていく
+
+ここまで考えていて、もう一つ強く感じていることがあります。
+
+Harness Engineeringは、まったく新しいAI固有のEngineeringというより、**Software Engineeringで積み上げてきた原則を、Agentという新しい実行主体に適用し直す話に近い**のではないか、ということです。
+
+例えば、ここまで出てきた考え方を並べると、かなり見慣れたものになります。
+
+- **責務分離**: MakerとChecker、PlannerとExecutorを分ける
+- **Contract**: Goal、Definition of Done、Constraints、Stop Conditionを明確にする
+- **Observability**: Trace、Tool Call、Failure Logから何が起きたかを説明できるようにする
+- **Regression Test**: Production FailureをEval Caseへ変え、Harness変更後に再発しないか確認する
+- **Least Privilege**: Agentに必要以上のPermissionやNetwork Accessを与えない
+- **State Management**: Context Windowだけに依存せず、ArtifactやCheckpointとして状態を外へ出す
+
+こうして見ると、AI Agentだから突然まったく別のEngineeringが必要になったわけではありません。
+
+実行主体が人間や通常のProgramからAgentへ広がったことで、**これまでSoftware Engineeringで使ってきた原則を、どこに適用するかが変わった**と考えるほうが自分にはしっくりきます。
+
+例えば、以前ならRegression TestはApplication Codeの変更に対して書いていました。
+
+Agent Systemでは、Prompt、Skill、Tool Schema、Routing、Permission、Harnessそのものの変更に対してもRegressionを考える必要があります。
+
+以前ならLeast PrivilegeはUserやService Accountに対して設計していました。
+
+Agent Systemでは、AgentがどのFileを読めるか、どのCommandを実行できるか、どのNetworkへ出られるかまで含めて設計する必要があります。
+
+以前ならState ManagementはApplicationの状態をどう永続化するかという問題でした。
+
+Agent Systemでは、長時間Taskの途中経過や判断理由を、次のSessionがどう復元するかという問題にもなります。
+
+こう考えると、自分がHarness Engineeringに惹かれている理由も少し分かります。
+
+**AIによってSoftware Engineeringが不要になるのではなく、むしろCoding以外のSoftware Engineering原則が前面に出てきている。**
+
+前の記事では、Codingが速くなるほどShapingの価値が上がると考えました。
+
+今回考えているのは、そのSystem版です。
+
+```text
+Codingが安くなる
+  ↓
+Shapingの価値が上がる
+
+Agentが強くなる
+  ↓
+Harness / System Designの価値が上がる
+```
+
+この2つは、同じ方向を向いているように感じています。
+
+そして、これらを最初から全部揃える必要はありません。
+
+自分自身も、失敗した場所、再発した場所、説明できなかった場所から一つずつHarnessへ追加しています。
+
+重要なのはHarnessを豪華にすることではなく、**Systemとして説明でき、失敗から改善できる状態にすること**だと思っています。
+
+---
+
 ## Harnessは増やせばよいわけではない
 
 ここは自分自身への注意でもあります。
