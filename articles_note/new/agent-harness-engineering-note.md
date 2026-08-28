@@ -257,7 +257,7 @@ Anthropicも2026年3月のlong-running application developmentの実験で、Pla
 
 特に興味深いのは、Generator自身を批判的にするより、Evaluatorを独立して厳しく調整するほうが扱いやすかったという点です。
 
-これは、自分がRiver Reviewで考えてきた方向ともかなり近いです。
+これは、実装と判定を分ける方向ともかなり近いです。
 
 Agentを増やすことが目的ではなく、**判断を独立させるために役割を分ける**。
 
