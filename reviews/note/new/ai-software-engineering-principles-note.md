@@ -15,6 +15,7 @@ AIが実装を高速化するほど「何を正しいとするか」を外部化
 重点確認した点:
 
 - 仕様駆動開発 / TDD / DDDを万能論として扱っていないか
+- 不確実性が高い段階でSpecやTestやDomain Modelを早く固定する危険を扱えているか
 - 現在の実践と、これから試したい仮説を混同していないか
 - TDDとAgent Evalを同一視していないか
 - DDDの概念をAgent分割へ安易に直結させていないか
@@ -174,6 +175,20 @@ Application Behaviorに対するTestと、Agent Behaviorに対するEvalの違�
 
 を追加した。
 
+### F6: 不確実性が高い初期にもSDD / TDD / DDDを固定的に適用すると読まれる危険
+
+**重要度: high / 対応済み**
+
+最新の検討を受けて、本文を次のように補正した。
+
+- SpecはKnowledgeを発見するものではなく、ある程度得られたKnowledgeをExecution Contractへ変えるものと整理
+- Product Hypothesisが未検証の段階では、Testで誤ったBehaviorを固定し得ることを明記
+- TDDは残したいBehaviorをExecutableなFeedbackへ変える方法として位置づけ
+- DDDは探索として早期から使える一方、Entity / Aggregateなど構造の固定は早すぎると危険と整理
+- 不確実性が高い場合はDomain Understanding / Shaping / Hypothesis / Experimentを優先し、Specを薄く保つ方針を追記
+
+**判定: 解消。**
+
 ---
 
 ## 良い点
@@ -224,7 +239,17 @@ Execution / Control
 
 が記事の中心図として機能している。
 
-### 4. 次の記事への導線が強い
+### 4. 不確実性と方法論の使い分けまで踏み込めた
+
+SDD / TDD / DDDを「全部入れるべき」とせず、Knowledgeの成熟度によって役割が変わることを本文へ反映した。
+
+特に、
+
+> Specを「Knowledgeを発見するもの」ではなく、ある程度得られたKnowledgeをAgentが実行できるContractへ変えるもの
+
+という整理は、AI駆動開発でのSDD万能論を避けるうえで重要。
+
+### 5. 次の記事への導線が強い
 
 最後に、
 
@@ -276,7 +301,7 @@ Evidence
 
 ## 総合判定
 
-**下書きとして公開可能レベル。must / highの未解決なし。**
+**公開可能レベル。must / highの未解決なし。**
 
 今回の記事の核は、
 
