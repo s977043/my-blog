@@ -64,7 +64,7 @@ Agent = Model + Harness
 
 **ModelをAgentから取り除いたとき、残るものがHarness。**
 
-Podcastでは、その中にTools、Skills、Memory、Context、Observability、Evaluation、Agentic Loopなどが含まれると整理されています。
+Podcastでは、その中にTools（使える道具）、Skills（再利用する手順や知識）、Memory（状態の保持）、Context（与える文脈）、Observability（観測可能性）、Evaluation（評価）、Agentic Loop（Agentが判断と実行を繰り返す流れ）などが含まれると整理されています。
 
 ここでいうHarnessは、Agentの推論そのものではなく、**何を渡し、何を使わせ、どんな状態を残し、どう実行・観測・評価するかを担う外側の仕組み**だと捉えると分かりやすいです。
 
@@ -72,7 +72,7 @@ Podcastでは、その中にTools、Skills、Memory、Context、Observability、
 
 - Planを先に作り、何をもって完了とするかを決める
 - 実装前に承認の境界を置く
-- SkillsやRepository KnowledgeをContextとして渡す
+- SkillsやRepository Knowledge（Repository固有の知識）をContextとして渡す
 - 実装するAgentとレビューする役割を分ける
 - 実行結果をArtifactとして残す
 - 失敗を振り返り、次のルールやEvalへ戻す
@@ -109,7 +109,7 @@ Toolを間違えたなら、Toolの入力形式や説明、どのToolを選ぶ�
 
 検証を飛ばしたなら、作業手順（Workflow）や承認・停止の境界（Gate）を疑う。
 
-同じ処理を繰り返すなら、LoopやStop Conditionを疑う。
+同じ処理を繰り返すなら、繰り返し処理の設計やStop Conditionを疑う。
 
 危険な操作をしそうになったなら、権限（Permission）や隔離された実行環境（Sandbox）を疑う。
 
@@ -164,7 +164,7 @@ Runtime条件だけで、それ以上動く可能性があるからです。
 
 ---
 
-## 改善ループの入口はObservabilityとEvaluation
+## 改善ループの入口は、観測と評価
 
 Harness Engineeringを考えると、結局ここが本丸だと思っています。
 
@@ -200,9 +200,9 @@ Harnessの変更
 
 本番で一度起きた失敗を、単なる障害や「AIだから仕方ない」で終わらせない。
 
-Failureを分類し、再現できるEval Caseへ変える。
+失敗を分類し、再現できる評価ケースへ変える。
 
-そのうえでHarnessを変更し、Regression Evalを通す。
+そのうえでHarnessを変更し、同じ失敗が再発しないか回帰評価を通す。
 
 ここで、前回の記事で書いたTime to Learningとつながります。
 
@@ -297,7 +297,7 @@ Session 3
 
 **次のSessionが、必要な状態を正しく復元できること。**
 
-これは普通のSoftware Engineeringで、Process MemoryよりPersistent Stateを信頼するのとかなり似ています。
+これは普通のSoftware Engineeringで、実行中だけの一時的な記憶より、外に永続化した状態を信頼するのとかなり似ています。
 
 AgentのMemoryも、「頭の中に覚えているもの」より、ArtifactやCheckpointとして外に残された状態として考えるほうが設計しやすいと感じています。
 
@@ -316,9 +316,9 @@ Agentに、
 
 ただし、それはSecurity Boundary（技術的に越えられない安全上の境界）ではありません。
 
-Anthropicが2026年5月に公開した内部Red Teamの例では、悪意あるPromptに`~/.aws/credentials`を読み、encodeし、外部endpointへPOSTする指示を混ぜたところ、25回中24回で情報送信まで完了しました。
+Anthropicが2026年5月に公開した内部Red Teamの例では、悪意あるPromptに`~/.aws/credentials`を読み、内容を変換して外部へ送信する指示を混ぜたところ、25回中24回で情報送信まで完了しました。
 
-Anthropicがそこで強調しているのは、Model Layerだけでは防げないケースがあることです。
+Anthropicがそこで強調しているのは、Model側の制御だけでは防げないケースがあることです。
 
 必要になるのは、
 
@@ -359,11 +359,11 @@ Harness Engineeringは、まったく新しいAI固有のEngineeringというよ
 
 例えば、以前ならRegression TestはApplication Codeの変更に対して書いていました。
 
-Agent Systemでは、Prompt、Skill、Tool Schema、Routing、Permission、Harnessそのものの変更に対してもRegressionを考える必要があります。
+Agent Systemでは、Prompt、Skill、Toolの入力形式や振り分け、権限、Harnessそのものの変更に対しても回帰テストを考える必要があります。
 
-以前ならLeast PrivilegeはUserやService Accountに対して設計していました。
+以前ならLeast Privilegeは、UserやService Accountといった実行主体に対して設計していました。
 
-Agent Systemでは、AgentがどのFileを読めるか、どのCommandを実行できるか、どのNetworkへ出られるかまで含めて設計する必要があります。
+Agent Systemでは、AgentがどのFileを読めるか、どのCommandを実行できるか、どのNetworkへ接続できるかまで含めて設計する必要があります。
 
 以前ならState ManagementはApplicationの状態をどう永続化するかという問題でした。
 
@@ -401,7 +401,7 @@ Harness / System Designの価値が上がる
 
 Harnessが重要だと分かると、つい機能を増やしたくなります。
 
-Planner、Router、Task Queue、Memory、Subagent、Reviewer、Checkpoint、Workflow。
+Planner（計画役）、Router（仕事の振り分け）、Task Queue（待ち行列）、Memory、Subagent（下位Agent）、Reviewer（レビュー役）、Checkpoint、Workflow。
 
 でも、複雑なHarnessが常に良いわけではありません。
 
@@ -444,13 +444,13 @@ Harnessを作る側が、定期的に問い直すべき質問だと思います�
 これはAWSやAnthropicの公式分類ではありません。自分が実装と改善箇所を考えやすくするための整理です。
 
 1. **Contract（実行契約）**: 目的、完了条件、制約、停止条件
-2. **Context & Tools（文脈と道具）**: 指示、Skills、MCP、検索、Repository Knowledge
-3. **State & Memory（状態と記憶）**: Artifact、Checkpoint、永続化したMemory
-4. **Orchestration（実行の組み立て）**: Agent Loop、Subagent、仕事の振り分け
-5. **Runtime & Recovery（実行環境と復旧）**: Sandbox、Retry、Resume、Timeout
-6. **Trust & Security（信頼と安全性）**: 権限、Identity、Approval、Filesystem / Networkの境界
-7. **Observability（観測可能性）**: Trace、Cost、Latency、Tool Call、Failure Log
-8. **Evaluation（評価）**: Regression、Judge、Score、Ablation
+2. **Context & Tools（文脈と道具）**: 指示、Skills、MCP、検索、Repository固有の知識
+3. **State & Memory（状態と記憶）**: 成果物、再開点、永続化した状態
+4. **Orchestration（実行の組み立て）**: Agent Loop（繰り返し実行）、Subagent（下位Agent）、仕事の振り分け
+5. **Runtime & Recovery（実行環境と復旧）**: 隔離実行、再試行、再開、Timeout（時間切れ）
+6. **Trust & Security（信頼と安全性）**: 権限、Identity（実行主体の識別）、Approval（承認）、Filesystem / Networkの境界
+7. **Observability（観測可能性）**: 実行記録、Cost（コスト）、Latency（遅延）、Tool呼び出し、失敗Log
+8. **Evaluation（評価）**: 回帰評価、Judge（判定役）、Score（評価値）、Ablation（切り分け実験）
 
 中でも最近重要だと思っているのが、土台に置いたContractです。
 
@@ -468,7 +468,7 @@ Agentに「何をするか」だけを渡すのではなく、
 
 そして、この8層でこれまでの取り組みを見ると、かなり整理しやすくなります。
 
-PlanやPBI、DoDはContract。
+PlanやPBI、DoD（完了の定義）はContract。
 
 SkillsやRulesはContext & Tools。
 
@@ -484,73 +484,17 @@ RetrospectiveやWeekly Improvementは、ObservabilityとEvaluationから得たEv
 
 以前は別々の機能として見ていました。
 
-今は、**Self-improving Agent Harnessの構成要素として見るほうが近い**と感じています。
+今は、**失敗から学びながら改善し続けるAgent Harnessの構成要素として見るほうが近い**と感じています。
 
 ### 次に作りたいのはHarness Control Plane
 
-この考え方まで来ると、次にやりたいことも少し変わってきます。
+この考え方まで来ると、新しいAgentを増やすより先に、今あるAgent Systemがなぜ成功し、なぜ失敗したのかを説明できるようにしたくなります。
 
-新しいAgentをもう一つ追加するより先に、今あるAgent Systemがなぜ成功し、なぜ失敗したのかを説明できるようにしたい。
+そのために、Model、Prompt、Skill、Harness、EvaluationのVersion、使ったTool、Cost、結果、失敗の種類を、1回の実行ごとに追えるようにする。
 
-最低限、1回のRunについて、
+この仕組みを、今は仮に**Harness Control Plane**と呼んでいます。Harnessの変更履歴と実行結果をまとめて追い、改善判断を支える管理の仕組み、という意味です。
 
-```text
-task_id
-model_version
-prompt_version
-skill_version
-harness_version
-context_size
-tools_called
-duration
-tokens
-cost
-result
-failure_type
-eval_version
-```
-
-くらいは追えるようにする。
-
-そして、
-
-```text
-Run
-  ↓
-Trace
-  ↓
-Failure
-  ↓
-Classification
-  ↓
-Eval Case
-  ↓
-Harness Change
-  ↓
-Regression
-  ↓
-Measure
-```
-
-を回す。
-
-これを今は、仮に**Harness Control Plane**と呼んでいます。Harnessの変更履歴と実行結果をまとめて追い、改善判断を支える管理の仕組み、という意味です。
-
-Agentを管理するための管理画面、という意味だけではありません。
-
-**Harnessの変更と、その結果を追跡し、改善を継続するための仕組み**です。
-
-Modelを変えたから良くなったのか。
-
-Promptを変えたから良くなったのか。
-
-Skillを追加したから良くなったのか。
-
-Reviewerを分離したから良くなったのか。
-
-それとも、複雑さを増やしただけなのか。
-
-そこまで説明できるようになれば、Agent開発はかなりSoftware Engineeringらしくなると思っています。
+これは次に実装してみたいテーマです。
 
 ### 2つのLearning Loopを重ねて考える
 
@@ -561,31 +505,31 @@ Reviewerを分離したから良くなったのか。
 自分の中では、今こう整理しています。
 
 ```text
-Product Learning Loop
+Product Learning Loop（Product側の学習）
 
-Problem
+Problem（課題）
   ↓
-Shape
+Shape（作るものを絞る）
   ↓
-Build
+Build（実装・実験）
   ↓
-Evidence
+Evidence（判断に使える根拠）
   ↓
-Decision
+Decision（次の判断）
 
 そのBuild / Verifyを支える
 
-Harness Improvement Loop
+Harness Improvement Loop（Harness側の改善）
 
-Agent Run
+Agent Run（1回の実行）
   ↓
-Trace
+Trace（実行記録）
   ↓
-Failure / Eval
+Failure / Eval（失敗の分類・評価）
   ↓
-Harness Change
+Harness Change（Harnessの変更）
   ↓
-Regression
+Regression（回帰評価）
 ```
 
 Productについても、Agent Systemについても、重要なのは変更そのものではありません。
@@ -596,27 +540,7 @@ Productについても、Agent Systemについても、重要なのは変更そ�
 
 でも、Agentの能力が上がるほど、その能力をどんなContextで使い、どんなToolを渡し、どこまで許可し、どう観測し、どう評価し、失敗からどう学ぶかの重要性も上がっていくはずです。
 
-だから今は、
-
-```text
-より良いModelを探す
-```
-
-だけではなく、
-
-```text
-失敗を観測する
-  ↓
-原因を分類する
-  ↓
-Harnessを改善する
-  ↓
-Evalする
-  ↓
-不要になった仕組みは削る
-```
-
-というEngineeringに興味があります。
+だから今は、より良いModelを探すだけではなく、**失敗を観測し、原因を分類し、Harnessを改善し、評価して、不要になった仕組みは削る**というEngineeringに興味があります。
 
 新しいAgentを増やすより先に、今あるAgent Systemを説明できるようにする。
 
@@ -648,4 +572,3 @@ AIがコードを書くほど、こうしたCoding以外のEngineeringがむし�
   - https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/
 - 前回の記事「AI時代の開発で短くすべきは、Time to CodeではなくTime to Learning」
   - https://note.com/mine_unilabo/n/n5070e13232ce
-
