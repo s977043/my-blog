@@ -73,7 +73,7 @@ Podcastでは、その中にtools、skills、memory、context、observability、
 - 実行結果をArtifactとして残す
 - 失敗を振り返り、次のルールやEvalへ戻す
 
-これまでは、PlanGate、River Review、Skills、Memory、Eval、Retrospectiveと、それぞれ別の仕組みとして考えていました。
+これまでは、計画と承認、独立したレビュー、Skills、Memory、Eval、Retrospectiveを、それぞれ別の仕組みとして考えていました。
 
 でもHarnessという見方をすると、かなり自然に一つのSystemとして整理できます。
 
@@ -202,29 +202,9 @@ Failureを分類し、再現できるEval Caseへ変える。
 
 ここで、前回の記事で書いたTime to Learningとつながります。
 
-Product側では、
+Product側では、BuildをEvidenceへ変え、Product Decisionにつなげる。
 
-```text
-Build
-  ↓
-Evidence
-  ↓
-Product Decision
-```
-
-を速くしたい。
-
-Agent System側では、
-
-```text
-Agent Run
-  ↓
-Trace / Eval
-  ↓
-Harness Decision
-```
-
-を速くしたい。
+Agent System側では、Agent RunをTrace / Evalへ変え、Harness Decisionにつなげる。
 
 両方に共通しているのは、**変更をEvidenceへ変換し、次の意思決定へつなげること**です。
 
@@ -470,7 +450,7 @@ Harnessを作る側が、定期的に問い直すべき質問だと思います�
 7. **Observability**: Trace、Cost、Latency、Tool Calls、Failure Log
 8. **Evaluation**: Regression、Judge、Score、Ablation
 
-中でも最近重要だと思っているのが、一番下に置いたContractです。
+中でも最近重要だと思っているのが、土台に置いたContractです。
 
 Agentに「何をするか」だけを渡すのではなく、
 
@@ -488,17 +468,17 @@ Agentに「何をするか」だけを渡すのではなく、
 
 PlanやPBI、DoDはContract。
 
-SkillsやRulesはContext。
+SkillsやRulesはContext & Tools。
 
-PlanGateやAgent LoopはOrchestrationとTrust。
+PlanGateやAgent LoopはOrchestrationとTrust & Security。
 
-River ReviewはVerificationとEvaluation。
+River ReviewはEvaluation。
 
-ArtifactsやRetrospectiveはStateとMemory。
+ArtifactsやCheckpointはState & Memory。
 
 Execution LogはObservability。
 
-Weekly ImprovementはEvolution。
+RetrospectiveやWeekly Improvementは、ObservabilityとEvaluationから得たEvidenceを次のHarness Changeへ戻す改善ループ。
 
 以前は別々の機能として見ていました。
 
