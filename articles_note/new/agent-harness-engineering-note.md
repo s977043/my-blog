@@ -4,7 +4,7 @@
 
 先日、「[AI時代の開発で短くすべきは、Time to CodeではなくTime to Learning](https://note.com/mine_unilabo/n/n5070e13232ce)」という記事を書きました。
 
-そこで考えていたのは、AIによってBuildが高速化するほど、開発のボトルネックはコードを書くことから、その前後にあるShaping、Verification、Learningへ移っていくのではないか、ということでした。
+そこで考えていたのは、AIによってBuildが高速化するほど、開発のボトルネックはコードを書くことから、その前後にあるShaping（何を作るかを絞ること）、Verification（正しさを確かめること）、Learning（得られた根拠から次の判断へ進むこと）へ移っていくのではないか、ということでした。
 
 前の記事では、開発を次のようなループとして捉えました。
 
@@ -46,23 +46,27 @@ Agent = Model + Harness
 
 もちろん、これは厳密な性能式ではありません。
 
-言いたいのは、Agentの性能や失敗をModel単体で説明するのではなく、Context、Tools、Memory、Runtime、Security、Observability、Evaluationまで含めたend-to-end systemとして扱う、ということです。
+言いたいのは、Agentの性能や失敗をModel単体で説明するのではなく、Context（与える文脈）、Tools（使える道具）、Memory（状態の保持）、Runtime（実行環境）、Security（権限制御）、Observability（何が起きたかを観測できること）、Evaluation（結果を評価すること）まで、実行の最初から最後まで含むSystemとして扱う、ということです。
 
-そして、前の記事で考えたProductのLearning Loopと同じように、**Agent System自身にもLearning Loopが必要なのではないか**と考えるようになりました。
+そして、前の記事で考えたProductのLearning Loop（学習ループ）と同じように、**Agent System自身にも、失敗を次の改善へ戻すLearning Loopが必要なのではないか**と考えるようになりました。
 
 ---
 
-## 自分が個別に作っていたものに、Harnessという名前が付いた
+## 失敗の見方を変える
+
+### Harnessという名前が付いた
 
 きっかけになったのは、AWSのMike ChambersによるAI Engineer World's Fair 2026の講演と、その後のAWS Developers Podcastでした。
 
-7月2日の講演「Harness Engineering: Building the Production Cage for Powerful Domain Agents」では、session isolation、context management、memory、sandboxed execution、observabilityなどを、Agentを本番で安定して動かすためのHarnessの問題として扱っています。
+7月2日の講演「Harness Engineering: Building the Production Cage for Powerful Domain Agents」では、実行単位の分離、Context管理、Memory、隔離された環境での実行、Observabilityなどを、Agentを本番で安定して動かすためのHarnessの問題として扱っています。
 
 8月26日のAWS Developers Podcastでは、さらに分かりやすい説明がされています。
 
 **ModelをAgentから取り除いたとき、残るものがHarness。**
 
-Podcastでは、その中にtools、skills、memory、context、observability、evaluations、agentic loopなどが含まれると整理されています。
+Podcastでは、その中にTools、Skills、Memory、Context、Observability、Evaluation、Agentic Loopなどが含まれると整理されています。
+
+ここでいうHarnessは、Agentの推論そのものではなく、**何を渡し、何を使わせ、どんな状態を残し、どう実行・観測・評価するかを担う外側の仕組み**だと捉えると分かりやすいです。
 
 この説明を聞いたとき、自分が最近個別に作っていたものが一つにつながりました。
 
@@ -73,7 +77,7 @@ Podcastでは、その中にtools、skills、memory、context、observability、
 - 実行結果をArtifactとして残す
 - 失敗を振り返り、次のルールやEvalへ戻す
 
-これまでは、計画と承認、独立したレビュー、Skills、Memory、Eval、Retrospectiveを、それぞれ別の仕組みとして考えていました。
+これまでは、計画と承認、独立したレビュー、再利用する手順や知識、状態の保持、評価、振り返りを、それぞれ別の仕組みとして考えていました。
 
 でもHarnessという見方をすると、かなり自然に一つのSystemとして整理できます。
 
@@ -81,9 +85,7 @@ Podcastでは、その中にtools、skills、memory、context、observability、
 
 この認識が、最近の自分にとってかなり大きな変化でした。
 
----
-
-## Agentの失敗を「モデルのせい」で終わらせない
+### 失敗を「モデルのせい」で終わらせない
 
 Coding Agentを使っていると、失敗したときにModelの名前で話してしまいがちです。
 
@@ -97,25 +99,25 @@ Coding Agentを使っていると、失敗したときにModelの名前で話し
 
 例えば、途中で仕事を終えたなら、最初に確認したいのはModelだけではありません。
 
-- Completion Criteriaは明確だったか
-- Stop Conditionは適切だったか
-- 現在地を確認できるArtifactがあったか
-- Contextが長くなりすぎていなかったか
-- CheckpointやResumeの仕組みがあったか
+- 完了条件（Completion Criteria）は明確だったか
+- 停止条件（Stop Condition）は適切だったか
+- 現在地を確認できる成果物（Artifact）があったか
+- Agentへ渡す文脈（Context）が長くなりすぎていなかったか
+- 途中から再開するための再開点（Checkpoint）やResumeの仕組みがあったか
 
-Toolを間違えたなら、Tool schemaやdescription、routing、Contextを疑う。
+Toolを間違えたなら、Toolの入力形式や説明、どのToolを選ぶかというRouting、Contextを疑う。
 
-Validationを飛ばしたなら、WorkflowやGateを疑う。
+検証を飛ばしたなら、作業手順（Workflow）や承認・停止の境界（Gate）を疑う。
 
 同じ処理を繰り返すなら、LoopやStop Conditionを疑う。
 
-危険な操作をしそうになったなら、PermissionやSandboxを疑う。
+危険な操作をしそうになったなら、権限（Permission）や隔離された実行環境（Sandbox）を疑う。
 
-何が起きたのか分からないなら、Observabilityを疑う。
+何が起きたのか分からないなら、実行を観測できる仕組みを疑う。
 
-修正したあと本当に良くなったのか分からないなら、Evalを疑う。
+修正したあと本当に良くなったのか分からないなら、同じ基準で結果を比べる評価（Eval）を疑う。
 
-こうやってFailureを分解すると、
+こうやって失敗（Failure）を分解すると、
 
 ```text
 Modelがダメだった
@@ -133,19 +135,17 @@ Modelの比較が不要になるわけではありません。
 
 **Model性能だけを独立した変数として扱うのでは足りなくなった**、という理解のほうが近いです。
 
----
+### ModelではなくSystemをテストする
 
-## Agentic Evalは、ModelのテストではなくSystemのテストに近い
+この感覚を強くしたのが、Anthropicが2026年2月に公開したAgentic Coding Evalの実験です。ここでいうAgentic Evalは、Modelへの一問一答ではなく、**AgentがToolや実行環境を使いながら一連の仕事を完了できるかを見る評価**です。
 
-この感覚を強くしたのが、Anthropicが2026年2月に公開したAgentic Coding Evalの実験です。
-
-Terminal-Bench 2.0で、同じAgentic Coding EvalでもCPUやRAMなどのInfrastructure Configurationによって、最もリソースの多い構成と少ない構成の間で成功率が6 percentage points変わったと報告しています。
+Terminal-Bench 2.0で、同じAgentic Coding EvalでもCPUやRAMなどの実行環境の構成によって、最もリソースの多い構成と少ない構成の間で成功率が6ポイント変わったと報告しています。
 
 Agentic Codingでは、Modelはコードを書くだけではありません。
 
 ファイルを読み、プログラムを実行し、テストし、依存関係を入れ、失敗を見てまた試します。
 
-つまりRuntimeは単なる箱ではなく、問題を解くSystemの一部になります。
+つまりRuntime（Agentが実際にコマンドやプログラムを動かす実行環境）は、単なる箱ではなく、問題を解くSystemの一部になります。
 
 例えば、ベンチマーク上で、
 
@@ -160,41 +160,45 @@ Runtime条件だけで、それ以上動く可能性があるからです。
 
 この話を、自分は「Model Benchmarkが意味を失った」とは捉えていません。
 
-むしろ、**Agentic SystemではModel Benchmarkに加えてend-to-end system testが必要になった**と考えています。
+むしろ、**Agentic SystemではModel単体のBenchmarkに加えて、Agentの実行全体を見るSystem Testが必要になった**と考えています。
 
 ---
 
-## ObservabilityとEvalが、Harnessを改善する入口になる
+## 改善ループの入口はObservabilityとEvaluation
 
 Harness Engineeringを考えると、結局ここが本丸だと思っています。
 
-**ObservabilityとEvaluationです。**
+**Observability（観測可能性）とEvaluation（評価）です。**
+
+Observabilityは、実行中に何が起きたのかをTraceやLogから説明できること。
+
+Evaluationは、同じ基準で結果を比べ、変更したあと本当に良くなったかを判断できることです。
 
 失敗したときに何が起きたのか分からなければ、改善できません。
 
 また、修正した結果が本当に良くなったのか測れなければ、その変更を残すべきか判断できません。
 
-AnthropicもAgent Evalについて、EvalがないとProductionで問題を見つけて修正し、その修正が別のFailureを生むreactive loopに入りやすいと説明しています。
+AnthropicもAgent Evalについて、評価がないと本番で問題を見つけてその場で修正し、その変更が別の失敗を生む場当たり的なループに入りやすいと説明しています。
 
 自分が作りたいのは、その逆です。
 
 ```text
-Production
+本番実行（Production）
   ↓
-Trace
+実行記録（Trace）
   ↓
-Failure Classification
+失敗の分類
   ↓
-Eval Case
+再現できる評価ケース（Eval Case）
   ↓
-Harness Change
+Harnessの変更
   ↓
-Regression Eval
+回帰評価（Regression Eval）
   ↓
-Deploy
+反映（Deploy）
 ```
 
-Productionで一度起きた失敗を、単なる障害や「AIだから仕方ない」で終わらせない。
+本番で一度起きた失敗を、単なる障害や「AIだから仕方ない」で終わらせない。
 
 Failureを分類し、再現できるEval Caseへ変える。
 
@@ -202,9 +206,9 @@ Failureを分類し、再現できるEval Caseへ変える。
 
 ここで、前回の記事で書いたTime to Learningとつながります。
 
-Product側では、BuildをEvidenceへ変え、Product Decisionにつなげる。
+Product側では、Build（実装・実験）をEvidence（次の判断に使える根拠）へ変え、Product Decisionにつなげる。
 
-Agent System側では、Agent RunをTrace / Evalへ変え、Harness Decisionにつなげる。
+Agent System側では、Agent Run（1回の実行）をTrace / Evalへ変え、Harnessをどう直すかというDecisionにつなげる。
 
 両方に共通しているのは、**変更をEvidenceへ変換し、次の意思決定へつなげること**です。
 
@@ -214,24 +218,26 @@ Agent System側では、Agent RunをTrace / Evalへ変え、Harness Decisionに�
 
 ---
 
-## Multi-Agentは、Agentを増やすことより境界を作るために使いたい
+## Harnessで見ると、境界・状態・「できないこと」が変わる
 
-Harnessを考えると、Multi-Agentの見方も少し変わりました。
+### 境界を作る: Multi-Agent
+
+Harnessを考えると、複数のAgentで仕事を分担するMulti-Agentの見方も少し変わりました。
 
 以前はAgentを増やせば、単純に知能が増えるようなイメージを持っていました。
 
 でも実際に重要なのは、
 
-- Contextを分ける
-- Responsibilityを分ける
-- Toolを分ける
-- Domainを分ける
-- Independent Verificationを作る
+- 渡す文脈（Context）を分ける
+- 責務（Responsibility）を分ける
+- 使えるToolを分ける
+- 扱うDomainを分ける
+- 実装とは独立した検証を作る
 - 並列化できる仕事だけを分ける
 
 ことだと感じています。
 
-OpenAIのAgent設計ガイドでも、まずSingle Agentの能力を最大化し、複雑なInstructionsやTool Selectionが問題になったときにMulti-Agentへ分割することが推奨されています。
+OpenAIのAgent設計ガイドでも、まず一つのAgentでできることを最大化し、指示が複雑になりすぎたり、使うToolの選択が難しくなったりしたときにMulti-Agentへ分割することが推奨されています。
 
 つまり、
 
@@ -243,7 +249,7 @@ Multi-Agent = Better
 
 **分けるべき境界があるからAgentを分ける。**
 
-自分が特に有効だと思っているのが、MakerとCheckerの分離です。
+自分が特に有効だと思っているのが、作る役割（Maker）と判定する役割（Checker）の分離です。
 
 ```text
 Maker
@@ -253,7 +259,7 @@ Checker
 
 同じAgentに、実装して、レビューして、修正して、最後に自分で正しいと承認させるより、作る役割と判定する役割を分ける。
 
-Anthropicも2026年3月のlong-running application developmentの実験で、Planner、Generator、Evaluatorの3-Agent構成を使っています。
+Anthropicも2026年3月の長時間にわたるApplication開発の実験で、計画するPlanner、実装するGenerator、評価するEvaluatorの3-Agent構成を使っています。
 
 特に興味深いのは、Generator自身を批判的にするより、Evaluatorを独立して厳しく調整するほうが扱いやすかったという点です。
 
@@ -263,15 +269,13 @@ Agentを増やすことが目的ではなく、**判断を独立させるため�
 
 この考え方は、今後さらに重要になると思っています。
 
----
+### 状態を外に残す: Memory
 
-## Memoryは「モデルが覚えること」ではなく、状態を復元できることと考える
+Memory（状態を次の実行へ引き継ぐ仕組み）についても同じです。
 
-Memoryについても同じです。
+長時間タスクの継続性を、すべてContext Window（Modelが一度に参照できる情報の範囲）の中に押し込む必要はありません。
 
-長時間タスクの継続性を、すべてContext Windowの中に押し込む必要はありません。
-
-Anthropicのlong-running harnessでは、structured artifactsを使ってsession間でContextをhandoffしています。
+Anthropicの長時間実行向けHarnessでは、構造化したArtifactを使ってSession間で必要なContextを引き継いでいます。
 
 例えば、
 
@@ -295,11 +299,9 @@ Session 3
 
 これは普通のSoftware Engineeringで、Process MemoryよりPersistent Stateを信頼するのとかなり似ています。
 
-AgentのMemoryも、「頭の中に覚えているもの」より「外に出されたState」として考えるほうが設計しやすいと感じています。
+AgentのMemoryも、「頭の中に覚えているもの」より、ArtifactやCheckpointとして外に残された状態として考えるほうが設計しやすいと感じています。
 
----
-
-## SecurityはPromptではなく、できない境界を作る
+### 「できないこと」を作る: Security
 
 Production Harnessを考えるとき、Securityも外せません。
 
@@ -312,7 +314,7 @@ Agentに、
 
 とInstructionを書くことはできます。
 
-ただし、それはSecurity Boundaryではありません。
+ただし、それはSecurity Boundary（技術的に越えられない安全上の境界）ではありません。
 
 Anthropicが2026年5月に公開した内部Red Teamの例では、悪意あるPromptに`~/.aws/credentials`を読み、encodeし、外部endpointへPOSTする指示を混ぜたところ、25回中24回で情報送信まで完了しました。
 
@@ -320,15 +322,15 @@ Anthropicがそこで強調しているのは、Model Layerだけでは防げな
 
 必要になるのは、
 
-- Filesystem Boundary
-- Network Egress Control
-- Sandbox
-- Permission
-- Scoped Credential
+- 読み書きできる範囲を制限するFilesystem Boundary
+- 外部通信先を制限するNetwork Egress Control
+- 隔離された実行環境であるSandbox
+- 実行できる操作を絞るPermission
+- 用途と権限を限定したCredential
 
 のようなEnvironment側の制約です。
 
-Anthropicはこれを、probabilisticな防御をすり抜けた最後に効くdeterministic boundaryとして説明しています。
+Anthropicはこれを、Modelの判断に依存する確率的な防御をすり抜けたあとにも効く、決定的な境界として説明しています。
 
 AIに「やってはいけない」とお願いするのではなく、**そもそもできない境界を作る。**
 
@@ -336,7 +338,7 @@ AIに「やってはいけない」とお願いするのではなく、**そも�
 
 ---
 
-## Harness Engineeringを考えるほど、Software Engineeringに戻っていく
+## Harness Engineeringは、Software Engineeringの原則に戻っていく
 
 ここまで考えていて、もう一つ強く感じていることがあります。
 
@@ -344,12 +346,12 @@ Harness Engineeringは、まったく新しいAI固有のEngineeringというよ
 
 例えば、ここまで出てきた考え方を並べると、かなり見慣れたものになります。
 
-- **責務分離**: MakerとChecker、PlannerとExecutorを分ける
-- **Contract**: Goal、Definition of Done、Constraints、Stop Conditionを明確にする
-- **Observability**: Trace、Tool Call、Failure Logから何が起きたかを説明できるようにする
-- **Regression Test**: Production FailureをEval Caseへ変え、Harness変更後に再発しないか確認する
-- **Least Privilege**: Agentに必要以上のPermissionやNetwork Accessを与えない
-- **State Management**: Context Windowだけに依存せず、ArtifactやCheckpointとして状態を外へ出す
+- **責務分離**: 作る役割と判定する役割、計画する役割と実行する役割を分ける
+- **Contract（実行契約）**: 目的、完了条件、制約、停止条件を明確にする
+- **Observability（観測可能性）**: 実行記録やTool呼び出し、失敗Logから何が起きたかを説明できるようにする
+- **Regression Test（回帰テスト）**: 一度起きた失敗を評価ケースへ変え、Harness変更後に再発しないか確認する
+- **Least Privilege（最小権限）**: Agentに必要以上の操作権限やNetwork Accessを与えない
+- **State Management（状態管理）**: Context Windowだけに依存せず、ArtifactやCheckpointとして状態を外へ出す
 
 こうして見ると、AI Agentだから突然まったく別のEngineeringが必要になったわけではありません。
 
@@ -393,9 +395,7 @@ Harness / System Designの価値が上がる
 
 重要なのはHarnessを豪華にすることではなく、**Systemとして説明でき、失敗から改善できる状態にすること**だと思っています。
 
----
-
-## Harnessは増やせばよいわけではない
+### 足すだけでなく、削る
 
 ここは自分自身への注意でもあります。
 
@@ -405,15 +405,15 @@ Planner、Router、Task Queue、Memory、Subagent、Reviewer、Checkpoint、Work
 
 でも、複雑なHarnessが常に良いわけではありません。
 
-Anthropicは2026年3月の記事で、Harnessの各Componentは「Modelが単独ではできないこと」に関するAssumptionをcode化している、と説明しています。
+Anthropicは2026年3月の記事で、Harnessの各構成要素は「Modelが単独ではできないこと」に関する前提をCodeとして固定している、と説明しています。
 
 そしてModelが進化すると、そのAssumptionは古くなります。
 
 以前は複雑なPlannerが必要だった仕事を、次のModelは単体で処理できるかもしれません。
 
-以前は毎Sprint必要だったEvaluatorが、簡単なTaskでは単なるCostになるかもしれません。
+以前は毎回必要だった評価用のAgentも、簡単なTaskでは単なるCostになるかもしれません。
 
-実際にAnthropicの実験でも、Harnessを一つずつ外しながら、どのComponentが本当にload-bearingなのかを確認しています。
+実際にAnthropicの実験でも、Harnessの構成要素を一つずつ外しながら、どの要素が本当に結果へ効いているのかを確認しています。
 
 なので、Harnessには追加のループだけでなく、削るループも必要です。
 
@@ -427,7 +427,7 @@ Validate
 Simplify
 ```
 
-自分も今後は、PlanGate ON / OFF、River Review ON / OFF、Skill ON / OFF、Memory ON / OFFのようなAblationをもっとやりたいと思っています。
+自分も今後は、PlanGate ON / OFF、River Review ON / OFF、Skill ON / OFF、Memory ON / OFFのようなAblation（構成要素を一つずつ外して影響を確かめる切り分け実験）をもっとやりたいと思っています。
 
 **この仕組みは、本当に今のModelにも必要なのか。**
 
@@ -435,20 +435,22 @@ Harnessを作る側が、定期的に問い直すべき質問だと思います�
 
 ---
 
-## 今はHarnessを8つの層で考えている
+## 自分の整理と、次に考えたいもの
+
+### Harnessを8つの層で見る
 
 こうしたことを整理していく中で、今のところ自分はHarnessを8つの層に分けて考えています。
 
 これはAWSやAnthropicの公式分類ではありません。自分が実装と改善箇所を考えやすくするための整理です。
 
-1. **Contract**: Goal、Definition of Done、Constraints、Stop Condition
-2. **Context & Tools**: Instructions、Skills、MCP、Retrieval、Repository Knowledge
-3. **State & Memory**: Artifacts、Checkpoint、Durable Memory
-4. **Orchestration**: Agent Loop、Subagent、Routing
-5. **Runtime & Recovery**: Sandbox Runtime、Retry、Resume、Timeout
-6. **Trust & Security**: Permission、Identity、Approval、Filesystem / Network Boundary
-7. **Observability**: Trace、Cost、Latency、Tool Calls、Failure Log
-8. **Evaluation**: Regression、Judge、Score、Ablation
+1. **Contract（実行契約）**: 目的、完了条件、制約、停止条件
+2. **Context & Tools（文脈と道具）**: 指示、Skills、MCP、検索、Repository Knowledge
+3. **State & Memory（状態と記憶）**: Artifact、Checkpoint、永続化したMemory
+4. **Orchestration（実行の組み立て）**: Agent Loop、Subagent、仕事の振り分け
+5. **Runtime & Recovery（実行環境と復旧）**: Sandbox、Retry、Resume、Timeout
+6. **Trust & Security（信頼と安全性）**: 権限、Identity、Approval、Filesystem / Networkの境界
+7. **Observability（観測可能性）**: Trace、Cost、Latency、Tool Call、Failure Log
+8. **Evaluation（評価）**: Regression、Judge、Score、Ablation
 
 中でも最近重要だと思っているのが、土台に置いたContractです。
 
@@ -462,7 +464,7 @@ Agentに「何をするか」だけを渡すのではなく、
 
 まで決める。
 
-自律的に動く時間が長くなるほど、入口のPromptより、こうしたExecution Contractのほうが効いてくる場面が増えると感じています。
+自律的に動く時間が長くなるほど、入口のPromptより、こうしたExecution Contract（何をもって正しく完了とするかを定める実行契約）のほうが効いてくる場面が増えると感じています。
 
 そして、この8層でこれまでの取り組みを見ると、かなり整理しやすくなります。
 
@@ -484,9 +486,7 @@ RetrospectiveやWeekly Improvementは、ObservabilityとEvaluationから得たEv
 
 今は、**Self-improving Agent Harnessの構成要素として見るほうが近い**と感じています。
 
----
-
-## 次に作りたいのは、新しいAgentよりHarness Control Plane
+### 次に作りたいのはHarness Control Plane
 
 この考え方まで来ると、次にやりたいことも少し変わってきます。
 
@@ -534,7 +534,7 @@ Measure
 
 を回す。
 
-これを今は、仮に**Harness Control Plane**と考えています。
+これを今は、仮に**Harness Control Plane**と呼んでいます。Harnessの変更履歴と実行結果をまとめて追い、改善判断を支える管理の仕組み、という意味です。
 
 Agentを管理するための管理画面、という意味だけではありません。
 
@@ -552,9 +552,7 @@ Reviewerを分離したから良くなったのか。
 
 そこまで説明できるようになれば、Agent開発はかなりSoftware Engineeringらしくなると思っています。
 
----
-
-## ProductのLearning Loopの内側に、HarnessのLearning Loopがある
+### 2つのLearning Loopを重ねて考える
 
 前の記事では、AI時代に短くすべきものをTime to CodeではなくTime to Learningとして考えました。
 
@@ -624,15 +622,11 @@ Evalする
 
 そして、この先でもう一つ考えたいことがあります。
 
-HarnessがAgentをどう動かすかを支えるものだとしたら、**そのAgentに「何が正しいか」を何で渡すのか**。
+HarnessがAgentをどう動かすかを支えるものだとしたら、次に考えたいのは、**そのAgentに「何が正しいか」をどう渡すのか**です。
 
-最近はそこに、仕様駆動開発、TDD、DDDといったSoftware Engineeringの考え方が改めて効いてくるのではないかと感じています。
+仕様で意図と完了条件を定め、Testで期待する振る舞いを実行可能な形にし、Domainの言葉や責務の境界を整理する。
 
-仕様でIntentとContractを定め、Testで期待するBehaviorを実行可能な形にし、Domain ModelとBounded Contextで意味と責務の境界を作る。
-
-AIがコードを書くほど、こうしたCoding以外のEngineeringがむしろ重要になる。
-
-次は、このあたりをもう少し整理してみたいと思っています。
+AIがコードを書くほど、こうしたCoding以外のEngineeringがむしろ重要になる。このテーマは次の記事で掘り下げたいと思っています。
 
 ---
 
@@ -654,3 +648,4 @@ AIがコードを書くほど、こうしたCoding以外のEngineeringがむし�
   - https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/
 - 前回の記事「AI時代の開発で短くすべきは、Time to CodeではなくTime to Learning」
   - https://note.com/mine_unilabo/n/n5070e13232ce
+
