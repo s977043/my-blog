@@ -17,6 +17,8 @@
 - 前記事のTime to Learningとの接続が、単なる内部リンクではなく論理的な続編になっているか
 - PlanGate / River Reviewの紹介が自作ツール宣伝に寄りすぎていないか
 - noteのWXRインポートで崩れやすいMarkdown Tableを使っていないか
+- 英語の専門語が説明なしで連続し、読者が意味を推測しないと読めない箇所がないか
+- H2が論点の羅列ではなく、読者が追うストーリーになっているか
 
 ---
 
@@ -37,6 +39,9 @@
 - [x] AWS公式のHarness説明と筆者独自の8層分類を明確に分けている
 - [x] Markdown Tableを本文に使っていない
 - [x] 横幅の大きいASCII図を避け、スマホで縦に読める構成にしている
+- [x] H2を13本から6本へ整理し、「失敗 → 改善 → 個別適用 → 原則 → 次」の読者導線に統合した
+- [x] Observability / Evaluation / Artifact / Checkpoint / Ablationなど主要な専門語は初出または8層で日本語の意味を添えている
+- [x] 独立した用語集は追加せず、本文の文脈の中で意味が分かるようにした
 - [x] JTFスタイルで禁止されている長音ダッシュ記号を本文に使っていない
 - [x] 固有ツール名の初出を遅らせ、読者にも起こるFailure / Evaluation / Securityの問題を先に説明している
 - [x] 最後に「Harness Control Plane」という筆者独自の次の仮説まで進んでいる
@@ -300,6 +305,34 @@ Harnessに気づいた経緯の段階ではPlanGate / River Reviewという固�
 
 ---
 
+### F12: H2の並列と未説明の英語用語が読者負荷を上げる
+
+**重要度: high / 対応済み**
+
+外部レビューで、記事の内容不足ではなく、H2が13個横並びになっていることで、読者が各テーマを同じ重要度で処理させられている点が指摘された。
+
+また、Observability / Evaluation / Artifact / Checkpoint / Ablationなど、英語だけでは意味を推測しないと読み進めにくい箇所が残っていた。
+
+#### 対応
+
+独立した用語集は追加せず、記事全体を次の5段階へ再構成した。
+
+1. 失敗の見方を変える
+2. 改善ループの入口は観測と評価
+3. Harnessで見ると、境界・状態・「できないこと」が変わる
+4. Software Engineeringの原則に戻す
+5. 自分の整理と次に考えたいもの
+
+H2は参考を含めて13本から6本へ削減した。
+
+主要な専門語は初出で日本語の意味を添え、8層は辞書ではなく、ここまで読んだ内容を再整理する写像として使う構成に変更した。
+
+終盤のHarness Control Planeも英語のfield一覧と重複Loopを削り、次テーマとして短くした。記事の最後はProduct Learning LoopとHarness Improvement Loopの統合に戻した。
+
+**判定: 解消。**
+
+---
+
 ## 良い点
 
 ### 1. AWSの紹介記事で終わらず、自分の思考の変化が主役になっている
@@ -341,8 +374,8 @@ Harness Engineeringを新しい複雑性の正当化にせず、AblationとSimpl
 1. **図版を1枚入れるなら、2つのLearning Loopを選ぶ**
    - Product Learning LoopとHarness Improvement Loopの関係が記事の独自主張なので、ヒーロー画像以外に図を1枚だけ入れるならここが最も効果的。
    - 本文内のLearning Loop図は役割ごとに整理済みで、追加の図を増やす必要はない。
-2. **note公開時は目次をONにする**
-   - H2が多い長文記事なので、スマホで途中から戻りやすくする。
+2. **note公開時の目次はON推奨**
+   - H2は6本まで整理済みだが、長文なので途中から戻る導線としては有効。公開ブロッカーではない。
 3. **タグ候補**
    - #AI
    - #生成AI
@@ -356,13 +389,14 @@ Harness Engineeringを新しい複雑性の正当化にせず、AblationとSimpl
 
 **公開可能。must / highの未解決指摘なし。**
 
-特に重要な補正は次の4点。
+特に重要な補正は次の5点。
 
 1. HarnessとModelを対立させず、end-to-end systemとして扱う
 2. AWS / Anthropicの一次情報と筆者独自の8層モデルを明確に分ける
 3. 前記事のTime to Learningを、Agent System自身のLearning Loopへ発展させる
 4. Harness EngineeringをSoftware Engineeringの既存原則の再適用として一般化する
+5. 論点を5段階の読者導線へ畳み、専門語を本文内で説明する
 
-この4点によって、一般的な「Harness Engineeringとは何か」という解説記事ではなく、**筆者が最近考えていることを既存の実践と一次情報で整理したnote記事**として成立している。
+この5点によって、一般的な「Harness Engineeringとは何か」という解説記事ではなく、**筆者が最近考えていることを既存の実践と一次情報で整理したnote記事**として成立している。
 
 PRマージ後は `articles_note/new/agent-harness-engineering-note.md` をcanonicalとしてWXR生成し、noteへ新規下書きとしてインポートする運用が適切。
