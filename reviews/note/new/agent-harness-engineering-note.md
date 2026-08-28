@@ -40,6 +40,7 @@
 - [x] JTFスタイルで禁止されている長音ダッシュ記号を本文に使っていない
 - [x] 自作ツール名より、読者にも起こるFailure / Evaluation / Securityの問題を先に説明している
 - [x] 最後に「Harness Control Plane」という筆者独自の次の仮説まで進んでいる
+- [x] Harness EngineeringをSoftware Engineeringの既存原則の再適用として明示し、記事全体の一般化ができている
 
 ---
 
@@ -236,7 +237,17 @@ ProductではBuildをEvidenceへ変え、Agent SystemではRunをTrace / Evalへ
 
 Harness Engineeringを新しい複雑性の正当化にせず、AblationとSimplifyまで入れている。シニアエンジニア読者への反論耐性が高い。
 
-### 5. Harness Control Planeが次の記事への仮説になる
+### 5. Software Engineeringとの連続性が記事の芯として明確になった
+
+責務分離、Contract、Observability、Regression Test、Least Privilege、State ManagementをAgent Engineeringへ適用し直す、という整理を追加したことで、Harness EngineeringがAI固有の流行語ではなくSoftware Engineeringの延長として読めるようになった。
+
+特に、
+
+> AIによってSoftware Engineeringが不要になるのではなく、むしろCoding以外のSoftware Engineering原則が前面に出てきている。
+
+という主張は、前記事の「Codingが速くなるほどShapingの価値が上がる」と対になっており、シリーズ全体の一貫性を強めている。
+
+### 6. Harness Control Planeが次の記事への仮説になる
 
 既存知識のまとめで終わらず、versioning / trace / failure taxonomy / eval / ablationを統合する次の設計テーマを提示している。筆者の現在地が伝わる。
 
@@ -263,11 +274,12 @@ Harness Engineeringを新しい複雑性の正当化にせず、AblationとSimpl
 
 **公開可能。must / highの未解決指摘なし。**
 
-特に重要な補正は次の3点。
+特に重要な補正は次の4点。
 
 1. HarnessとModelを対立させず、end-to-end systemとして扱う
 2. AWS / Anthropicの一次情報と筆者独自の8層モデルを明確に分ける
 3. 前記事のTime to Learningを、Agent System自身のLearning Loopへ発展させる
+4. Harness EngineeringをSoftware Engineeringの既存原則の再適用として一般化する
 
 この3点によって、一般的な「Harness Engineeringとは何か」という解説記事ではなく、**筆者が最近考えていることを既存の実践と一次情報で整理したnote記事**として成立している。
 
