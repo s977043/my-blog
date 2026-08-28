@@ -734,6 +734,34 @@ function hermeticCases(eq) {
     }
   }
 
+  // ── fixture G: origin 追跡 ref なのに一度も fetch していない（H-1） ──
+  //   40h 経過しているので素直に見れば OK だが、ref が古ければ「見えていないだけ」かもしれない。
+  //   fetch もできない（ZENN_PACE_NO_FETCH=1 / FETCH_HEAD なし）なら OK と言ってはいけない。
+  {
+    const bare = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'zenn-pace-origin-'));
+    const dir = makeFixtureRepo();
+    try {
+      git(bare, ['init', '-q', '--bare', '-b', 'main']);
+      writeArticle(dir, 'j', 'false');
+      commitAt(dir, 'seed', 96);
+      git(dir, ['switch', '-q', '-c', 'release/zenn']);
+      writeArticle(dir, 'j', 'true');
+      commitAt(dir, 'publish j', 40);
+      // push は remote-tracking ref（origin/release/zenn）を作るが FETCH_HEAD は作らない
+      // ＝「origin 追跡 ref はあるが一度も fetch していない」状態を再現できる。
+      git(dir, ['remote', 'add', 'origin', bare]);
+      git(dir, ['push', '-q', 'origin', 'main', 'release/zenn']);
+
+      const r = runMain(dir, { STRICT: '1' });
+      eq('[git] H-1: 未 fetch の origin ref は UNKNOWN', /UNKNOWN/.test(r.out), true);
+      eq('[git] H-1: 鮮度を確保できなかったことを出力する', /鮮度を確保できなかった/.test(r.out), true);
+      eq('[git] H-1: 未 fetch は STRICT で exit 1（40h 経過でも OK と言わない）', r.code, 1);
+    } finally {
+      rmrf(dir);
+      rmrf(bare);
+    }
+  }
+
   // ── fixture E: 24h 内に 2 件公開 → 件数側の FAIL_THRESHOLD が効く ──
   {
     const dir = makeFixtureRepo();
