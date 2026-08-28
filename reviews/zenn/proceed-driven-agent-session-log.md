@@ -1,4 +1,4 @@
-<!-- publish-readiness: blocked=true mustHigh=1 verified=true articleHash=6ebcf36006eccf6593276f822086adf2c62af9ae loops=1 reviewedAt=2026-08-28T02:04:07Z -->
+<!-- publish-readiness: blocked=false mustHigh=0 verified=true articleHash=41926df98e366a9f340678d730a4269df434e56c loops=1 reviewedAt=2026-08-28T02:04:07Z -->
 
 # レビュー成果物: proceed-driven-agent-session-log
 
@@ -7,7 +7,7 @@
 - 構成タイプ: 概念解説・考察（事故未遂ケーススタディ集）
 - 改善ループ数: 1（今回は review-only。本文は一切変更していない）
 - レビュー状態: fresh-review-verified（3 ケースすべてを `AGENT_LEARNINGS.md` の一次記録と再突合、外部 URL 3 本と転送先リポジトリの可視性を実測）
-- 総合判定: **must 0 件 / high 1 件（F1、未反映）/ medium 2 件 / low 2 件。high が残るため `blocked=true mustHigh=1`。`published: false` は維持。**
+- 総合判定: **must 0 件 / high 1 件（F1、2026-08-28 反映済み）/ medium 2 件 / low 2 件。high が解消したため `blocked=false mustHigh=0`。medium / low は未反映（公開ブロッカーではない）。`published: false` は維持。**
 
 > **本レビューを実施した理由**: 直前のレビュー（`reviewedAt=2026-08-27T03:40:15Z`、`articleHash=d8b6578a…`）のあとに PR #539「未公開4記事の末尾に X アカウント導線を追加」が本文を変更したため、`npm run check:publish-readiness -- proceed-driven-agent-session-log` が articleHash 不一致（recorded=`d8b6578a` / current=`6ebcf360`）の stale 判定（WARN）を返す状態だった。本ファイルは現行本文（L1-L88）に対する**新規レビュー**として全面的に書き直したもので、旧レビューの結論をそのまま引き継いではいない。
 >
@@ -60,7 +60,7 @@
 
 ## 3. 指摘コメント
 
-### F1 — high: タイトル前半「踏み外しかけた3つの瞬間」が、記事の中心的な区別（1件は未遂ではない）を潰している
+### F1 — high: タイトル前半「踏み外しかけた3つの瞬間」が、記事の中心的な区別（1件は未遂ではない）を潰している（**2026-08-28 反映済み**）
 
 **該当箇所**: L2（`title`）／対比する本文は L19・L22・L45-53・L63・L71
 
@@ -81,6 +81,13 @@
 - after 案B: `『進めて』と言い続けたAIの事故・未遂3件 — 安全機構が止めた/機構がまだ無かったケーススタディ`
 
 案A は「越えかけた/越えた」の両方を含意でき、変更は 1 語で済む。`topics`（`["ai駆動開発", "claudecode", "エージェント設計", "aiagent", "セキュリティ"]`）は記事の中心語を過不足なく拾えているため変更不要。
+
+**反映（2026-08-28）**: 著者確定案として、案A の語を「越えた」ではなく「触れた」とした形で反映済み。変更はタイトル 1 行のみで、本文・`topics`・`published: false` は変更していない。
+
+- before: `『進めて』と言い続けたAIが踏み外しかけた3つの瞬間 — 安全機構が止めた/機構がまだ無かったケーススタディ`
+- after: `『進めて』と言い続けたAIが境界に触れた3つの瞬間 — 安全機構が止めた/機構がまだ無かったケーススタディ`
+
+本文 L19 は元から「実際に踏み外しかけた（あるいは踏み外した）瞬間を3件」と既遂を含む書き方をしており、タイトル変更後も整合するため本文側の修正は不要と判断した。反映後の `articleHash` は `41926df98e366a9f340678d730a4269df434e56c`（ヘッダへ反映済み、`blocked=false mustHigh=0`）。
 
 ---
 
@@ -187,7 +194,7 @@
 
 ### 残る改善点
 
-- **公開前に直す（high 1、未反映）**: F1 — タイトル前半「踏み外しかけた」が、ケース3 が既遂であるという記事の中心的な区別を打ち消している
+- **公開前に直す（high 1）**: F1 — タイトル前半「踏み外しかけた」が、ケース3 が既遂であるという記事の中心的な区別を打ち消していた → **2026-08-28 に「境界に触れた」へ差し替えて反映済み**
 - **推奨（medium 2、未反映）**: F2（「安全機構」のレイヤー未特定）、F3（L31「漏れ出る」が private リポジトリという実態より強い）
 - **任意（low 2、未反映）**: F4（HTML コメントに埋まった復活タスク）、F5（署名行の文体）
 - **据え置き（前回からの引き継ぎ）**: ケース2 の PR 番号欠落は、原典に無いため現状維持が妥当
@@ -208,10 +215,10 @@
 | 項目 | 状態 |
 | --- | --- |
 | must（技術的誤り・危険手順・重大な再現性欠如） | **0 件** |
-| high 残件 | **1 件（F1、未反映）** |
-| `blocked` | **true**（in-review 条件 `blocked=false` かつ `mustHigh=0` を満たさない） |
-| `mustHigh` | **1** |
+| high 残件 | **0 件**（F1 は 2026-08-28 に反映済み） |
+| `blocked` | **false**（F1 反映により `blocked=false` かつ `mustHigh=0` を満たす） |
+| `mustHigh` | **0** |
 | `verified` | true（一次記録 3 エントリ / 外部 URL 3 本 / リポジトリ可視性 1 件 / 本文差分 1 件を実測） |
-| 記事本文の変更 | **なし**（本レビューは review-only。`published: false` を維持） |
+| 記事本文の変更 | **タイトル 1 行のみ**（2026-08-28 の F1 反映。`published: false` は維持） |
 | medium / low 残件 | medium 2 件・low 2 件（いずれも未反映、公開ブロッカーではない） |
 | 検証コマンド | `git hash-object` / `git diff` / `grep -n`（`AGENT_LEARNINGS.md`）/ `curl -sL -o /dev/null -w "%{http_code}"`（URL 3 本）/ `gh repo view --json visibility,isPrivate` / `npm run check:publish-readiness` |
