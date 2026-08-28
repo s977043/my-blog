@@ -64,7 +64,7 @@ Agent = Model + Harness
 
 **ModelをAgentから取り除いたとき、残るものがHarness。**
 
-Podcastでは、その中にTools（使える道具）、Skills（再利用する手順や知識）、Memory（状態の保持）、Context（与える文脈）、Observability（観測可能性）、Evaluation（評価）、Agentic Loop（Agentが判断と実行を繰り返す流れ）などが含まれると整理されています。
+Podcastでは、その中にTools、Skills（再利用する手順や知識）、Memory、Context、Observability、Evaluation、Agentic Loop（Agentが判断と実行を繰り返す流れ）などが含まれると整理されています。
 
 ここでいうHarnessは、Agentの推論そのものではなく、**何を渡し、何を使わせ、どんな状態を残し、どう実行・観測・評価するかを担う外側の仕組み**だと捉えると分かりやすいです。
 
@@ -74,7 +74,7 @@ Podcastでは、その中にTools（使える道具）、Skills（再利用す�
 - 実装前に承認の境界を置く
 - SkillsやRepository Knowledge（Repository固有の知識）をContextとして渡す
 - 実装するAgentとレビューする役割を分ける
-- 実行結果をArtifactとして残す
+- 実行結果をArtifact（実行結果を外に残す成果物）として残す
 - 失敗を振り返り、次のルールやEvalへ戻す
 
 これまでは、計画と承認、独立したレビュー、再利用する手順や知識、状態の保持、評価、振り返りを、それぞれ別の仕組みとして考えていました。
@@ -101,9 +101,9 @@ Coding Agentを使っていると、失敗したときにModelの名前で話し
 
 - 完了条件（Completion Criteria）は明確だったか
 - 停止条件（Stop Condition）は適切だったか
-- 現在地を確認できる成果物（Artifact）があったか
-- Agentへ渡す文脈（Context）が長くなりすぎていなかったか
-- 途中から再開するための再開点（Checkpoint）やResumeの仕組みがあったか
+- 現在地を確認できるArtifactがあったか
+- Contextが長くなりすぎていなかったか
+- 途中から再開するためのCheckpoint（途中から再開するための再開点）やResumeの仕組みがあったか
 
 Toolを間違えたなら、Toolの入力形式や説明、どのToolを選ぶかというRouting、Contextを疑う。
 
@@ -168,11 +168,9 @@ Runtime条件だけで、それ以上動く可能性があるからです。
 
 Harness Engineeringを考えると、結局ここが本丸だと思っています。
 
-**Observability（観測可能性）とEvaluation（評価）です。**
+**ObservabilityとEvaluationです。**
 
-Observabilityは、実行中に何が起きたのかをTraceやLogから説明できること。
-
-Evaluationは、同じ基準で結果を比べ、変更したあと本当に良くなったかを判断できることです。
+失敗したときに何が起きたのかを説明するのがObservabilityで、変更したあと本当に良くなったかを判断するのがEvaluationです。
 
 失敗したときに何が起きたのか分からなければ、改善できません。
 
@@ -228,7 +226,7 @@ Harnessを考えると、複数のAgentで仕事を分担するMulti-Agentの見
 
 でも実際に重要なのは、
 
-- 渡す文脈（Context）を分ける
+- Contextを分ける
 - 責務（Responsibility）を分ける
 - 使えるToolを分ける
 - 扱うDomainを分ける
@@ -348,7 +346,7 @@ Harness Engineeringは、まったく新しいAI固有のEngineeringというよ
 
 - **責務分離**: 作る役割と判定する役割、計画する役割と実行する役割を分ける
 - **Contract（実行契約）**: 目的、完了条件、制約、停止条件を明確にする
-- **Observability（観測可能性）**: 実行記録やTool呼び出し、失敗Logから何が起きたかを説明できるようにする
+- **Observability**: 実行記録やTool呼び出し、失敗Logから何が起きたかを説明できるようにする
 - **Regression Test（回帰テスト）**: 一度起きた失敗を評価ケースへ変え、Harness変更後に再発しないか確認する
 - **Least Privilege（最小権限）**: Agentに必要以上の操作権限やNetwork Accessを与えない
 - **State Management（状態管理）**: Context Windowだけに依存せず、ArtifactやCheckpointとして状態を外へ出す
@@ -443,14 +441,14 @@ Harnessを作る側が、定期的に問い直すべき質問だと思います�
 
 これはAWSやAnthropicの公式分類ではありません。自分が実装と改善箇所を考えやすくするための整理です。
 
-1. **Contract（実行契約）**: 目的、完了条件、制約、停止条件
-2. **Context & Tools（文脈と道具）**: 指示、Skills、MCP、検索、Repository固有の知識
-3. **State & Memory（状態と記憶）**: 成果物、再開点、永続化した状態
-4. **Orchestration（実行の組み立て）**: Agent Loop（繰り返し実行）、Subagent（下位Agent）、仕事の振り分け
-5. **Runtime & Recovery（実行環境と復旧）**: 隔離実行、再試行、再開、Timeout（時間切れ）
-6. **Trust & Security（信頼と安全性）**: 権限、Identity（実行主体の識別）、Approval（承認）、Filesystem / Networkの境界
-7. **Observability（観測可能性）**: 実行記録、Cost（コスト）、Latency（遅延）、Tool呼び出し、失敗Log
-8. **Evaluation（評価）**: 回帰評価、Judge（判定役）、Score（評価値）、Ablation（切り分け実験）
+1. **Contract**: 目的、完了条件、制約、停止条件
+2. **Context & Tools**: 指示、Skills、MCP、検索、Repository固有の知識
+3. **State & Memory**: 成果物、再開点、永続化した状態
+4. **Orchestration**: 実行の組み立て。Agent Loop、Subagent、仕事の振り分け
+5. **Runtime & Recovery**: 実行環境と復旧。隔離実行、再試行、再開、時間切れ
+6. **Trust & Security**: 信頼と安全性。権限、実行主体の識別、承認、Filesystem / Networkの境界
+7. **Observability**: 観測可能性。実行記録、コスト、遅延、Tool呼び出し、失敗Log
+8. **Evaluation**: 評価。回帰評価、判定役、評価値、Ablation
 
 中でも最近重要だと思っているのが、土台に置いたContractです。
 
@@ -464,11 +462,11 @@ Agentに「何をするか」だけを渡すのではなく、
 
 まで決める。
 
-自律的に動く時間が長くなるほど、入口のPromptより、こうしたExecution Contract（何をもって正しく完了とするかを定める実行契約）のほうが効いてくる場面が増えると感じています。
+自律的に動く時間が長くなるほど、入口のPromptより、こうしたExecution Contractのほうが効いてくる場面が増えると感じています。
 
 そして、この8層でこれまでの取り組みを見ると、かなり整理しやすくなります。
 
-PlanやPBI、DoD（完了の定義）はContract。
+PlanやPBI、DoDはContract。
 
 SkillsやRulesはContext & Tools。
 
