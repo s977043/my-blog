@@ -642,7 +642,17 @@ Evalする
 
 新しいAgentを増やすより先に、今あるAgent Systemを説明できるようにする。
 
-しばらくは、この方向をもう少し掘ってみたいと思っています。
+そして、この先でもう一つ考えたいことがあります。
+
+HarnessがAgentをどう動かすかを支えるものだとしたら、**そのAgentに「何が正しいか」を何で渡すのか**。
+
+最近はそこに、仕様駆動開発、TDD、DDDといったSoftware Engineeringの考え方が改めて効いてくるのではないかと感じています。
+
+仕様でIntentとContractを定め、Testで期待するBehaviorを実行可能な形にし、Domain ModelとBounded Contextで意味と責務の境界を作る。
+
+AIがコードを書くほど、こうしたCoding以外のEngineeringがむしろ重要になる。
+
+次は、このあたりをもう少し整理してみたいと思っています。
 
 ---
 
