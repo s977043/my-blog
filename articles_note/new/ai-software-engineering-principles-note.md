@@ -107,6 +107,22 @@ Kiroも、Specを先に作ることでScopeやConstraints、Edge Caseを明確�
 
 **「実装する前に、何を正しいとするかを外部化する」ことです。**
 
+ただし、ここで一つ注意したいことがあります。
+
+Specは、まだ分かっていないことを自動的に正しくしてくれるものではありません。
+
+Domainの理解やProduct Hypothesisが大きく揺れている段階で詳細なSpecを作ると、単なるAssumptionをRequirementとして固定してしまうことがあります。
+
+だから、不確実性が高い段階ではSpecを薄く保ち、
+
+- 分かっていること
+- 仮説であること
+- まだ確認できていないこと
+
+を分けて持つほうがよいと考えています。
+
+Specを「Knowledgeを発見するもの」ではなく、**ある程度得られたKnowledgeをAgentが実行できるContractへ変えるもの**として見るほうが、今の自分にはしっくりきます。
+
 例えばAgentに渡すSpecificationなら、最低限、
 
 - Goal
@@ -261,6 +277,12 @@ Eval
 
 です。
 
+一方で、TestがあるからProductとして正しいとは限りません。
+
+まだ価値があるか分からないBehaviorを精密にTestへ固定すれば、間違った仮説を高品質に実装することもできます。
+
+TDDは、Product Hypothesisそのものを検証する方法というより、**残したいBehaviorが見えてきたあとに、それをExecutableなFeedbackへ変える方法**として考えると整理しやすいと感じています。
+
 自分がRiver Reviewで、作る役割と確認する役割を分けようとしてきた理由もここにあります。
 
 これはTDDそのものではありません。
@@ -276,6 +298,14 @@ Eval
 DDDは、仕様駆動開発やTDDほど、自分の現在の運用へ明示的に組み込めているわけではありません。
 
 だからここは、実践済みの答えというより、今後試したい仮説に近いです。
+
+ただ、DDDはSpecificationやTestよりも早い段階から使える可能性があると思っています。
+
+Domain Expertとの会話、具体例、言葉の違和感からModelを揺らし、Ubiquitous LanguageやBounded Contextを探していく活動は、むしろ「まだ何が正しいか分からない」段階のLearningに向いています。
+
+一方で、EntityやAggregateなどの実装構造を早く固定しすぎれば、仮説段階のDomain ModelをArchitectureへ焼き付ける危険があります。
+
+**探索としてのDDDと、構造として固定するDDDは分けて考えたい。**
 
 AI Agentには大量のContextを渡せます。
 
@@ -513,7 +543,9 @@ AI駆動開発でも同じだと思います。
 
 ### 不確実性が高い
 
-Domain UnderstandingとShapingを厚くする。
+Domain Understanding、Shaping、Hypothesis / Experimentを厚くする。
+
+この段階ではSpecを詳細化しすぎず、AssumptionやUnknownを残したままLearningを優先する。
 
 ### Scopeが大きい
 
@@ -623,11 +655,11 @@ AIによってCodingが不要になるとは思っていません。
 
 と考えています。
 
-仕様駆動開発は、AgentとのContractを作る。
+仕様駆動開発は、**理解が進んだKnowledgeをAgentとのContractへ変える。**
 
-TDDは、期待するBehaviorをExecutableにする。
+TDDは、**残したいBehaviorをExecutableなFeedbackへ変える。**
 
-DDDは、意味と責務のBoundaryを作る。
+DDDは、**Domainの意味と責務のBoundaryを探索し、必要なところから構造へ変える。**
 
 Harnessは、それらを守りながらAgentを実行する。
 
