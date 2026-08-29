@@ -8,6 +8,7 @@
 - 手順は各記事内「公開当日チェックリスト」に従う（ignorePublish→false / updated_at / コメント削除 / `npm run check` / `npm run publish:qiita`）
 - 公開したら下の Done へ移動し、公開日を記録
 - Zenn は `published_at` を締切日 18:00 JST に設定 → release/zenn へ反映（rate-limit 24h/3本厳守）
+  - **実観測の注記（2026-08-28 10:45 JST 実測）**: 上記の「24h/3本」より実効はさらに厳しい。`loop-maturity-rubric-audit`（published_at 2026-08-27 14:45 JST）の **18時間13分後**に release/zenn へマージした `river-review-judgment-placement`（sync PR #551、2026-08-27 23:58 UTC マージ）は、マージから約1時間45分経過時点で **HTTP 403** かつ `https://zenn.dev/api/articles?username=minewo&order=latest` に**未出現**＝deploy されなかった。同時刻の対照群 `loop-maturity-rubric-audit` は HTTP 200 / API 出現あり（id 640688）。**rate-limit 数値の正本は [`docs/publish-operating-policy.md`](./publish-operating-policy.md) §Rate-limit 遵守**（実効 ~24h/1本、`check:zenn-pace` は 1 件 WARN / 2 件 FAIL）。この実測はその「実効 ~24h/1本」を支持する追加観測であり、上記の既存表現を置き換えるものではない
 
 ## 状態遷移（機械可読）
 
@@ -39,7 +40,18 @@
 
 - `[ready-to-publish]` **#12 (note) 締切 2026-09-03**: 「AI駆動開発を「個人技」で終わらせない。チームの仕組みに変えるまで」（`articles_note/new/plangate-team-rollout.md`。PR #524 マージ済み・構成レビュー完了〔P1/P2 指摘なし〕）。一次情報: Growth-Teams-Agent の `docs/team-onboarding/CHANGELOG.md`・`improvement-backlog.md`〔FB-001/031/032〕・`.agents/metrics/`、plangate README。**公開前に人間判断が要る残件**: ①チーム統計・GTA内部情報・改善バックログ由来の実数の公開可否 ②note公開時に目次をON ③ASCII図の実表示確認（2026-08-27 に code block の最大表示幅を 67→38 に圧縮済み。崩れる場合は全体図のみ画像化）
 
-- `[ready-to-publish]` **#13 (zenn) 締切 2026-08-29**: 「AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計」（`articles/river-review-judgment-placement.md`、14,209字）。`reviews/zenn/river-review-judgment-placement.md` が `blocked=false mustHigh=0`（2026-08-26 実測）。release/zenn へは #535 で `published: false` のまま同期済み。公開手順は flip PR（main）→ sync PR（release/zenn）の2本
+- `[requires-human]` **#13 (zenn) 締切 2026-08-29**: 「AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計」（`articles/river-review-judgment-placement.md`、14,209字）。`reviews/zenn/river-review-judgment-placement.md` が `blocked=false mustHigh=0`（2026-08-26 実測）。flip PR #550（main、`published: true`）→ sync PR #551（release/zenn、2026-08-27 23:58 UTC マージ）まで完了済み。**しかし deploy が発火していない**。
+  - 実測（2026-08-28 10:45 JST、マージから約1時間45分経過時点）: `https://zenn.dev/minewo/articles/river-review-judgment-placement` は **HTTP 403**、`https://zenn.dev/api/articles?username=minewo&order=latest` にも **未出現**
+  - 対照群: `loop-maturity-rubric-audit` は同時刻に **HTTP 200** / API 出現あり（id 640688、published_at 2026-08-27 14:45 JST）。Zenn 連携そのものは生きている
+  - 原因は **Zenn rate-limit** でほぼ確定。`AGENT_LEARNINGS.md` の 2026-05-22 エントリに**同型の先例**がある（`river-review-v033` を前記事の 22.4 時間後に publish → Zenn deploy log に「次の記事は投稿数の上限に達したためデプロイされませんでした」と表示され未反映。同 commit 内の他ファイル更新は deploy 成功）。今回はさらに短い間隔である。loop-maturity の公開（8/27 14:45 JST）から本記事の sync マージ（8/28 08:58 JST）まで **18時間13分**しかあいておらず、規約の 24 時間を下回っている
+  - **`[done]` へ移してはならない理由**: `done` の遷移条件は「live URL と HTTP 200 を記録」。現状は 403 / API 未出現で公開が成立していない。マージ済みという事実だけで Done にすると、公開されていない記事を公開済みとして扱い、以後の rate-limit ペース計算と相互リンク作業がすべて誤った前提で進む
+  - 人間の判断が要る点: ①さらに待って反映されるか（Zenn 側の遅延の可能性）②反映されなければ release/zenn への空 commit（`git commit --allow-empty`）で再 deploy ③再試行は **前回公開（`loop-maturity-rubric-audit` = 2026-08-27 14:45 JST）から 24 時間以上**あけてから（＝ 2026-08-28 14:45 JST 以降）
+- `[ready-to-publish]` **#15 (zenn) 締切 2026-08-31 以降**: 「AIセカンドブレインのマルチエージェント記憶」（`articles/ai-second-brain-multi-agent-memory.md`、`published: false`）。レビュー成果物 `reviews/zenn/ai-second-brain-multi-agent-memory.md` — **2026-08-28 10:45 JST 実測**で `blocked=false mustHigh=0 verified=true loops=1 reviewedAt=2026-08-27T09:41:31Z`、`articleHash=5b87649768cb5df4a159a8c4e42ffbe115972ad5` が `git hash-object articles/ai-second-brain-multi-agent-memory.md` の現行値と**一致（fresh）**。`in-review` の遷移条件（blocked=false かつ mustHigh=0）を満たしたうえで `ready-to-publish` に置いている。**締切を 8/31 以降にしている理由**: 8/28 時点で `check:zenn-pace` が WARN(FAIL相当) 2 件、かつ #13 が deploy 未発火のため、先に #13 の決着を待つ必要がある。着手直前に readiness を**再測**すること（ゲート鮮度: reviewedAt からの経過ではなく articleHash 一致で判定する）
+- `[ready-to-publish]` **#16 (zenn) 締切 2026-09-01 以降**: 「『進めて』駆動のエージェントセッションログ」（`articles/proceed-driven-agent-session-log.md`、`published: false`）。レビュー成果物 `reviews/zenn/proceed-driven-agent-session-log.md`。**2026-08-28 11:0x JST の再レビュー（PR #556）で検出した high 1 件（F1）を同日反映済み**（タイトル前半「踏み外しかけた」→「境界に触れた」。本文・`topics`・`published` は不変）。反映に伴い readiness を更新し、**`blocked=false mustHigh=0 verified=true`、`articleHash=41926df98e366a9f340678d730a4269df434e56c`**（2026-08-28 11:2x JST 実測、`git hash-object articles/proceed-driven-agent-session-log.md` の現行値と一致＝fresh）。`in-review` の遷移条件（blocked=false かつ mustHigh=0）を満たしたため `ready-to-publish` へ移した
+  - **F1 (high、反映済み)**: タイトル前半「踏み外し**かけた**3つの瞬間」が、ケース3 は未遂ではなく既遂（PR #258 を丸ごと使ってリカバリした不可逆な作業損失）だという記事の中心的な区別を打ち消していた。前回の high 反映はタイトル**後半**（「止め損ねた」→「機構がまだ無かった」）のみで、同じ不整合が前半に残っていた。2026-08-28 にユーザー確定案で「境界に触れた」へ差し替え済み（変更はタイトル 1 行のみ）
+  - **未反映のまま残す指摘**: F2（medium: 「安全機構」のレイヤー未特定）/ F3（medium: 「漏れ出る」が private リポジトリという実態より強い）/ F4・F5（low）。いずれも公開ブロッカーではなく、著者判断で別途扱う
+  - **締切を 2026-09-01 以降にしている理由**: 2026-08-28 時点で `npm run check:zenn-pace` が **WARN(FAIL相当) 2 件**、かつ #13 `river-review-judgment-placement` が Zenn rate-limit により deploy 未発火のまま未決着。新規 publish を重ねると同じ未発火を再発させるため、#13 の決着を待ってから着手する
+  - 着手直前に `npm run check:publish-readiness -- proceed-driven-agent-session-log` を**再測**すること（ゲート鮮度は reviewedAt ではなく articleHash 一致で判定する）
 - `[ready]` **#11 (zenn) 締切 2026-09-07**: 「worktree 分離だけでは防げない — 並列AIセッションのGit事故を"事後検知"で機械化する」（仮）。一次情報: `scripts/check-pr-staleness.sh`＋テスト、`scripts/hooks/pre-commit|pre-push`、Round 3〜5 の実測インシデント（#404/#405 の squash 済み記事巻き戻し等、`memory/project_parallel_session_metrics.md`）。差別化: 市場は git worktree による事前分離記事が多数だが、同一 working tree での実事故観測データと検知系（staleness チェック・hooks）は空白（theme-discovery 2026-08-10、スコア 17/20）
 - `[done]` #7 (zenn-book) は **2026-06-01 公開完了**（下記 Done 参照）。本文・図・cover・5系統＋ultracode レビュー完了後、release/zenn PR #350 マージで go-live
 - `[ready-to-publish]` #9 (zenn) は「Bookを多層AIレビューで作った話」。内容は収束済み・公開可。タイミングのみ分離（Book公開→update同期→新規publish の順で間隔を空ける）
@@ -58,6 +70,8 @@
 <!-- suggest:theme:insert-here 自動起票はこの行の直前に追記される。締切未設定の候補が締切つきの行より上に来ないよう、位置を固定している。移動・削除するとスクリプトが停止する。 -->
 
 ## Done
+
+- 2026-08-29 note agent-harness-engineering-note https://note.com/mine_unilabo/n/nd6a5d83d1488 （queue 外の新規執筆。「失敗をモデルのせいにしない。AI駆動開発を『Model + Harness』で考える」。記事本体 #558 → 冒頭・結論を個人の経験起点へ調整 #561 → WXR 再生成・note 手動公開。公開後、過去2記事からのシリーズ導線を #562、関連する前史「AI駆動開発はアジャイルにフィットするのか」への接続を #563 で整備。note公開済みだが、次回公式エクスポート取り込みで `published/nd6a5d83d1488.md` が生成されるまでは `articles_note/new/agent-harness-engineering-note.md` を編集用正本として残す。公開済み記事への相互リンク反映は note 管理画面でまとめて手動対応する）
 
 - 2026-08-27 zenn loop-maturity-rubric-audit https://zenn.dev/minewo/articles/loop-maturity-rubric-audit （queue #14、締切 8/31 から 4 日前倒し。ループ成熟度ルーブリックによる自己採点と改善の記録。公開3点セット: X導線追加 #539 → flip #540 main → sync #541 release/zenn でマージし deploy 発火。HTTP 200・og:title・Zenn API 出現を確認済み〔id 640688、published_at 14:45 JST〕。レビュー経緯は /review-improve-loop 2ループ〔Humanize PASS〕＋ Codex CLI の独立ファクトチェック10件＋セルフレビュー。指摘由来の追随PRが #532 #533 #534。公開時 check:publish-readiness は stale WARN〔recorded=598f2ddb / current=64441e91〕だったが、レビュー後の差分は #539 のX導線4行の追記のみと全件確認のうえ公開した）
 
