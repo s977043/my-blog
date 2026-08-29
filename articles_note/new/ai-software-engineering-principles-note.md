@@ -85,14 +85,21 @@ Verification
 
 ここで重要なのは、**実装より前にDONEを置く**ことです。
 
-例えば架空のPBIとして「管理者がユーザーを一時停止できる」を考えるなら、実装に入る前に、
+この時点のDONEは、実装詳細まで先に固定した完成仕様ではありません。
 
-- 管理者だけが停止できる
-- 停止されたユーザーはログインできない
-- 認証方式そのものは変更しない
-- 既存の権限モデルの再設計が必要なら、いったん止めて設計へ戻る
+Designで守るべき期待Behaviorと境界を先に置き、設計の中で前提が変われば更新します。
 
-といった条件を外へ出しておく。
+例えば架空のPBIとして「管理者がユーザーを一時停止できる」を考えるなら、実装前に次のようなContractを置きます。
+
+~~~text
+Goal: 管理者がユーザーを一時停止できる
+Acceptance: 管理者だけが停止できる
+Acceptance: 停止されたユーザーはログインできない
+Non-goal: 認証方式そのものは変更しない
+Stop: 既存の権限モデルの再設計が必要ならDesignへ戻る
+~~~
+
+こうした条件を、実装より前に外へ出しておく。
 
 こうするとAgentへ渡すものは、単なる「やってほしいこと」ではなくなります。
 
@@ -121,9 +128,7 @@ PlanGateには、SDD、TDD、DDDの考え方をそれぞれ取り入れてきま
 
 一方で、使い続ける中で、**SDD的なFlowがうまく機能しないケース**も見えるようになりました。
 
-こうしたケースを見ると、AI駆動開発で「SDDがうまくフィットしない」という議論が出てくる理由の一つも、ここにあるのではないかと思っています。
-
-少なくとも、自分がPlanGateを使う中で感じた違和感は、Specの作り方そのものより、**まだKnowledgeが足りない段階でExecution Contractを作ろうとすること**にありました。
+自分がPlanGateを使う中で感じた違和感は、Specの作り方そのものより、**まだKnowledgeが足りない段階でExecution Contractを作ろうとすること**にありました。
 
 原因の一つはシンプルです。
 
@@ -402,14 +407,14 @@ Harnessは、それらを守りながらAgentを実行する。
 ## 参考
 
 - GitHub Spec Kit「What is Spec-Driven Development?」
+  - SDDをIntentからSpec / Plan / Tasks / Implementationへつなぐ考え方の参考
   - https://github.com/github/spec-kit/blob/main/docs/concepts/sdd.md
-- GitHub Spec Kit Documentation
-  - https://github.github.com/spec-kit/
-- Kiro「Specs just got faster (and smarter)」
-  - https://kiro.dev/blog/faster-smarter-specs/
 - Martin Fowler「Test Driven Development」
+  - TDDをTest / Code / RefactorのFeedback Loopとして捉える際の参考
   - https://martinfowler.com/bliki/TestDrivenDevelopment.html
 - Microsoft Learn「Use Domain Analysis to Model Microservices」
+  - DomainのConceptやBoundaryを整理するDDDの考え方の参考
   - https://learn.microsoft.com/en-us/azure/architecture/microservices/model/domain-analysis
 - Anthropic「Demystifying evals for AI agents」
+  - Agent EvalとRegressionを考える際の参考
   - https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents
