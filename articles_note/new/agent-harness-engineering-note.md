@@ -36,7 +36,7 @@ Agent = Model + Harness
 
 もちろん、これは厳密な性能式ではありません。
 
-言いたいのは、Agentの性能や失敗をModel単体で説明するのではなく、Context（与える文脈）、Tools（使える道具）、Memory（状態の保持）、Runtime（実行環境）、Security（権限制御）、Observability（何が起きたかを観測できること）、Evaluation（結果を評価すること）まで、実行の最初から最後まで含むSystemとして扱う、ということです。
+言いたいのは、Agentの性能や失敗をModel単体で説明するのではなく、ContextやTool、実行環境、観測、評価まで含めたSystemとして扱う、ということです。
 
 先日、「[AI時代の開発で短くすべきは、Time to CodeではなくTime to Learning](https://note.com/mine_unilabo/n/n5070e13232ce)」という記事を書きました。
 
