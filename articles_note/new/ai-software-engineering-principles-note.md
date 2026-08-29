@@ -2,7 +2,9 @@
 
 > 区分: 個人
 
-前回、AIエージェント開発を「Model + Harness」で考える、という記事を書きました。
+こんにちは、みねです。
+
+前回、[AI駆動開発を「Model + Harness」で考える記事](https://note.com/mine_unilabo/n/nd6a5d83d1488)を書きました。
 
 そこで整理したのは、Agentの失敗をModel単体の問題にせず、Context、Tools、Runtime、Security、Observability、Evaluationまで含めたSystemとして扱う、という考え方です。
 
@@ -204,7 +206,7 @@ Agentが、
 
 と言っても、それだけではVerificationになりません。
 
-実装した主体と、正しいと判定する主体が同じだからです。
+Agent自身の「できました」という自己申告だけでは、実装とは独立した証拠にならないからです。
 
 そこで、
 
