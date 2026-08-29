@@ -582,3 +582,5 @@ AIがコードを書くほど、こうしたCoding以外のEngineeringがなぜ�
   - https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/
 - 前回の記事「AI時代の開発で短くすべきは、Time to CodeではなくTime to Learning」
   - https://note.com/mine_unilabo/n/n5070e13232ce
+- 関連する過去記事「AI駆動開発はアジャイルにフィットするのか」
+  - https://note.com/mine_unilabo/n/n92b270e91110
