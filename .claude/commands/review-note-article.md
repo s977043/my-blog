@@ -48,6 +48,9 @@ mkdir -p reviews/note/$STATE
 - `articles_note/guides/note-structure-best-practices.md` を必ず読む
 - `articles_note/checklists/note-article-quality-checklist.md` を参照する
 - 価値の先出し、見出し、具体性、実際に存在する気づき/限界、読後価値、スマホ可読性を記事タイプに応じて確認する
+- H2が論点一覧になっていないか、同じ役割のテーマを上位の読者軸へ束ねられないか確認する
+- 専門語は初出説明の有無だけでなく、2回目以降の括弧説明が重複していないか確認する
+- 内容・事実レビューのあと、新しい論点を追加せず「重複 / 用語密度 / 見出し / Loop / 終盤」を削るPassを行う
 - 3ペルソナ（noteディレクター / note編集者 / 想定読者）でレビューする
 - `reviews/note/$1.md` を生成する
 - JTFスタイル違反は同種を統合する
@@ -103,3 +106,5 @@ gh pr create \
 - 自動マージ禁止
 - GitHub active accountは `gh api user` で確認する
 - 構成ガイドを固定テンプレートとして強制しない
+- H2の本数を固定値で評価しない。読者が追う思考軸と見出しの役割重複で判断する
+- 用語集セクションを自動追加しない。初出の一言説明で解決できるかを先に見る
