@@ -412,6 +412,22 @@ noteディレクター、編集者、AI駆動開発の実務読者、初見読�
 次記事のSpecification / Test / Domain Designへの接続は短く残した。
 
 **判定: 解消。**
+
+---
+
+### F16: 冒頭のHarness定義で用語が再び密集する
+
+**重要度: low / 対応済み**
+
+外部再レビューで、冒頭をExperience起点へ改善した一方、その直後にContext / Tools / Memory / Runtime / Security / Observability / Evaluationを括弧説明付きで一気に並べるため、自己紹介からの勢いが落ちる点が指摘された。
+
+冒頭は、
+
+> ContextやTool、実行環境、観測、評価まで含めたSystemとして扱う
+
+まで圧縮し、各要素の具体的な意味は本文側で回収する構成に変更した。
+
+**判定: 解消。**
 ---
 
 ## 良い点
