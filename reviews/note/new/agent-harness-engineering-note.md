@@ -1,10 +1,24 @@
 # articles_note/new/agent-harness-engineering-note.md の記事レビュー
 
-> 対象: note向けオピニオン記事「最近、AIエージェント開発を『Model + Harness』で考えるようになった」
+> 対象: note向けオピニオン記事「失敗をモデルのせいにしない。AI駆動開発を『Model + Harness』で考える」
 >
 > 位置づけ: 公開済み記事「AI時代の開発で短くすべきは、Time to CodeではなくTime to Learning」（n5070e13232ce）の続編。前記事のProduct Learning Loopを、Agent System自身のLearning Loopへ展開する記事としてレビューした。
 >
 > 検証日: 2026-08-29
+
+## タイトル最終判断
+
+旧タイトル「最近、AIエージェント開発を『Model + Harness』で考えるようになった」から、
+
+> **失敗をモデルのせいにしない。AI駆動開発を「Model + Harness」で考える**
+
+へ変更した。
+
+タイトルは、読者が経験する「失敗」から入り、本文の中心主張である「Model単体ではなくHarnessを含むSystemとして見る」へ接続する構造になった。
+
+また「AIエージェント開発」ではなく「AI駆動開発」を採用し、Agentそのものを開発する読者だけでなく、Coding Agentを使ってSoftware Developmentを進める実務者まで対象範囲を本文と揃えた。
+
+**判定: 採用。**
 
 ## 🚩 レビュー方針
 
