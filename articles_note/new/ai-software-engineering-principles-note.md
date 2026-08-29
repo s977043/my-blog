@@ -61,7 +61,7 @@ AI Coding Agentへ、
 
 ## PlanGateで先に置いていたのは「DONE」だった
 
-自分が使っているPlanGateでは、Why / WhatやPBIから、そのままAgentへ実装を依頼しません。
+自分が使っているPlanGateでは、Why / WhatやPBI（Product Backlog Item）から、そのままAgentへ実装を依頼しません。
 
 PlanGateは、実装前に設計と実行計画を確認し、承認した範囲でAgentを動かすための仕組みです。
 
@@ -140,6 +140,12 @@ WhyやWhatそのものが仮説で、Domainの理解も揺れている。
 **間違った仮説を、高い品質で、速く実装する**
 
 ことすら起こり得ます。
+
+もう一つ気をつけたいのが、Specの鮮度です。
+
+実装を進める中で新しい制約やKnowledgeが見つかったのに、SpecやDONEを更新せず、そのまま古いContractとして使い続ければ、Agentは古い前提を忠実に実行してしまいます。
+
+だから、Specを先に作ることだけでなく、**前提が変わったらDesignへ戻り、Contractを更新できること**も必要になります。
 
 これはSDDが間違っているという話ではありません。
 
