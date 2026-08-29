@@ -71,6 +71,8 @@
 
 ## Done
 
+- 2026-08-29 note agent-harness-engineering-note https://note.com/mine_unilabo/n/nd6a5d83d1488 （queue 外の新規執筆。「失敗をモデルのせいにしない。AI駆動開発を『Model + Harness』で考える」。記事本体 #558 → 冒頭・結論を個人の経験起点へ調整 #561 → WXR 再生成・note 手動公開。公開後、過去2記事からのシリーズ導線を #562、関連する前史「AI駆動開発はアジャイルにフィットするのか」への接続を #563 で整備。note公開済みだが、次回公式エクスポート取り込みで `published/nd6a5d83d1488.md` が生成されるまでは `articles_note/new/agent-harness-engineering-note.md` を編集用正本として残す。公開済み記事への相互リンク反映は note 管理画面でまとめて手動対応する）
+
 - 2026-08-27 zenn loop-maturity-rubric-audit https://zenn.dev/minewo/articles/loop-maturity-rubric-audit （queue #14、締切 8/31 から 4 日前倒し。ループ成熟度ルーブリックによる自己採点と改善の記録。公開3点セット: X導線追加 #539 → flip #540 main → sync #541 release/zenn でマージし deploy 発火。HTTP 200・og:title・Zenn API 出現を確認済み〔id 640688、published_at 14:45 JST〕。レビュー経緯は /review-improve-loop 2ループ〔Humanize PASS〕＋ Codex CLI の独立ファクトチェック10件＋セルフレビュー。指摘由来の追随PRが #532 #533 #534。公開時 check:publish-readiness は stale WARN〔recorded=598f2ddb / current=64441e91〕だったが、レビュー後の差分は #539 のX導線4行の追記のみと全件確認のうえ公開した）
 
 - 2026-08-20 note shaping_the_build_note https://note.com/mine_unilabo/n/n5070e13232ce （queue 外の新規執筆、WXR インポート→手動公開。id n5070e13232ce、publishAt 18:37 JST。前記事 `ai_engineering_essence`〔n103182c44979〕の続編として Andrew Ng の Skills Map を起点に企画したが、複数視点レビューで主題を2回転換: ①#517 で Time to Learning を中心に再構成しタイトルを「AIがコードを書く時代、エンジニアは『何を作るか』をどう決めるのか」→「AI時代の開発で短くすべきは、Time to CodeではなくTime to Learning」へ変更②#518 で冒頭に自己紹介と問題提起を加筆〔6,154→7,156字〕。図版は #504 で3点追加後、#517 の再構成で本文参照が1点〔shaping-decision-loop.png〕に減り、#519 でヒーロー画像を新タイトル版へ差し替え。WXR は改稿のたびに再生成が必要で、実際に2回作り直した〔16:02版→18:37版〕。`--base-url` 付き生成→verify_wxr 合格→インポート→手動公開。HTTP 200・note API 出現・eyecatch 設定を確認済み）
