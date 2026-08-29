@@ -22,7 +22,7 @@ Agentはコードを書けます。
 
 今はそう考えています。
 
-前回は、Agentの失敗をModel単体ではなくSystemとして扱う[Harness Engineeringの記事](https://note.com/mine_unilabo/n/nd6a5d83d1488)を書きました。
+前回は、Agentの失敗をModel単体ではなくSoftware Systemとして扱う[Harness Engineeringの記事](https://note.com/mine_unilabo/n/nd6a5d83d1488)を書きました。
 
 今回は、そのさらに手前にある「正しさをどう設計するか」を考えてみます。
 
