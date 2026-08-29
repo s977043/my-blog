@@ -38,7 +38,7 @@ Buildだけでなく、調査、計画、実装、レビュー、検証までCod
 
 **Harness Engineering**です。
 
-先に結論を書くと、今はAIエージェント開発を次のように考えています。
+先に結論を書くと、今はAI駆動開発を次のように考えています。
 
 ```text
 Agent = Model + Harness
@@ -103,7 +103,7 @@ Coding Agentを使っていると、失敗したときにModelの名前で話し
 - 停止条件（Stop Condition）は適切だったか
 - 現在地を確認できるArtifactがあったか
 - Contextが長くなりすぎていなかったか
-- 途中から再開するためのCheckpoint（途中から再開するための再開点）やResumeの仕組みがあったか
+- Checkpoint（途中から再開するための再開点）やResumeの仕組みがあったか
 
 Toolを間違えたなら、Toolの入力形式や説明、どのToolを選ぶかというRouting、Contextを疑う。
 
