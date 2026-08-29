@@ -222,7 +222,7 @@ PlanGateを使い始めた頃は、実装前にWhy / What、PBI、DONE、Design�
 
 を残す。
 
-小さく試して、Evidenceを得る。
+小さく試して、判断材料を得る。
 
 その結果から、WhatやDONEを更新する。
 
@@ -400,11 +400,11 @@ AI時代に突然、新しいSoftware Engineeringが必要になったという�
 
 ## 全部を厚くするのではなく、不確実性に合わせて変える
 
-もちろん、すべてのTaskでSDD、TDD、DDD、Harnessをフルセットで使う必要はありません。
+もちろん、すべての変更でSDD、TDD、DDD、Harnessをフルセットで使う必要はありません。
 
-単純な文言修正に、詳細なDomain Modelingは必要ありません。
+単純な文言修正に、詳細なドメイン設計は必要ありません。
 
-小さなSpikeに、完成した仕様書も必要ありません。
+小さな試作に、完成した仕様書も必要ありません。
 
 大事なのは、
 
@@ -415,10 +415,10 @@ AI時代に突然、新しいSoftware Engineeringが必要になったという�
 例えば、
 
 - **まだ何を作るべきか分からない**  
-  Domain Understanding、Shaping、仮説検証を厚くする。仕様は薄く保つ。
+  問題やDomainの理解、仮説検証を厚くする。仕様は薄く保つ。
 
 - **変更範囲が大きい**  
-  Scope、Non-goal、DONEを明確にする。
+  変更する範囲、変更しない範囲、DONEを明確にする。
 
 - **壊したときの影響が大きい**  
   TestやEvalを厚くする。
@@ -427,7 +427,7 @@ AI時代に突然、新しいSoftware Engineeringが必要になったという�
   DDDの考え方で、意味と境界を整理する。
 
 - **Agentへ長く自律実行させる、または強い権限を渡す**  
-  Harness、Checkpoint、Observability、Permissionを厚くする。
+  Harness側で、途中確認、実行記録、権限管理を厚くする。
 
 最初から全部を固定するのではなく、必要な場所に必要な構造を置く。
 
