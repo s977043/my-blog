@@ -6,7 +6,7 @@
 
 AIに実装を任せるとき、自分は「何を満たせば完了なのか」を先に定義するようにしてきました。
 
-PBIを用意し、リファインメントで理解を揃え、プランニングで対応内容を決める。そのうえで、仕様や完了条件を外に出し、設計と実行計画を作ってAgentへ渡す。
+開発アイテムの内容をチームで整理し、何を満たせば完了なのかを外に出す。そのうえで、設計と実行計画を作ってAgentへ渡す。
 
 このやり方は、Deliveryではかなりうまく機能しています。
 
@@ -30,56 +30,16 @@ Discovery                         Delivery
 何を作る価値があるか             価値があると判断したものを
 何を学ぶ必要があるか             どう正しく届けるか
         ↓                               ↓
-仮説・実験・Evidence              PBI・Spec・実装・検証
+仮説・実験・学び                  開発アイテム・仕様・実装・検証
 ~~~
 
 この二つでは、同じ「先に定義する」でも、定義すべきものが違いました。
 
-**Deliveryでは「何を満たせば完了か」をSpecifyする。**
+**Deliveryでは「何を満たせば完了か」を先に定義する。**
 
-**Discoveryでは「何を学べれば次を判断できるか」をSpecifyする。**
+**Discoveryでは「何を学べれば次を判断できるか」を先に定義する。**
 
 この記事では、探索的なPoCで感じた違和感から、SDDの使い方をどう考え直したかを書きます。
-
----
-
-## SDDは「howの前にwhatを定義する」
-
-今回考え直すうえで、GitHub Spec KitのSDDの説明が参考になりました。
-
-GitHub Spec Kitでは、Spec-Driven Developmentを、**実装方法であるhowより先に、実現したいwhatを仕様として定義するIntent-drivenな開発**として説明しています。
-
-実際、Spec Kitの基本Flowも、
-
-~~~text
-Specify
-  ↓
-Plan
-  ↓
-Tasks
-  ↓
-Implementation
-~~~
-
-となっていて、`/speckit.specify` では技術スタックではなく、まず「何を作るのか」「なぜ作るのか」に集中します。
-
-自分もSDDを、**分かっているIntentを実装前に外へ出し、Agentが実行できる形へ変える方法**として捉えてきました。
-
-ここで今回引っかかったのが、whatという言葉です。
-
-Deliveryでは、「何を作るか」はある程度分かっています。
-
-一方、Product Discoveryでは、**そのwhat自体に価値があるのかをまだ確かめている**ことがあります。
-
-つまり、問題はSpecを書くタイミングだけではありませんでした。
-
-**DiscoveryとDeliveryでは、Specifyする対象そのものが違う。**
-
-この理解が、自分の中ではかなり大きな変化でした。
-
-なお、GitHub Spec KitにもCreative Explorationという開発フェーズがあります。ただし、そこで扱われているのは複数の実装、技術スタック、Architecture、UX PatternなどのSolution探索が中心です。
-
-この記事でいうDiscoveryは、**そもそもその価値を提供すべきかを確かめるProduct Discovery**を指しています。
 
 ---
 
@@ -154,7 +114,9 @@ Deliveryでは、このSDDの型がかなりよく機能しました。
 
 ## Discoveryに同じSpecを当てると、価値仮説が完了条件になった
 
-違和感が出たのは、既存プロダクトに新しい価値や体験を追加する探索的なPoCでした。
+違和感が出たのは、既存プロダクトの利用フローの途中に新しい体験を加え、その体験が実際に使われるかを確かめる探索的なPoCでした。
+
+具体的な機能名や案件内容は伏せますが、対象ユーザーが普段使っている流れの中に新しい選択肢を置き、その選択肢を使うことで追加の価値が生まれるかを見ようとしていました。
 
 このPoCは、何も根拠がない状態から始めたわけではありません。
 
@@ -222,6 +184,46 @@ Softwareとしては、この条件を満たせます。
 
 ---
 
+## SDDは「howの前にwhatを定義する」
+
+今回考え直すうえで、GitHub Spec KitのSDDの説明が参考になりました。
+
+GitHub Spec Kitでは、Spec-Driven Developmentを、**実装方法であるhowより先に、実現したいwhatを仕様として定義するIntent-drivenな開発**として説明しています。
+
+実際、Spec Kitの基本Flowも、
+
+~~~text
+Specify
+  ↓
+Plan
+  ↓
+Tasks
+  ↓
+Implementation
+~~~
+
+となっていて、`/speckit.specify` では技術スタックではなく、まず「何を作るのか」「なぜ作るのか」に集中します。
+
+自分もSDDを、**分かっているIntentを実装前に外へ出し、Agentが実行できる形へ変える方法**として捉えてきました。
+
+ここで今回引っかかったのが、whatという言葉です。
+
+Deliveryでは、「何を作るか」はある程度分かっています。
+
+一方、Product Discoveryでは、**そのwhat自体に価値があるのかをまだ確かめている**ことがあります。
+
+つまり、問題はSpecを書くタイミングだけではありませんでした。
+
+**DiscoveryとDeliveryでは、Specifyする対象そのものが違う。**
+
+この理解が、自分の中ではかなり大きな変化でした。
+
+なお、GitHub Spec KitにもCreative Explorationという開発フェーズがあります。ただし、そこで扱われているのは複数の実装、技術スタック、Architecture、UX PatternなどのSolution探索が中心です。
+
+この記事でいうDiscoveryは、**そもそもその価値を提供すべきかを確かめるProduct Discovery**を指しています。
+
+---
+
 ## Discoveryでは「学習条件」をSpecifyする
 
 ここまで考えて、自分の結論は、
@@ -230,9 +232,9 @@ Softwareとしては、この条件を満たせます。
 
 ではなくなりました。
 
-むしろ、**Discovery用のSDDが必要だった**と考えています。
+むしろ、**Discoveryでは、Deliveryとは違うものを先に定義する必要があった**と考えています。
 
-ここでいう「Discovery用のSDD」は、GitHub Spec Kitの公式用語ではありません。自分たちの運用を考えるための呼び方です。
+自分の中では、これをDiscovery側でSDDを使うときの型として捉えています。GitHub Spec Kitの公式用語ではなく、自分たちの運用上の整理です。
 
 Deliveryで先に定義するのが完了条件なら、Discoveryで先に定義したいのは、
 
@@ -336,7 +338,7 @@ Discovery Contract
 - Value Hypothesis
 - Learning Conditions
 - Evidence
-- 見直す条件
+- Decision
 - 今回固定しないもの
 
             ↓ Evidence / Decision
