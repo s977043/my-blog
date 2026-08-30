@@ -125,7 +125,7 @@ metadata:
 
 正本を1か所に決めても、各ツールがそこを読んでくれなければ意味がありません。ここがいちばん泥臭いところです。MCP（Model Context Protocol）サーバで横断共有する手もありますが、本記事は MCP に依存せず Markdown を正本に置く構成を取ります。ツールによって「記憶への接続方法」が違います。
 
-- **Claude Code**: 公式設定の `autoMemoryDirectory`（auto memory の保存先を指定するキー）で、メモリーディレクトリを自前 Vault 配下に向けて自動接続できる。なお auto memory 自体の ON/OFF は `autoMemoryEnabled` で制御する。project/local スコープで設定した場合は、ワークスペースの信頼ダイアログを承認したあとに有効になる（参照: [Claude Code settings](https://code.claude.com/docs/en/settings)）
+- **Claude Code**: 公式設定の `autoMemoryDirectory`（auto memory の保存先を指定するキー）で、メモリーディレクトリを自前 Vault 配下に向けて自動接続できる。なお auto memory 自体の ON/OFF は `autoMemoryEnabled` で制御する。project/local スコープで設定した場合は、ワークスペースの信頼ダイアログを承認したあとに有効になる（参照: [Claude Code memory](https://code.claude.com/docs/en/memory)）
 - **Codex CLI**: 保存先を変更できない。そこで `~/.codex/AGENTS.md` に**指示ベース**で「この Vault の memory を読め」と、対象パスを書いて接続する（ファイル内容のミラーではなく、参照先を指示として記述する）
 - **Gemini CLI**: 同じく保存先を変更できないため指示ベース。`~/.gemini/GEMINI.md` に書くほか、後述のとおり settings.json の `context.fileName` に `AGENTS.md` を追加して共通規約を読ませる（参照: [Gemini CLI configuration](https://google-gemini.github.io/gemini-cli/docs/get-started/configuration.html)）
 
