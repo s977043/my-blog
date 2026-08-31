@@ -39,7 +39,7 @@
     "test:suggest-theme": "node scripts/suggest-next-theme.js --self-test"
   },
   "dependencies": {
-    "zenn-cli": "^0.5.2"
+    "zenn-cli": "^0.5.3"
   },
   "devDependencies": {
     "@qiita/qiita-cli": "^1.10.0"
