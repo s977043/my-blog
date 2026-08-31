@@ -46,6 +46,15 @@ jobs:
       - name: Publish readiness self-test
         run: npm run test:publish-readiness
 
+      # zenn-pace ゲート自身の self-test（純関数 + 一時 git リポジトリによる hermetic テスト）。
+      # 上と同じ趣旨（新設 check スクリプトの初版バグ対策・#393/#417 の再発防止）で常時実行する。
+      # これを入れないと「rate-limit を見逃す変異」を CI が一度も検出できない（PR #553 レビュー M-2）。
+      # ZENN_PACE_NO_FETCH=1: fixture は一時リポジトリなのでネットワーク fetch を抑止する。
+      - name: Zenn publish pace self-test
+        env:
+          ZENN_PACE_NO_FETCH: '1'
+        run: npm run test:zenn-pace
+
       # release/zenn 宛 PR のみ: この PR が release/zenn に新規に持ち込む published 数を
       # diff モード(BASE_REF)で直接計測し、二重公開(同一 deploy/24h で 2 記事)を STRICT で fatal 化する。
       # date モード(コミット日付)は「溜めてから sync」運用で見逃す/誤ブロックするため base 比較で計測する。
