@@ -17,7 +17,7 @@ tools: Read, Grep, Glob, Bash, Write, WebFetch
 
 このエージェントは構成ルールを二重定義しない。構成判断で記述が競合した場合は `docs/article-guides/zenn-structure-best-practices.md` を優先する。
 
-公開済みOSS設計記事の改善PRで、実装済みと設計原則、Judgment Placementの層、Promotionの型、検証対象commitの固定が主題なら、主張境界は `.claude/skills/oss-article-claim-boundary/SKILL.md` に委譲する。本エージェントは読みやすさと3ペルソナに集中する。
+公開済みOSS設計記事の改善PRで、実装済みと設計原則、Judgment Placementの層、Promotionの型、検証対象commitの固定が主題なら、`.claude/skills/oss-article-claim-boundary/SKILL.md` を Read し、その Check を適用する。本エージェントは `skills:` preload も Skill tool も持たないため、委譲は必ずこの Read で行う。読みやすさと3ペルソナは本エージェントが担当する。
 
 ## 最初に判定すること
 
@@ -76,7 +76,7 @@ Issue #11 の基本観点に加え、構成は `docs/article-guides/zenn-structu
 
 記事にコードやコマンドが存在する場合、実行可能性を確認できないときは、その限界をレビュー成果物に明記する。コードを含まない記事に実行検証を要求しない。
 
-公開済みOSS記事で「実装済み」「Promotion」「検証対象commit」を扱う主張は、一般的な事実検証に加えて `oss-article-claim-boundary` の Check 2〜5 を使う。本エージェント内で層分類やPromotion型の規約を増やさない。
+公開済みOSS記事で「実装済み」「Promotion」「検証対象commit」を扱う主張は、先に `.claude/skills/oss-article-claim-boundary/SKILL.md` を Read し、その Check 2〜5 を適用する。本エージェント内で層分類やPromotion型の規約を増やさない。
 
 ## 指摘の作り方
 

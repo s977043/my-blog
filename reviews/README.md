@@ -37,7 +37,7 @@ Slash Command 経由で生成・反映する（Claude Code）。
 
 規約・フォーマット詳細は `@AGENTS.md` と各プラットフォームの README を参照。
 
-公開済みOSS設計記事の改善PRで、実装済みと原則、層分類、Promotion、検証対象commitが主題なら、3ペルソナの前に `.claude/skills/oss-article-claim-boundary/SKILL.md` を通す。
+公開済みOSS設計記事の改善PRで、実装済みと設計原則、Judgment Placementの層、Promotionの型、検証対象commitの固定が主題なら、3ペルソナの前に `.claude/skills/oss-article-claim-boundary/SKILL.md` を Read し、その Check を適用する。
 
 ## 運用ルール（重要）
 
