@@ -37,6 +37,8 @@ Slash Command 経由で生成・反映する（Claude Code）。
 
 規約・フォーマット詳細は `@AGENTS.md` と各プラットフォームの README を参照。
 
+公開済みOSS設計記事の改善PRで、実装済みと原則、層分類、Promotion、検証対象commitが主題なら、3ペルソナの前に `.claude/skills/oss-article-claim-boundary/SKILL.md` を通す。
+
 ## 運用ルール（重要）
 
 - **レビュー成果物は不変**。採否判断や反映は本文側の PR で行う
@@ -50,3 +52,4 @@ Slash Command 経由で生成・反映する（Claude Code）。
 - `.claude/agents/article-reviewer.md` — Zenn 版レビュアの出力仕様
 - `.claude/agents/note-article-reviewer.md` — note 版レビュアの出力仕様
 - `.claude/agents/review-applier.md` — 採用/保留/却下の分類基準
+- `.claude/skills/oss-article-claim-boundary/SKILL.md` — 公開済みOSS記事の主張境界レビュー
