@@ -419,6 +419,8 @@ canary testで固定
 意味的レビューとの責務重複を減らす
 ```
 
+ここで行っているのはRuleの自動生成ではなく、**1つのレビュー観点を分解し、明示できる部分だけを再現可能な層へ移して、その責務境界を固定すること**です。
+
 これは「Agentic ReviewerのFindingを自動で昇格した」事例ではありません。**意味的レビューで扱いうる観点のうち、明示条件にできる部分をHeuristicへ責務移譲し、その境界を実運用で改善した例**です。
 
 River Reviewでは、この考え方をRiverbed、fixture、evaluation、Review Evolution Cycleと接続し、Promotionが本当に品質を上げたかを検証する設計にしています。
