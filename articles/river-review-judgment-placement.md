@@ -181,6 +181,8 @@ Caller / Human
 GO / NO-GO / Approval / Merge
 ```
 
+この「収束までは自動化し、マージの判断そのものは人間に残す」という境界は、[AIにマージさせない。PRをMERGE_READYまで運ぶ状態機械の設計](/articles/ai-merge-ready-state-machine) で状態機械として整理しています。
+
 ### 判断層と変更リスクは別の軸
 
 ここは混同しやすいポイントです。
@@ -381,6 +383,8 @@ Can it be deterministic?
 
 **AI Reviewerが覚えていなくても、リポジトリ側が守れる状態を増やす**改善です。
 
+どの指摘をPromotionの候補にするかは、レビュー結果の分類と記録がないと決められません。指摘の採否と理由を残し、繰り返し出るものをルールへ戻す運用は [AIコードレビューを仕組みにする: 指摘の分類・記録・改善の回し方](/articles/ai-code-review-feedback-ops) にまとめています。
+
 ### 実例：temporary codeの撤去条件をHeuristicへ切り出す
 
 River Reviewには、意味的な整合を扱う `knowledge-to-code-alignment` Skillがあります。一方、「一時対応コメントに撤去条件があるか」という観点のうち、明示パターンで高精度に候補を絞れる部分は `temporary-without-exit` detectorへ切り出しています。
@@ -575,7 +579,7 @@ River Reviewで取り組んでいるJudgment Placementは、その問いをも�
 - [PR #1788 - temporary-without-exit detector導入・改善](https://github.com/s977043/river-review/pull/1788)
 - [PR #1811 - 恒久宣言をfalse positiveから除外](https://github.com/s977043/river-review/pull/1811)
 - [Phase 1b fixture / evaluation設計](https://github.com/s977043/river-review/blob/main/docs/development/1978-phase1b-fixtures.md)
-- [AIコードレビューを仕組みにする: 指摘の分類・記録・改善の回し方](https://zenn.dev/minewo/articles/ai-code-review-feedback-ops)
+- [「プロンプトを磨けば勝てる」をやめた：AIレビューを運用に乗せる“Agent Skills”設計 - note](https://note.com/mine_unilabo/n/nd21c3f1df22e)
 
 ---
 
