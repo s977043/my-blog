@@ -170,3 +170,4 @@ OSS としての「正しさ」は、機能の豊かさだけでなく、**利�
 - [AI 駆動開発の 2 層ガード設計：PlanGate と River Review で実装前後を守る](https://zenn.dev/minewo/articles/ai-dev-guardrail-plangate-river-reviewer)
 - [AI エージェントを"投げっぱなし"にしない：Agent Skills と自由度の設計で実現する「評価駆動の開発エコシステム」](https://zenn.dev/minewo/articles/zenn-river-reviewer-architecture)
 - [River Review v0.30 → v0.33：Improvement Loop と applyTo Scoping 整備の半月](https://zenn.dev/minewo/articles/river-reviewer-v033-improvement-loop)
+- [AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計](/articles/river-review-judgment-placement)
