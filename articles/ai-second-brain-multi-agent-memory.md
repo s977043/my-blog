@@ -147,9 +147,7 @@ Hermes の仕事は、自分で実装を抱え込むことではありません�
 - 矛盾・重複・未検証の主張を検出する
 - 最終判断・残タスク・次アクションをまとめる
 
-実行者（Claude Code / Codex / Grok / Gemini）は、割り当てられた範囲だけを担当します。記憶を共有する併用ツール（Claude / Codex / Gemini / ChatGPT）に加え、最新情報の調査や外部比較は Grok に振る、という役割の振り分けです。勝手にスコープを広げず、成果物には前提・変更点・検証結果・残リスクを書きます。そして**外部投稿・破壊的変更・永続設定の変更はしません**。
-
-記憶を共有する4ツール（Claude / Codex / Gemini / ChatGPT）に加え、調査特化の Grok を実行者として役割分担に組み込みます。次の表の「避けること」列は、机上のルールではなく仕組みのブロックと二重化しています（後述）。
+実行者（Claude Code / Codex / Grok / Gemini）は、割り当てられた範囲だけを担当します。記憶を共有する併用ツールは Claude / Codex / Gemini の3つで、これに加えて最新情報の調査や外部比較を Grok に振ります。ChatGPT は Vault への接続方法を持たないため実行者には含めず、Hermes 運用のプロンプト基盤として使うか、必要な内容は人間が手動で転記します。勝手にスコープを広げず、成果物には前提・変更点・検証結果・残リスクを書き、**外部投稿・破壊的変更・永続設定の変更はしません**。次の表の「避けること」列は、机上のルールではなく仕組みのブロックと二重化しています（後述）。
 
 | Role | 主な使いどころ | 避けること |
 |---|---|---|
@@ -198,6 +196,7 @@ Hermes の仕事は、自分で実装を抱え込むことではありません�
 - 関連: [ObsidianとSupermemory MCPをつなぐ知識管理ワークフロー](https://zenn.dev/minewo/articles/obsidian-supermemory-mcp) — 外部 MCP サービスで横断共有する案。本記事は「自前 Vault を正本に固定し指示ベースで集約する」点が異なる
 - 関連: [AIエージェントの『進めて』問題：自走と確認の境界をmemoryで永続化する](https://zenn.dev/minewo/articles/ai-agent-autonomy-boundary-with-memory)
 - 関連: [推測で書いた学びが次の罠になった — AGENT_LEARNINGS.md の運用設計](https://zenn.dev/minewo/articles/agent-learnings-md-operation)
+- 関連: [Hermes Agentを「依頼窓口」として導入し始めた](https://note.com/mine_unilabo/n/nc1ac531190c9) — 「役割の呼び名」（本記事）と「導入した実体」（note）は別の粒度の説明
 
 ---
 

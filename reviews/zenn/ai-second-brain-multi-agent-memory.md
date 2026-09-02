@@ -1,13 +1,13 @@
-<!-- publish-readiness: blocked=false mustHigh=0 verified=true articleHash=5b87649768cb5df4a159a8c4e42ffbe115972ad5 loops=1 reviewedAt=2026-08-27T09:41:31Z -->
+<!-- publish-readiness: blocked=false mustHigh=0 verified=true articleHash=b43e3cbbe4329377cece98789e90ffee73cb9822 loops=1 reviewedAt=2026-08-27T09:41:31Z -->
 
 # レビュー成果物: ai-second-brain-multi-agent-memory
 
-- 対象記事: `articles/ai-second-brain-multi-agent-memory.md`（articleHash `5b87649768cb5df4a159a8c4e42ffbe115972ad5`。レビュー実施時点は `de26d5b3ce87a0dc09d4b700cbe5c8ad609e3606`、F1 反映後に更新）
+- 対象記事: `articles/ai-second-brain-multi-agent-memory.md`（articleHash `b43e3cbbe4329377cece98789e90ffee73cb9822`。レビュー実施時点は `de26d5b3ce87a0dc09d4b700cbe5c8ad609e3606`、F1 反映後に `5b876497…`、2026-09-02 の主張境界レビュー反映後に `b43e3cbb…`）
 - Zennカテゴリー: Idea（`type: "idea"`。設計思想と運用ふりかえりが主で、Zenn 公式の Idea 定義と一致）
 - 構成タイプ: 概念解説・考察（記憶集約の設計 + 運用ふりかえり）
-- 改善ループ数: 1（レビュー自体は review-only。その後 F1 のみを 1 回の改稿で反映した）
-- レビュー状態: fresh-review-verified（全指摘を一次情報または著者のローカル実環境で裏取り済み）／ F1 反映済み（2026-08-28）
-- 総合判定: **must 0 件 / high 1 件 → 反映済みで残 0 件。medium 5 件・low 3 件は今回未反映（公開ブロッカーではない）。`published: false` のまま。in-review 条件（`blocked=false` かつ `mustHigh=0`）を満たしたため `blocked=false`。**
+- 改善ループ数: 2（レビュー自体は review-only。F1 を 1 回、2026-09-02 の主張境界指摘 3 件をもう 1 回、それぞれ改稿で反映した）
+- レビュー状態: fresh-review-verified（全指摘を一次情報または著者のローカル実環境で裏取り済み）／ F1 反映済み（2026-08-28）／ 主張境界レビュー（`oss-article-claim-boundary`）指摘 high 1・medium 2 反映済み（2026-09-02、詳細は 7 章）
+- 総合判定: **must 0 件 / high 1 件（F1）→ 反映済みで残 0 件。2026-09-02 に新規 high 1 件（ChatGPT 記述の矛盾）を検出し反映済みで残 0 件。medium は F5（重複段落）を含む 2 件を 2026-09-02 に反映済み、残る medium 3 件・low 3 件は未反映（公開ブロッカーではない）。`published: false` のまま。in-review 条件（`blocked=false` かつ `mustHigh=0`）を満たしたため `blocked=false`。**
 
 > **本レビューを実施した理由**: 直前のレビュー（PR #537、`reviewedAt=2026-08-27T03:36:12Z`、`articleHash=2911ba59…`）のあとに PR #539「未公開4記事の末尾に X アカウント導線を追加」が本文を変更したため、`check:publish-readiness` が articleHash 不一致（recorded=`2911ba59` / current=`de26d5b3`）の stale 判定を返す状態だった。本ファイルは現行フォーマットのまま **現在の本文（L1-L204）に対する新規レビュー**として全面的に書き直したもので、旧レビューの結論をそのまま引き継いではいない。
 >
@@ -158,6 +158,10 @@ L128 の箇条書きの直後に 3 行のコードブロックを足す（値は
 **提案**
 L152 の該当一文を削り、表の導入として機能している後半だけを残す。例: 「次の表の『避けること』列は、机上のルールではなく仕組みのブロックと二重化しています（後述）。」。Grok を実行者に含める旨は L150 に残るので情報は失われない。
 
+**反映状況: 反映済み（2026-09-02、`oss-article-claim-boundary` レビュー経由）**
+
+2段落を1段落へ統合した。統合の過程で「記憶を共有する4ツール（Claude / Codex / Gemini / ChatGPT）」という誤った前提も解消している（詳細は 7 章 G1）。
+
 ---
 
 ### F6 — medium: 「ブロックされました」の主体が書かれておらず、根拠として弱い
@@ -245,25 +249,84 @@ L152 の該当一文を削り、表の導入として機能している後半だ
 
 ### 残る改善点
 
-- **公開前に直す（high 1）**: F1 — 一次資料リンクの参照先を `docs/en/settings` から `docs/en/memory` へ → **反映済み（2026-08-28）。残件なし**
-- **推奨（medium 5、いずれも未反映）**: F2（MEMORY.md の 200 行 / 25KB 上限）、F3（Codex「保存先を変更できない」）、F4（`autoMemoryDirectory` の設定例）、F5（L150/L152 の重複）、F6（ブロックの主体）
+- **公開前に直す（high 2、いずれも反映済み）**: F1 — 一次資料リンクの参照先を `docs/en/settings` から `docs/en/memory` へ → **反映済み（2026-08-28）**。G1 — 「記憶を共有する4ツール」に ChatGPT を含める記述の矛盾 → **反映済み（2026-09-02、7 章参照）**
+- **推奨（medium 3、未反映）**: F2（MEMORY.md の 200 行 / 25KB 上限）、F3（Codex「保存先を変更できない」）、F4（`autoMemoryDirectory` の設定例）※ F5（L150/L152 の重複）・F6 相当の note 参照追加は **2026-09-02 に反映済み**（7 章参照。F6 本体の「ブロックの主体」明記は未反映のまま残置）
 - **任意（low 3、いずれも未反映）**: F7（`09 Projects`）、F8（署名行の文体）、F9（タイトルの "Hermes"）
 
 ### 推奨アクション
 
 1. ~~F1 を反映する（1 行の URL 差し替え）。反映後にヘッダを `blocked=false mustHigh=0` へ更新し、`articleHash` を再取得して差し替える~~ → **完了（2026-08-28）**
-2. 併せて F2・F3・F4 を反映すると、読者が手を動かす部分（設定・上限・ツール差）の精度が揃う
-3. `published: true` への切替は本レビューの範囲外。別途人間判断・別 PR で、`release/zenn` 経由の公開フローに従って行う
+2. ~~`oss-article-claim-boundary` 指摘（G1 / F5 / G2）を反映する~~ → **完了（2026-09-02、7 章参照）**
+3. 併せて F2・F3・F4 を反映すると、読者が手を動かす部分（設定・上限・ツール差）の精度がさらに揃う
+4. `published: true` への切替は本レビューの範囲外。別途人間判断・別 PR で、`release/zenn` 経由の公開フローに従って行う
 
 ### 総合判定
 
 | 項目 | 状態 |
 | --- | --- |
 | must（技術的誤り・危険手順・重大な再現性欠如） | **0 件** |
-| high 残件 | **0 件（F1 は 2026-08-28 に反映済み）** |
+| high 残件 | **0 件（F1 は 2026-08-28、G1 は 2026-09-02 に反映済み）** |
 | `blocked` | **false**（in-review 条件 `blocked=false` かつ `mustHigh=0` を満たす） |
 | `mustHigh` | **0** |
-| `verified` | true（外部 URL 5 本 / 公式ドキュメント 3 キー / ローカル実環境 6 項目を実測） |
-| 記事本文の変更 | F1 のみ 1 行（L128 の参照 URL 差し替え）。`published: false` は維持 |
-| medium / low 残件 | **medium 5 件・low 3 件は未反映**（公開ブロッカーではないため今回は据え置き） |
+| `verified` | true（外部 URL 5 本 / 公式ドキュメント 3 キー / ローカル実環境 6 項目を実測。G1〜G3 は 7 章の実測で追加裏取り） |
+| 記事本文の変更 | F1（L128 の参照 URL 差し替え）＋ 2026-09-02 の G1/F5 統合段落・参考リンク追加（7 章）。`published: false` は維持 |
+| medium / low 残件 | **medium 3 件・low 3 件は未反映**（公開ブロッカーではないため今回は据え置き） |
 | 検証コマンド | `npm run check:publish-readiness -- ai-second-brain-multi-agent-memory` / `npm run check:internal-links` / `npm run check:article-humanizer` / `npm run check:zenn-image-format` |
+
+---
+
+## 7. 2026-09-02 反映記録（主張境界レビュー: high 1 / medium 2）
+
+`.claude/skills/oss-article-claim-boundary/SKILL.md` の判定基準に基づく主張境界レビューで検出された3指摘を、最小差分で反映した（記事の主張・タイトル・`topics`・`published: false` は不変）。
+
+### G1 — high: 「記憶を共有する4ツール」に ChatGPT が含まれるが接続方法がない（矛盾）
+
+**該当箇所**: 反映前 L150 / L152（「Hermesを司令塔にする」節）
+
+**問題**: 「ツールごとの『接続方法』の違いを吸収する」節（旧 L124-134）は Claude Code / Codex CLI / Gemini CLI の3つの接続方法しか説明していないのに、「Hermesを司令塔にする」節は「記憶を共有する4ツール（Claude / Codex / Gemini / ChatGPT）」と書いており、ChatGPT がどう Vault を読むのかが記事のどこにも書かれていなかった。さらに冒頭「なぜ記憶が分断するのか」節（L48）は「ChatGPT は会話の中（基本は揮発する）」と、むしろ共有できない側として説明しており、記事内で矛盾していた。
+
+**一次情報照合（2026-09-02 実測）**:
+- `ls ~/.codex/AGENTS.md ~/.gemini/settings.json` → 両ファイルとも実在。中身に ChatGPT への言及なし
+- `~/.gemini/settings.json` の内容: `"context": { "fileName": ["GEMINI.md", "AGENTS.md"] }`（記事本文の記述と一致。ChatGPT 関連キーは無し）
+- `grep -n "autoMemory" .claude/settings.local.json` → このワークツリーに当該ファイルは存在しない（local-only 設定のため worktree 間で共有されない）。ただし前回レビュー（2章 #1）で `my-blog/.claude/settings.local.json` に `autoMemoryDirectory` が実在することは確認済みで、今回はこの事実を否定する情報は得られていない
+- ChatGPT が Vault を読む設定・接続方法: `find ~ -maxdepth 2 -iname "*chatgpt*"` で該当なし（ダウンロード済みアプリのインストーラー・画像のみ）。**Vault 接続の実装は確認できなかった**
+
+**判断**: 実態は「記憶を共有できるのは Claude / Codex / Gemini の3ツール」であり、ChatGPT は Vault に接続していない。本文 L140 が既に述べる「筆者はこの役割を Claude / ChatGPT 上のプロンプト規約として与えた1エージェントとして運用している」という記述と整合させ、ChatGPT は「Hermes 運用のプロンプト基盤／人間による手動転記」という別枠の扱いに揃えた。実在しない接続方法は書いていない。
+
+**反映（articles/ai-second-brain-multi-agent-memory.md L150-152 相当、F5 の重複解消と同一箇所で統合実施）**:
+
+```diff
+-実行者（Claude Code / Codex / Grok / Gemini）は、割り当てられた範囲だけを担当します。記憶を共有する併用ツール（Claude / Codex / Gemini / ChatGPT）に加え、最新情報の調査や外部比較は Grok に振る、という役割の振り分けです。勝手にスコープを広げず、成果物には前提・変更点・検証結果・残リスクを書きます。そして**外部投稿・破壊的変更・永続設定の変更はしません**。
+-
+-記憶を共有する4ツール（Claude / Codex / Gemini / ChatGPT）に加え、調査特化の Grok を実行者として役割分担に組み込みます。次の表の「避けること」列は、机上のルールではなく仕組みのブロックと二重化しています（後述）。
++実行者（Claude Code / Codex / Grok / Gemini）は、割り当てられた範囲だけを担当します。記憶を共有する併用ツールは Claude / Codex / Gemini の3つで、これに加えて最新情報の調査や外部比較を Grok に振ります。ChatGPT は Vault への接続方法を持たないため実行者には含めず、Hermes 運用のプロンプト基盤として使うか、必要な内容は人間が手動で転記します。勝手にスコープを広げず、成果物には前提・変更点・検証結果・残リスクを書き、**外部投稿・破壊的変更・永続設定の変更はしません**。次の表の「避けること」列は、机上のルールではなく仕組みのブロックと二重化しています（後述）。
+```
+
+役割分担表（Role テーブル）は元々 ChatGPT を行として含んでおらず、この反映と矛盾しない。
+
+### F5（再掲） — medium: 同じ内容の段落が連続している
+
+G1 の反映（2段落を1段落へ統合）で同時に解消。詳細は 3 章 F5 の「反映状況」参照。
+
+### G2 — medium: Hermes の説明が既存 note 記事と食い違って読める
+
+**該当箇所**: L140（「特定の製品やサービスの名前ではなく、役割そのものを指す呼び名」という説明）と、公開済み note 記事 `https://note.com/mine_unilabo/n/nc1ac531190c9`（「Hermes Agent を『依頼窓口』として導入し始めた」）
+
+**問題**: 両記事を読む読者には「役割の呼び名」（本記事）と「導入した実体」（note）が衝突して見える。旧レビュー4章（PR #537 由来の medium 1件）で既に「粒度差」として指摘されていたが未反映のまま残っていた。
+
+**対応方針**: 本文中の説明を変更すると記事の主張（Hermes=役割の呼び名という中核設計）に踏み込むため、`## 参考` 節への note 記事へのリンク追加のみで対応した（本文中の断定は変更していない）。AGENTS.md の「記事内クロスプラットフォーム参照」規約（本文中への配置禁止・末尾リンク集への配置のみ許可）に従い、リンクは `## 参考` 節配下に置いた。`npm run check:note-ref` で `no note.com/mine_unilabo links outside allowed sections` を確認済み。
+
+**反映**:
+
+```diff
+ - 関連: [推測で書いた学びが次の罠になった — AGENT_LEARNINGS.md の運用設計](https://zenn.dev/minewo/articles/agent-learnings-md-operation)
++- 関連: [Hermes Agentを「依頼窓口」として導入し始めた](https://note.com/mine_unilabo/n/nc1ac531190c9) — 「役割の呼び名」（本記事）と「導入した実体」（note）は別の粒度の説明
+```
+
+この対応で旧レビュー4章の note 粒度差指摘（PR #537 由来）は解消として扱う。
+
+### 反映後の検証
+
+- `npm run check` → exit 0（全チェック通過。`check:note-ref` OK、`check:internal-links` OK）
+- articleHash: `de26d5b3ce87a0dc09d4b700cbe5c8ad609e3606` → `5b87649768cb5df4a159a8c4e42ffbe115972ad5`（F1 反映後）→ `b43e3cbbe4329377cece98789e90ffee73cb9822`（G1/F5/G2 反映後）
+- `published: false`、タイトル、`topics`、記事の中心的主張は変更していない

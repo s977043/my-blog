@@ -8,7 +8,7 @@ published: true
 ---
 
 :::message
-この記事は、自律型 AI エージェントを組織の「資産」として運用するための実装パターンを、River Review の設計思想に沿って解説する技術記事です。
+この記事は、自律型 AI エージェントを組織の「資産」として運用するための実装パターンを、River Review の設計思想に沿って解説する技術記事です。本記事は River Review v0.x 時点の設計を扱っており、現行の判断層の分類は [River ReviewのJudgment Placement設計](/articles/river-review-judgment-placement) を参照してください。
 :::
 
 ## 1. はじめに：AI エージェントの「投げっぱなし」を卒業する
@@ -189,6 +189,8 @@ River Review では、この知見に基づきワークフローを 3 つのス�
 
 ## 6. 核心：評価駆動（Evaluation-Driven）でスキルを育てる
 
+この節は運用ステップの設計であり、自動昇格として実装しているものではありません。
+
 Agent Skills を「資産」として維持するために、共有メモリをメンテナンスする運用ステップを組み込みます。
 
 - **定期的な要約（Compression）**: `Dynamic Layer`（学習ログ）が一定量を超えたら、過去の「**失敗の共通項**」を AI に抽出させ、`Static Layer`（組織憲法）へ昇格させます。
@@ -218,4 +220,5 @@ River Review は、単なる OSS ツールではなく、「**開発文化をコ
 - [River Review v0.30→v0.33：Improvement Loop と applyTo Scoping 整備の半月](https://zenn.dev/minewo/articles/river-reviewer-v033-improvement-loop) - この記事の設計思想が実装としてどう進化したかの記録です。
 - [テンプレコピーをやめた — River Review を Claude Code / Codex の Plugin にした話](https://zenn.dev/minewo/articles/river-review-plugin-migration) - 配布形態を Plugin に移行した話です。
 - [AI駆動開発の2層ガード設計：PlanGateとRiver Reviewで実装前後を守る](https://zenn.dev/minewo/articles/ai-dev-guardrail-plangate-river-reviewer) - 実装前ガード（PlanGate）との組み合わせ方です。
+- [AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計](/articles/river-review-judgment-placement) - 現行の判断層の分類を解説した記事です。
 :::
