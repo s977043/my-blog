@@ -17,6 +17,7 @@
     "check:qiita-publish-hygiene": "node scripts/check-qiita-publish-hygiene.js",
     "check:doc-freshness": "node scripts/check-doc-freshness.js",
     "check:zenn-pace": "node scripts/check-zenn-publish-pace.js",
+    "test:zenn-pace": "node scripts/check-zenn-publish-pace.js --self-test",
     "gh:ensure": "bash scripts/check-gh-account.sh --fix",
     "check:zenn-title": "node scripts/check-zenn-title-length.js",
     "check:fm-title": "node scripts/check-frontmatter-title-yaml.js",
@@ -38,7 +39,7 @@
     "test:suggest-theme": "node scripts/suggest-next-theme.js --self-test"
   },
   "dependencies": {
-    "zenn-cli": "^0.5.2"
+    "zenn-cli": "^0.5.3"
   },
   "devDependencies": {
     "@qiita/qiita-cli": "^1.10.0"

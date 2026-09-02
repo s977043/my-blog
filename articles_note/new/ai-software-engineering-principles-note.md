@@ -1,701 +1,399 @@
-# AIがコードを書くほど、仕様・テスト・ドメイン設計が重要になる
+# AI駆動開発でSDDを考え直した。DiscoveryとDeliveryでは「先に定義するもの」が違った
 
 > 区分: 個人
 
 こんにちは、みねです。
 
-前回、[AI駆動開発を「Model + Harness」で考える記事](https://note.com/mine_unilabo/n/nd6a5d83d1488)を書きました。
+AIに実装を任せるとき、自分は「何を満たせば完了なのか」を先に定義するようにしてきました。
 
-そこで整理したのは、Agentの失敗をModel単体の問題にせず、Context、Tools、Runtime、Security、Observability、Evaluationまで含めたSystemとして扱う、という考え方です。
+開発アイテムの内容をチームで整理し、何を満たせば完了なのかを外に出す。そのうえで、設計と実行計画を作ってAgentへ渡す。
 
-その記事を書きながら、もう一つ強く感じたことがありました。
+このやり方は、Deliveryではかなりうまく機能しています。
 
-Harness Engineeringについて考えるほど、AI固有の新しい技術だけを学んでいる感覚が薄くなっていく。
+ところが、新しい価値を探るDiscovery側のPoCで、同じ型を使おうとすると噛み合わないことがありました。
 
-むしろ、
+最初は、
 
-- 責務分離
-- Contract
-- Observability
-- Regression Test
-- Least Privilege
-- State Management
+> DiscoveryではSDDが合わないのではないか
 
-といったSoftware Engineeringの原則を、Agentという新しい実行主体へ適用し直している感覚が強くなっています。
+と考えました。
 
-そして最近は、その延長で、
+でも、今は少し違う捉え方をしています。
 
-**仕様駆動開発、TDD、DDDの考え方も、AI駆動開発で改めて重要になるのではないか**
+**SDDがDiscoveryに合わなかったのではなく、Delivery用に作ったSpecの型を、そのままDiscoveryへ当てていた。**
 
-と考えています。
+自分たちのProduct Developmentでは、DiscoveryとDeliveryを並行して進めるDual-trackに近い形で開発しています。
 
-AIがコードを書いてくれるなら、こうした方法論は古くなるのではないか。
+Discoveryでは、何を作る価値があるのかを探る。Deliveryでは、価値があると判断したものをプロダクトとして正しく届ける。
 
-最初は自分もそう考える部分がありました。
+ただし、実際にはどちらでも実装が発生します。DiscoveryでもPoCや試作を作りますし、DeliveryではもちろんSoftwareを作ります。
 
-でも今は、むしろ逆です。
+**この「どちらでも作る」という状態が、今回の混線の原因の一つでした。**
 
-**実装が速くなるほど、「何を正しいとするか」を定義するEngineeringの価値が上がる。**
+Deliveryでうまく機能していたSDDの型を、そのままDiscoveryの試作にも当てようとしていたからです。
 
-今回は、この感覚を整理してみます。
+![AI駆動開発におけるDual-track](../assets/ai-dual-track-discovery-delivery.png)
+
+違いは「作る / 作らない」ではありません。**何のために作るのか、何を先に定義するのか**です。
+
+**Deliveryでは「何を満たせば完了か」を先に定義する。**
+
+**Discoveryでは「何を学べれば次を判断できるか」を先に定義する。**
+
+この記事では、探索的なPoCで感じた違和感から、SDDの使い方をどう考え直したかを書きます。
 
 ---
 
-## 実装が速くなっても、「正しさ」は自動では決まらない
+## Deliveryでは「完了条件」をSpecifyする
 
-自分の開発でも、AI Coding Agentを使うことでBuildはかなり速くなりました。
+自分たちのDelivery Flowでは、PBI単位でAI駆動開発を回しています。
 
-以前なら数時間かけていた実装が、数十分で終わることもあります。
+~~~text
+PBI
+  ↓
+リファインメント
+  ↓
+プランニング
+  ↓
+Spec・完了条件
+  ↓
+設計・実行計画
+  ↓
+AIによる実装
+  ↓
+検証
+~~~
 
-でも、コードが速く書けることと、正しいものが作れることは同じではありません。
+PBIは、Product Backlog Itemの略です。ここでは「今回実現したい変更や要求を、開発チームが扱える単位にしたもの」くらいの意味で使っています。
 
-Agentは、与えられたIntentやContextをもとに実装します。
+このFlowでは、PBIをそのままAgentへ渡しません。
 
-そのため、入口が曖昧なら、実装能力が高いほど間違った方向へ速く進むことがあります。
+なぜ作るのか。何を実現するのか。何ができれば完了なのか。何を変えないのか。何を検証するのか。
+
+そうした条件を先に外へ出してから実装へ進みます。
+
+この運用を仕組みにしたものの一つがPlanGateです。
+
+### DONEは「何を満たせば完了か」
+
+自分たちのFlowでは、PBIごとにDONEを置きます。
+
+ここでいうDONEは、**何が満たされれば、この変更を完了と判断できるかという完了条件**です。
 
 例えば、
 
+> 管理者がユーザーを一時停止できるようにする
+
+というPBIなら、
+
 ~~~text
-ユーザー管理を改善して
+目的:
+管理者がユーザーを一時停止できる
+
+DONE:
+- 管理者だけが停止できる
+- 停止されたユーザーはログインできない
+
+変更しないこと:
+- 認証方式そのものは変更しない
 ~~~
 
-だけでは、
+のように定義できます。
 
-- 誰の問題を解くのか
-- 何を改善と呼ぶのか
-- 既存仕様をどこまで変えてよいのか
-- Security上の制約は何か
-- 何をもって完了とするのか
+この状態なら、Agentに対して、
 
-が分かりません。
+- 何を実現するか
+- 何を変えないか
+- どこまで進めればよいか
+- 何をもって正しいと判断するか
 
-人間同士なら、会話の中で補完できるかもしれません。
+を渡せます。
 
-しかしAgentへ長時間の自律実行を任せるほど、この曖昧さはExecution Riskになります。
-
-だから、AI駆動開発ではPrompt Engineeringだけでなく、
-
-**Specification Engineeringが必要になる。**
-
-今はそう考えています。
+Deliveryでは、このSDDの型がかなりよく機能しました。
 
 ---
 
-## 仕様駆動開発は、AgentとのExecution Contractになる
+## Discoveryに同じSpecを当てると、価値仮説が完了条件になった
 
-最近のAI開発では、Spec-Driven Developmentという言葉をよく見るようになりました。
+違和感が出たのは、既存プロダクトの利用フローの途中に新しい体験を加え、その体験が実際に使われるかを確かめる探索的なPoCでした。
 
-ここでは、歴史的な仕様中心開発全般ではなく、GitHub Spec KitやKiroのように、SpecをAI Coding Agentへ渡す中心的なArtifactとして扱う現在の流れを念頭に置いています。
+具体的な機能名や案件内容は伏せますが、対象ユーザーが普段使っている流れの中に新しい選択肢を置き、その選択肢を使うことで追加の価値が生まれるかを見ようとしていました。
 
-GitHubのSpec Kitでは、Spec-Driven DevelopmentをIntent-drivenな開発として整理し、
+このPoCは、何も根拠がない状態から始めたわけではありません。
+
+事前にユーザーインタビューなどを行い、
+
+> こういう価値があれば、ユーザーにとって意味があるのではないか
+
+という仮説は持っていました。
+
+ただし、どんな形でその価値を届けるか、その体験自体に本当に価値があるかは、まだ検証が必要な状態でした。
+
+ここでDeliveryと同じようにPBIを作り、DONEを置こうとしました。
+
+例えば、構造だけを単純化すると、
 
 ~~~text
-Spec
+DONE:
+- 新しい体験を利用できるようにする
+~~~
+
+とは書けます。
+
+Softwareとしては、この条件を満たせます。
+
+でも、PoCで本当に確かめたかったのは、
+
+> **その体験に、ユーザーにとって価値があるのか**
+
+でした。
+
+つまり、
+
+~~~text
+実装として決められること:
+- 新しい体験を利用できるようにする
+
+まだ確かめる必要があること:
+- その体験自体に価値があるか
+- この提供方法が適切か
+~~~
+
+が混ざっていました。
+
+前者は完了条件です。
+
+後者は価値仮説です。
+
+ここを区別せずにDeliveryのSpecへ入れると、
+
+**「価値があるかもしれない」が「これを作るべき」に変わってしまう。**
+
+そしてAgentは、その区別をしてくれません。
+
+こちらが価値仮説を要件として渡せば、その仮説も忠実に実装します。
+
+結果として、
+
+**間違った仮説を、高い品質で、速く実装する**
+
+ことが起こり得ます。
+
+これはSDDの欠点ではありません。
+
+**Specifyする対象を間違えていた**ことが問題でした。
+
+---
+
+## SDDは「howの前にwhatを定義する」
+
+今回考え直すうえで、GitHub Spec KitのSDDの説明が参考になりました。
+
+GitHub Spec Kitでは、Spec-Driven Developmentを、**実装方法であるhowより先に、実現したいwhatを仕様として定義するIntent-drivenな開発**として説明しています。
+
+実際、Spec Kitの基本Flowも、
+
+~~~text
+Specify
   ↓
 Plan
   ↓
 Tasks
   ↓
-Implement
-~~~
-
-という流れを提供しています。
-
-GitHubは、Specificationを単なる実装前の補助文書ではなく、AI Coding Agentへ構造化されたContextを渡す中心的なArtifactとして扱っています。
-
-Kiroも、Specを先に作ることでScopeやConstraints、Edge Caseを明確にし、曖昧さを実装前に減らす考え方を取っています。
-
-ここで自分が重要だと思っているのは、Specのフォーマットそのものではありません。
-
-**「実装する前に、何を正しいとするかを外部化する」ことです。**
-
-ただし、ここで一つ注意したいことがあります。
-
-Specは、まだ分かっていないことを自動的に正しくしてくれるものではありません。
-
-Domainの理解やProduct Hypothesisが大きく揺れている段階で詳細なSpecを作ると、単なるAssumptionをRequirementとして固定してしまうことがあります。
-
-だから、不確実性が高い段階ではSpecを薄く保ち、
-
-- 分かっていること
-- 仮説であること
-- まだ確認できていないこと
-
-を分けて持つほうがよいと考えています。
-
-Specを「Knowledgeを発見するもの」ではなく、**ある程度得られたKnowledgeをAgentが実行できるContractへ変えるもの**として見るほうが、今の自分にはしっくりきます。
-
-例えばAgentに渡すSpecificationなら、最低限、
-
-- Goal
-- Problem
-- Scope
-- Non-goals
-- Constraints
-- Acceptance Criteria
-- Definition of Done
-- Stop Condition
-
-くらいは明確にしておきたい。
-
-自分はこれを、単なるRequirement Documentというより、
-
-**AgentとのExecution Contract**
-
-として考えています。
-
-Agentに「何を作るか」をお願いするのではなく、
-
-~~~text
-何を達成するか
-何を変えてよいか
-何を変えてはいけないか
-何をもって完了とするか
-どこで止まるか
-~~~
-
-を合意する。
-
-AI Agentの自律性が上がるほど、このContractの重要性も上がるはずです。
-
-自分がPlanGateで、実装へ入る前にPlanやDefinition of Doneを確認する流れを作ってきたのも、振り返るとかなり近い発想でした。
-
-当時はSpec-Driven Developmentとして整理していたわけではありません。
-
-でも今は、Promptをうまく書くことより、**実装前にIntentとCompletion CriteriaをArtifactとして残すこと**のほうが重要だと感じています。
-
----
-
-## TDDは、Agentの「できました」を信じなくてよくする
-
-仕様を決めても、それだけでは十分ではありません。
-
-次に必要になるのが、
-
-**その仕様を満たしていることを、どう確認するか**
-
-です。
-
-ここでTDDの考え方が効いてきます。
-
-Martin FowlerはTDDを、
-
-1. 次に追加したいFunctionalityに対するTestを書く
-2. Testが通るまでCodeを書く
-3. Refactorする
-
-という繰り返しとして説明しています。
-
-よく知られているRed、Green、Refactorです。
-
-TDDは単なる「実装前にTestを書くルール」ではなく、TestによってDesignとFeedback Loopを駆動する方法です。
-
-AI駆動開発で自分が特に重要だと感じているのは、
-
-**期待するBehaviorを、実装とは別の実行可能な判定基準にする**
-
-という部分です。
-
-Agentが、
-
-~~~text
-実装しました
-テストも通りました
-問題ありません
-~~~
-
-と言っても、それだけではVerificationになりません。
-
-Agent自身の「できました」という自己申告だけでは、実装とは独立した証拠にならないからです。
-
-そこで、
-
-~~~text
-Specification
-  ↓
-Test / Eval
-  ↓
 Implementation
-  ↓
-Regression
 ~~~
 
-という構造を作る。
+となっていて、`/speckit.specify` では技術スタックではなく、まず「何を作るのか」「なぜ作るのか」に集中します。
 
-実装がAIで高速化するほど、TestやEvalは「あとで確認するもの」ではなく、
+自分もSDDを、**分かっているIntentを実装前に外へ出し、Agentが実行できる形へ変える方法**として捉えてきました。
 
-**Agentの仕事を制御するContractの一部**
+ここで今回引っかかったのが、whatという言葉です。
 
-になっていくと感じています。
+Deliveryでは、「何を作るか」はある程度分かっています。
+
+一方、Product Discoveryでは、**そのwhat自体に価値があるのかをまだ確かめている**ことがあります。
+
+つまり、問題はSpecを書くタイミングだけではありませんでした。
+
+**DiscoveryとDeliveryでは、Specifyする対象そのものが違う。**
+
+この理解が、自分の中ではかなり大きな変化でした。
+
+なお、GitHub Spec KitにもCreative Explorationという開発フェーズがあります。ただし、そこで扱われているのは複数の実装、技術スタック、Architecture、UX PatternなどのSolution探索が中心です。
+
+この記事でいうDiscoveryは、**そもそもその価値を提供すべきかを確かめるProduct Discovery**を指しています。
 
 ---
 
-## TestとEvalは同じではないが、役割は近づいている
+## Discoveryでは「学習条件」をSpecifyする
 
-ここは少し分けて考えたいところです。
+ここまで考えて、自分の結論は、
 
-TDDのTestと、AI Agentに対するEvalは同じものではありません。
+> DiscoveryではSDDを使わない
 
-Unit TestやIntegration Testは、決められたInputに対するSystem Behaviorを比較的deterministicに検証できます。
+ではなくなりました。
 
-一方、Agent Evalでは、
+むしろ、**Discoveryでは、Deliveryとは違うものを先に定義する必要があった**と考えています。
 
-- Toolの選び方
-- 複数Stepの判断
-- Intermediate State
-- Output Quality
-- Safety
-- Task Completion
+自分の中では、これをDiscovery側でSDDを使うときの型として捉えています。GitHub Spec Kitの公式用語ではなく、自分たちの運用上の整理です。
 
-など、より広いBehaviorを見る必要があります。
+Deliveryで先に定義するのが完了条件なら、Discoveryで先に定義したいのは、
 
-AnthropicもAgent Evalについて、EvalがないとProductionでFailureを見つけて修正し、その修正が別のFailureを生むreactive loopに入りやすいと説明しています。
-
-だから自分は、
-
-~~~text
-Application Behavior
-  ↓
-Test
-
-Agent Behavior
-  ↓
-Eval
-~~~
-
-と完全に分離するより、
-
-**どちらも「期待するBehaviorを外部化してRegressionを検知する仕組み」**
-
-として見るほうが、AI駆動開発では理解しやすいと感じています。
-
-もちろん、TestですべてのAgent Behaviorを評価できるわけではありません。
-
-逆に、Evalで通常のSoftware Testを置き換えるべきでもありません。
-
-重要なのは、
-
-**実装したAgent自身の自己評価だけに依存しないこと**
+- どんなProblemを見ているのか
+- どんなValue Hypothesisを持っているのか
+- 何を確かめたいのか
+- 何が観測できれば次を判断できるのか
+- どんなEvidenceを得たいのか
+- そのEvidenceを見て、次にどんなDecisionを取るのか
+- 今回は何を固定しないのか
 
 です。
 
-一方で、TestがあるからProductとして正しいとは限りません。
-
-まだ価値があるか分からないBehaviorを精密にTestへ固定すれば、間違った仮説を高品質に実装することもできます。
-
-TDDは、Product Hypothesisそのものを検証する方法というより、**残したいBehaviorが見えてきたあとに、それをExecutableなFeedbackへ変える方法**として考えると整理しやすいと感じています。
-
-自分がRiver Reviewで、作る役割と確認する役割を分けようとしてきた理由もここにあります。
-
-これはTDDそのものではありません。
-
-ただ、実装とは独立した判定基準を持ち、MakerとCheckerを分けたいという問題意識はつながっています。
-
----
-
-## DDDは、Agentへ渡すContextの「量」ではなく「意味」を整理する
-
-もう一つ、これから自分のAI駆動開発へ、より意識的に取り込みたいと思っているのがDDDです。
-
-DDDは、仕様駆動開発やTDDほど、自分の現在の運用へ明示的に組み込めているわけではありません。
-
-だからここは、実践済みの答えというより、今後試したい仮説に近いです。
-
-ただ、DDDはSpecificationやTestよりも早い段階から使える可能性があると思っています。
-
-Domain Expertとの会話、具体例、言葉の違和感からModelを揺らし、Ubiquitous LanguageやBounded Contextを探していく活動は、むしろ「まだ何が正しいか分からない」段階のLearningに向いています。
-
-一方で、EntityやAggregateなどの実装構造を早く固定しすぎれば、仮説段階のDomain ModelをArchitectureへ焼き付ける危険があります。
-
-**探索としてのDDDと、構造として固定するDDDは分けて考えたい。**
-
-AI Agentには大量のContextを渡せます。
-
-Repository全体を読ませる。
-
-大量のDocumentを検索させる。
-
-Long Context Windowへ情報を入れる。
-
-でも、
-
-**Contextが多いことと、Contextが正しく構造化されていることは別です。**
-
-そこでDDDの考え方が効いてきます。
-
-特に、
-
-- Ubiquitous Language
-- Bounded Context
-
-です。
-
-MicrosoftのDDD解説でも、Ubiquitous LanguageはDomain ExpertとDeveloperが共有するVocabularyであり、Bounded Contextは特定のDomain Modelが有効な境界として説明されています。
-
-これをAgent Engineeringへ持ち込むと、かなり面白い。
-
-例えば「Account」という言葉が、
-
-- 契約管理
-- 認証
-- 請求
-- CRM
-
-で違う意味を持っていたとします。
-
-人間のTeamでも混乱します。
-
-Agentならなおさらです。
-
-巨大なContextを渡して、
+例えば、実際の案件内容は伏せたうえで、今ならPoCのSpecを次のように考えます。
 
 ~~~text
-Accountを修正して
+Problem:
+既存の利用フローの中で、
+対象ユーザーが十分に解決できていない課題がある
+
+Value Hypothesis:
+既存フローに新しい体験を加えることで、
+ユーザーに追加の価値を届けられる
+
+Learning Conditions:
+- 対象ユーザーが、実際の利用文脈の中でその体験を使うか確認できる
+- 使われなかった場合、価値そのものの問題か、
+  提供方法の問題かを切り分けられる
+
+Evidence:
+- 実際の利用文脈で使った / 使わなかった記録
+- 使わなかった理由や、利用後に得られた反応
+
+Decision:
+- 次の試作へ進む
+- 仮説を見直す
+- この案を止める
+
+今回まだ固定しないこと:
+- 本実装としての最終仕様
+- この提供方法を継続すること
 ~~~
 
-と指示するより、
+Discoveryだから何も決めないわけではありません。
+
+**決める対象が違う。**
 
 ~~~text
-Billing ContextにおけるAccount
+Delivery
+何を満たせば実装完了かをSpecifyする
+
+Discovery
+何を学べれば次を判断できるかをSpecifyする
 ~~~
 
-と意味の境界を明確にしたほうが、Agentが参照すべきModel、Code、Ruleを絞れます。
+この違いです。
 
-つまりDDDは、AIに対して、
+### 仮説だと分かったら、DONEを捨てるのではなく書き換える
 
-**何を知っているかではなく、どの意味の世界で仕事をしているかを定義する**
+ここも今回の学びでした。
 
-方法として使えるのではないか、と考えています。
+DONEを書いていて、そこに価値仮説が混ざっていると気づいたからといって、実装をすべて止める必要はありません。
 
----
+価値仮説の部分を完了条件から外して、**学習条件へ書き換える。**
 
-## Bounded Contextは、Agentを分ける前に考えたい
-
-これはMulti-Agentとも関係します。
-
-AI駆動開発では、Agentを増やしたくなります。
-
-Frontend Agent。
-
-Backend Agent。
-
-Test Agent。
-
-Review Agent。
-
-でも、先にAgentを分けると、役割分担がTool都合になりやすい。
-
-DDD的に考えるなら、順番は逆です。
+そして、その学習に必要な最小限の試作だけをAgentへ渡す。
 
 ~~~text
-Domainを理解する
+価値仮説
   ↓
-Bounded Contextを見つける
+Learning Conditions
   ↓
-Responsibilityを分ける
-  ↓
-Context / Tool / Permissionを分ける
-  ↓
-必要ならAgentを分ける
-~~~
-
-Agentを増やすことが目的ではありません。
-
-**意味と責務の境界があるから、Agentを分ける。**
-
-この考え方は、自分がHarness Engineeringで考えているMulti-Agentの設計ともかなり相性がよいです。
-
----
-
-## 仕様駆動、TDD、DDDはそれぞれ違う問いを持っている
-
-3つを同時に考えると、役割が重複しているようにも見えます。
-
-でも、自分の中では少し違う問いを担当しています。
-
-### DDD
-
-~~~text
-このProblem Domainを
-どんなConceptとBoundaryで捉えるか
-~~~
-
-### Specification
-
-~~~text
-今回のChangeで
-何を実現し、何を実現しないか
-~~~
-
-### TDD / Test / Eval
-
-~~~text
-正しく実現できたことを
-どう確認するか
-~~~
-
-そしてHarnessは、
-
-~~~text
-そのContractとBoundaryの中で
-Agentをどう安全に実行するか
-~~~
-
-を担う。
-
-自分は今、この4つを次のように見ています。
-
-~~~text
-DDD
-  ↓
-Meaning / Boundary
-
-Specification
-  ↓
-Intent / Contract
-
-Test / Eval
-  ↓
-Executable Criteria
-
-Harness
-  ↓
-Execution / Control
-~~~
-
-これは、かなりSoftware Engineeringらしい構造です。
-
----
-
-## AI駆動開発のLoopをこう考えたい
-
-これまで考えてきたことを一つのFlowにすると、今はこうなります。
-
-~~~text
-Problem
-  ↓
-Domain Understanding
-  ↓
-Shaping
-  ↓
-Specification
-  ↓
-Test / Eval Design
-  ↓
-Agent Build
-  ↓
-Verification
-  ↓
-Evidence
-  ↓
-Learning / Decision
-~~~
-
-以前の記事で考えた、
-
-~~~text
-Problem
-  ↓
-Shape
-  ↓
-Build
+最小限のExperiment
   ↓
 Evidence
   ↓
 Decision
 ~~~
 
-というProduct Learning Loopの中を、少し細かくした形です。
+価値が確認できたら、その後でDelivery側のPBIとして完了条件を定義すればよい。
 
-BuildをAIへ任せるなら、その前後にある、
+こう考えると、DiscoveryとDeliveryは別々の世界ではなく、自然につながります。
 
-- Domain Understanding
-- Specification
+---
+
+## DiscoveryとDeliveryで、Agentへ渡すContractを変える
+
+前回、「[失敗をモデルのせいにしない。AI駆動開発を『Model + Harness』で考える](https://note.com/mine_unilabo/n/nd6a5d83d1488)」という記事を書きました。
+
+そこで、Agentを正しく動かすためのHarnessの土台として、目的、完了条件、制約、停止条件などを含むContractを考えました。
+
+今回の経験で、その続きを一つ理解できた気がします。
+
+**Contractは必要。でも、DiscoveryとDeliveryでContractの中身を同じにしてはいけない。**
+
+自分の中では、今こう整理しています。
+
+~~~text
+Discovery Contract
+- Problem
+- Value Hypothesis
+- Learning Conditions
+- Evidence
+- Decision
+- 今回固定しないもの
+
+            ↓ Evidence / Decision
+
+Delivery Contract
+- Intent
+- Completion Criteria
+- Constraints
 - Verification
+- Stop Conditions
+~~~
 
-をより明示的にする。
+HarnessがAgentに「どう動くか」を支えるものだとしたら、SDDはそのAgentへ**何を先に渡すか**を考えるものとして見えてきました。
 
-そして、それをHarnessで実行可能なWorkflowへ変える。
+そして、その「何を」は一種類ではありません。
 
-AI駆動開発とは、単にCoding Agentを導入することではなく、
+Discoveryでは、学習すべきことを渡す。
 
-**このFeedback Loop全体を設計し直すこと**
-
-なのではないかと思っています。
+Deliveryでは、実現すべきことを渡す。
 
 ---
 
-## すべての開発でフルセットを使う必要はない
+## SDDがAI駆動開発に合わないのではなかった
 
-ここは重要です。
+今回、最初に感じていた違和感は、
 
-仕様駆動開発、TDD、DDDが重要だからといって、すべてのTaskに重いProcessを入れる必要はありません。
+> PoCではSDDが噛み合わない
 
-単純な文言修正に、Domain Modeling Workshopは必要ありません。
+でした。
 
-明らかなCRUD追加に、複雑なAggregate設計が必要とは限りません。
+今は、**SDDがAI駆動開発に合わないのではなく、DiscoveryとDeliveryで同じSpecの型を使っていた**ことが問題だったと考えています。
 
-小さなSpikeに、完全なSpecificationを作る必要もありません。
+Product Developmentでは、DiscoveryとDeliveryがいつもきれいに分かれるわけではありません。Discoveryでも実装は必要ですし、Deliveryしながら新しいことが分かることもあります。
 
-Software Engineeringの方法論は、使うこと自体が目的になると逆効果です。
+だから分類そのものが目的ではありません。
 
-AI駆動開発でも同じだと思います。
+自分自身、これからAgentへPBIやSpecを渡す前に、まず次の2つを確認したいと思っています。
 
-自分なら、次のように考えます。
+- **いま必要なのは、価値を確かめることか。それとも、価値があると判断したものを届けることか**
+- **このSpecで先に定義すべきなのは、完了条件か。それとも学習条件か**
 
-### 不確実性が高い
+SDDを使うか使わないかではなく、**DiscoveryとDeliveryで、何をSpecifyするのかを変える。**
 
-Domain Understanding、Shaping、Hypothesis / Experimentを厚くする。
-
-この段階ではSpecを詳細化しすぎず、AssumptionやUnknownを残したままLearningを優先する。
-
-### Scopeが大きい
-
-SpecificationとContractを厚くする。
-
-### Regression Riskが高い
-
-TestとEvalを厚くする。
-
-### Domain Complexityが高い
-
-DDDのStrategic Designを厚くする。
-
-### Agentの自律実行時間が長い
-
-Harness、Checkpoint、Observability、Permissionを厚くする。
-
-つまり、
-
-**TaskのRiskとUncertaintyに応じてEngineeringを増減する。**
-
-最初から全部入れるのではなく、必要な場所に必要な構造を置く。
-
-これもHarnessを増やしすぎないという考え方と同じです。
-
----
-
-## 明日から変えるなら、Promptの前を変えたい
-
-では、この考え方を実際のAI駆動開発へどう取り込むか。
-
-大げさなTransformationを始める必要はないと思っています。
-
-まず変えたいのは、Agentへ最初のPromptを送る前です。
-
-### 1. ProblemとDomainを言葉にする
-
-何が問題なのか。
-
-誰のどんなBehaviorを変えたいのか。
-
-この変更はどのDomain / Contextに属するのか。
-
-### 2. SpecをArtifactとして残す
-
-Conversationだけに閉じず、
-
-~~~text
-Goal
-Scope
-Constraints
-Acceptance Criteria
-DoD
-~~~
-
-を外へ出す。
-
-### 3. Acceptance CriteriaをTest / Evalへ落とす
-
-「できたと思う」ではなく、
-
-~~~text
-どうなればPASSか
-~~~
-
-をExecutableにできるところからする。
-
-### 4. AgentのExecutionを観測する
-
-何を読み、何を変更し、どこで失敗したかをTraceとして残す。
-
-### 5. Failureを次のSpec / Test / Evalへ戻す
-
-一度起きた失敗を、その場のPrompt修正で終わらせない。
-
-次のRunでも検知できる状態にする。
-
-このLoopを回すだけでも、AI駆動開発はかなりSoftware Engineeringらしくなると思います。
-
----
-
-## AIがコードを書くほど、EngineeringはCodingの外へ広がっていく
-
-AIによってCodingが不要になるとは思っていません。
-
-ただ、自分の開発では、Codingそのものに使う時間の割合は明らかに変わってきました。
-
-そしてCodingが高速化するほど、
-
-~~~text
-何を作るか
-何を意味するか
-何を正しいとするか
-どう検証するか
-どこまで任せるか
-~~~
-
-を決める仕事の重要性が相対的に上がっていく。
-
-だから今は、
-
-**AI時代だから新しいSoftware Engineeringが必要**
-
-というより、
-
-**AI時代だからSoftware Engineeringが扱う範囲を広げ直す必要がある**
-
-と考えています。
-
-仕様駆動開発は、**理解が進んだKnowledgeをAgentとのContractへ変える。**
-
-TDDは、**残したいBehaviorをExecutableなFeedbackへ変える。**
-
-DDDは、**Domainの意味と責務のBoundaryを探索し、必要なところから構造へ変える。**
-
-Harnessは、それらを守りながらAgentを実行する。
-
-この組み合わせは、今後のAI駆動開発を考えるうえでかなり重要になるのではないかと思っています。
-
-次は、この考えをもう一段実装側へ寄せて、
-
-~~~text
-Domain
-  ↓
-Spec
-  ↓
-Test / Eval
-  ↓
-Agent
-  ↓
-Evidence
-~~~
-
-を、実際の開発Workflowとしてどう設計するかを考えてみたいです。
+今回のPoCから得た、一番大きな学びです。
 
 ---
 
 ## 参考
 
 - GitHub Spec Kit「What is Spec-Driven Development?」
+  - SDDを、howより先にwhatを定義するIntent-drivenな開発として整理する際の参考
   - https://github.com/github/spec-kit/blob/main/docs/concepts/sdd.md
-- GitHub Spec Kit Documentation
-  - https://github.github.com/spec-kit/
-- Kiro「Specs just got faster (and smarter)」
-  - https://kiro.dev/blog/faster-smarter-specs/
-- Martin Fowler「Test Driven Development」
-  - https://martinfowler.com/bliki/TestDrivenDevelopment.html
-- Microsoft Learn「Use Domain Analysis to Model Microservices」
-  - https://learn.microsoft.com/en-us/azure/architecture/microservices/model/domain-analysis
-- Anthropic「Demystifying evals for AI agents」
-  - https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents
+- GitHub Spec Kit README
+  - `/speckit.specify` でwhat / whyを定義し、Plan / Tasks / Implementationへ進むFlowの参考
+  - https://github.com/github/spec-kit
+- 前回の記事「失敗をモデルのせいにしない。AI駆動開発を『Model + Harness』で考える」
+  - https://note.com/mine_unilabo/n/nd6a5d83d1488
