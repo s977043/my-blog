@@ -40,7 +40,6 @@
 
 - `[ready-to-publish]` **#12 (note) 締切 2026-09-03**: 「AI駆動開発を「個人技」で終わらせない。チームの仕組みに変えるまで」（`articles_note/new/plangate-team-rollout.md`。PR #524 マージ済み・構成レビュー完了〔P1/P2 指摘なし〕）。一次情報: Growth-Teams-Agent の `docs/team-onboarding/CHANGELOG.md`・`improvement-backlog.md`〔FB-001/031/032〕・`.agents/metrics/`、plangate README。**公開前に人間判断が要る残件**: ①チーム統計・GTA内部情報・改善バックログ由来の実数の公開可否 ②note公開時に目次をON ③ASCII図の実表示確認（2026-08-27 に code block の最大表示幅を 67→38 に圧縮済み。崩れる場合は全体図のみ画像化）
 
-- `[requires-human]` **#13 (zenn) 締切 2026-08-29**: 「AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計」（`articles/river-review-judgment-placement.md`、14,209字）。`reviews/zenn/river-review-judgment-placement.md` が `blocked=false mustHigh=0`（2026-08-26 実測）。flip PR #550（main、`published: true`）→ sync PR #551（release/zenn、2026-08-27 23:58 UTC マージ）まで完了済み。**しかし deploy が発火していない**。
   - 実測（2026-08-28 10:45 JST、マージから約1時間45分経過時点）: `https://zenn.dev/minewo/articles/river-review-judgment-placement` は **HTTP 403**、`https://zenn.dev/api/articles?username=minewo&order=latest` にも **未出現**
   - 対照群: `loop-maturity-rubric-audit` は同時刻に **HTTP 200** / API 出現あり（id 640688、published_at 2026-08-27 14:45 JST）。Zenn 連携そのものは生きている
   - 原因は **Zenn rate-limit** でほぼ確定。`AGENT_LEARNINGS.md` の 2026-05-22 エントリに**同型の先例**がある（`river-review-v033` を前記事の 22.4 時間後に publish → Zenn deploy log に「次の記事は投稿数の上限に達したためデプロイされませんでした」と表示され未反映。同 commit 内の他ファイル更新は deploy 成功）。今回はさらに短い間隔である。loop-maturity の公開（8/27 14:45 JST）から本記事の sync マージ（8/28 08:58 JST）まで **18時間13分**しかあいておらず、規約の 24 時間を下回っている
@@ -70,6 +69,8 @@
 <!-- suggest:theme:insert-here 自動起票はこの行の直前に追記される。締切未設定の候補が締切つきの行より上に来ないよう、位置を固定している。移動・削除するとスクリプトが停止する。 -->
 
 ## Done
+
+- 2026-08-31 zenn river-review-judgment-placement https://zenn.dev/minewo/articles/river-review-judgment-placement （queue #13、締切 8/29 を 2 日超過。id 640689、published_at 08:41 JST。**rate-limit hit からの復旧事例**: 8/28 08:58 の sync PR #551 マージが前回公開〔8/27 14:45〕の 18時間13分後で、Zenn が「次の記事は投稿数の上限に達したためデプロイされませんでした」と名指しで拒否。同一 deploy の既存 update 2 件は反映されたため、**rate-limit は新規 publish のみに掛かる**ことが確定した。8/28 19:07 に再実行を予約したがネットワークエラーで失敗し、8/31 08:41 に PR #566 で再実行して公開成功〔前回公開から 90 時間〕。公開3点セット: flip #550 main / sync #551〔hit〕/ 再 sync #566。HTTP 200・og:title・Zenn API 出現・canonical リンク〔#548〕・X 導線〔#539〕の反映をすべて確認済み）
 
 - 2026-08-29 note agent-harness-engineering-note https://note.com/mine_unilabo/n/nd6a5d83d1488 （queue 外の新規執筆。「失敗をモデルのせいにしない。AI駆動開発を『Model + Harness』で考える」。記事本体 #558 → 冒頭・結論を個人の経験起点へ調整 #561 → WXR 再生成・note 手動公開。公開後、過去2記事からのシリーズ導線を #562、関連する前史「AI駆動開発はアジャイルにフィットするのか」への接続を #563 で整備。note公開済みだが、次回公式エクスポート取り込みで `published/nd6a5d83d1488.md` が生成されるまでは `articles_note/new/agent-harness-engineering-note.md` を編集用正本として残す。公開済み記事への相互リンク反映は note 管理画面でまとめて手動対応する）
 

@@ -132,6 +132,12 @@ River Reviewでは、こうした機械的に判定できる結果をSource of T
 
 完全に正しい / 間違いを証明できなくても、明示ルールで候補を高精度に絞れるなら、まずpure-code detectorへ置けます。
 
+River Reviewでは、`TODO` / `FIXME` / `HACK` / `WORKAROUND` / `暫定` などを含むコメントに、Issue参照・URL・期日 / version・撤去条件・恒久宣言のいずれもない場合を候補として拾う `temporary-without-exit` detectorを実装しています。
+
+これは「temporary codeが必ず悪い」と証明するDeterministic Gateではありません。明示パターンから高シグナルな候補を絞るHeuristicとして置き、既定severityも `nit` としてgateを止めない設計にしています。意味や例外の判断までRegexへ押し込まないためです。
+
+この観点をHeuristicへ切り出した経緯は、後半のPromotionの実例で扱います。
+
 ### Agentic Review：意味理解が必要になってからLLMを使う
 
 ここで初めてLLMが中心になります。
@@ -174,6 +180,8 @@ Caller / Human
    ↓
 GO / NO-GO / Approval / Merge
 ```
+
+この「収束までは自動化し、マージの判断そのものは人間に残す」という境界は、[AIにマージさせない。PRをMERGE_READYまで運ぶ状態機械の設計](/articles/ai-merge-ready-state-machine) で状態機械として整理しています。
 
 ### 判断層と変更リスクは別の軸
 
@@ -357,14 +365,6 @@ Evidenceの成立   → Deterministic
 
 Judgment Placementで重要なのは、最初の4分類だけでなく、**運用から学んで判断の置き場所を変え続けること**です。
 
-例えば、Agentic Reviewerが何度も、
-
-> presentation layerからrepositoryを直接参照している
-
-と指摘しているとします。
-
-最初は意味理解が必要でも、繰り返すうちに条件が明確になるかもしれません。
-
 ```text
 Repeated Human / Agentic Judgment
             ↓
@@ -382,6 +382,50 @@ Can it be deterministic?
 これは「AI Reviewerをもっと賢くする」とは別の改善です。
 
 **AI Reviewerが覚えていなくても、リポジトリ側が守れる状態を増やす**改善です。
+
+どの指摘をPromotionの候補にするかは、レビュー結果の分類と記録がないと決められません。指摘の採否と理由を残し、繰り返し出るものをルールへ戻す運用は [AIコードレビューを仕組みにする: 指摘の分類・記録・改善の回し方](/articles/ai-code-review-feedback-ops) にまとめています。
+
+### 実例：temporary codeの撤去条件をHeuristicへ切り出す
+
+River Reviewには、意味的な整合を扱う `knowledge-to-code-alignment` Skillがあります。一方、「一時対応コメントに撤去条件があるか」という観点のうち、明示パターンで高精度に候補を絞れる部分は `temporary-without-exit` detectorへ切り出しています。
+
+現在の条件は、`TODO` / `FIXME` / `HACK` / `WORKAROUND` / `暫定` などを含むコメントに対し、Issue参照・URL・期日 / version・撤去条件・恒久宣言が見つからないことです。
+
+```text
+Semantic review concern
+        ↓
+条件を明示できる部分を切り出す
+        ↓
+temporary-without-exit
+        ↓
+Heuristic detector
+        ↓
+Agentic Skillでは同じ観点を重複指摘しない
+```
+
+ポイントは、「Regexで検出できたから完成」ではないことです。
+
+このdetectorを追加したPR #1788では、その後の別視点レビューで、Skillの `applyTo` とdetectorの実効範囲のずれ、severityの強さなどが見つかり、修正されています。さらにPR #1811では、`keep forever` / `by design` / `恒久` のような恒久宣言を許容し、意図的なコメントを誤検出しないよう条件を改善しました。
+
+その後は、対象範囲のdriftや誤検出をcanary testで固定しています。
+
+```text
+観点を切り出す
+  ↓
+Heuristic化
+  ↓
+false positive / scope driftを観測
+  ↓
+条件を改善
+  ↓
+canary testで固定
+  ↓
+意味的レビューとの責務重複を減らす
+```
+
+ここで行っているのはRuleの自動生成ではなく、**1つのレビュー観点を分解し、明示できる部分だけを再現可能な層へ移して、その責務境界を固定すること**です。
+
+これは「Agentic ReviewerのFindingを自動で昇格した」事例ではありません。**意味的レビューで扱いうる観点のうち、明示条件にできる部分をHeuristicへ責務移譲し、その境界を実運用で改善した例**です。
 
 River Reviewでは、この考え方をRiverbed、fixture、evaluation、Review Evolution Cycleと接続し、Promotionが本当に品質を上げたかを検証する設計にしています。
 
@@ -468,6 +512,14 @@ Judgment Placementは「Deterministicへ寄せるほど成熟している」と�
 
 この区別は重要です。設計思想が先行している領域を「すでに完成した機能」として説明すると、OSSの記事として追試性を失います。
 
+:::message
+**公開後の進展（2026-09-02）**
+
+この記事は再現性のため、本文の検証対象commitを固定しています。その後、Evidence-Grounded Adversarial ReviewはPhase 1bとして、LLM依存caseのfixture・事前に人が固定したgolden label・paired evaluationの設計までmainへ追加されています。
+
+ただし、APIキーを使ったpaired evaluation自体は未実行で、Criticを呼び出すLLM runnerも未実装です。本文中の「Phase 1a deterministic skeletonまで」という記述は、あくまで検証対象commit時点の状態として残しています。
+:::
+
 ## 最小導入：レビュー観点を1つ分類してみる
 
 River Reviewを導入しなくても、Judgment Placement自体は使えます。最初からレビュー全体を作り替える必要はありません。
@@ -522,7 +574,12 @@ River Reviewで取り組んでいるJudgment Placementは、その問いをも�
 - [deterministic-gate.mjs - 検証対象commit](https://github.com/s977043/river-review/blob/56e0ae4c4e03efd7f5b254fbe2eabde22edbd7c9/src/lib/deterministic-gate.mjs)
 - [deterministic-command-orchestrator.mjs - 検証対象commit](https://github.com/s977043/river-review/blob/56e0ae4c4e03efd7f5b254fbe2eabde22edbd7c9/src/lib/deterministic-command-orchestrator.mjs)
 - [finding-critic.mjs - 検証対象commit](https://github.com/s977043/river-review/blob/56e0ae4c4e03efd7f5b254fbe2eabde22edbd7c9/src/lib/finding-critic.mjs)
-- [AIコードレビューを仕組みにする: 指摘の分類・記録・改善の回し方](https://zenn.dev/minewo/articles/ai-code-review-feedback-ops)
+- [temporary-without-exit - heuristic-review.mjs](https://github.com/s977043/river-review/blob/main/src/lib/heuristic-review.mjs)
+- [knowledge-to-code-alignment Skill](https://github.com/s977043/river-review/blob/main/skills/midstream/knowledge-to-code-alignment/SKILL.md)
+- [PR #1788 - temporary-without-exit detector導入・改善](https://github.com/s977043/river-review/pull/1788)
+- [PR #1811 - 恒久宣言をfalse positiveから除外](https://github.com/s977043/river-review/pull/1811)
+- [Phase 1b fixture / evaluation設計](https://github.com/s977043/river-review/blob/main/docs/development/1978-phase1b-fixtures.md)
+- [「プロンプトを磨けば勝てる」をやめた：AIレビューを運用に乗せる“Agent Skills”設計 - note](https://note.com/mine_unilabo/n/nd21c3f1df22e)
 
 ---
 
