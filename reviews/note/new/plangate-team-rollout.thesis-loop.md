@@ -1,6 +1,6 @@
 # Thesis-preserving review loop: articles_note/new/plangate-team-rollout.md
 
-対象: `/Users/user/Documents/GitHub/my-blog/articles_note/new/plangate-team-rollout.md`
+対象: `articles_note/new/plangate-team-rollout.md`
 実施: 3 Loop（主題・論理構造 / 読者理解・反論耐性・役割境界 / 編集・密度・最終主張）+ Final Verify
 最終判定: **passed / unresolvedImportant = 0（公開可）**
 
