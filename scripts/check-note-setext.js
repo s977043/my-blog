@@ -1,17 +1,26 @@
 #!/usr/bin/env node
-// Check: articles_note/**/*.md で「段落が setext 見出しへ化ける」事故を検出する。
+// Check: articles_note/new/**/*.md で「段落が setext 見出しへ化ける」事故を検出する。
 //
 // ■ 背景（なぜ必要か）
 //   Markdown では `---`（水平線）の直前行が非空だと **setext 見出し記法**として解釈され、
-//   直前の段落が `<h2>` になる（`===` は同様に `<h1>` になる）。note へのインポート用 WXR は
-//   本文をそのまま HTML 変換するため、この事故が起きると段落が見出しとして出力され、
-//   気づかずに公開すると本文中に誤った見出しが混入する。
+//   直前の段落が `<h2>` になる（`===` は同様に `<h1>` になる）。`new/<slug>.md` は
+//   `md_to_wxr.py` でインポート用 WXR に変換されて note へ流し込まれる本文原稿であり、
+//   この事故が起きると段落が見出しとして WXR に出力され、note インポート後に本文中へ
+//   誤った見出しが混入する。
 //
 //   実例: PR #581（`articles_note/new/plangate-team-rollout.md` で4段落が意図せず `<h2>` 化）。
 //   `git show 5f313ff` で修正内容（空行1行の挿入のみ、本文は無変更）を確認できる。
 //
+// ■ なぜ対象を `new/` だけに限定するか（`published/`・`drafts/` は対象外）
+//   `articles_note/README.md` の定義どおり、`published/`・`drafts/` は note 公式エクスポート
+//   （WXR）を `wxr_to_md.py` で Markdown 化した**読み取り専用ミラー**。次回エクスポート
+//   取り込みで無条件に上書き再生成されるため、そこを直しても意味がない。加えて setext 化が
+//   実害になるのは「Markdown → WXR → note インポート」という **`new/` → note 方向の変換経路
+//   のみ**で、`published/`・`drafts/` はその逆方向（note → Markdown）の結果であり、
+//   再び WXR に変換されることはない。つまり対象外にした場合の見逃しリスクが無い。
+//
 // ■ 検出対象
-//   - articles_note/**/*.md（`export/`・`build/` は除外。`.gitignore` 済みだが念のため）
+//   - articles_note/new/**/*.md
 //   - コードブロック（``` / ~~~ で囲まれた範囲）の外にある `---` / `===` のみ
 //   - frontmatter（ファイル先頭の `---` 〜 次の `---` の範囲）は対象外
 //     （frontmatter の開始・終了デリミタ自体、およびその直後の行を誤って
@@ -21,7 +30,7 @@
 //
 // ■ なぜ FATAL（exit 1）か
 //   判定は機械的（コードブロック外・frontmatter外の `---`/`===` の直前行が非空か）で
-//   曖昧さがなく、見逃すと公開物に誤った見出しがそのまま出る非対称リスクがある。
+//   曖昧さがなく、見逃すと note インポート用 WXR に誤った見出しがそのまま出る非対称リスクがある。
 //
 // ■ 使い方
 //   npm run check:note-setext    # 実データ
@@ -31,7 +40,7 @@ const fs = require("fs");
 const path = require("path");
 
 const ROOT = process.cwd();
-const NOTE_DIR = "articles_note";
+const NOTE_DIR = "articles_note/new";
 const EXCLUDE_DIRS = new Set(["export", "build"]);
 const LABEL = "[check:note-setext]";
 
@@ -226,7 +235,7 @@ function selfTest() {
 
   // 9) 実データに対する経路（依存欠落・パス解決の検査）
   eq(
-    "articles_note 配下の md を列挙できる",
+    "articles_note/new 配下の md を列挙できる",
     collectMarkdownFiles().length > 0,
     true,
   );
@@ -239,6 +248,26 @@ function selfTest() {
     "build/ 配下は対象から除外する",
     collectMarkdownFiles().some((f) => f.split(path.sep).includes("build")),
     false,
+  );
+  eq(
+    "published/ 配下は列挙対象に含まれない（articles_note/new 限定のため構造的に除外）",
+    collectMarkdownFiles().some((f) => f.split(path.sep).includes("published")),
+    false,
+  );
+  eq(
+    "drafts/ 配下は列挙対象に含まれない（articles_note/new 限定のため構造的に除外）",
+    collectMarkdownFiles().some((f) => f.split(path.sep).includes("drafts")),
+    false,
+  );
+
+  // 10) 実データの回帰ケース: published/n79e2918aa7f4.md:190 の脚注ブロック
+  //     （setext 化しうる形だが、published/ は読み取り専用ミラーで実害が無いため対象外）
+  eq(
+    "published/ の実在する setext 化パターンは検出対象外（ロジックの回帰確認のみ・new/ 限定で構造的に非検出）",
+    findSetextViolations(
+      "※3：**グランドルール**とは「参加者が安心して発言でき、ふるまうことができる「**安全な場**」を作る1つの方法です\n※4：**ステークホルダー**とはプロダクトに対して利害関係を持つ**スクラム**チーム以外の人たちのこと\n---\n",
+    ).length > 0,
+    true, // findSetextViolations 自体は new/ 限定を知らない（フィルタは collectMarkdownFiles 側の責務）
   );
 
   const failed = t.filter((x) => !x.ok);
@@ -272,7 +301,7 @@ function main() {
 
   if (violations.length > 0) {
     console.error(
-      `${LABEL} FAIL: 段落が setext 見出し化するリスク ${violations.length} 件（checked ${files.length} files）`,
+      `${LABEL} FAIL: note インポート用 WXR 生成時に段落が見出し化するリスク ${violations.length} 件（checked ${files.length} files）`,
     );
     violations.forEach((v) => console.error(v));
     console.error(
@@ -282,7 +311,7 @@ function main() {
   }
 
   console.log(
-    `${LABEL} OK: setext 見出し化リスクなし（checked ${files.length} files）`,
+    `${LABEL} OK: note インポート用 WXR 生成時の見出し化リスクなし（checked ${files.length} files, articles_note/new/ のみ）`,
   );
   return 0;
 }
