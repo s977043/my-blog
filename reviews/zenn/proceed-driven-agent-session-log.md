@@ -1,149 +1,86 @@
-<!-- publish-readiness: blocked=false mustHigh=0 verified=true articleHash=63a3de626bd9d476b4630ac8f80252045c35b982 loops=4 reviewedAt=2026-09-03T15:55:00Z -->
+<!-- publish-readiness: blocked=false mustHigh=0 verified=true articleHash=aa8cd4bf1b9ec53bc45b8614b1d28e451c93a867 loops=7 reviewedAt=2026-09-03T15:44:00Z -->
 
 # レビュー成果物: proceed-driven-agent-session-log
 
 - 対象記事: `articles/proceed-driven-agent-session-log.md`
-- articleHash: `63a3de626bd9d476b4630ac8f80252045c35b982`
-- 全 210 行 / `published: false`
+- articleHash: `aa8cd4bf1b9ec53bc45b8614b1d28e451c93a867`
+- 全 200 行 / `published: false`
 - Zennカテゴリー: Idea
-- 改善ループ数: **4**
+- 改善ループ数: **累計7（今回3ループ追加）**
 - 総合判定: **must 0 / high 0 / medium 0 / 公開ブロッカーなし**
 
-## 今回の再構成
+## 今回の3ループ
 
-初見レビューで、旧ケース1 `cross-repo push` は事実としては強い一方、
+### Loop 1 — 初見読者 / Web編集
 
-- Obsidian / vault
-- 複数repository
-- private repository
-- cross-repo push
+#### 指摘
+- 後半に `permission / Verifier / preflight / rule / hook / guard` が集中し、事故の学びより用語分類が前に出始めていた
+- 初見読者が持ち帰るべきなのは名称ではなく「次へ進む前に何を確認するか」
 
-など固有前提が多く、記事の最初のケースとして理解コストが高いと判断した。
+#### 改善
+- 「permission」→「権限」など、一般語で読める箇所を日本語化
+- Verifier / preflight を本文の主語にせず、「外部状態の確認」「復旧できる状態かの確認」へ置換
+- 改善ループも「確認ルール / チェック」を中心に整理
 
-5リポジトリ横断の過去実績探索結果から、より一般化しやすい PlanGate の「マージ未確認でbranch削除」事故へ差し替えた。
+#### 判定
+**OK**。概念名を知らなくても3ケースの意味が追える。
 
-## 採用した3ケース
+---
 
-| ケース | 境界 | 採用理由 |
+### Loop 2 — 技術 / 因果関係
+
+#### 指摘
+- PlanGateのブランチ削除を「不可逆」と呼ぶのは強すぎる。実際にはPRをreopenでき、作業ロストも無かった
+- ケース3は `stash drop` 単体が事故原因のように読めるが、一次記録では「内容編集の取りこぼし未検知」→「cleanupで復旧経路を狭めた」という二段階の失敗
+
+#### 一次情報との再突合
+- PlanGate `AGENT_LEARNINGS.md`: 未マージPR #240のbranch削除 → CLOSE → reopen、作業ロストなし
+- my-blog `AGENT_LEARNINGS.md`: PR #257の内容編集取りこぼし → stash/reset/drop → PR #258で再作業
+
+#### 改善
+- 「不可逆な後処理」→ **状態を壊しうる後処理**
+- ケース3見出しを「取りこぼしに気づかず `git stash drop` し、再作業になった」へ変更
+- ケース3に「最初の失敗」と「二つ目の操作」の因果を明記
+- Git仕様上の復旧可能性を残し、「完全消失」は引き続き使わない
+
+#### 判定
+**OK**。事故原因と、被害を拡大した後処理を分離できている。
+
+---
+
+### Loop 3 — 公開品質 / 文章密度
+
+#### 指摘
+- `cleanup / branch / check` など英日混在が多い
+- 後半で改善ループを図として2回説明しており、まとめが重複
+- 「安全機構」が初出で未定義
+
+#### 改善
+- `cleanup` →「後処理」、`branch削除` →「ブランチ削除」、`check` →「チェック」を基本形に統一
+- ケース1で「ツール側の許可制御やhookなど、実行を止める仕組み」を本稿での「安全機構」と定義
+- まとめの重複図を削り、**記録 → 分類 → 確認地点 → ルール/ガード**を1文に圧縮
+- 212行 → **200行**へ圧縮
+
+#### 判定
+**OK**。技術的な精度を保ちつつ、公開記事として読みやすくなった。
+
+---
+
+## 最終4ペルソナレビュー
+
+| 観点 | 判定 | コメント |
 |---|---|---|
-| settings.local.json自己編集 | 権限境界 | 「AIが自分の権限を自分で変える」で危険性が即伝わる |
-| マージ未確認でbranch削除 | 状態確認境界 | 会話上の状態 ≠ 外部Ground Truthという一般原則へ展開できる |
-| git stash drop | 破壊的操作境界 | guard不在で実際に再作業が発生した対照例になる |
-
-旧 `cross-repo push` は主ケースから削除した。内容自体は有用だが、本稿では一般性と初見理解を優先した。
-
-## 一次情報の再検証
-
-### ケース1: 権限設定の自己編集
-
-- `my-blog/AGENT_LEARNINGS.md` 2026-05-18
-- `.claude/settings.local.json` の自己編集は安全機構に繰り返しブロック
-- project標準script経由では当該ケースで通過
-- 「標準scriptなら常に安全」とは一般化しない
-- 権限追加は人間操作へ戻す原則を採用
-
-判定: **OK**
-
-### ケース2: マージ未確認でbranch削除
-
-PlanGate一次記録:
-
-- `AGENT_LEARNINGS.md`: 「マージした」発言を信用し、未確定のまま `git push origin --delete` を実行
-- PR #240 が未マージ状態でCLOSE
-- reopenで復旧、作業ロストなし
-- PR #241で振り返り・再発防止を実装
-- `scripts/verify-pr-merged.sh` を追加
-
-ガードはcleanup前に以下3条件を必須確認する。
-
-```text
-state == MERGED
-mergedAt != null
-mergeCommit != null
-```
-
-判定: **OK**。会話上の状態を外部実状態と混同した事故として一般化可能。
-
-### ケース3: stash drop
-
-- `my-blog/AGENT_LEARNINGS.md` 2026-05-17
-- PR #257で内容編集取りこぼし
-- cleanup時のstash drop後、PR #258で再作業
-- Git公式仕様に合わせ「完全消失」とは断定せず、通常のstash参照を失い再作業した事実に限定
-
-判定: **OK**
-
-## 構成レビュー
-
-旧構成:
-
-```text
-cross-repo / 権限 / stash
-```
-
-新構成:
-
-```text
-権限境界
-  ↓
-状態確認境界
-  ↓
-破壊的操作境界
-```
-
-3ケースが異なる失敗クラスを担当するため、比較表と後半の抽象化が明確になった。
-
-中心主張も、
-
-> 危険コマンドを禁止する
-
-ではなく、
-
-> 境界で何を検証するかを事故から学び、rule / verifier / guardへ変換する
-
-へ整理されている。
-
-## 初見レビュー
-
-- ケース1は1文で危険性を理解できる
-- ケース2は「終わったと思って削除したら終わっていなかった」で理解可能
-- ケース3は実害が分かりやすい
-- PlanGate固有用語は必要最小限で、詳細はPR番号・script名に閉じている
-- `cross-repo push` を外したことで前提知識負荷が下がった
-
-判定: **OK**
-
-## 技術レビュー
-
-- PlanGate PR #240 は現在 merged 状態だが、PR #241 と AGENT_LEARNINGS が「未マージCLOSE → reopen」の事故時系列を一次記録として保持している
-- `verify-pr-merged.sh` の実装と記事の3条件は一致
-- Git stashについては復旧可能性を残す表現を維持
-- AI関与を一次記録で確認できない PocketEitan production deploy等は採用していない
-
-判定: **OK**
+| 初見のAIコーディング利用者 | OK | 3件とも「なぜ危険か」を前提知識少なく理解できる |
+| Web編集者 | OK | 権限 → 状態確認 → 破壊的操作の3分類が明確 |
+| エージェント/Harness設計者 | OK | 個別禁止ではなく、確認地点を仕組みに変換する話として成立 |
+| 技術レビュー | OK | PlanGateの復旧可能性、stash事故の因果、Gitの復旧可能性を過剰断定していない |
 
 ## 公開判断
 
 **公開可能。**
 
-今回の書き換えで、記事の持ち帰りは次の3点に整理された。
+現在の記事の中心メッセージは次の通り。
 
-1. 権限変更は人間へ戻す
-2. 不可逆な後処理の前に外部Ground Truthを検証する
-3. 破壊的cleanupの前に復旧可能性を確認する
-
-そして、事故を
-
-```text
-記録
- ↓
-分類
- ↓
-検証点を決める
- ↓
-rule / verifier / guard
-```
-
-へ変えることが、本稿の中心メッセージになっている。
+> AIエージェントの安全性は、危険コマンドを増やして禁止することではなく、事故・未遂から「次へ進む前に何を確認するか」を学び、それを機械的な確認へ変えていくことで育てる。
 
 `published: false` はPRでは維持する。
