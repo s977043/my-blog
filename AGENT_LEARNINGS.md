@@ -44,7 +44,9 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 > 各エントリは日付見出し `### YYYY-MM-DD —` で本文を検索（grep / Ctrl-F）できる。同じエントリが複数テーマに再掲されることがある。
 
 ### A. Zenn 公開フロー / rate-limit / release-zenn
+
 **現行正本**: `docs/publish-operating-policy.md` §Rate-limit 遵守（数値）/ `AGENTS.md` §Zenn 公開フロー（運用）
+
 - 2026-05-22 — Zenn rate-limit は実効 24h/2本でも hit する（「24h/5本」は楽観値）
 - 2026-05-22 — 公式 rate-limit と内部基準は別物。著者明示指示なら内部基準は超過可
 - 2026-05-22 — release/zenn sync は単一ファイル限定で取り出す（全体マージ回避）
@@ -58,8 +60,11 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-08-20 — `sync-release-zenn.sh` の公開影響プレビューは新規ファイル追加を検知しない。deploy 実差分を直接照合する
 - 2026-08-20 — Zenn `/api/articles` は約23件しか返さない。全件突合は `zenn.dev/<user>` の `articlesCount`
 - 2026-08-27 — Zenn は SVG を配信できない（Cloudinary `/image/fetch/` が 400）。図版は PNG 1600x900 で置く
+
 ### B. Qiita publish / drift / 重複公開
+
 **現行正本**: `CLAUDE.md` §公開前ガード（`check:qiita-remote-cache` / `publish:qiita` wrapper）
+
 - 2026-06-03 — `qiita publish` は冒頭で全記事 pull。`.remote/` 手編集でローカル改変が巻き戻る
 - 2026-05-18 — Qiita 公開は `npm run publish:qiita`（documented script）で叩く
 - 2026-05-18 — Qiita slug↔id 乖離は重複公開を生む／dedup はリモート削除まで `qiita pull` 禁止
@@ -69,7 +74,9 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-07-19 — 連続 publish:qiita はガード誤 FAIL。working≠.remote を cmp 確認して SKIP_REMOTE_CACHE_CHECK=1 で続行
 
 ### C. note WXR / 画像 / インポート
+
 **現行正本**: `articles_note/README.md`（state/構成）/ `.claude/skills/note-export-import/SKILL.md`（手順）
+
 - 2026-04-26 — エクスポートZIP取り込み後にローカル修正が上書きされる（→ `wxr_to_md.py` の git-dirty ガードで防止）
 - 2026-04-18 — WXR の著者フィールドと CDATA エスケープ規則 / 必須フィールド
 - 2026-04-19 — note インポートの運用制約と 2 スペース改行の罠
@@ -80,7 +87,9 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-05-16 — note `new/` と `drafts/` の重複は用途で正を分ける
 
 ### D. 並列セッション / ブランチ干渉 / commit
+
 **現行正本**: `CLAUDE.md` §並列セッション耐性 / `scripts/hooks/pre-commit`
+
 - 2026-09-03 — 長時間ワークフローは実行中にベースごと入れ替わる
 - 2026-04-20 — 並列セッション干渉で commit が意図せず main に着地する
 - 2026-04-20 — 並列セッションによるブランチ干渉と復旧手順 / 切替頻度の観測データ
@@ -93,7 +102,9 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-08-27 — ゲートは実行直前に最新の状態で測る（古い checkout の readiness は OK に化ける）
 
 ### E. GitHub account / gh CLI / PR 運用
+
 **現行正本**: `CLAUDE.md` §作業開始時のチェックリスト / `scripts/hooks/pre-push`
+
 - 2026-05-21 — gh active account の自動切替を毎回 pre-push で検知する
 - 2026-04-30 — `gh auth setup-git` は active account を上書きする副作用がある
 - 2026-04-20 — 作業開始前の重複 PR 確認で二重作業を避ける
@@ -107,10 +118,11 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-08-27 — Dependabot alerts API の 403 はスコープが揃っていても発生。まず `gh auth refresh`
 
 ### F. review / 記事品質 / convention
+
 - 2026-09-03 — レビューワークフローに媒体固有の表記規約を渡さないと違反が混入する
 - 2026-09-03 — レビューループは数値の「単位」を保存しない
 - 2026-09-03 — 自作OSS記事では「過剰な自己批判」も一次情報と矛盾する
-**現行正本**: `.claude/agents/*` / `AGENTS.md` §表現規約
+  **現行正本**: `.claude/agents/*` / `AGENTS.md` §表現規約
 - 2026-09-03 — レビューワークフローに媒体固有の表記規約を渡さないと違反が混入する
 - 2026-09-03 — レビューループは数値の「単位」を保存しない
 - 2026-09-03 — 自作OSS記事では「過剰な自己批判」も一次情報と矛盾する
@@ -128,7 +140,10 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-08-27 — レビュー成果物は `articleHash` を `git hash-object` と突き合わせてから信じる
 - 2026-09-02 — 内部リンクと外部リンクでベストプラクティスは逆。「文脈内配置が良い」は同一ドメイン内の話
 - 2026-09-02 — 委託ワーカーは消去法の残りを断定に変える。一次情報が特定していない主張は確度を明示させる
+- 2026-09-04 — Codex CLI は長文プロンプトで exit 0 のまま無言終了する。疎通は成功していても落ちる
+
 ### G. CI / tooling / マルチAI
+
 - 2026-08-27 — `catch` が ReferenceError を握りつぶすと実装の誤りが「検証したが不一致」に化ける（純関数テストは依存欠落を検出しない）
 - 2026-05-21 — 媒体実測の取得は `scripts/fetch-channel-metrics.mjs` に集約
 - 2026-05-15 — CI run が runner を掴めず長時間 queued なら空コミットで re-trigger
@@ -159,6 +174,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 **なぜ検出できなかったか**: `check:internal-links` は参照先ファイルの**実在**しか見ておらず、表示可否を検証しない。「存在すること」と「表示されること」は別。さらに、既存記事が `.svg` を使っていたのでそれを前例として踏襲したが、**その前例自体が壊れていた**（壊れた前例は前例にならない）。
 
 **対策/学び**:
+
 - Zenn の図版は **PNG（1600x900）** で置く。SVG は使わない
 - cairosvg でラスタライズする場合、フォントスタック `-apple-system,...,'Yu Gothic',...` は解決できず**日本語が豆腐（□）になる**。`YuGothic` へ差し替えてから変換する
 - PNG 化後は live で **HTTP 200** と `static.zenn.studio/user-upload/deployed-images/` からの配信を確認する（ファイルを置いただけで終わりにしない）
@@ -170,6 +186,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 **観察**: 未追跡のレビュー成果物が `mustHigh=2` を主張していたが、その `articleHash` は**削除済みブランチ系統の版**のものだった。main の記事は既に指摘の一部を織り込み済みで、実際に残っていたブロッカーは **1 件だけ**。古い hash の成果物をそのまま信じると、解決済みの指摘へ対応工数を払うことになる。
 
 **対策/学び**:
+
 - レビュー結果を採用する前に、記録された `articleHash` と `git hash-object <記事>` を突き合わせる。不一致なら「当時の版に対する指摘」として再検証してから採否を決める
 - 本文を変更すると readiness 記録は**必ず**陳腐化する。公開直前に本文を触るなら、readiness の再取得か stale の許容判断を**明示的に**行う（実例: X 導線を後から追記して stale WARN になった）
 
@@ -205,6 +222,7 @@ git worktree add --detach /tmp/gate-check origin/main
 **なぜ検出できなかったか**: self-test は純関数 `isVerifiableEvidence(facts)` に値を注入して検査していたため、`facts` を作る側の依存欠落は素通りした。「テストを追加した」と「欠陥を検出できる」は別。
 
 **対策**:
+
 - `catch` は**想定内の失敗だけ**を扱う。`git grep` なら不一致の `exit 1`（`e.status === 1`）のみを `false` に倒し、それ以外は再 throw する
 - 外部コマンドに依存する関数は、純関数テストとは別に **hit / miss の両方を実際に 1 回叩く** テストを持つ
 - テスト用の「存在しない文字列」はソースに直書きしない。リテラルがファイル内に出現して自分自身に hit する（実際に踏んだ）。実行時に連結して作る
@@ -217,10 +235,10 @@ git worktree add --detach /tmp/gate-check origin/main
 
 **対策/学び**: 用途で使い分ける。
 
-| 目的 | 使うもの |
-|---|---|
+| 目的                               | 使うもの                                                                |
+| ---------------------------------- | ----------------------------------------------------------------------- |
 | **特定記事**の反映確認（公開直後） | `/api/articles?username=X` に slug が出現するか（最近の記事は含まれる） |
-| **全件数**の突合（drift 検知） | `curl -s https://zenn.dev/<user>` から `"articlesCount":N` を抽出 |
+| **全件数**の突合（drift 検知）     | `curl -s https://zenn.dev/<user>` から `"articlesCount":N` を抽出       |
 
 ```bash
 # 公開記事数（Zenn 実サイト）
@@ -374,11 +392,13 @@ done
 ### 2026-06-18 — Obsidian 連携の3つの落とし穴: vault 構成変更への追従 / cross-repo push ブロック / Codex アカウント無権限 [Tooling][Workflow][Gotcha]
 
 **観察**:
+
 1. `scripts/export_to_obsidian.py` の出力先 vault（`ai-second-brain`）が、ローカルと origin の分岐解決（origin/main 採用）で**全面再編成**され、旧 `50_outputs/` 構成が破棄されていた。古い構成のまま登録した内容は live vault に反映されず、`05 Content/blog/{zenn,qiita,note}` ＋ vault 直下 `Attachments/` という新構成へ登録し直す必要があった。
 2. my-blog の記事ツリー（未公開 note draft 含む）を別リポジトリ `ai-second-brain` へ push しようとすると、安全機構が「cross-repo の一括転送＝データ持ち出し」と判定して**毎回ブロック**。一方で **vault 自身のコンテンツ（Hermes ドキュメント等）の push は通る**。
 3. Codex CLI が ChatGPT アカウントでログイン済みでも、`gpt-5-codex` 他**全モデルが `not supported when using Codex with a ChatGPT account` で拒否**。モデル名を変えても解決しない（アカウントのプランに Codex 利用権が無い）。
 
 **対策/学び**:
+
 - エクスポート系スクリプトは**出力先 vault の現行構成を毎回確認**してから流す。vault 構成は `.obsidian/app.json` の `attachmentFolderPath` と README のフォルダ規約で確認。画像リンクの相対深さ（`05 Content/blog/<platform>/` からは `../../../Attachments`）に注意。
 - my-blog → vault の **cross-repo push はユーザーに手動実行を依頼**する（安全機構を回避しない）。vault 内部の commit/push はエージェントから実行可。
 - Codex CLI が「全モデル not supported」を返したら**リトライせず即フォールバック**（規約 L3）。復旧は `codex login --with-api-key`（API キー認証）か Codex 対応プランでの再ログインが必要で、これは環境側＝ユーザー対応。
@@ -390,6 +410,7 @@ done
 **観察**: 1セッション中に `gh auth setup-git` を実行した後、`git push` / `gh pr create` / `gh pr merge` を進めるたびに active account が s977043 → kominem-unilabo へ反転し、`Permission ... denied to kominem-unilabo`（push）や `does not have the correct permissions to execute MergePullRequest`（merge）で複数回失敗した。毎回 `gh auth switch --user s977043` で復旧。
 
 **対策/学び**:
+
 - **push / `gh pr create` / `gh pr merge` の各操作の直前**で毎回 `gh auth switch --user s977043` → `gh auth status | grep "Active account: true"` を確認してから実行する（pre-push hook だけでは PR 操作をカバーできない）。
 - `&&` チェーンで `grep "active account: true"` を条件に入れると、表記揺れ（大文字小文字）で grep が外れて後続 push が走らない事故があるため、確認とコマンドは分離する。
 
@@ -416,6 +437,7 @@ done
 **観察**: 記事 ai-review-rate-limit-fallback を PR #401-403 で squash マージし磨き込んだ後、並列セッションの PR #404（base が #401 マージ前の古い main）がマージされ、main の記事が #404 版に巻き戻り #401-403 の磨き込みが消失。さらに別 PR #405 はその「消えた #404」の上に図を足したものだったため、`gh pr` 上の diff は「+14行」に見えても、現 main に対しては記事全体を巻き戻すリグレッションだった。
 
 **対策/学び**:
+
 - PR をマージする前に必ず `git diff origin/main...origin/<branch> -- <path>` の**3点比較**で「現 main に対して実際に入る差分」を確認する（GitHub の PR diff は head の base に対する差分で、base が main からズレていると実害を隠す）。
 - 並列で同一記事を触る可能性がある場合、マージ直前に `gh pr view <n> --json baseRefOid` と `git rev-parse origin/main` を突き合わせ、base が古ければ巻き戻しを疑う。
 - 上書き合戦を避けるには、後発側を正として尊重し、不足分（図・事実）だけを非破壊的に足す形で収束させる。
@@ -461,6 +483,7 @@ done
 **影響**: 公開予定の記事が Zenn 側で未公開のまま、main / release/zenn は published:true でマージ済の不整合状態に陥る。事後リカバリで再 push が必要。
 
 **対策/学び**:
+
 - **Zenn の rate-limit は文書の「24h/5本」より厳しい**。実観測では `release/zenn` の publish:true 切替が 24h 以内 2件目で hit。実効値は **24h/1本に近い**か、特定のシグナル（連続マージ間隔・ファイルパス・本文長など）で決まる可能性
 - **判断基準を緩めない**: 内部基準「24h/3本」も楽観値だった。実運用上の安全マージンは **24h/1本** に倒す
 - **公開後の Web 反映確認を必須化**: deploy log（Zenn 管理画面）または API（`/api/articles?username=X`）で記事一覧に出現するかを公開作業の最終ステップとして確認する。出現しない場合は deploy 失敗 / rate-limit hit を疑う（⚠️ 2026-08-20 追記: この API は**最近の 23 件程度しか返さない**。公開直後の新規記事には有効だが、**古い記事の不在を未公開の証拠にしてはいけない**。全件の突合は `zenn.dev/<user>` の `articlesCount` を使う）
@@ -480,6 +503,7 @@ done
 **影響**: agent が判断停止すべきか進めるべきか判断保留した。フラグを上げてから user 指示優先で進行。
 
 **対策/学び**:
+
 - **公式 rate-limit と内部基準は明確に分けて扱う**:
   - 公式 rate-limit（24h/5本）= 違反すると Zenn 側でブロック、不可逆。**絶対遵守**
   - 内部基準（24h/3本・24h間隔）= 安全マージン、運用ガイドライン。**著者明示指示で超過可**
@@ -498,6 +522,7 @@ done
 **影響**: 全体マージ回避により衝突解決の手間とリグレッションリスクを完全に排除。
 
 **対策/学び**:
+
 - **release/zenn への sync は原則「単一ファイル限定取り出し」**:
   ```bash
   git switch -c release/zenn-publish-<slug> origin/release/zenn
@@ -519,6 +544,7 @@ done
 **影響**: 1件あたり 1-2分の手戻り。4-5回発生して累積約 8 分。気付かないと長く詰まる類のインシデント。
 
 **対策/学び**:
+
 - `scripts/check-gh-account.sh` を作成。`gh auth status` の "Active account: true" 直前の `Logged in to github.com account NAME` を awk で抽出し、想定アカウント（既定 `s977043`）と一致しなければ exit 1
 - 自分で push する直前は `bash scripts/check-gh-account.sh && git push ...` の組合せで使う
 - pre-push hook 化はリポジトリ毎の opt-in なので、CLAUDE.md / AGENTS.md に運用として記録（hook の自動有効化はしない、ユーザーの環境設定領域）
@@ -535,6 +561,7 @@ done
 **影響**: 月次再計測（`docs/publish-operating-policy.md` で canonical 化）の手段が未整備のままだと、宣言した運用が回らない。再現性低下。
 
 **対策/学び**:
+
 - `scripts/fetch-channel-metrics.mjs` を新設。Zenn 公開 API / Qiita 公開 API / note 公開 API を統一インターフェースで叩き、JSON または `--pretty` で Markdown サマリ出力
 - 環境変数 `ZENN_USERNAME` / `QIITA_USERNAME` / `NOTE_USERNAME` で対象切替可能
 - GA4 は管理画面側のため本スクリプト対象外（手動取得を Markdown スナップショットに併記する設計）
@@ -549,6 +576,7 @@ done
 **観察**: Qiita 重複記事 `93027e02` を「ユーザーが手動削除すべき最優先の不可逆タスク」と数ラウンドにわたり申し送り、`qiita pull 禁止` の過剰制約まで課した。だが最終的に `WebFetch` で確認すると当該 URL は **404（最初から存在しないか既に削除済み）**。ローカルファイルの存在だけを根拠に「リモートにも重複公開がある」と推測し、確認せず制約を積み上げていた。
 
 **対策/学び**:
+
 - 外部サービスの状態（公開記事の有無・URL 生死・リモート削除要否）を「ブロッカー」「ユーザー必須の不可逆操作」として申し送る**前に、必ず実在確認する**（Qiita/Zenn/note は `WebFetch` で URL を叩く。404 か記事かを見る）
 - ローカルの `<id>.md` 存在 ≠ リモート公開中。`qiita pull` 生成物や過去の残骸が残るため、ローカルだけで重複公開を断定しない
 - 不可逆/外部操作をユーザータスク化するときは「現状こうなっている（確認済）／なので次にこれが要る」の順。確認なしの推測ブロッカーは数ラウンドの誤誘導を生む
@@ -560,6 +588,7 @@ done
 **観察**: `npx qiita publish ...` 直叩きと `.claude/settings.local.json` の自己編集（権限付与）は安全機構に**繰り返しブロック**され、公開が複数ラウンド停滞。最終的に **`npm run publish:qiita -- <basename>`**（package.json の documented script）経由で安全機構を通過し公開成功。
 
 **対策/学び**:
+
 - Qiita 公開は最初から **project 標準 npm script `npm run publish:qiita -- <basename>`** を使う（生 `npx qiita publish` でなく）。documented なプロジェクトコマンドは評価が通りやすい
 - 自分の権限ファイル（settings.local.json）を自己編集して公開権限を付与するのは安全機構で不可（self-modification）。権限追加が要るならユーザー操作（`/permissions`）に委ねる
 - 公開準備の hygiene（`ignorePublish:false`/`updated_at`更新/公開当日HTMLコメント削除）は手作業で毎回やっていた → `npm run check:qiita-publish-hygiene`（`npm run check` 組込・公開対象記事の内部コメント残存を FAIL 検出）で機械ガード化。`qiita publish` 前に `npm run check` を必ず通す
@@ -571,6 +600,7 @@ done
 **観察**: 「Codex 検討 → Gemini 検証」の方針相談ラウンドをセッション中に多数回実施。結論は毎回ほぼ同一（「プロセスを作りすぎ＝ship-first・公開せよ・凍結維持」）に収束したのに、同じ問いで AI 連鎖を再起動し計算資源と対話往復を浪費した（プロセス theater）。
 
 **対策/学び**:
+
 - マルチAI相談（Codex/Gemini 連鎖）は**前ラウンドと実質同じ問い・同じ結論に収束する見込みなら起動しない**。前回の結論を引用し「変化した前提があるか」だけ確認する
 - 起動するのは「新しい意思決定が必要」「前提が実際に変わった」「対象が前回と異なる」場合のみ。同テーマ2回目以降は既存結論を実行に回す
 - 「相談して」と依頼されても、結論が自明・既出なら正直にそう伝え、相談を省いて実行へ進む方が価値が高い
@@ -582,6 +612,7 @@ done
 **観察**: `npm run publish:qiita -- ai-coding-preflight-checklist` が `titleは文字列で入力してください` / `tagsは配列で入力してください` … と**全フィールド型エラー**で失敗。末尾に `（破壊的な変更がありました .../v0.5.0）` が付くため CLI バージョン問題に見えるが誤誘導（installed は 1.8.0、v0.5.0 の破壊的変更は `slide` 必須化のみで本件無関係）。真因は frontmatter の `title: AIコーディング前に確認する5項目: Goal / Scope ...` に**未クオートの `: `（コロン+空白）**が含まれ、YAML パーサが `5項目: Goal` をネスト mapping と誤認 → frontmatter ブロック全体のパースが崩壊 → 全フィールドが undefined 扱いで一斉に型エラー。ignorePublish:true の下書きでは顕在化せず、初 publish で初めて露見した潜在バグ。
 
 **対策/学び**:
+
 - Qiita/Zenn の frontmatter で **`title` に半角 `: `（コロン+空白）/ `#` / `[` 等の YAML 特殊シーケンスを含む場合は必ずシングルクオートで囲む**（全角 `：` は安全）。`title: 'xxx: yyy'`
 - **「全フィールドが型エラー」= 個別フィールド不正ではなく frontmatter ブロックのパース崩壊サイン**。まず title/値の未クオート特殊文字を疑う（CLI バージョンや認証を先に疑わない）
 - qiita-cli のエラー末尾 `v0.5.0` リンクは定型の汎用ポインタで、必ずしも当該バージョンの変更が原因ではない
@@ -594,6 +625,7 @@ done
 **観察**: Qiita 記事が重複公開されているのを発見。原因は `Qiita/public/<slug>.md`（編集元）と `qiita pull` 生成の `<id>.md` が**同一 id を持つ2ファイルに分裂し内容も乖離**した状態。この状態で `qiita publish` すると、Qiita 側は id 不一致を**更新でなく新規記事作成**として扱い、**同タイトルの記事が別 id で2本公開**された（PlanGate: `5ebff79...` と `93027e02...`）。さらに復旧でローカルの重複ファイルを削除しても、**Qiita 上の記事を消さない限り次の `qiita pull` が `<id>.md` を再生成して重複が蘇生**する。
 
 **対策/学び**:
+
 - **1 Qiita 記事 = ローカル1ファイル**を厳守。`qiita pull` は全リモート記事の `<id>.md` を作るため、slug 名の編集元を別に持つなら**どちらか一方を正にして他方は即削除**（divergence を放置しない）
 - `qiita publish` 前に対象ファイルの `id:` がリモート記事と一致しているか確認。id:null や不一致のまま publish すると**新規記事が増える**（更新でなく重複）
 - **ローカル dedup はリモート削除が完了するまで未完**。重複記事をローカル削除した後は、**ユーザーが Qiita 上で当該記事を削除するまで `qiita pull` / `npm run pull:qiita` を実行しない**（pull が削除済みローカルファイルを蘇生させ regression する）
@@ -607,6 +639,7 @@ done
 **観察**: プロセス凍結 PR #257 で `git mv`（リネーム）と Write/Edit（同ファイル群の内容編集）+ 新規 README を1コミットにまとめた。`git add <paths>` を明示したが、結果 PR は **リネームのみ反映（7 files changed, 0 insertions）** で内容編集と新規 README が欠落。さらに post-merge の後片付けで未コミット状態だったその編集を `git stash push -u <files>` → `git reset --hard origin/main` → `git stash drop` の順で実行し、**復旧可能だった変更を完全破棄**した。リカバリに丸ごと1 PR (#258) を要した。
 
 **対策/学び**:
+
 - `git mv` を含むコミットでは、**コミット直後に `git show --stat HEAD` で insertions/deletions を必ず確認**する。リネームだけの `0 insertions` は内容編集の取りこぼしサイン
 - リネームと内容編集は**別コミットに分ける**（mv コミット → 内容編集コミット）。混在は add 漏れを誘発
 - `git stash drop` は破壊的。`reset --hard` 前に退避した stash は、内容を `git stash show -p` で確認し**復元（pop/apply）するまで drop しない**。原則 `stash drop` の前に「本当にこの変更は不要か」を一度止まって判断
@@ -619,6 +652,7 @@ done
 **観察**: 1 セッション内でブランチ切替の度に `M AGENTS.md` を「ユーザーの作業外 WIP」とみなし `git stash push AGENTS.md` → `pop` を 10 回以上繰り返した。実体は claude-mem プラグインが末尾へ追記する `<claude-mem-context>...</claude-mem-context>`（毎セッション再生成される記憶コンテキスト）で、stash/pop しても hook が再書き込みするため `M` が消えなかった。
 
 **対策/学び**:
+
 - `git diff AGENTS.md` が `<claude-mem-context>` ブロックのみなら `git checkout -- AGENTS.md` で**破棄**してから操作する（再生成されるため情報損失なし）。stash/pop の往復は不要
 - このブロックは**絶対に commit しない**。commit は対象ファイル明示 staging（`git add -A` 禁止）で AGENTS.md を巻き込まない
 - 破棄前に必ず `git diff` を見る。規約本文（ブロックより上）に実変更が混在する場合のみ別途退避
@@ -631,6 +665,7 @@ done
 **観察**: `new/<slug>.md` をインポート → 次回エクスポート取り込みで `drafts/<guid>.md` が降りてきて同一記事が両ディレクトリに併存。どちらを編集の正とするか曖昧で、`drafts/` 側はテーブルが note 仕様で平坦化されており混乱要因になった。
 
 **対策/学び**:
+
 - **`new/<slug>.md` = 編集の正**（原形保持、以後の修正はここ）。**`drafts/<guid>.md` = note 実体ミラー（読取専用・手編集禁止、次回取り込みで上書き再生成）**
 - インポート後も `new/` は削除しない。重複は許容し `drafts/` を信頼源にしない
 - articles_note/README.md に役割表を明文化済み
@@ -642,6 +677,7 @@ done
 **観察**: PR #242 の CI run が `queued` のまま 1 時間以上滞留。`gh run cancel <id>` も HTTP 500 を返し停止不能。同時刻の他 run（#237/#239/#241/#243）は 13〜25 秒で正常完了しており、GitHub Actions 全体障害ではなく**当該 run 単体が runner を掴めず stuck**していた。auto-merge 設定済みのため CI 通過待ちで全工程がブロックされた。
 
 **対策/学び**:
+
 - 単一 run のみ長時間 `queued` で他 run は正常なら、`gh run cancel` の成否に関わらず**空コミット `git commit --allow-empty` を push して CI を再トリガー**する。新 run は通常通り数十秒で完了する（本件は 15 秒で成功）
 - 判定基準: `gh run list --branch <b> --limit 1` が 10 分以上 `queued`、かつ `gh run list --limit 6` で他ブランチの直近 run が正常完了している
 - auto-merge は再トリガー後の新 run 成功でそのまま発火するため、設定し直し不要
@@ -654,6 +690,7 @@ done
 **観察**: Gemini CLI 設計の SVG を `cairosvg` で PNG 化したところ、日本語が全て tofu（□□□）になった。cairosvg は macOS の Hiragino(.ttc) を解決できない。SKILL.md には「Chrome headless を使う」とあったが、SVG の `font-family` が未指定/汎用だと Chrome でも豆腐になり得る点が明文化されていなかった。
 
 **対策/学び**:
+
 - SVG → PNG（日本語含む）は **(1) SVG の全 `font-family` を `Hiragino Sans, Hiragino Kaku Gothic ProN, sans-serif` に正規表現置換 → (2) HTML でラップ → (3) Chrome headless `--screenshot` `--force-device-scale-factor=2`** の順で行う
 - `--window-size` は SVG の `viewBox` 比率に合わせる（余白・見切れ防止）。生成後は必ず `Read` で目視検証し、tofu / テキスト見切れ / 文言を確認してから採用する
 - 文言修正が入ったら同じパイプラインで再レンダリング → 再目視。1 発で決めようとせず検証ループを回す
@@ -666,6 +703,7 @@ done
 **観察**: `articles_note/new/` の記事に Markdown テーブル（GFM table）を書いて WXR 生成 → note 手動インポート → 公式エクスポート再取込すると、テーブルがプレーンな行（「段階 / やったこと / …」と縦に並ぶ）へ平坦化されていた。note は Markdown テーブルを描画できないため round-trip で体裁が崩れる。公開後の取込で初めて気づき、事前予測できなかった。
 
 **対策/学び**:
+
 - note 向け記事（`articles_note/new/`）でテーブルを使うなら、公開前に**リスト化または画像化**するか、平坦化を許容すると判断する
 - 早期検知のため `scripts/check-note-tables.js`（`npm run check` に組込済・WARN/非 fatal）を追加。`new/` の Markdown テーブルを執筆段階で警告する
 - 編集の正は `articles_note/new/<slug>.md`、`drafts/<guid>.md` は note 実体ミラー（平坦化済）と役割を分ける。両者の重複は次回エクスポート取込で drafts 側が自動更新される前提で運用する
@@ -677,6 +715,7 @@ done
 **観察**: PR #178 作成時、HTTPS push が `Permission denied to kominem-unilabo` で失敗。`gh auth setup-git` でクレデンシャルヘルパーを再設定して push は通ったが、直後の `gh pr create` が `must be a collaborator (createPullRequest)` で失敗。`gh auth status` を確認すると active account が **s977043 → kominem-unilabo に切り替わっていた**。`gh auth switch -u s977043` で復旧後、再実行で成功。CLAUDE.md には「`git push` 直前の auth 確認」しか書かれておらず、`gh pr create` / `gh pr merge` 前の確認は盲点だった。
 
 **対策/学び**:
+
 - `gh auth setup-git` を実行したら直後に必ず `gh api user --jq .login` で active account を再確認する
 - `git push` だけでなく、`gh pr create` / `gh pr merge` の **直前すべて** で active account を確認する（CLAUDE.md チェックリスト #3 を更新済み）
 - 失敗時の復旧コスト: 1ラウンドの再実行（30秒〜1分）。発生頻度はこのリポでは中。同種の auth 切替は他にも `gh auth refresh` などで起こりうる
@@ -689,6 +728,7 @@ done
 **観察**: 振り返り PR セッションで `md_to_wxr.py` を `--base-url` なしで実行する誤りが複数記事で発生。従来は `[warn] ローカル画像 N件あり` の警告のみで WXR 生成が成功してしまうため、警告を見落とすと「note インポートして画像が出ない → 再生成 → 再インポート」の手戻りが発生する設計だった。本振り返り PR でガード化（exit 1）を実装。
 
 **対策/学び**:
+
 - 画像参照ありで `--base-url` 未指定なら exit 1 で終了。WXR ファイル自体は調査用に書き出される
 - 意図的にローカル参照を残したい場合は `--allow-local-images` を明示
 - WXR 生成は **必ず `--base-url https://raw.githubusercontent.com/s977043/my-blog/main/articles_note/assets`** を付ける（CLAUDE.md チェックリスト #6 に追記済み）
@@ -700,6 +740,7 @@ done
 **観察**: PR #167 で OpenAI Symphony 記事のカバーとして配置された PNG が **600×315 / 7KB のプレースホルダ画像**で、本番運用までその状態が見過ごされた。他のカバー画像は 1200×630 / 65–103KB が標準だが、ファイル名が同じなだけで実物確認がなく、note 取り込み時に画像として認識されず URL がテキストとしてレンダリングされる現象が発生（PR #174 / #175 で計2回追加対応）。
 
 **対策/学び**:
+
 - 画像配置 PR では `file <path>` で寸法と形式を、`ls -la` でサイズを必ず確認する
 - 既存カバー画像と比較し、サイズが極端に小さい（<10KB）場合は警戒する
 - `npm run check:note-images` を CI に組み込み、`articles_note/assets/**/*.png` の <10KB を WARN（プレースホルダ早期検知）
@@ -712,6 +753,7 @@ done
 **観察**: `npm run check:note-images` が `articles_note/assets/` の <10KB 画像8件を継続警告していた。`file` で確認すると、いずれも note 公式エクスポート由来の 8-bit colormap PNG で、1008×78 / 256×78 / 600×160 など実寸を持つ正規画像だった。参照元も `articles_note/published/n40f2574d87dd.md` と `articles_note/published/nb068316a12ec.md` の既存公開記事に限定され、新規WXR投入対象ではなかった。
 
 **対策/学び**:
+
 - 小容量画像は原則警戒するが、`file` で実寸・形式を確認し、公式エクスポート由来かつ参照元が既存公開記事に限定される場合は false positive として allowlist 化できる
 - allowlist にはファイル名だけでなく、寸法と「プレースホルダではない」理由を残す
 - 新規追加画像は allowlist に入れず、従来どおり <10KB warning を維持する
@@ -723,6 +765,7 @@ done
 **観察**: プレースホルダ画像（7KB）を本番画像に差替後（PR #174）も、note 上で取り込み済みの下書きでは URL がテキスト表示のまま改善しなかった。GitHub Raw URL の CDN キャッシュ（5分）と、note 側の「この URL は画像にならない」判定キャッシュの両方が原因。同URLでの再インポートでは取り込みに失敗するケースがある。
 
 **対策/学び**:
+
 - 画像差替後にユーザー側で「URLテキスト化」が継続している場合、ファイル名を変更（例: `cover.png` → `cover-v2.png`）して URL 自体を別物にする
 - 記事 md の参照を新ファイル名に更新し、WXR を再生成 → ユーザーは note 上の壊れた下書きを削除して再インポート
 - 旧ファイルは他で参照される可能性があるため残置（不要なら後日削除）
@@ -734,6 +777,7 @@ done
 **観察**: `md_to_wxr.py` は標準 python-markdown の出力（`<p>本文</p>`、ブロック間 `\n`、`<br/>` XHTML形式）を CDATA に詰めて WXR を生成していた。note は WordPress wpautop 相当の補正をしないため、Markdown 内の改行が `<br>` にならず、ブロック間の `\n` も意図しない空白として扱われ、note 上で「空の改行が出る」「改行が消える」現象が発生した。`verify_wxr.py` は構造チェックのみで HTML パターンの差分は検知できない。
 
 **対策/学び**:
+
 - `python-markdown` に **`nl2br` 拡張を必ず追加**（`extensions=["fenced_code", "tables", "sane_lists", "nl2br"]`）。Markdown の単一 `\n` を `<br>` に変換しないと note 上で改行が消える
 - 全ブロック要素（`p`/`h2`/`h3`/`ul`/`ol`/`pre`/`figure`/`blockquote`）に **UUID v4 の `name=id=` 属性を必ず付与**。公式エクスポートと同じパターンに合わせると note エディタが「公式投稿と同じ構造の下書き」として認識する
 - `<li>X</li>` は **`<li><p name=UUID id=UUID>X</p></li>` で二重ラップ**（公式形式準拠、リスト項目もコピペ・再編集しやすくなる）
@@ -745,6 +789,7 @@ done
 - 検証は `verify_wxr.py`（構造）+ 公式エクスポート WXR の HTML パターン比較（目視 or 専用 linter）の二段構え
 
 **実装ポイント** (`.claude/skills/note-export-import/scripts/md_to_wxr.py`):
+
 - `transform_html_to_note_format()` パイプラインで wrap_images_in_figure → normalize_void_elements → strip_code_class → wrap_li_content → add_uuid_to_blocks → add_external_link_attrs → collapse_block_whitespace の順で正規化
 
 **根拠**: PR #172 / 2エージェント並列調査（公式WXR 28記事のHTMLパターン解析 + Web仕様調査 14URL）/ 全11記事の再生成で `verify_wxr.py` PASS
@@ -754,6 +799,7 @@ done
 **観察**: Zenn 記事 11 本を `article-reviewer` サブエージェントで並列起動したところ、全 11 本が `Write(reviews/zenn/**)` permission denied で停止した。バックグラウンド実行中の permission prompt に応答できず、全エージェントの作業が無駄になった（精読・指摘生成は完了していたがファイル書き込みのみ失敗、20〜30 分のロス）。
 
 **対策/学び**:
+
 - 大量並列起動の前に、対象パスへの Write/Edit が `.claude/settings.local.json` で allow されているか確認する
 - 記事 / レビュー / スキル定義など**本プロジェクトで頻繁に書き込むパス**は事前に設定へ追加:
   - `Write(reviews/zenn/**)` / `Edit(reviews/zenn/**)`
@@ -768,6 +814,7 @@ done
 **観察**: 同一ワーキングツリーで複数セッションが走る環境では、`git switch -c <branch>` 実行直後に別セッションの作業でブランチが切り替わり、気づかないまま `git commit` が **main に直接着地する**事案が 1 セッションで 3〜4 回発生した。PR 作成のための push も意図したブランチではなく main に対するものになりそうになった。
 
 **対策/学び**:
+
 - `git commit` 直前に **必ず `git branch --show-current` で期待ブランチ確認**（既存の CLAUDE.md ガードを厳守）
 - 誤って main に commit した場合の復旧フロー:
   ```bash
@@ -784,6 +831,7 @@ done
 **観察**: ChatGPT 外部レビューで「`:::message` / `:::details` / table で長文を畳む」指示を受けたが、既存の `article-reviewer` の Zenn 読みやすさ観点（1-8）には記法活用が含まれていなかった。毎回外部レビューを受けると再現性がなく、コストも掛かる。
 
 **対策/学び**:
+
 - `article-reviewer` の観点 9-11 として追加し、ルール #8 の「毎回チェック」対象に組み込む（観点 9: 想定読者 `:::message` / 観点 10: `:::details` で畳む / 観点 11: table 化）
 - `review-applier` / `article-review-apply` SKILL には **文面生成の有無**で採否を機械判定する基準を追加:
   - 採用可: `:::details` で既存を畳む、table 化、既存段落を `:::message` で囲う、固有 SHA を一般表現に置換
@@ -797,6 +845,7 @@ done
 **観察**: Zenn / note / Qiita の記事を同一リポジトリで管理している。当初 `reviews/` 配下はフラットで Zenn 前提だったが、note記事のレビュー生成で配置規約の衝突が発生した。
 
 **対策/学び**:
+
 - `reviews/{zenn|note|qiita}/` で**必ずプラットフォーム別サブディレクトリ**を切る
 - note は公開状態で意味が変わるため、さらに `reviews/note/{new|drafts|published}/` と階層化
 - 新規プラットフォーム追加時はこの規約に従うこと
@@ -810,6 +859,7 @@ done
 **観察**: `.claude/agents/<name>.md` を作成して直後に `Agent(subagent_type: "<name>")` で呼び出すと「Agent type not found」エラー。ハーネスのリロード前はまだ未登録状態。
 
 **対策/学び**:
+
 - 新規 Agent を使いたい場合:
   - (A) ユーザーに Claude Code の再起動を依頼してから使う
   - (B) `general-purpose` エージェントに仕様書の Read を指示してインライン委譲（即時実行したい時）
@@ -824,6 +874,7 @@ done
 **観察**: note.com は「テキスト校正くん」等のJTF 日本語スタイルガイド系リンターで警告が出やすい。特にダッシュ（`—` `――` `──` `―`）は個人記事で頻出する違反パターン。
 
 **対策/学び**:
+
 - 原則ダッシュは使わず、**全角括弧**（）や**句点**で置換
 - 三点リーダーは `……`（2 つ並べる）
 - カッコ類は全角 `（）「」『』`
@@ -839,6 +890,7 @@ done
 **観察**: note は WXR インポートで既存記事を上書き更新**できない**（常に新規下書きとして作成される）。`articles_note/published/` 配下を編集してもリポジトリ上の変更とnote側の実状態が乖離する。
 
 **対策/学び**:
+
 - `articles_note/published/` 配下の記事に反映PRを作る場合、PR 本文冒頭に必ず:
   ```
   > ⚠️ **公開済み記事** (`articles_note/published/`)
@@ -857,6 +909,7 @@ done
 **観察**: 個人記事10件のレビュー生成を並列エージェントで実行し、実働10分弱で完了。逐次（1件2〜3分想定）だと30分以上かかる見積もり。
 
 **対策/学び**:
+
 - 独立したレビュー/分析タスクは `run_in_background: true` で並列起動する
 - 並列数の目安: 10〜12程度までは安定動作を確認
 - 並列時の注意:
@@ -873,6 +926,7 @@ done
 **観察**: `note-article-review` スキルを最初に作ったとき、`articles_note/<slug>.md` フラット構成を前提にしていた。実際は `articles_note/{new,drafts,published}/<slug>.md` と階層化されており、作成直後に改修が必要になった。
 
 **対策/学び**:
+
 - 新規スキル/コマンド/エージェントを設計する前に:
   1. `ls <対象ディレクトリ>` で実構成を確認
   2. 既存類似スキル（Zenn 用など）との整合を確認
@@ -888,6 +942,7 @@ done
 **観察**: `テキスト校正くん` (VS Code 拡張) が `jtf-style/3.1.1.全角文字と半角文字の間` のスペースを警告する。ルート `README.md` で「コードブロック内は触らない」方針でツリー図の日本語コメントを放置したところ、Gemini Code Assist から差し戻しの review コメントを受けた。
 
 **対策/学び**:
+
 - 全角/半角が隣接する箇所ではスペースを入れない（例: `Zenn と Qiita` → `ZennとQiita`、`articles/ 配下` → `articles/配下`）
 - **ツリー図やbashコメントの日本語説明文も本文扱い**で同ルールを適用する
 - コードブロック**内の純ASCII**（コマンド本体やパス）は対象外
@@ -902,6 +957,7 @@ done
 **観察**: `Qiita`・`Zenn`・`Findy`・`FindyTeamPlus`・`unilabo`・`PRONI` など、プロジェクト特有の固有名詞は cSpell のデフォルト辞書に含まれず `Unknown word` 警告が多発する。
 
 **対策/学び**:
+
 - リポジトリルートに `.cspell.json` を置いて `words` に追加していく
 - `caseSensitive: false` にすれば `Qiita`/`qiita` 両方カバーできる
 - `ignorePaths` に `.gitignore` 相当のビルド成果物・エクスポート置き場（`Qiita/public/.remote/`、`articles_note/export/`、`node_modules/`）を記載
@@ -916,6 +972,7 @@ done
 **観察**: IDE や hook の影響で `git checkout` が意図せず別ブランチに切り替わっていることがある。PR #49 の修正を `docs/readme-style-and-cspell` に積むつもりで `git commit && git push` したところ、`docs/agent-guide-bootstrap` にコミットが載ってしまい、cherry-pick で PR ブランチに反映し直す羽目になった。
 
 **対策/学び**:
+
 - 複数ブランチをまたぐ作業の場合、commit直前に必ず `git branch --show-current` または `git status` の 1 行目を確認する
 - `git status` 冒頭行をBashの最初のコマンドに混ぜておくと癖になる（例: `git status && git commit ...`）
 - 間違えて別ブランチに push した場合は、**force-push で消す前に** cherry-pick で正しいブランチに反映して PR が通る状態を先に作る（破壊的操作は最後）
@@ -929,6 +986,7 @@ done
 **観察**: READMEのjtf-style警告に対して「プロジェクト慣習に合わせて残す」と初回判断したが、ユーザーから「修正して」で差し戻された。lint設定が生きている = ルールとして守る前提というのが正解だった。
 
 **対策/学び**:
+
 - プロジェクト側で VS Code 拡張やCIで lint ルールが有効な場合、警告は「無視可」ではなく「直すべき」と解釈するのがデフォルト
 - 残す判断をするなら、理由と根拠（例: 他ファイルとの整合、技術的制約）を明示してユーザー確認を取る
 - lint通過が前提のスタイルが既に確立している場合は `.cspell.json` のような辞書ファイルで吸収する設計も選択肢
@@ -946,6 +1004,7 @@ done
 3. CDATA衝突は`<title>`と`<content:encoded>`の**両方**で起きうる。タイトルに`]]>`を含む記事があるとXMLが途中終了する（この点は継続して有効）
 
 **対策/学び**:
+
 - `]]>`分割処理（`]]]]><![CDATA[>`）はbody HTMLだけでなく **titleにも** 適用する。共通化するならlambda/関数として抽出する
 - 時刻を複数箇所で扱う場合（pubDateと出力ファイル名のts等）、**全箇所で同じTZ**に統一すること。`datetime.now()`と`datetime.now(timezone(timedelta(hours=9)))`を混在させると実行環境で揺れる
 - gemini-code-assist / sentry-seerのline-level commentはピンポイントかつ根拠が明確なので、ローカル検証（`xmllint --noout` + サンプル実行）で裏取りしてから一気に反映するのが効率的
@@ -966,7 +1025,8 @@ done
    - 旧スクリプトは「note公式エクスポートと同形式」を謳いつつ、これらを全て省略していた。channelレベルだけ公式形式でも`<item>`が空だとimporterが post として認識しない
 
 **対策/学び**:
-- WXR 変更時は「XMLとして well-formed」では不十分。**公式エクスポートZIPと `<item>` の wp:* タグを一個一個照合**する。`xmllint --noout` は構文チェックしかできない
+
+- WXR 変更時は「XMLとして well-formed」では不十分。*_公式エクスポートZIPと `<item>` の wp:_ タグを一個一個照合**する。`xmllint --noout` は構文チェックしかできない
 - 著者フィールドは直感に頼らず実測。WordPress標準のWXR慣例とnoteの実装は違う
 - `ElementTree.parse` で公式/生成の両方をloadして `[el.tag for el in item]` を diff すると抜けが1発で分かる（検証スクリプト化候補）
 - 新規フィールド追加や公式形式対応で「import 成功まで」を確認するには、実際にnote管理画面に投入するしかない（xmllint・schema検証だけでは通らないエラーがある）
@@ -983,6 +1043,7 @@ done
 2. **Markdown の 2 スペース改行（行末 2 スペース）が note 側で `<br />` として余白過多を生む**。Python-Markdown の変換で `<br />` になり、note は段落間の標準余白 + `<br />` の追加余白を両方適用するため、スマホ表示で間延びして見える。`verify_wxr.py` は well-formed と構造しか見ないので、この視覚問題は検出できない。
 
 **対策/学び**:
+
 - 複数記事の一括投入スクリプトを設計するなら「1 ファイル生成 → 投入 → 下書き確認」のシリアルフローを前提にする。並列投入しても note 側で順次処理されるだけで高速化しない
 - 2 スペース改行は Markdown の仕様としては正しいが、note の表示を考えると「段落内で息継ぎを入れたい」用途では空行による段落分けの方が安全
 - `ai_agent_operations_opinion_note.md`（26 箇所）と `note_production_ai_app_article.md`（11 箇所）で同じ問題が再現。レビュー時の Medium 指摘で 2 スペース改行を推奨する場合は、note の実表示影響を先に検証する
@@ -997,11 +1058,13 @@ done
 **観察**: Claude Code と Codex CLI、または Claude Code 複数セッションを同一ワーキングツリーで同時実行すると、自作業の外でブランチが切り替わる事例が複数回発生。2026-04-18 のセッションで `docs/learnings-note-import-constraints` に commit が紛れ込み、2026-04-19 のセッションでは `chore/apply-review-zenn-candidates-d-f-e-c` に自動切替されて stash 退避が必要になった。2026-04-17 の `[Gotcha]` エントリ（IDE/hook 由来）と原因は別で、こちらは**並列セッションの進行に起因する**。
 
 **観測された干渉パターン**:
+
 1. 期待ブランチ（例: main）で作業中に `git commit` が別ブランチに載る
 2. `git switch -c` で作った新規ブランチが他セッションによって消滅・改名される
 3. ローカルに意図しない merge commit が作られ fast-forward pull が失敗する
 
 **対策/学び**:
+
 - **branch-impacting 操作の前に毎回 `git branch --show-current` を確認**（`git add` / `git commit` / `git push` / `git reset` / `git switch` / `gh pr create` 直前）
 - commit 前に `git status --short` も併用。意図しないファイルが stage されていないか確認
 - ブランチが期待と異なる場合の復旧手順:
@@ -1026,11 +1089,13 @@ done
 **観察**: 4 本の Zenn 記事（D / F / E / C）に対するレビュー反映作業を進めようとしたら、別セッションが同じ作業を並列で実施しており PR #81〜#84 が既に作成・マージ済みだった。review agent を走らせた後に反映作業に入る段階で気づいて途中破棄。PR #85（並列セッション耐性強化）が扱うのはブランチ干渉で、こちらは **成果物レベルの重複作業** が主題で相補的。
 
 **観測された失敗手順**:
+
 1. `reviews/zenn/` 配下の成果物が存在しない前提で 4 本の review agent を並列起動
 2. 完了通知を受けてから反映作業を開始しようとしたタイミングで、同名ファイルが既存 PR に含まれていることが判明
 3. ブランチ `chore/apply-review-zenn-candidates-d-f-e-c` は空のまま破棄
 
 **対策/学び**:
+
 - **作業開始前に以下 3 コマンドを習慣化**:
   ```bash
   # (A) open PR を確認（進行中の重複作業がないか）
@@ -1058,6 +1123,7 @@ done
 **気づき**: エラーメッセージ末尾の `or use the --head flag` が復旧の鍵。`git switch` で目的ブランチに戻って再試行するよりも、**`gh pr create --head <intended-branch>` で指名する** ほうが副作用が少ない。切替は並列セッションとの新たな競合を生む可能性がある。
 
 **対策/学び**:
+
 - `gh pr create` 実行直前に以下 3 行でプリチェック:
   ```bash
   git branch --show-current
@@ -1079,6 +1145,7 @@ done
 **観察**: 10 本の Zenn drafts を 1 PR にまとめて公開した（PR #87）。粒度判断の背景（レビュアー負荷 / 公開タイミング揃え / ロールバック単純さ）は振り返りでは語れるが PR 本文には残っていなかった。将来の読者・エージェントが「なぜ 10 本束ね？」を追跡できない。
 
 **対策/学び**:
+
 - **N 本以上を 1 PR にまとめる場合、粒度判断の理由を PR 本文 Summary 直下に明記**
 - 記載例:
   > **バンドル粒度の理由**: 10 本を 1 PR にまとめた理由は (1) 全記事が同一の品質ゲート通過済み (2) Zenn 公開タイミングを揃えたい (3) ロールバック単位を単純化 — の 3 点。
@@ -1096,6 +1163,7 @@ done
 **気づき**: `mergeStateStatus: CLEAN` は「コンフリクトなくマージ可能」という意味であって「main の最新コミットを undo しない」保証ではない。特に squash merge ワークフローでは、ブランチ側にまだ squash 前の個別コミットが残っており「既に main にある」ことを git が認識しない。
 
 **対策/学び**:
+
 - `gh pr merge` 実行前に以下のプリチェックを必須化:
   ```bash
   gh pr view <n> --json state,mergeStateStatus --jq .  # state=OPEN 再確認
@@ -1116,6 +1184,7 @@ done
 **気づき**: 「note に言及する/しない」ではなく、**本文中の主張の根拠/導入として持ち出すか（NG）** と **末尾の参考/関連リンク集に列挙するか（OK）** が判定軸。後者は読者にとって追加情報源の提示に留まる。
 
 **対策/学び**:
+
 - Zenn / Qiita 記事で `note.com/mine_unilabo` へのリンクを置く場合は:
   - ✅ OK: `## 参考` / `## 関連記事` / 末尾リンク集 など、記事末尾のセクション配下
   - ❌ NG: 本文中の「姉妹記事」「本編」「設計思想ベース」等の言及、`:::message` や導入段落内のリンク
@@ -1133,6 +1202,7 @@ done
 **気づき**: 並列セッション環境では、PR リストを取得してからマージ実行までの数秒〜数十秒の間に他セッションがマージを完了させている可能性が常にある。`gh pr merge` 自体は冪等（二重マージしない）だが、事前確認があればログの意図が明確になる。
 
 **対策/学び**:
+
 - `gh pr merge <n>` の直前に `gh pr view <n> --json state --jq .state` で `OPEN` を確認
 - 並列起動する場合も各コマンドの先頭で state 再確認してから merge
 - CLAUDE.md「並列セッション耐性」節に明文化
@@ -1145,15 +1215,16 @@ done
 
 **観察**: Round 3 振り返り PR (#103) マージ後の単一セッション内で、**意図外のブランチ切替が計 3 回** 発生した。いずれも stash→switch→pop で復旧可能だったが、頻度として記録しておく。
 
-| # | 発生タイミング | 当時のブランチ→切替先 | 復旧 |
-|---|---|---|---|
-| 1 | Round 3 PR 作成中 (`git commit` 直前) | `chore/process-improvements-round3` → `chore/apply-review-engineering-process-improvement-skill` | stash → switch → pop |
-| 2 | Round 3 PR push 直前 | 意図せず main に直接コミット (`cee373a`) | `git reset --hard origin/main` + 目的ブランチへ `git reset --hard <sha>` |
-| 3 | PR #110（note draft 反映）commit 直前 | `chore/apply-review-note-n9988537bc326` → `chore/review-applier-zenn-markdown-guidance` | stash → switch → pop |
+| #   | 発生タイミング                        | 当時のブランチ→切替先                                                                            | 復旧                                                                     |
+| --- | ------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
+| 1   | Round 3 PR 作成中 (`git commit` 直前) | `chore/process-improvements-round3` → `chore/apply-review-engineering-process-improvement-skill` | stash → switch → pop                                                     |
+| 2   | Round 3 PR push 直前                  | 意図せず main に直接コミット (`cee373a`)                                                         | `git reset --hard origin/main` + 目的ブランチへ `git reset --hard <sha>` |
+| 3   | PR #110（note draft 反映）commit 直前 | `chore/apply-review-note-n9988537bc326` → `chore/review-applier-zenn-markdown-guidance`          | stash → switch → pop                                                     |
 
 **気づき**: 並列セッション数とブランチ切替頻度は比例する可能性が高い。本セッションは同時 3-4 セッション体制だったと推定される（開始時の b0089ff / f2b3feb / PR #107 など複数の未 push commit や open PR が観測された）。
 
 **対策/学び**:
+
 - 現状の復旧手順（Round 2/3 で明文化済み）は **3/3 成功** — recoverable な問題として安定化している
 - 頻度データは次 Round 4 meta-retrospective の材料（3 セッション分以上蓄積後に「構造的対策が必要か」を判断）
 - 実装フェーズでは **branch-impacting 操作の直前** に `git branch --show-current` を機械的に打つ習慣をさらに強化
@@ -1169,6 +1240,7 @@ done
 エクスポートZIPは「現在のnote.com上の状態」を返すため、**note.com側がまだ更新されていない記事はローカルの修正が失われる**。
 
 **対策/学び**:
+
 1. エクスポートZIP取り込み直後に `git diff articles_note/` で差分を確認する
 2. ローカルで修正済みだがnote.com未反映の記事があれば、`git checkout -- articles_note/drafts/<slug>.md` で復元
 3. 根本対策: review-applier がPRをマージした後、対象記事をnote.com上でも速やかに更新してから次回エクスポートを取る
@@ -1183,6 +1255,7 @@ done
 **観察**: main ブランチに変更がマージされた後、既存PRのブランチが競合してマージ不能になるケースがある（PR #148: mermaid ブロック vs PNG 画像参照が同一箇所に挿入）。元ブランチに直接 `git rebase` すると force-push で他のセッションに影響するリスクがある。
 
 **対策/学び**:
+
 1. `git checkout -b fix/pr<N>-rebase origin/<conflicting-branch>` で修正専用ブランチを作成
 2. `git rebase origin/main` → 競合を Edit ツールで解消 → `git add` → `git rebase --continue`
 3. `git push --force-with-lease origin fix/pr<N>-rebase` でプッシュ
@@ -1205,6 +1278,7 @@ done
 3. GitHub Raw URL が HTTP 200 を返すには、対象ファイルが main にマージ済みである必要がある（WXR アップロード前に先に PR をマージすること）
 
 **対策/学び**:
+
 - 記事内の画像パスは `../assets/<file>` に統一する。`images/` などのパスは `--base-url` で変換されないため、WXR 生成前に修正する
 - SVG 画像は事前に PNG 変換が必要。**macOS では `cairosvg` は日本語フォントを描画できず□□□になる**（.ttc フォントの解決失敗）。代わりに Chrome headless を使う（次エントリ参照）
 - WXR アップロード前に画像の GitHub Raw URL が HTTP 200 を返すかを `curl -s -o /dev/null -w "%{http_code}"` で確認する
@@ -1219,17 +1293,22 @@ done
 **観察**: `--base-url` で GitHub Raw URL に変換した WXR をインポートすると、本文は取り込まれるが**画像だけ省略**される問題が発生。原因を調査したところ、python-markdown が生成する `<p><img alt="" src="..." /></p>` をnoteのインポーターが無視していた。note公式エクスポートXMLの画像は**全件**以下の形式でラップされている:
 
 ```html
-<figure name="uuid"><img src="..."><figcaption></figcaption></figure>
+<figure name="uuid">
+  <img src="..." />
+  <figcaption></figcaption>
+</figure>
 ```
 
 note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取り込み可能」と記載があるが、インポーターの実装はエクスポート形式（`<figure>`）のみを認識している模様。
 
 **追加調査結果**（3エージェント並列調査 2026-04-27）:
+
 - GitHub Raw URL（`raw.githubusercontent.com`）は HTTP 200・Content-Type: image/png を返す ✅
 - CSP/CORS ヘッダーはブラウザ側制約であり、noteのサーバーサイドインポーターには影響しない
 - `<figure>` 形式への変換で問題解決の見込み（PR #157）
 
 **対策/学び**:
+
 - `md_to_wxr.py` に `wrap_images_in_figure()` を追加。markdown変換後のHTMLで `<p><img /></p>` を `<figure name="uuid"><img src="..."><figcaption></figcaption></figure>` に後処理変換する
 - 正規表現は `alt` 属性をオプション扱いにすること（`(?:alt="[^"]*"\s+)?`）。python-markdownは常に `alt=""` を出力するが、raw HTML混入ケースも考慮
 - WXR構造を変更したら、必ず note公式エクスポートXML と `<item>` の要素を照合して確認する
@@ -1243,6 +1322,7 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 **観察**: `cairosvg` が SVG→PNG 変換時に日本語を□□□（豆腐文字）として出力した。原因は macOS の .ttc フォントファイル（Hiragino/Noto Sans JP）を cairosvg が解決できないため。Playwright も `file://` プロトコルをブロックした。
 
 **対策/学び**:
+
 - 日本語テキストを含む SVG は **Chrome headless で PNG 変換**する（macOS ネイティブフォントを使うため正常描画）:
   ```bash
   /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
@@ -1270,6 +1350,7 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 ブランチ切替後の release/zenn deploy 試行で **完全に同じ 7 記事リスト**が表示されたことから、rate-limit キューは **アカウント単位で維持** されており、ブランチ単位ではないと結論。
 
 **対策/学び**:
+
 - **Zenn デプロイ対象ブランチを `main` から `release/zenn` に分離**する（rate-limit 再発防止の構造的対策、PR #199 で AGENTS.md/CLAUDE.md に正本化）
   - main = 通常運用（記事執筆・レビュー反映・修正すべて、Zenn deploy 発火しない）
   - release/zenn = Zenn deploy 対象（このブランチへの push のみ deploy 発火）
@@ -1288,6 +1369,7 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 **観察**: Zenn デプロイ対象ブランチを main → release/zenn に切り替えた直後、release/zenn は派生元 main の `published: true` をすべて引き継いでいた。「Phase 1 で plangate-v86 だけを段階公開する」と計画していたが、**既に release/zenn 上に 7 記事すべてが published で乗っている**ため、段階公開そのものが不可能と判明。
 
 **対策/学び**:
+
 - **新規ブランチを Zenn deploy 対象にする前に、派生元の `published: true` 記事一覧を grep で確認**:
   ```bash
   for f in articles/*.md; do
@@ -1310,6 +1392,7 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 **観察**: main → release/zenn の sync PR を作ると、`articles_note/drafts/` の rename/rename / modify/delete / add/add が 10件超で頻発する。原因は (1) main で note import の dedup によりファイル名が ID 単位に書き換わる、(2) release/zenn 側は同期前の古い名前で残っている、の組み合わせ。手動解決していると 5〜10 分のロスが出る。
 
 **対策/学び**:
+
 - `git merge -X theirs origin/main` だけでは rename/rename / modify/delete / add/add は自動解決されない（unmerged が残る）
 - 残った unmerged を一括処理する手順:
   ```bash
@@ -1334,6 +1417,7 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 **観察**: 1記事 (design-md-guide) で末尾に置いた「FAQ」セクションが読者から強い反応を得たため、ガイド系8記事に横展開。3-5問 / 各回答 2-4 文 / 「やってみないと分からない」で逃げない断定型で揃えた結果、`### Q.` 単位で People Also Ask に拾われやすい形になった。
 
 **対策/学び**:
+
 - 横展開時のテンプレート:
   - 見出し: `## <記事の主題>のFAQ`（記事ごとに固有名、design-md-guide だけは「DESIGN.md 導入ガイドのFAQ」のように完全形）
   - Q&A: `### Q. <質問>` 改行 `A. <2-4文>` の Markdown 形式
@@ -1351,6 +1435,7 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 **観察**: `docs/publish-queue.md` の #2 ai-coding-preflight-checklist が「未公開（ignorePublish:true）/ 締切 5/29」と記載されたまま、実際は 2026-05-19 に Qiita 公開済み（id: b8dacca4ce2d9079454a）だった。queue だけ見て公開準備を進めると、二重公開や無駄な hygiene 修正に時間を使う。
 
 **対策/学び**:
+
 - 公開作業着手前の確認手順:
   ```bash
   # ローカル状態
@@ -1371,6 +1456,7 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 **観察**: River Review リネーム（#361 で `articles/` + `Qiita/public/` の本文を書換済み）を Qiita へ反映するため `npm run publish:qiita -- <slug>` を実行したところ、**作業ツリーの本文が「River Review」→ 旧名「River Reviewer」へ巻き戻り**、その旧内容が再 publish された（サーバも `updated_at` だけ進んで本文は旧名のまま）。原因は qiita-cli の `publish` が冒頭で**必ず `syncArticlesFromQiita`（全記事 pull）を実行**し、その `syncItem` が「**作業ファイル == `.remote/<id>.md` キャッシュ**」のとき**サーバ内容で作業ファイルを上書き**する仕様（`file-system-repo.js` の `syncItem`: `remoteFileContent.equals(data)` 成立で working も上書き）。リネーム時に Python 一括置換が `.remote/` キャッシュも「River Review」に書き換えていた（= 作業ファイルと一致）ため、pre-sync がサーバ旧内容で working を巻き戻した。
 
 **対策/学び**:
+
 - **`Qiita/public/.remote/` は qiita-cli 専用の「最後に取得したサーバ状態」キャッシュ。絶対に手編集しない**（リネーム等の一括 sed/置換スクリプトでは必ず `Qiita/public/.remote/` を除外する）
 - 作業ファイルを安全に push する条件は「**working ≠ `.remote/` キャッシュ**」。一致していると pre-sync がサーバ版で working を巻き戻す（else 分岐に入れば working は保護される）
 - 巻き戻された場合の復旧: `git checkout HEAD -- <file>` で正しい本文を作業ツリーへ復元 → `.remote/` がサーバ旧内容（= working と相違）であることを確認 → `--force` 付きで再 publish（`npm run publish:qiita -- <slug> --force`）。`--force` は publish 内の `isOlderThanRemote`（サーバ `updated_at` の方が新しいと FAIL）検証を skip するため、失敗 publish でサーバ `updated_at` が進んだ後の再投稿に必須
@@ -1389,6 +1475,7 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 - **Zenn queue #9 公開**: 「published フラグ変更は agent 単独で行ってよいか」を相談 → `publish-operating-policy.md` の著者ゲート対象で**明示承認必須**と確認。2 段マージ設計（main → release/zenn）も Codex 助言で確定（PR #372/#373）
 
 **対策/学び**:
+
 - Codex への相談は「**判断の相談**（実装は私が行う）」と明示すると、ROI が高い回答が得られる。プロンプトに「簡潔に」「率直に」「問題なければ問題なしと返してほしい」を加えると無駄な肉付けが減る
 - **代替案 A vs B を併記**して聞くと判断が明確になる（「rank8 をどうする?」より「A: 非破壊インデックス、B: 実圧縮、どちらを推すか」のほうが回答が鋭い）
 - 各フェーズで Codex 経由のチェックポイントを置くと、**実装着手後の手戻りが減る**（rank8 で実圧縮を着手していたら 980 行を破壊的に編集して履歴 trace 不能になっていた可能性）
@@ -1406,12 +1493,14 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 **気づき**: 本当の穴は別にあった。**他媒体へのリンクにだけ規約があり、同一媒体内の自記事リンクは無規約**という非対称が残っていた。実態として、内部リンクを持つ既存 4 記事すべてが `## まとめ` 以降にしかリンクを置いていない。「規約があるほう」ばかり整備され、「規約がないほう」が放置されていた。
 
 **対策/学び**:
+
 - リンクの配置指針を検討するときは、まず **同一ドメイン内か他プラットフォームか**を切り分ける。切り分ける前に一般論を当てはめない
 - AGENTS.md 表現規約に「記事内の同一プラットフォーム参照（Zenn ↔ Zenn / Qiita ↔ Qiita）」節を新設。説明的アンカーテキスト・`/articles/<slug>` 相対形式・双方向の張り返しを明文化した
 - クロスプラットフォーム参照の節には「この指針は同一ドメイン内の話なので本規約を緩める根拠にならない」と理由を追記し、同じ検討を繰り返さないようにした
 - 一般的なベストプラクティスを既存規約の変更根拠にする前に、**その指針の適用範囲が自分のケースと一致しているか**を確認する。今回は適用範囲を確認しないまま「規約が best practice と衝突している」と一度ユーザーへ報告してしまった
 
 **Codex レビューで受けた指摘（反映済み）**:
+
 - 検索エンジンの挙動を断定する書き方（「評価を外へ渡す」「1〜3本に絞る」）は、計測していない以上、恒久規約には強すぎる。**SEO の事実ではなく、このリポジトリの運用方針として書く**
 - 「文脈内リンク 2〜4 本」のような数値は、根拠・計測方法・見直し条件がないなら置かない。上限だけが独り歩きして必要な導線を抑制する
 - `docs/content-channel-strategy.md` §Cross-posting rules は「再構成版の**冒頭**に正本明示リンク」を求めており、クロスプラットフォーム参照の禁止と衝突していた。**例外として明記**し、規約同士の矛盾を解消した
@@ -1427,6 +1516,7 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 既存の「並列セッション干渉」エントリはブランチ切替と commit 混入が対象だったが、これは**長時間バックグラウンド処理の入力ファイルが実行中に別物へ差し替わる**という別の形。ワークフローの返り値だけでは検知できない。
 
 **対策/学び**:
+
 - 長時間ワークフロー完了時は、返り値を信じる前に **`git branch --show-current` と対象ファイルの行数・主題マーカーを実測する**。今回は「再構成で入れたはずの語句が0件」で検知できた
 - 検知したら成果物をスクラッチパッドへ退避 → `git checkout --` で作業ツリーを戻す → 正しいブランチへ復帰 → 再実行。誤ベースの成果物から拾える指摘はほぼない（前提が違うため）
 - 隔離したい場合は worktree だが、`EnterWorktree` は「ユーザーまたは CLAUDE.md が明示的に worktree を指示した場合のみ」使用可。勝手に使わない
@@ -1438,6 +1528,7 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 **観察**: 3ループレビューが note 記事に**禁止表記のダッシュ（`—` `——`）を20箇所混入**させた。`AGENTS.md` §note固有（JTFスタイル準拠）に「ダッシュは使用しない → 全角括弧や句点で置換」と明記されているが、ワーカーは主題・論理・読者理解の観点しか見ておらず表記規約を参照していなかった。検出したのは Copilot の PR 行コメント。混入箇所はタイトル / 見出し / 挿入句 `——A——` / ラベル区切り `**X** — Y` の4種類に散っていた。
 
 **対策/学び**:
+
 - 記事改善を委託するときは、委託プロンプトの情報源に **`AGENTS.md` の媒体固有セクション**を明示的に含める
 - レビュー系ワークフローの完了後、コミット前に `grep -n "—\|―" <file>` を1回走らせる
 - 置換は既存 `articles_note/published/*.md` の表記に合わせる。ラベル区切りは全角コロン `**ラベル**：説明` が既存記事の標準
@@ -1450,6 +1541,7 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 **観察**: 3ループレビューが、実行系 K1 の分母61を「スキル単位ではなく**ケース単位**の件数」と書き換えた。`metrics_k1.py` の実出力は `Skills with passing canary: 42 / 61` で単位はスキル。数値そのものは保持されるが、**数値が何を数えているかの説明が言い換えの過程で入れ替わる**。さらに後続の圧縮パスで、一度直した「19スキル」が別の箇所で「19件」へ再発した。
 
 **対策/学び**:
+
 - レビューループ後は、数値の**存在**（grep で件数一致）だけでなく、**単位と分母の説明**を一次情報と突き合わせる
 - 同じ数値が複数箇所に出る記事では、単位表記の揺れを `grep -n "<数値>"` で全件並べて確認する。1箇所直して終わりにしない
 - 数値の書き換え・丸めは禁止できても、「説明の言い換え」は禁止しにくい。**検証側で捕まえる前提**で運用する
@@ -1463,6 +1555,7 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 自作ツールの記事では「贔屓目による誇張」を疑うのが定石だが、**贔屓目を打ち消そうとした自己批判のほうが先に一次情報と衝突した**。しかも記事の決め台詞がその誤った自己批判に乗っていたため、主張の芯が誤情報で支えられる形になっていた。
 
 **対策/学び**:
+
 - 主張境界レビューでは、褒めている箇所と同じ強度で**貶している箇所も一次情報に当てる**。「〜が存在しない」「〜の仕組みがない」という否定形の断定は特に照合する
 - 照合先はリポジトリ内の記述だけでなく、**GitHub API の branch protection / ruleset** まで見る。運用ルールがコードやドキュメントに書かれていないことがある
 - 直すときは自己批判を削らず、**欠けているものを正確に言い直す**（「レビューゲートがない」→「段階配布とロールバックがない」）。記事の力を保ったまま事実に合わせられる
@@ -1476,12 +1569,40 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 **気づき**: ワーカーは「調べて分からなかった」を報告しづらい。委託プロンプトが「特定せよ」と読める書き方だと、**確度の低い推論でも埋めて返す**。消去法で候補が1つに絞れなかったときに何を書くかを、事前に指示しておく必要がある。前段の指摘（レビュー側）が「特定されていないのが欠落」と書いていたことも、ワーカーを断定へ押した。
 
 **対策/学び**:
+
 - 委託プロンプトに **「一次情報で裏が取れない主張は断定せず、『〜と考えられる』『記録上は特定できていない』など確度に合った表現にする」** を定型として入れる。あわせて **「別々のインシデント・別々の記録を接続して根拠にしない」** も明記する
 - 消去法の**否定側は断定してよい**（根拠が実物にある）。今回も「`pre-push` は gh アカウント検査しかしていないので Git hook ではない」は残した。否定と肯定で確度が違うことを指示に書き分ける
 - レビュー指摘が「Xが特定されていない」という形のとき、反映タスクは**「特定する」ではなく「特定できる範囲を明示する」**と定義して渡す
 - 完了報告の実物照合では、**追加された断定文の根拠を一次情報まで戻って確認する**。ワーカーが挙げた根拠が別文脈のものになっていないかを見る
 
 **根拠**: 2026-09-02 PR #574。初回報告を差し戻し、`pre-push` の実装（`check-gh-account.sh` の結果しか見ない）を根拠に否定側のみ断定する表現へ修正させた
+
+---
+
+### 2026-09-04 — Codex CLI は長文プロンプトで exit 0 のまま無言終了する [Tooling][Gotcha]
+
+**観察**: PR のレビューを `codex exec --sandbox read-only` へ委託したところ、**3 回連続で回答がゼロ**だった。いずれも exit code は 0 で、エラーメッセージも出ない。
+
+1. 前景実行 → 10 分でタイムアウト（出力なし）
+2. `nohup` + バックグラウンド → ログにプロンプトのエコーだけが残り終了。`Reading additional input from stdin...` の行があった
+3. `< /dev/null` で stdin を切る → 「差分と規約を照合します。一次情報も確認します」という**前置き 1 行だけ**出力して終了
+
+「Codex が壊れている」と判断しかけたが、`codex exec ... "1+1 の答えだけを数字で答えてください。"` の疎通テストは **19,054 tokens 使って正常に応答**した。つまり CLI もアカウントも生きていた。
+
+4 回目に**プロンプトを大幅に短縮**（観点を 3 つに絞り、diff を貼らず `git diff main...HEAD` を実行させる形へ）したところ、62,975 tokens を使って must 2 件・should 1 件の実のあるレビューが返った。
+
+**気づき**: 失敗が exit 0 で返るため、**成功と区別がつかない**。「実行できた＝結果が空だった」と読んでしまい、レビュー対象に問題がなかったのだと誤解しかねない。実際 2 回目は「Codex が Approve した」と解釈する余地があった。
+
+**対策/学び**:
+
+- `codex exec` は **stdin を必ず切る**（`< /dev/null`）。付けないと stdin 待ちで沈黙終了する
+- **プロンプトに diff やファイル本文を貼らない**。パスと実行すべきコマンドを渡し、Codex 自身に読ませる。貼った時点でそれは一次ソースではなく要約でもある
+- 観点は 3 つ程度に絞る。長い依頼文は分割する
+- **exit 0 を成功の証拠にしない**。出力に `tokens used` 行と実際の回答本文があるかを確認してから受理する。無ければ失敗として扱う
+- 疑わしいときは最小プロンプト（`1+1`）で疎通を切り分ける。CLI 全体の障害と、そのプロンプト固有の失敗を区別できる
+- 長文が必要な場合は前景 10 分で切らず、バックグラウンド実行にしてログを後から読む
+
+**根拠**: 2026-09-04 セッション。PR #571 のレビュー依頼で 3 回空振り（約 25 分のロス）、短縮版の 4 回目で成功し、そこで得た must 2 件を #571 へ反映した
 
 ---
 
