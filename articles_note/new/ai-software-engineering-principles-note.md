@@ -72,7 +72,7 @@ PBIは、Product Backlog Itemの略です。ここでは「今回実現したい
 
 そうした条件を先に外へ出してから実装へ進みます。
 
-この運用を仕組みにしたものの一つがPlanGateです。
+この考え方は、普段使っているPlanGateの運用にも組み込んでいます。
 
 ### DONEは「何を満たせば完了か」
 
@@ -219,9 +219,17 @@ Deliveryでは、「何を作るか」はある程度分かっています。
 
 この理解が、自分の中ではかなり大きな変化でした。
 
-なお、GitHub Spec KitにもCreative Explorationという開発フェーズがあります。ただし、そこで扱われているのは複数の実装、技術スタック、Architecture、UX PatternなどのSolution探索が中心です。
+なお、GitHub Spec KitにはCreative Explorationという開発フェーズがあり、複数の実装、技術スタック、Architecture、UX PatternなどのSolution探索を扱います。
 
-この記事でいうDiscoveryは、**そもそもその価値を提供すべきかを確かめるProduct Discovery**を指しています。
+さらに現在は、`/speckit.specify` の前段で「そもそも作る価値があるか」を評価する `assess` というIdea Assessment Pipelineもあります。`intake → research → define → shape → decide` の流れでProblemやEvidenceを整理し、`go / needs-clarification / kill` を判断してからSDDへ渡す仕組みです。
+
+これは、DiscoveryとDeliveryを分けるという点で、今回の整理とかなり近い考え方です。
+
+一方で、Spec Kitの `assess` はDiscoveryと実装を明確に分離し、`speckit.assess.*` の各Commandはソースコードを変更しません。Solution DesignやImplementationは `/speckit.specify` 以降のSDD lifecycleへ渡します。
+
+この記事で扱っているのは、**Product Discoveryそのものに、PoCやExperimentとして最小限の実装が必要になるケース**です。
+
+その実装をAgentへ渡すとき、Deliveryと同じ完了条件をContractにするのではなく、**「何を学ぶための実装なのか」を先に外へ出す必要がある**と考えました。
 
 ---
 
@@ -233,9 +241,9 @@ Deliveryでは、「何を作るか」はある程度分かっています。
 
 ではなくなりました。
 
-むしろ、**Discoveryでは、Deliveryとは違うものを先に定義する必要があった**と考えています。
+むしろ、**SDDの「実装前にIntentを外部化する」という考え方を、DiscoveryのExperimentにも適用すると、Deliveryとは違うものを先に定義する必要がある**と考えています。
 
-自分の中では、これをDiscovery側でSDDを使うときの型として捉えています。GitHub Spec Kitの公式用語ではなく、自分たちの運用上の整理です。
+以下はGitHub Spec Kitの公式用語ではなく、自分たちの運用上の整理です。
 
 Deliveryで先に定義するのが完了条件なら、Discoveryで先に定義したいのは、
 
@@ -261,18 +269,21 @@ Value Hypothesis:
 ユーザーに追加の価値を届けられる
 
 Learning Conditions:
-- 対象ユーザーが、実際の利用文脈の中でその体験を使うか確認できる
-- 使われなかった場合、価値そのものの問題か、
-  提供方法の問題かを切り分けられる
+- 実際の利用文脈で、その体験が利用されるかを確認する
+- 利用されない場合、
+  「価値そのものが弱い」のか
+  「提供方法に問題がある」のかを区別できる情報を得る
 
 Evidence:
-- 実際の利用文脈で使った / 使わなかった記録
-- 使わなかった理由や、利用後に得られた反応
+- 実際の利用文脈での利用 / 非利用
+- 利用前後の行動
+- 利用しなかった理由
+- 利用後に得られた反応
 
 Decision:
-- 次の試作へ進む
-- 仮説を見直す
-- この案を止める
+- 価値仮説を支持するEvidenceが得られた → 次のExperimentへ進む
+- 価値はありそうだが提供方法に問題がある → Solutionを変更する
+- 価値自体を支持するEvidenceが得られない → 仮説を見直す / Stopする
 
 今回まだ固定しないこと:
 - 本実装としての最終仕様
@@ -282,16 +293,6 @@ Decision:
 Discoveryだから何も決めないわけではありません。
 
 **決める対象が違う。**
-
-~~~text
-Delivery
-何を満たせば実装完了かをSpecifyする
-
-Discovery
-何を学べれば次を判断できるかをSpecifyする
-~~~
-
-この違いです。
 
 ### 仮説だと分かったら、DONEを捨てるのではなく書き換える
 
@@ -313,6 +314,8 @@ Learning Conditions
 Evidence
   ↓
 Decision
+  │
+  └─ 価値を確認できたらDeliveryへ
 ~~~
 
 価値が確認できたら、その後でDelivery側のPBIとして完了条件を定義すればよい。
@@ -354,11 +357,9 @@ Delivery Contract
 
 HarnessがAgentに「どう動くか」を支えるものだとしたら、SDDはそのAgentへ**何を先に渡すか**を考えるものとして見えてきました。
 
-そして、その「何を」は一種類ではありません。
+Discoveryでは、学習すべきことをContractにする。
 
-Discoveryでは、学習すべきことを渡す。
-
-Deliveryでは、実現すべきことを渡す。
+Deliveryでは、実現すべきことをContractにする。
 
 ---
 
@@ -395,5 +396,8 @@ SDDを使うか使わないかではなく、**DiscoveryとDeliveryで、何をS
 - GitHub Spec Kit README
   - `/speckit.specify` でwhat / whyを定義し、Plan / Tasks / Implementationへ進むFlowの参考
   - https://github.com/github/spec-kit
+- GitHub Spec Kit `assess` - Idea Assessment Pipeline Extension
+  - SDDの前段にDiscovery trackを置き、`go / needs-clarification / kill` を判断するFlowと、Discoveryではソースコードを変更しないGuardrailの参考
+  - https://github.com/github/spec-kit/blob/main/extensions/assess/README.md
 - 前回の記事「失敗をモデルのせいにしない。AI駆動開発を『Model + Harness』で考える」
   - https://note.com/mine_unilabo/n/nd6a5d83d1488
