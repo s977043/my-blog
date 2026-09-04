@@ -34,7 +34,7 @@ Deliveryでうまく機能していたSDDの型を、そのままDiscoveryの試
 
 ![AI駆動開発におけるDual-track](../assets/ai-dual-track-discovery-delivery.png)
 
-ここでいうDiscoveryとDeliveryは、ScrumのEvent / Artifact / Accountabilityとして定義されたものではありません。また、Discoveryを終えてからDeliveryへ引き渡す工程分割を意図しているわけでもありません。
+ここでいうDiscoveryとDeliveryは、Scrumの構成要素を増やす話でも、Discoveryを終えてからDeliveryへ引き渡す工程分割でもありません。
 
 実際には、同じチームがDiscoveryとDeliveryを行き来します。Deliveryの途中で新しい不確実性が見つかればDiscoveryへ戻りますし、Discoveryでも学習のために実装することがあります。
 
@@ -237,17 +237,11 @@ Deliveryでは、「何を作るか」はある程度分かっています。
 
 この理解が、自分の中ではかなり大きな変化でした。
 
-なお、GitHub Spec KitにはCreative Explorationという開発フェーズがあり、複数の実装、技術スタック、Architecture、UX PatternなどのSolution探索を扱います。
+なお、GitHub Spec KitにはSolution探索を扱うCreative Explorationがあり、さらに`/speckit.specify`の前段には「そもそも作る価値があるか」を評価する`assess`というDiscovery trackがあります。`assess`ではProblemやEvidenceを整理し、`go / needs-clarification / kill`を判断してからSDDへ渡します。
 
-さらに現在は、`/speckit.specify` の前段で「そもそも作る価値があるか」を評価する `assess` というIdea Assessment Pipelineもあります。`intake → research → define → shape → decide` の流れでProblemやEvidenceを整理し、`go / needs-clarification / kill` を判断してからSDDへ渡す仕組みです。
+ただし、`assess`自体はソースコードを変更せず、実装は`/speckit.specify`以降へ渡します。
 
-これは、DiscoveryとDeliveryを分けるという点で、今回の整理とかなり近い考え方です。
-
-一方で、Spec Kitの `assess` はDiscoveryと実装を明確に分離し、`speckit.assess.*` の各Commandはソースコードを変更しません。Solution DesignやImplementationは `/speckit.specify` 以降のSDD lifecycleへ渡します。
-
-この記事で扱っているのは、**Product Discoveryそのものに、PoCやExperimentとして最小限の実装が必要になるケース**です。
-
-その実装をAgentへ渡すとき、Deliveryと同じ受入基準をContractにするのではなく、**「何を学ぶための実装なのか」を先に外へ出す必要がある**と考えました。
+この記事で扱っているのは、そのDiscovery自体にPoCやExperimentとして最小限の実装が必要になるケースです。その実装をAgentへ渡すとき、Deliveryと同じ受入基準ではなく、**「何を学ぶための実装なのか」を先に外へ出す必要がある**と考えました。
 
 ---
 
@@ -312,11 +306,9 @@ Discoveryだから何も決めないわけではありません。
 
 **決める対象が違う。**
 
-### これはScrumの新しいArtifactやGateではない
+### 学習条件は、次の判断を支えるために置く
 
-ここでいうLearning ConditionsやDiscovery Contractを、Scrumに新しいArtifactや承認Gateとして追加したいわけではありません。
-
-Scrumは意図的に不完全なFrameworkで、さまざまなProcess、Technique、Methodをその中で利用できます。そしてScrumの土台にあるEmpiricismでは、経験から知識を得て、観測したものに基づいて意思決定します。
+Learning ConditionsやDiscovery Contractは、Scrumに新しいArtifactや承認Gateを追加するためのものではありません。
 
 自分たちにとって、
 
@@ -332,13 +324,9 @@ Decision
 
 は、**何を観測するのかを透明にし、得られたEvidenceをInspection（検査）し、次のAdaptation（適応）につなげるための補助的な実践**です。
 
-最初から完全なSpecを作ることが目的ではありません。むしろ、学びによってSpecや計画が変わることを前提にしています。
+重要なのは、最初から完全なSpecを作ることではありません。Specはその時点での理解を透明にするもので、Evidenceが変われば見直します。
 
-アジャイルの観点でも、Specを事前に書くことを「変更を防ぐための固定契約」にはしたくありません。Specはその時点での理解を透明にするもので、Evidenceが変われば見直します。
-
-また、すべてのExperimentでこの項目を詳細に埋めることも目的ではありません。不確実性や失敗したときのコストに応じて、**次の判断に必要なものだけを外へ出す**ようにしています。
-
-Contractを増やすことではなく、判断に必要な情報を明確にすることが目的です。
+すべてのExperimentで項目を詳細に埋める必要もありません。不確実性や失敗したときのコストに応じて、**次の判断に必要なものだけを外へ出す**。Contractを増やすことではなく、判断に必要な情報を明確にすることが目的です。
 
 ### 仮説だと分かったら、受入基準を捨てるのではなく書き換える
 
@@ -369,8 +357,6 @@ Decision
 価値仮説を支持するEvidenceが十分に得られ、Deliveryへ進む判断をしたら、Delivery側のPBIとして受入基準を整理します。
 
 ただし、これは一方向のHandoffではありません。Deliveryで得たEvidenceによって仮説を見直す必要が出れば、再びDiscoveryへ戻ります。
-
-こう考えると、DiscoveryとDeliveryは別々の世界ではなく、同じProduct Developmentの中で行き来するものとしてつながります。
 
 ---
 
@@ -425,11 +411,7 @@ Deliveryでは、実現すべきことをContractにする。
 
 今は、**SDDがAI駆動開発に合わないのではなく、DiscoveryとDeliveryで同じSpecの型を使っていた**ことが問題だったと考えています。
 
-Product Developmentでは、DiscoveryとDeliveryがいつもきれいに分かれるわけではありません。Discoveryでも実装は必要ですし、Deliveryしながら新しいことが分かることもあります。
-
-だから分類そのものが目的ではありません。
-
-これはScrumのEventやArtifactを増やす話でもありません。Scrumで言えば、Product GoalやSprint Goalへ向かう中で、いま扱っている不確実性に応じて、どんな情報を透明にし、何を観測し、どう適応するかを変える話だと捉えています。
+分類そのものが目的ではありません。DiscoveryとDeliveryは行き来します。重要なのは、**いま扱っている不確実性に応じて、何を先に明らかにするか**です。
 
 自分自身、これからAgentへPBIやSpecを渡す前に、まず次の2つを確認したいと思っています。
 
