@@ -71,7 +71,7 @@ AIによる実装・検証
     ↺ 学びをPBI / Spec / Planへ反映
 ~~~
 
-自分たちの運用では、リファインメントの中でPBIのIntentと受入基準を明確にします。そのうえでSprint PlanningでSprint Goalや選択するPBI、Planを整理し、Specや設計・実行計画へ進みます。
+自分たちの運用では、リファインメントの中でPBIのIntentと受入基準を明確にします。そのうえでSprint PlanningでSprint Goalを定め、取り組むPBIと、それらを届けるためのPlanを整理し、Specや設計・実行計画へ進みます。
 
 ここで大事なのは、このFlowを一方向の工程として扱わないことです。実装や検証で分かったことをPBIやSpec、計画へ戻しながら進めます。
 
