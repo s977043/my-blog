@@ -8,6 +8,14 @@
 
 AIにコードを書いてもらうだけではなく、**人が考えるべきことと、Agentに任せることをどう分けるか**。そのために、SDD（仕様駆動開発）、TDD（テスト駆動開発）、DDD（ドメイン駆動設計）など、これまでのSoftware Engineeringの考え方をAI駆動開発へ取り入れながら試行錯誤しています。
 
+Product Developmentでは、DiscoveryとDeliveryを並行して進めるDual-trackに近い形で開発しています。
+
+Discoveryでは、何を作る価値があるのかを探る。Deliveryでは、現時点で価値があると判断したものをプロダクトとして正しく届ける。
+
+そしてAI駆動開発を取り入れると、**DiscoveryでもDeliveryでもAgentによる実装が発生します。**
+
+DiscoveryではPoCやExperimentを作り、Deliveryではプロダクトとして届けるSoftwareを作る。
+
 この記事では、その実践から得た一つの学びとして、SDDについて書きます。
 
 最近、そのSDDの使い方について一つ大きな気づきがありました。
@@ -29,12 +37,6 @@ Deliveryでは、リファインメントの中でPBIのIntentと受入基準を
 でも、今は少し違う捉え方をしています。
 
 **SDDがDiscoveryに合わなかったのではなく、Delivery用に作ったSpecの型を、そのままDiscoveryへ当てていた。**
-
-自分たちのProduct Developmentでは、DiscoveryとDeliveryを並行して進めるDual-trackに近い形で開発しています。
-
-Discoveryでは、何を作る価値があるのかを探る。Deliveryでは、現時点で価値があると判断したものをプロダクトとして正しく届ける。
-
-ただし、実際にはどちらでも実装が発生します。DiscoveryでもPoCや試作を作りますし、DeliveryではもちろんSoftwareを作ります。
 
 **この「どちらでも作る」という状態が、今回の混線の原因の一つでした。**
 
