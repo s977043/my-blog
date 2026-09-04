@@ -44,7 +44,7 @@ Deliveryでうまく機能していたSDDの型を、そのままDiscoveryの試
 
 違いは「作る / 作らない」ではありません。**何のために作るのか、何を先に定義するのか**です。
 
-**Deliveryでは「何を満たせば完了か」を先に定義する。**
+**Deliveryでは「何を満たせば、このPBIを受け入れられるか」を先に定義する。**
 
 **Discoveryでは「何を学べれば次を判断できるか」を先に定義する。**
 
@@ -52,7 +52,7 @@ Deliveryでうまく機能していたSDDの型を、そのままDiscoveryの試
 
 ---
 
-## Deliveryでは「完了条件」をSpecifyする
+## Deliveryでは「受入基準」をSpecifyする
 
 自分たちのDelivery Flowでは、PBIを起点にAI駆動開発を進めています。
 
@@ -64,7 +64,7 @@ PBI / リファインメント
 Sprint Planning
 （Sprint Goal / 選択したPBI / Plan）
     ↓
-Spec・完了条件
+Spec・受入基準
     ↕
 設計・実行計画
     ↕
@@ -84,19 +84,19 @@ Scrum GuideではProduct Backlogを、プロダクトを改善するために必
 
 このFlowでは、PBIをそのままAgentへ渡しません。
 
-なぜ作るのか。何を実現するのか。何ができれば完了なのか。何を変えないのか。何を検証するのか。
+なぜ作るのか。何を実現するのか。どんな振る舞いや条件を満たせば受け入れられるのか。何を変えないのか。何を検証するのか。
 
 そうした条件を先に外へ出してから実装へ進みます。
 
 この考え方は、普段使っているPlanGateの運用にも組み込んでいます。
 
-### Completion Criteriaは「このPBIで何を満たせばよいか」
+### 受入基準は「このPBIで何を満たせば受け入れられるか」
 
-自分たちの運用では、このPBI固有の完了条件を「DONE」と呼ぶこともあります。
+自分たちの運用では、PBIごとに**受入基準（Acceptance Criteria）**を整理しています。
 
-ただし、Scrumの**Definition of Done**と混同しやすいため、この記事では**Completion Criteria**と呼び分けます。
+受入基準はScrum Guideで定義されたArtifactやCommitmentではありません。ここでは、**このPBIでどんな振る舞いや条件が実現されれば、意図した変更として受け入れられるか**を明確にするための実践として使っています。
 
-Definition of Doneは、Incrementがプロダクトに求められる品質基準を満たした状態を表す共通の定義です。この記事でいうCompletion Criteriaは、それとは別の「このPBIで何が満たされれば目的を達成したと判断できるか」という個別条件を指します。
+これはScrumの**Definition of Done**とは別です。Definition of Doneは、Incrementがプロダクトに求められる品質基準を満たした状態を表す共通の定義です。一方、受入基準は個々のPBIで期待する振る舞いや条件を表します。
 
 例えば、
 
@@ -108,7 +108,7 @@ Definition of Doneは、Incrementがプロダクトに求められる品質基�
 Intent:
 管理者がユーザーを一時停止できる
 
-Completion Criteria:
+Acceptance Criteria:
 - 管理者だけが停止できる
 - 停止されたユーザーはログインできない
 
@@ -123,7 +123,7 @@ Completion Criteria:
 - 何を実現するか
 - 何を変えないか
 - どこまで進めればよいか
-- 何をもって正しいと判断するか
+- 何をもって受け入れられると判断するか
 
 を渡せます。
 
@@ -131,7 +131,7 @@ Deliveryでは、このSDDの型がかなりよく機能しました。
 
 ---
 
-## Discoveryに同じSpecを当てると、価値仮説が完了条件になった
+## Discoveryに同じSpecを当てると、価値仮説が受入基準になった
 
 違和感が出たのは、既存プロダクトの利用フローの途中に新しい体験を加え、その体験が実際に使われるかを確かめる探索的なPoCでした。
 
@@ -147,12 +147,12 @@ Deliveryでは、このSDDの型がかなりよく機能しました。
 
 ただし、どんな形でその価値を届けるか、その体験自体に本当に価値があるかは、まだ検証が必要な状態でした。
 
-ここでDeliveryと同じようにPBIを作り、Completion Criteriaを置こうとしました。
+ここでDeliveryと同じようにPBIを作り、受入基準を置こうとしました。
 
 例えば、構造だけを単純化すると、
 
 ~~~text
-Completion Criteria:
+Acceptance Criteria:
 - 新しい体験を利用できるようにする
 ~~~
 
@@ -179,7 +179,7 @@ Softwareとしては、この条件を満たせます。
 
 が混ざっていました。
 
-前者は実装に対して置ける完了条件です。
+前者は実装に対して置ける受入基準です。
 
 後者は価値仮説です。
 
@@ -247,7 +247,7 @@ Deliveryでは、「何を作るか」はある程度分かっています。
 
 この記事で扱っているのは、**Product Discoveryそのものに、PoCやExperimentとして最小限の実装が必要になるケース**です。
 
-その実装をAgentへ渡すとき、Deliveryと同じ完了条件をContractにするのではなく、**「何を学ぶための実装なのか」を先に外へ出す必要がある**と考えました。
+その実装をAgentへ渡すとき、Deliveryと同じ受入基準をContractにするのではなく、**「何を学ぶための実装なのか」を先に外へ出す必要がある**と考えました。
 
 ---
 
@@ -263,7 +263,7 @@ Deliveryでは、「何を作るか」はある程度分かっています。
 
 以下はGitHub Spec KitやScrumの公式用語ではなく、自分たちの運用上の整理です。
 
-Deliveryで先に定義するのが完了条件なら、Discoveryで先に定義したいのは、
+Deliveryで先に定義するのがIntentや受入基準なら、Discoveryで先に定義したいのは、
 
 - どんなProblemを見ているのか
 - どんなValue Hypothesisを持っているのか
@@ -340,13 +340,13 @@ Decision
 
 Contractを増やすことではなく、判断に必要な情報を明確にすることが目的です。
 
-### 仮説だと分かったら、完了条件を捨てるのではなく書き換える
+### 仮説だと分かったら、受入基準を捨てるのではなく書き換える
 
 ここも今回の学びでした。
 
-Completion Criteriaを書いていて、そこに価値仮説が混ざっていると気づいたからといって、実装をすべて止める必要はありません。
+Acceptance Criteriaを書いていて、そこに価値仮説が混ざっていると気づいたからといって、実装をすべて止める必要はありません。
 
-価値仮説の部分を完了条件から外して、**学習条件へ書き換える。**
+価値仮説の部分を受入基準から外して、**学習条件へ書き換える。**
 
 そして、その学習に必要な最小限の試作だけをAgentへ渡す。
 
@@ -366,7 +366,7 @@ Decision
   └─ 価値を確認できたらDeliveryへ
 ~~~
 
-価値が確認できたら、その後でDelivery側のPBIとして完了条件を定義すればよい。
+価値が確認できたら、その後でDelivery側のPBIとして受入基準を定義すればよい。
 
 ただし、これは一方向のHandoffではありません。Deliveryで得たEvidenceによって仮説を見直す必要が出れば、再びDiscoveryへ戻ります。
 
@@ -378,7 +378,7 @@ Decision
 
 前回、「[失敗をモデルのせいにしない。AI駆動開発を『Model + Harness』で考える](https://note.com/mine_unilabo/n/nd6a5d83d1488)」という記事を書きました。
 
-そこで、Agentを正しく動かすためのHarnessの土台として、目的、完了条件、制約、停止条件などを含むContractを考えました。
+そこで、Agentを正しく動かすためのHarnessの土台として、目的、受入基準、制約、停止条件などを含むContractを考えました。
 
 今回の経験で、その続きを一つ理解できた気がします。
 
@@ -399,7 +399,7 @@ Discovery Contract
 
 Delivery Contract
 - Intent
-- Completion Criteria
+- Acceptance Criteria
 - Constraints
 - Verification
 - Stop Conditions
@@ -434,7 +434,7 @@ Product Developmentでは、DiscoveryとDeliveryがいつもきれいに分か�
 自分自身、これからAgentへPBIやSpecを渡す前に、まず次の2つを確認したいと思っています。
 
 - **いま必要なのは、価値を確かめることか。それとも、価値があると判断したものを届けることか**
-- **このSpecで先に定義すべきなのは、完了条件か。それとも学習条件か**
+- **このSpecで先に定義すべきなのは、受入基準か。それとも学習条件か**
 
 SDDを使うか使わないかではなく、**DiscoveryとDeliveryで、何をSpecifyするのかを変える。**
 
