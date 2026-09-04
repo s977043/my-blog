@@ -34,11 +34,13 @@ Deliveryでうまく機能していたSDDの型を、そのままDiscoveryの試
 
 ![AI駆動開発におけるDual-track](../assets/ai-dual-track-discovery-delivery.png)
 
-ここでいうDiscoveryとDeliveryは、Scrum Guideで定義されたフェーズや役割ではありません。また、Discoveryを終えてからDeliveryへ引き渡す工程分割を意図しているわけでもありません。
+ここでいうDiscoveryとDeliveryは、ScrumのEvent / Artifact / Accountabilityとして定義されたものではありません。また、Discoveryを終えてからDeliveryへ引き渡す工程分割を意図しているわけでもありません。
 
 実際には、同じチームがDiscoveryとDeliveryを行き来します。Deliveryの途中で新しい不確実性が見つかればDiscoveryへ戻りますし、Discoveryでも学習のために実装することがあります。
 
 **分けたいのは工程ではなく、「いま何が不確実なのか」と、その不確実性に対してAgentへ何をContractとして渡すのかです。**
+
+ここでいうContractは、顧客との契約や変更を固定する文書という意味ではありません。Agentが現在のIntent、制約、判断条件を理解して動くための、実行上の前提をまとめたものとして使っています。
 
 違いは「作る / 作らない」ではありません。**何のために作るのか、何を先に定義するのか**です。
 
@@ -55,25 +57,28 @@ Deliveryでうまく機能していたSDDの型を、そのままDiscoveryの試
 自分たちのDelivery Flowでは、PBIを起点にAI駆動開発を進めています。
 
 ~~~text
-Product Goal / Sprint Goal
-          ↓
-         PBI
-          ↓
-リファインメント / プランニング
-          ↓
+Product Goal
+    ↓
+PBI / リファインメント
+    ↓
+Sprint Planning
+（Sprint Goal / 選択したPBI / Plan）
+    ↓
 Spec・完了条件
-          ↕
+    ↕
 設計・実行計画
-          ↕
+    ↕
 AIによる実装・検証
-          ↺ 学びをSpec / 計画へ反映
+    ↺ 学びをSpec / 計画へ反映
 ~~~
 
 ここで大事なのは、このFlowを一方向の工程として扱わないことです。実装や検証で分かったことをSpecや計画へ戻しながら進めます。
 
 PBIは、Product Backlog Itemの略です。ここでは「今回実現したい変更や要求を、開発チームが扱える単位にしたもの」くらいの意味で使っています。
 
-Scrum GuideではProduct Backlogを、プロダクトを改善するために必要なものの「創発的で順序づけられたリスト」としています。PBIも固定された要求ではなく、リファインメントを通じて小さく、より明確になっていきます。
+Scrum GuideではProduct Backlogを、プロダクトを改善するために必要なものの「創発的で順序づけられたリスト」としています。Product Backlog Refinementでは、PBIをより小さく、より明確なItemへ分解・詳細化していきます。
+
+この記事でも、PBIを最初から固定された要求として扱う意図はありません。
 
 また、Scrumの文脈ではPBIだけを孤立したチケットとして扱うのではなく、Product GoalやSprint Goalとのつながりが重要です。Agentへ渡す場合も、必要に応じて「この変更が何のために必要なのか」という上位のIntentを含めます。
 
@@ -87,11 +92,11 @@ Scrum GuideではProduct Backlogを、プロダクトを改善するために必
 
 ### Completion Criteriaは「このPBIで何を満たせばよいか」
 
-自分たちのFlowでは、PBIごとに**Completion Criteria（そのPBI固有の完了条件）**を置きます。
+自分たちの運用では、このPBI固有の完了条件を「DONE」と呼ぶこともあります。
 
-ここはScrumの用語と区別しておきたいところです。
+ただし、Scrumの**Definition of Done**と混同しやすいため、この記事では**Completion Criteria**と呼び分けます。
 
-Scrumの**Definition of Done**は、Incrementがプロダクトに求められる品質基準を満たした状態を表す共通の定義です。この記事でいうCompletion Criteriaは、それとは別の「このPBIで何が満たされれば目的を達成したと判断できるか」という個別条件を指します。
+Definition of Doneは、Incrementがプロダクトに求められる品質基準を満たした状態を表す共通の定義です。この記事でいうCompletion Criteriaは、それとは別の「このPBIで何が満たされれば目的を達成したと判断できるか」という個別条件を指します。
 
 例えば、
 
@@ -325,9 +330,11 @@ Evidence
 Decision
 ~~~
 
-は、**何を観測するのかを透明にし、観測した結果をInspectionし、次の行動へAdaptするための補助的な実践**です。
+は、**何を観測するのかを透明にし、得られたEvidenceをInspection（検査）し、次のAdaptation（適応）につなげるための補助的な実践**です。
 
 最初から完全なSpecを作ることが目的ではありません。むしろ、学びによってSpecや計画が変わることを前提にしています。
+
+アジャイルの観点でも、Specを事前に書くことを「変更を防ぐための固定契約」にはしたくありません。Specはその時点での理解を透明にするもので、Evidenceが変われば見直します。
 
 また、すべてのExperimentでこの項目を詳細に埋めることも目的ではありません。不確実性や失敗したときのコストに応じて、**次の判断に必要なものだけを外へ出す**ようにしています。
 
@@ -422,7 +429,7 @@ Product Developmentでは、DiscoveryとDeliveryがいつもきれいに分か�
 
 だから分類そのものが目的ではありません。
 
-これはScrumのイベントやArtifactを増やす話でもありません。Scrumで言えば、Product GoalやSprint Goalへ向かう中で、いま扱っている不確実性に応じて、どんな情報を透明にし、何を観測し、どう適応するかを変える話だと捉えています。
+これはScrumのEventやArtifactを増やす話でもありません。Scrumで言えば、Product GoalやSprint Goalへ向かう中で、いま扱っている不確実性に応じて、どんな情報を透明にし、何を観測し、どう適応するかを変える話だと捉えています。
 
 自分自身、これからAgentへPBIやSpecを渡す前に、まず次の2つを確認したいと思っています。
 
