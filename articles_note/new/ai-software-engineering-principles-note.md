@@ -34,6 +34,12 @@ Deliveryでうまく機能していたSDDの型を、そのままDiscoveryの試
 
 ![AI駆動開発におけるDual-track](../assets/ai-dual-track-discovery-delivery.png)
 
+ここでいうDiscoveryとDeliveryは、Scrum Guideで定義されたフェーズや役割ではありません。また、Discoveryを終えてからDeliveryへ引き渡す工程分割を意図しているわけでもありません。
+
+実際には、同じチームがDiscoveryとDeliveryを行き来します。Deliveryの途中で新しい不確実性が見つかればDiscoveryへ戻りますし、Discoveryでも学習のために実装することがあります。
+
+**分けたいのは工程ではなく、「いま何が不確実なのか」と、その不確実性に対してAgentへ何をContractとして渡すのかです。**
+
 違いは「作る / 作らない」ではありません。**何のために作るのか、何を先に定義するのか**です。
 
 **Deliveryでは「何を満たせば完了か」を先に定義する。**
@@ -46,25 +52,30 @@ Deliveryでうまく機能していたSDDの型を、そのままDiscoveryの試
 
 ## Deliveryでは「完了条件」をSpecifyする
 
-自分たちのDelivery Flowでは、PBI単位でAI駆動開発を回しています。
+自分たちのDelivery Flowでは、PBIを起点にAI駆動開発を進めています。
 
 ~~~text
-PBI
-  ↓
-リファインメント
-  ↓
-プランニング
-  ↓
+Product Goal / Sprint Goal
+          ↓
+         PBI
+          ↓
+リファインメント / プランニング
+          ↓
 Spec・完了条件
-  ↓
+          ↕
 設計・実行計画
-  ↓
-AIによる実装
-  ↓
-検証
+          ↕
+AIによる実装・検証
+          ↺ 学びをSpec / 計画へ反映
 ~~~
 
+ここで大事なのは、このFlowを一方向の工程として扱わないことです。実装や検証で分かったことをSpecや計画へ戻しながら進めます。
+
 PBIは、Product Backlog Itemの略です。ここでは「今回実現したい変更や要求を、開発チームが扱える単位にしたもの」くらいの意味で使っています。
+
+Scrum GuideではProduct Backlogを、プロダクトを改善するために必要なものの「創発的で順序づけられたリスト」としています。PBIも固定された要求ではなく、リファインメントを通じて小さく、より明確になっていきます。
+
+また、Scrumの文脈ではPBIだけを孤立したチケットとして扱うのではなく、Product GoalやSprint Goalとのつながりが重要です。Agentへ渡す場合も、必要に応じて「この変更が何のために必要なのか」という上位のIntentを含めます。
 
 このFlowでは、PBIをそのままAgentへ渡しません。
 
@@ -74,11 +85,13 @@ PBIは、Product Backlog Itemの略です。ここでは「今回実現したい
 
 この考え方は、普段使っているPlanGateの運用にも組み込んでいます。
 
-### DONEは「何を満たせば完了か」
+### Completion Criteriaは「このPBIで何を満たせばよいか」
 
-自分たちのFlowでは、PBIごとにDONEを置きます。
+自分たちのFlowでは、PBIごとに**Completion Criteria（そのPBI固有の完了条件）**を置きます。
 
-ここでいうDONEは、**何が満たされれば、この変更を完了と判断できるかという完了条件**です。
+ここはScrumの用語と区別しておきたいところです。
+
+Scrumの**Definition of Done**は、Incrementがプロダクトに求められる品質基準を満たした状態を表す共通の定義です。この記事でいうCompletion Criteriaは、それとは別の「このPBIで何が満たされれば目的を達成したと判断できるか」という個別条件を指します。
 
 例えば、
 
@@ -87,10 +100,10 @@ PBIは、Product Backlog Itemの略です。ここでは「今回実現したい
 というPBIなら、
 
 ~~~text
-目的:
+Intent:
 管理者がユーザーを一時停止できる
 
-DONE:
+Completion Criteria:
 - 管理者だけが停止できる
 - 停止されたユーザーはログインできない
 
@@ -129,12 +142,12 @@ Deliveryでは、このSDDの型がかなりよく機能しました。
 
 ただし、どんな形でその価値を届けるか、その体験自体に本当に価値があるかは、まだ検証が必要な状態でした。
 
-ここでDeliveryと同じようにPBIを作り、DONEを置こうとしました。
+ここでDeliveryと同じようにPBIを作り、Completion Criteriaを置こうとしました。
 
 例えば、構造だけを単純化すると、
 
 ~~~text
-DONE:
+Completion Criteria:
 - 新しい体験を利用できるようにする
 ~~~
 
@@ -161,7 +174,7 @@ Softwareとしては、この条件を満たせます。
 
 が混ざっていました。
 
-前者は完了条件です。
+前者は実装に対して置ける完了条件です。
 
 後者は価値仮説です。
 
@@ -243,7 +256,7 @@ Deliveryでは、「何を作るか」はある程度分かっています。
 
 むしろ、**SDDの「実装前にIntentを外部化する」という考え方を、DiscoveryのExperimentにも適用すると、Deliveryとは違うものを先に定義する必要がある**と考えています。
 
-以下はGitHub Spec Kitの公式用語ではなく、自分たちの運用上の整理です。
+以下はGitHub Spec KitやScrumの公式用語ではなく、自分たちの運用上の整理です。
 
 Deliveryで先に定義するのが完了条件なら、Discoveryで先に定義したいのは、
 
@@ -294,11 +307,37 @@ Discoveryだから何も決めないわけではありません。
 
 **決める対象が違う。**
 
-### 仮説だと分かったら、DONEを捨てるのではなく書き換える
+### これはScrumの新しいArtifactやGateではない
+
+ここでいうLearning ConditionsやDiscovery Contractを、Scrumに新しいArtifactや承認Gateとして追加したいわけではありません。
+
+Scrumは意図的に不完全なFrameworkで、さまざまなProcess、Technique、Methodをその中で利用できます。そしてScrumの土台にあるEmpiricismでは、経験から知識を得て、観測したものに基づいて意思決定します。
+
+自分たちにとって、
+
+~~~text
+Learning Conditions
+  ↓
+Experiment
+  ↓
+Evidence
+  ↓
+Decision
+~~~
+
+は、**何を観測するのかを透明にし、観測した結果をInspectionし、次の行動へAdaptするための補助的な実践**です。
+
+最初から完全なSpecを作ることが目的ではありません。むしろ、学びによってSpecや計画が変わることを前提にしています。
+
+また、すべてのExperimentでこの項目を詳細に埋めることも目的ではありません。不確実性や失敗したときのコストに応じて、**次の判断に必要なものだけを外へ出す**ようにしています。
+
+Contractを増やすことではなく、判断に必要な情報を明確にすることが目的です。
+
+### 仮説だと分かったら、完了条件を捨てるのではなく書き換える
 
 ここも今回の学びでした。
 
-DONEを書いていて、そこに価値仮説が混ざっていると気づいたからといって、実装をすべて止める必要はありません。
+Completion Criteriaを書いていて、そこに価値仮説が混ざっていると気づいたからといって、実装をすべて止める必要はありません。
 
 価値仮説の部分を完了条件から外して、**学習条件へ書き換える。**
 
@@ -314,13 +353,17 @@ Learning Conditions
 Evidence
   ↓
 Decision
-  │
+  ├─ 次のExperiment
+  ├─ Solution変更
+  ├─ 仮説見直し / Stop
   └─ 価値を確認できたらDeliveryへ
 ~~~
 
 価値が確認できたら、その後でDelivery側のPBIとして完了条件を定義すればよい。
 
-こう考えると、DiscoveryとDeliveryは別々の世界ではなく、自然につながります。
+ただし、これは一方向のHandoffではありません。Deliveryで得たEvidenceによって仮説を見直す必要が出れば、再びDiscoveryへ戻ります。
+
+こう考えると、DiscoveryとDeliveryは別々の世界ではなく、同じProduct Developmentの中で行き来するものとしてつながります。
 
 ---
 
@@ -345,7 +388,7 @@ Discovery Contract
 - Decision
 - 今回固定しないもの
 
-            ↓ Evidence / Decision
+            ↕ Evidence / Decision
 
 Delivery Contract
 - Intent
@@ -360,6 +403,8 @@ HarnessがAgentに「どう動くか」を支えるものだとしたら、SDD�
 Discoveryでは、学習すべきことをContractにする。
 
 Deliveryでは、実現すべきことをContractにする。
+
+そして、どちらのContractも固定された正解ではありません。Evidenceによって見直し、必要なら書き換えます。
 
 ---
 
@@ -376,6 +421,8 @@ Deliveryでは、実現すべきことをContractにする。
 Product Developmentでは、DiscoveryとDeliveryがいつもきれいに分かれるわけではありません。Discoveryでも実装は必要ですし、Deliveryしながら新しいことが分かることもあります。
 
 だから分類そのものが目的ではありません。
+
+これはScrumのイベントやArtifactを増やす話でもありません。Scrumで言えば、Product GoalやSprint Goalへ向かう中で、いま扱っている不確実性に応じて、どんな情報を透明にし、何を観測し、どう適応するかを変える話だと捉えています。
 
 自分自身、これからAgentへPBIやSpecを渡す前に、まず次の2つを確認したいと思っています。
 
@@ -399,5 +446,11 @@ SDDを使うか使わないかではなく、**DiscoveryとDeliveryで、何をS
 - GitHub Spec Kit `assess` - Idea Assessment Pipeline Extension
   - SDDの前段にDiscovery trackを置き、`go / needs-clarification / kill` を判断するFlowと、Discoveryではソースコードを変更しないGuardrailの参考
   - https://github.com/github/spec-kit/blob/main/extensions/assess/README.md
+- The Scrum Guide（2020）
+  - Product Goal / Sprint Goal / Definition of Done、Empiricism、Product Backlog Refinementの用語と位置づけの確認
+  - https://scrumguides.org/scrum-guide.html
+- Principles behind the Agile Manifesto
+  - 変化への適応、Simplicity、継続的な改善という観点の確認
+  - https://agilemanifesto.org/principles.html
 - 前回の記事「失敗をモデルのせいにしない。AI駆動開発を『Model + Harness』で考える」
   - https://note.com/mine_unilabo/n/nd6a5d83d1488
