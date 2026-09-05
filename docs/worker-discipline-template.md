@@ -121,6 +121,12 @@ git diff origin/main...HEAD --stat
 - 実装は `scripts/<name>.js` に `--self-test` フラグを生やす（既存の全 self-test がこの形。fixture は `scripts/fixtures/<name>/` に置く）
 - `package.json` に `check:<name>` と `test:<name>`（= `node scripts/<name>.js --self-test`）の 2 本を足す
 - `check:<name>` を `npm run check` の集約ランナーの `checks` リストに足す
+
+**ただし集約ランナーに足すのは「読むだけの検査」に限る。** ファイルを削除・変更する運用スクリプト
+（`cleanup:pr` / `publish:qiita` など）は `npm run check` に入れない。CI が副作用付きの操作を実行して
+しまう。この種のスクリプトは bash でもよく（`scripts/cleanup-pr-worktree.sh` / `scripts/check-pr-staleness.sh`
+が実例）、self-test を別ファイルへ切り出して `test:<name>` から `exec` する形も既存にある。
+その場合も **self-test を `.github/workflows/ci.yml` へ繋ぐことは必須**。
 - **`test:<name>` を `.github/workflows/ci.yml` の self-test ステップに足す**
 
 **最後の 1 手を忘れない。** script を書いても CI に wire されていなければガードは効かない（`AGENT_LEARNINGS.md` 2026-06-07）。2026-09-06 に未接続の self-test 9 件が一括発覚している（PR #606）。
