@@ -53,7 +53,11 @@ python3 .claude/skills/note-export-import/scripts/verify_wxr.py articles_note/bu
 
 依存: `pip install --break-system-packages markdownify markdown`（`verify_wxr.py` は標準ライブラリのみ）
 
-> **生成物の整理**: `articles_note/build/` は `md_to_wxr.py` が実行のたびに新規ファイルを積むため旧版が溜まる。note のインポートはファイル選択式で、**旧版を選ぶと古い本文の下書きがサーバ側に作られ、復旧に手動削除が必要**になる。WXR を生成したら `npm run clean:note-build` で記事ごと最新1本だけに整理する（`articles_note/new/<slug>.md` が無い slug は全削除。`--dry-run` で対象確認のみ）。build/ は `.gitignore` 済みで再生成可能なため削除は非破壊。
+> **生成物の整理**: `articles_note/build/` は `md_to_wxr.py` が生成する `import-<slug>-YYYYMMDD-HHMM.xml` が溜まる（タイムスタンプは分粒度なので、同一分内の再実行は上書き、分をまたぐと旧版が残る）。note のインポートはファイル選択式で、**旧版を選ぶと古い本文の下書きがサーバ側に作られ、復旧に手動削除が必要**になる。WXR を生成したら `npm run clean:note-build` で記事ごと最新1本だけに整理する。build/ は `.gitignore` 済みで再生成可能なため削除は非破壊。
+>
+> - **確認だけしたいときは `npm run clean:note-build:dry`**（`--` 不要）。`npm run clean:note-build -- --dry-run` も同義。`--` を忘れた `npm run clean:note-build --dry-run` は npm がフラグを食って引数に届かないが、スクリプト側で `npm_config_dry_run` を見て dry-run 扱いにするため実削除にはならない（判定経路を1行ログに出す）
+> - 削除対象は `articles_note/{new,published,drafts}/<slug>.md` がどこにも無い slug の WXR と、同一 slug の旧版。published/ drafts/ のミラー（note guid 名）も live 判定に含めるので、guid 由来の WXR は消えない
+> - `new` / `drafts` / `published` / `bundle` / `batch` は `md_to_wxr.py` がディレクトリ指定・複数指定時に付ける**予約名**で、記事を逆引きできないため**旧版も含めて自動削除しない**（`kept (reserved)` としてログに出る。不要になったら手動で消す）
 
 ## 初回セットアップ（リポジトリ毎に1回）
 

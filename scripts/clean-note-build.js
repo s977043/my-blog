@@ -2,25 +2,37 @@
 // Clean: `articles_note/build/` に溜まる note インポート用 WXR を、記事ごとの最新1本だけに整理する。
 //
 // ■ 背景（なぜ必要か）
-//   `md_to_wxr.py` は実行のたびに `import-<slug>-YYYYMMDD-HHMM.xml` を**新規ファイルとして**
-//   追記していく（同名上書きをしない設計）。そのため同じ記事を何度か生成し直すと、
-//   build/ に旧版が積み上がる。note のインポート UI はファイル選択式なので、**旧版を取り違えて
-//   アップロードすると、古い本文の下書きが note 側に作られる**。インポートは常に新規下書きを
-//   作る（既存記事の上書き不可）ため、取り違えの復旧には note 側の手動削除が必要になる。
+//   `md_to_wxr.py` は `--out` 省略時に `import-<slug>-YYYYMMDD-HHMM.xml` を生成する。
+//   タイムスタンプは**分粒度**なので、同一分内の再実行は同名を `out.write_text` で上書きし、
+//   分をまたげば別ファイルとして積み上がる。つまり多くの場合、生成し直すたびに旧版が残る。
+//   note のインポート UI はファイル選択式なので、**旧版を取り違えてアップロードすると、
+//   古い本文の下書きが note 側に作られる**。インポートは常に新規下書きを作る（既存記事の
+//   上書き不可）ため、取り違えの復旧には note 側の手動削除が必要になる。
+//
+// ■ ファイル名の slug（`md_to_wxr.py` の derive_default_outname が正本）
+//   - 単一ファイル指定  → そのファイルの stem（＝記事 slug）
+//   - 単一ディレクトリ指定 → ディレクトリ名（`new` / `drafts` / `published`）
+//   - 複数指定          → `bundle`（ディレクトリ名が空なら `batch`）
+//   後者2つは「複数記事を束ねた生成物」であり、slug から記事を逆引きできない。
 //
 // ■ 削除する / 残すの判定
-//   1. 同一 slug の WXR が複数ある場合、**ファイル名のタイムスタンプが最新のものだけ残す**
-//   2. `articles_note/new/<slug>.md` が存在しない slug の WXR は**全削除**する
-//      （note へ公開済みの記事は new/ から外れ、`published/` ミラーへ降りる運用のため、
-//       new/ に無い＝もうインポートする予定がない、と判断できる）
-//   3. `.DS_Store` 等、`import-*.xml` 以外のファイルは対象外（触らない）
+//   1. 予約名（new / drafts / published / bundle / batch）の slug は**一切削除しない**。
+//      同一 slug でも束ねた記事集合が実行ごとに異なりうるため、新しい版が古い版の上位互換とは
+//      限らず、「最新1本を残す」規則を適用すると失われる生成物がある。よって旧版も残す。
+//   2. 上記以外で、同一 slug の WXR が複数ある場合は**タイムスタンプが最新のものだけ残す**
+//   3. 上記以外で、`articles_note/{new,published,drafts}/<slug>.md` がどこにも存在しない slug の
+//      WXR は**全削除**する（new/ に無い＝インポート予定なし。published/ drafts/ のミラーは
+//      note guid 名なので、guid 由来の WXR を誤って消さないために live 判定へ含める）
+//   4. `.DS_Store` 等、`import-*.xml` 以外のファイルは対象外（触らない）
 //
 //   `articles_note/build/` は `.gitignore` 済みのローカル生成物であり、削除しても
 //   `md_to_wxr.py` の再実行でいつでも復元できる。よって削除は破壊的操作にあたらない。
 //
 // ■ 使い方
 //   npm run clean:note-build              # 実削除
-//   npm run clean:note-build -- --dry-run # 削除対象の一覧表示のみ（何も消さない）
+//   npm run clean:note-build:dry          # 削除対象の一覧表示のみ（`--` 不要。推奨）
+//   npm run clean:note-build -- --dry-run # 同上（`--` を忘れると npm がフラグを食う点に注意。
+//                                         #  その場合も npm_config_dry_run 経由で dry-run 扱いにする）
 //   npm run test:clean-note-build         # self-test
 
 const fs = require("fs");
@@ -30,19 +42,39 @@ const path = require("path");
 const LABEL = "[clean:note-build]";
 const BUILD_DIR = "articles_note/build";
 const NEW_DIR = "articles_note/new";
+const LIVE_DIRS = ["articles_note/new", "articles_note/published", "articles_note/drafts"];
 
 // import-<slug>-YYYYMMDD-HHMM.xml
 const FILE_RE = /^import-(.+)-(\d{8})-(\d{4})\.xml$/;
 
+// md_to_wxr.py が「記事 slug ではない」名前を付けるケース（ディレクトリ指定 / 複数指定）
+const RESERVED_SLUGS = new Set(["new", "drafts", "published", "bundle", "batch"]);
+
+/**
+ * dry-run 判定。`npm run <script> --dry-run` は `--` 忘れで npm 自身のフラグとして食われ、
+ * process.argv には現れないまま script が実行される（＝確認のつもりで実削除される）。
+ * このとき npm は環境変数 npm_config_dry_run=true を渡すので、これも dry-run として扱う。
+ * @returns {{dryRun: boolean, source: string|null}}
+ */
+function resolveDryRun(argv, env) {
+  if (argv.includes("--dry-run")) return { dryRun: true, source: "引数 --dry-run" };
+  const v = env.npm_config_dry_run;
+  if (v !== undefined && v !== "" && v !== "false" && v !== "0") {
+    return { dryRun: true, source: "環境変数 npm_config_dry_run（`--` なしの npm フラグ）" };
+  }
+  return { dryRun: false, source: null };
+}
+
 /**
  * build ディレクトリの内容から「残す/消す」を決める。純関数（fs に触らない）ので self-test しやすい。
  * @param {string[]} fileNames build/ 直下のファイル名一覧
- * @param {Set<string>} liveSlugs articles_note/new/ に .md が実在する slug の集合
- * @returns {{keep: string[], remove: {name: string, reason: string}[], ignored: string[]}}
+ * @param {Set<string>} liveSlugs articles_note/{new,published,drafts}/ に .md が実在する slug の集合
+ * @returns {{keep: string[], remove: {name: string, reason: string}[], reserved: {name: string, reason: string}[], ignored: string[]}}
  */
 function plan(fileNames, liveSlugs) {
   const keep = [];
   const remove = [];
+  const reserved = [];
   const ignored = [];
   const bySlug = new Map();
 
@@ -58,6 +90,15 @@ function plan(fileNames, liveSlugs) {
   }
 
   for (const [slug, entries] of bySlug) {
+    if (RESERVED_SLUGS.has(slug)) {
+      for (const e of entries) {
+        reserved.push({
+          name: e.name,
+          reason: `slug "${slug}" は複数記事を束ねた生成物で provenance 不明のため自動削除しない`,
+        });
+      }
+      continue;
+    }
     if (!liveSlugs.has(slug)) {
       for (const e of entries) {
         remove.push({ name: e.name, reason: `${NEW_DIR}/${slug}.md が存在しない（インポート予定なし）` });
@@ -74,8 +115,9 @@ function plan(fileNames, liveSlugs) {
 
   keep.sort();
   remove.sort((a, b) => a.name.localeCompare(b.name));
+  reserved.sort((a, b) => a.name.localeCompare(b.name));
   ignored.sort();
-  return { keep, remove, ignored };
+  return { keep, remove, reserved, ignored };
 }
 
 function readDirSafe(dir) {
@@ -87,22 +129,31 @@ function readDirSafe(dir) {
   }
 }
 
-function liveSlugsFrom(dir) {
-  const entries = readDirSafe(dir) || [];
-  return new Set(entries.filter((f) => f.endsWith(".md")).map((f) => f.slice(0, -3)));
+function liveSlugsFrom(dirs) {
+  const set = new Set();
+  for (const dir of dirs) {
+    for (const f of readDirSafe(dir) || []) {
+      if (f.endsWith(".md")) set.add(f.slice(0, -3));
+    }
+  }
+  return set;
 }
 
-function run({ buildDir, newDir, dryRun }) {
+function run({ buildDir, liveDirs, dryRun, dryRunSource }) {
   const files = readDirSafe(buildDir);
   if (files === null) {
     console.log(`${LABEL} SKIP: ${buildDir} が存在しない（生成物なし）`);
     return 0;
   }
 
-  const { keep, remove, ignored } = plan(files, liveSlugsFrom(newDir));
+  if (dryRun) console.log(`${LABEL} dry-run 判定: ${dryRunSource || "不明"}`);
+
+  const { keep, remove, reserved, ignored } = plan(files, liveSlugsFrom(liveDirs));
 
   if (remove.length === 0) {
-    console.log(`${LABEL} OK: 整理不要（keep=${keep.length}, ignored=${ignored.length}）`);
+    console.log(
+      `${LABEL} OK: 整理不要（keep=${keep.length}, reserved=${reserved.length}, ignored=${ignored.length}）`
+    );
   } else {
     for (const r of remove) {
       const verb = dryRun ? "would remove" : "removed";
@@ -113,6 +164,7 @@ function run({ buildDir, newDir, dryRun }) {
     console.log(`${LABEL} ${head}: ${remove.length}件を削除${dryRun ? "する予定" : ""}、${keep.length}件を保持`);
   }
 
+  for (const r of reserved) console.log(`${LABEL} kept (reserved): ${r.name}  — ${r.reason}`);
   for (const name of keep) console.log(`${LABEL} keep: ${name}`);
   return 0;
 }
@@ -214,9 +266,9 @@ function selfTest() {
     const logged = [];
     const orig = console.log;
     console.log = (...a) => logged.push(a.join(" "));
-    run({ buildDir: b, newDir: n, dryRun: true });
+    run({ buildDir: b, liveDirs: [n], dryRun: true, dryRunSource: "self-test" });
     const afterDry = fs.readdirSync(b).sort();
-    run({ buildDir: b, newDir: n, dryRun: false });
+    run({ buildDir: b, liveDirs: [n], dryRun: false, dryRunSource: null });
     const afterReal = fs.readdirSync(b).sort();
     console.log = orig;
 
@@ -234,10 +286,95 @@ function selfTest() {
     const logged = [];
     const orig = console.log;
     console.log = (...a) => logged.push(a.join(" "));
-    const code = run({ buildDir: path.join(tmp, "nope"), newDir: tmp, dryRun: false });
+    const code = run({ buildDir: path.join(tmp, "nope"), liveDirs: [tmp], dryRun: false });
     console.log = orig;
     check("missing build dir exit", code, 0);
     check("missing build dir skip log", logged.some((l) => l.includes("SKIP")), true);
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+
+  // 10. 予約名 slug（ディレクトリ指定・複数指定の生成物）は旧版も含めて削除しない
+  {
+    for (const slug of ["bundle", "batch", "new", "drafts", "published"]) {
+      const r = plan(
+        [`import-${slug}-20260101-0900.xml`, `import-${slug}-20260905-1637.xml`],
+        new Set(["foo"])
+      );
+      check(`reserved ${slug} not removed`, r.remove, []);
+      check(`reserved ${slug} listed`, r.reserved.map((x) => x.name), [
+        `import-${slug}-20260101-0900.xml`,
+        `import-${slug}-20260905-1637.xml`,
+      ]);
+      check(`reserved ${slug} not in keep`, r.keep, []);
+    }
+  }
+
+  // 11. published/ drafts/ の note guid ミラーも live 扱い（guid 由来の WXR を消さない）
+  {
+    const r = plan(
+      ["import-n2ef833cbece8-20260905-1637.xml", "import-nabc123-20260905-1637.xml"],
+      new Set(["n2ef833cbece8", "nabc123"])
+    );
+    check("guid slugs kept", r.keep, [
+      "import-n2ef833cbece8-20260905-1637.xml",
+      "import-nabc123-20260905-1637.xml",
+    ]);
+    check("guid slugs not removed", r.remove, []);
+  }
+
+  // 12. liveSlugsFrom は new/published/drafts を横断して集める
+  {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "clean-note-build-"));
+    const dirs = ["new", "published", "drafts"].map((d) => path.join(tmp, d));
+    dirs.forEach((d) => fs.mkdirSync(d));
+    fs.writeFileSync(path.join(dirs[0], "foo.md"), "#\n");
+    fs.writeFileSync(path.join(dirs[1], "n2ef833cbece8.md"), "#\n");
+    fs.writeFileSync(path.join(dirs[2], "n99draft.md"), "#\n");
+    fs.writeFileSync(path.join(dirs[0], "not-md.txt"), "x");
+    check(
+      "liveSlugsFrom crosses dirs",
+      [...liveSlugsFrom(dirs)].sort(),
+      ["foo", "n2ef833cbece8", "n99draft"]
+    );
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+
+  // 13. `--` 忘れ（npm_config_dry_run）でも dry-run と判定する
+  {
+    check("dry-run via argv", resolveDryRun(["--dry-run"], {}), {
+      dryRun: true,
+      source: "引数 --dry-run",
+    });
+    const env = resolveDryRun([], { npm_config_dry_run: "true" });
+    check("dry-run via env flag", env.dryRun, true);
+    check("dry-run via env source", env.source.includes("npm_config_dry_run"), true);
+    check("no dry-run by default", resolveDryRun([], {}), { dryRun: false, source: null });
+    check("env false is not dry-run", resolveDryRun([], { npm_config_dry_run: "false" }).dryRun, false);
+    check("env empty is not dry-run", resolveDryRun([], { npm_config_dry_run: "" }).dryRun, false);
+  }
+
+  // 14. npm_config_dry_run 環境下では実ファイルが消えない（fs 経路の回帰検出）
+  {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "clean-note-build-"));
+    const b = path.join(tmp, "build");
+    const n = path.join(tmp, "new");
+    fs.mkdirSync(b);
+    fs.mkdirSync(n);
+    fs.writeFileSync(path.join(n, "foo.md"), "# foo\n");
+    fs.writeFileSync(path.join(b, "import-foo-20260101-0900.xml"), "<x/>");
+    fs.writeFileSync(path.join(b, "import-foo-20260905-1637.xml"), "<x/>");
+
+    const { dryRun, source } = resolveDryRun([], { npm_config_dry_run: "true" });
+    const logged = [];
+    const orig = console.log;
+    console.log = (...a) => logged.push(a.join(" "));
+    run({ buildDir: b, liveDirs: [n], dryRun, dryRunSource: source });
+    console.log = orig;
+    check("env dry-run keeps files", fs.readdirSync(b).sort(), [
+      "import-foo-20260101-0900.xml",
+      "import-foo-20260905-1637.xml",
+    ]);
+    check("env dry-run logs source", logged.some((l) => l.includes("npm_config_dry_run")), true);
     fs.rmSync(tmp, { recursive: true, force: true });
   }
 
@@ -250,8 +387,9 @@ function main() {
   if (args.includes("--self-test")) {
     process.exit(selfTest());
   }
+  const { dryRun, source } = resolveDryRun(args, process.env);
   process.exit(
-    run({ buildDir: BUILD_DIR, newDir: NEW_DIR, dryRun: args.includes("--dry-run") })
+    run({ buildDir: BUILD_DIR, liveDirs: LIVE_DIRS, dryRun, dryRunSource: source })
   );
 }
 
