@@ -14,6 +14,8 @@ Claude Code 向けのツールガイド。規約（何が正しいか）は `@AG
 
 各ツールの一覧と説明文はハーネスが毎セッション自動で読み込む（`.claude/commands/` / `.claude/agents/` / `.claude/skills/` / `.claude/workflows/`）。個別の用途は各定義ファイルの frontmatter description を正とする。**本ファイルに件数は書かない**（増減の度に必ず陳腐化するため）。実態を数えたいときは `ls .claude/commands .claude/agents .claude/skills .claude/workflows`。
 
+**サブエージェントへ作業を委託するときは、[`docs/worker-discipline-template.md`](docs/worker-discipline-template.md) を読ませること。** worktree セットアップ（`npm ci` が要る）、触ってはいけないファイル、formatter churn の commit 後チェック、完了報告の形式、報告の作法をまとめてある。委託プロンプトへ「このファイルを読んでから着手すること」の1行を入れれば足りる。
+
 `.claude/workflows/` は Workflow ツールから `Workflow({ name: "<file名から .js を除いたもの>", args: {...} })` で起動する多フェーズスクリプト。commands / skills と違い**ハーネスの一覧には出ない**ので、note 記事の最終化に関わるものだけここに索引を置く。
 
 ### note 記事の最終化まわり（#594 / #604 で追加）
