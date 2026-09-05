@@ -53,6 +53,8 @@ python3 .claude/skills/note-export-import/scripts/verify_wxr.py articles_note/bu
 
 依存: `pip install --break-system-packages markdownify markdown`（`verify_wxr.py` は標準ライブラリのみ）
 
+> **生成物の整理**: `articles_note/build/` は `md_to_wxr.py` が実行のたびに新規ファイルを積むため旧版が溜まる。note のインポートはファイル選択式で、**旧版を選ぶと古い本文の下書きがサーバ側に作られ、復旧に手動削除が必要**になる。WXR を生成したら `npm run clean:note-build` で記事ごと最新1本だけに整理する（`articles_note/new/<slug>.md` が無い slug は全削除。`--dry-run` で対象確認のみ）。build/ は `.gitignore` 済みで再生成可能なため削除は非破壊。
+
 ## 初回セットアップ（リポジトリ毎に1回）
 
 ```bash
