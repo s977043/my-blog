@@ -103,6 +103,13 @@ function validate(files) {
     'review-only',
     'requiresThesisLoop',
     'drafts-readonly-mirror',
+    'primarySourceAccess',
+    "enum: ['available', 'partial', 'unavailable']",
+    'custom Agent定義をRead',
+    'findings:',
+    'claims:',
+    'images:',
+    'addCandidates:',
   ])
 
   const phaseOrder = ['Extract', 'DomainReview', 'LanguageReview', 'VisualReview', 'EditorialReview', 'FinalGate']
@@ -145,6 +152,12 @@ function validate(files) {
   if (pkg.scripts?.['test:note-finalize'] !== 'node scripts/check-note-finalize.js --self-test') {
     errors.push('package.json missing test:note-finalize script')
   }
+  if (!String(pkg.scripts?.check || '').includes('check:article-humanizer-contract')) {
+    errors.push('global check must include check:article-humanizer-contract')
+  }
+  if (String(pkg.scripts?.check || '').includes('check:article-language-density')) {
+    errors.push('global check must not scan all historical articles with WARN-only language density')
+  }
 
   return errors
 }
@@ -170,13 +183,16 @@ function selfTest() {
     "name: 'note-finalize'",
     "{ title: 'Extract' } { title: 'DomainReview' } { title: 'LanguageReview' } { title: 'VisualReview' } { title: 'EditorialReview' } { title: 'FinalGate' }",
     "phase('Extract') phase('DomainReview') phase('LanguageReview') phase('VisualReview') phase('EditorialReview') phase('FinalGate')",
-    'Terminology Contract READY NEEDS_CHANGES UNVERIFIED review-only requiresThesisLoop drafts-readonly-mirror',
+    "enum: ['available', 'partial', 'unavailable']",
+    'Terminology Contract READY NEEDS_CHANGES UNVERIFIED review-only requiresThesisLoop drafts-readonly-mirror primarySourceAccess custom Agent定義をRead findings: claims: images: addCandidates:',
   ].join('\n')
   base[PATHS.command] = 'npm run check:article-language-density note-finalize READY NEEDS_CHANGES UNVERIFIED drafts 自動マージしない'
   base[PATHS.languageScript] = 'WARN only analyzeMarkdown --self-test'
   base[PATHS.package] = JSON.stringify({ scripts: {
     'check:note-finalize': 'node scripts/check-note-finalize.js',
     'test:note-finalize': 'node scripts/check-note-finalize.js --self-test',
+    'check:article-humanizer-contract': 'node scripts/check-article-humanizer.js',
+    check: 'npm run check:article-humanizer-contract && npm run check:note-finalize',
   } })
 
   const validErrors = validate(base)
@@ -195,6 +211,20 @@ function selfTest() {
   const wrongOrder = { ...base, [PATHS.workflow]: base[PATHS.workflow].replace("phase('LanguageReview') phase('VisualReview')", "phase('VisualReview') phase('LanguageReview')") }
   if (!validate(wrongOrder).some((error) => error.includes('phase order invalid'))) {
     throw new Error('workflow phase-order fixture was not rejected')
+  }
+
+  const noisyGlobalCheck = {
+    ...base,
+    [PATHS.package]: JSON.stringify({ scripts: {
+      'check:note-finalize': 'node scripts/check-note-finalize.js',
+      'test:note-finalize': 'node scripts/check-note-finalize.js --self-test',
+      'check:article-humanizer-contract': 'node scripts/check-article-humanizer.js',
+      'check:article-language-density': 'node scripts/check-article-language-density.js',
+      check: 'npm run check:article-humanizer-contract && npm run check:article-language-density',
+    } }),
+  }
+  if (!validate(noisyGlobalCheck).some((error) => error.includes('must not scan all historical articles'))) {
+    throw new Error('noisy global language-density fixture was not rejected')
   }
 
   console.log('[test:note-finalize] PASS')
