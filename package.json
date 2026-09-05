@@ -27,6 +27,8 @@
     "check:internal-links": "node scripts/check-internal-links.js",
     "check:pr-staleness": "bash scripts/check-pr-staleness.sh",
     "test:pr-staleness": "bash scripts/test-check-pr-staleness.sh",
+    "cleanup:pr": "bash scripts/cleanup-pr-worktree.sh",
+    "test:cleanup-pr": "bash scripts/test-cleanup-pr-worktree.sh",
     "check:publish-readiness": "node scripts/check-publish-readiness.js",
     "test:publish-readiness": "node scripts/check-publish-readiness.js --self-test",
     "check:article-humanizer-contract": "node scripts/check-article-humanizer.js",
