@@ -21,8 +21,20 @@
 | `drafting` | 本文執筆中 | `npm run check` が通る |
 | `in-review` | レビュー中 | `reviews/zenn/<slug>.md` の `publish-readiness` が `blocked=false` かつ `mustHigh=0` |
 | `ready-to-publish` | 公開待ち | `npm run check:zenn-pace` が FAIL でない |
+| `publishing` | **main 段だけ公開済み**。`articles/<slug>.md` は `published: true` で main にマージ済みだが、`release/zenn` 未マージのため Zenn には未反映 | `curl -s -o /dev/null -w "%{http_code}" https://zenn.dev/minewo/articles/<slug>` が `200`（＝ Zenn deploy 発火済み）→ `done` へ移し live URL を記録する |
 | `requires-human` | **異常停止**。人間の確認が必要 | （機械では進めない。人間が原因を解消して前の state へ戻す） |
 | `done` | 公開済み。live URL と HTTP 200 を記録 | — |
+
+#### なぜ `publishing` が要るか（Zenn 公開の2段階性）
+
+Zenn の公開は2段階である。`main` へ `published: true` をマージしても Zenn には反映されず、**`release/zenn` へマージした時点で公開される**（`main` への push は deploy をトリガーしない。rate-limit 対策。手順は [`AGENTS.md`](../AGENTS.md) §「Zenn 公開フロー」）。
+
+そのため main 段のマージから release/zenn マージまでの間、**「記事は `published: true` だが、まだ公開されていない」という窓が必ず生じる**。この窓に対して既存の state はどちらも誤りだった。
+
+- `ready-to-publish` のまま残す → 記事が `published: true` なので `npm run check:queue-drift` が FAIL する（未公開 state なのに公開フラグが立っている＝乖離扱い）
+- `done` へ移す → `done` の定義は「公開済み。live URL と HTTP 200 を記録」。この時点では HTTP 200 が取れず、公開されていない記事を公開済みとして扱うことになる（以後の rate-limit ペース計算と相互リンク作業が誤った前提で進む）
+
+`publishing` はこの窓そのものを表す state で、**`published: true` であることが正常**である点が他の未公開 state と異なる。`check:queue-drift` は `publishing` 行に対してのみ判定を反転させ、`published: false` のままの `publishing` 行（main 段の flip が未マージ／巻き戻った）を FAIL とする。
 
 ### `requires-human` への遷移条件（異常停止の定義）
 
@@ -32,6 +44,7 @@
 - 改善ループ **2 回連続で `mustHigh` が減少しない**（収束していない）
 - `check:zenn-pace` が FAIL（rate-limit 抵触。公開は翌日以降）
 - `check:publish-readiness` が `stale`（レビュー後に本文が変わった）
+  - **対象外**: `published: false` → `true` のフリップだけによる `stale`。`check:publish-readiness` の鮮度判定は記事の blob hash（`git hash-object articles/<slug>.md`）の一致で行うため、**front matter の `published` 行しか変えていなくても hash は必ず変わる**。つまり公開のたびに機械的に stale が出る。これは「レビュー後に本文が変わった」という本来の検知対象ではないので、`requires-human` に落とさない。判定手順は `git diff` で差分が `published:` の 1 行のみであることを確認すること。確認できたら reviews ファイルの `articleHash` をフリップ後の値へ更新し、**本文が変わっていない事実（diff が `published` 行のみ）を根拠として明記する**。差分が `published` 行以外に及んでいた場合は通常どおり `requires-human` を適用する
 - 一次情報の参照先が実在しない（リンク切れ・削除済みスクリプト）
 
 > **なぜ数値を決め打ちするか**: 「収束しなければ人間へ」だけでは、エージェントは収束していないことを自分で認めない。回数という**外形的な基準**にすることで、判定に主観が入る余地を消す。5 回 / 2 回連続は現時点の暫定値で、実測が溜まったら見直す（この数値自体が仮説）。
@@ -45,8 +58,10 @@
   - 原因は **Zenn rate-limit** でほぼ確定。`AGENT_LEARNINGS.md` の 2026-05-22 エントリに**同型の先例**がある（`river-review-v033` を前記事の 22.4 時間後に publish → Zenn deploy log に「次の記事は投稿数の上限に達したためデプロイされませんでした」と表示され未反映。同 commit 内の他ファイル更新は deploy 成功）。今回はさらに短い間隔である。loop-maturity の公開（8/27 14:45 JST）から本記事の sync マージ（8/28 08:58 JST）まで **18時間13分**しかあいておらず、規約の 24 時間を下回っている
   - **`[done]` へ移してはならない理由**: `done` の遷移条件は「live URL と HTTP 200 を記録」。現状は 403 / API 未出現で公開が成立していない。マージ済みという事実だけで Done にすると、公開されていない記事を公開済みとして扱い、以後の rate-limit ペース計算と相互リンク作業がすべて誤った前提で進む
   - 人間の判断が要る点: ①さらに待って反映されるか（Zenn 側の遅延の可能性）②反映されなければ release/zenn への空 commit（`git commit --allow-empty`）で再 deploy ③再試行は **前回公開（`loop-maturity-rubric-audit` = 2026-08-27 14:45 JST）から 24 時間以上**あけてから（＝ 2026-08-28 14:45 JST 以降）
-- `[ready-to-publish]` **#15 (zenn) 締切 2026-08-31 以降**: 「AIセカンドブレインのマルチエージェント記憶」（`articles/ai-second-brain-multi-agent-memory.md`、`published: false`）。レビュー成果物 `reviews/zenn/ai-second-brain-multi-agent-memory.md` — **2026-08-28 10:45 JST 実測**で `blocked=false mustHigh=0 verified=true loops=1 reviewedAt=2026-08-27T09:41:31Z`、`articleHash=5b87649768cb5df4a159a8c4e42ffbe115972ad5` が `git hash-object articles/ai-second-brain-multi-agent-memory.md` の現行値と**一致（fresh）**。`in-review` の遷移条件（blocked=false かつ mustHigh=0）を満たしたうえで `ready-to-publish` に置いている。**締切を 8/31 以降にしている理由**: 8/28 時点で `check:zenn-pace` が WARN(FAIL相当) 2 件、かつ #13 が deploy 未発火のため、先に #13 の決着を待つ必要がある。着手直前に readiness を**再測**すること（ゲート鮮度: reviewedAt からの経過ではなく articleHash 一致で判定する）
+- `[publishing]` **#15 (zenn) 締切 2026-08-31 以降**: 「AIセカンドブレインのマルチエージェント記憶」（`articles/ai-second-brain-multi-agent-memory.md`、`published: true`）。**main 段のみ完了（Zenn 未反映）**。レビュー成果物 `reviews/zenn/ai-second-brain-multi-agent-memory.md` — **2026-08-28 10:45 JST 実測**で `blocked=false mustHigh=0 verified=true loops=1 reviewedAt=2026-08-27T09:41:31Z`、`articleHash=5b87649768cb5df4a159a8c4e42ffbe115972ad5` が `git hash-object articles/ai-second-brain-multi-agent-memory.md` の現行値と**一致（fresh）**。`in-review` の遷移条件（blocked=false かつ mustHigh=0）を満たしたうえで `ready-to-publish` に置いている。**締切を 8/31 以降にしている理由**: 8/28 時点で `check:zenn-pace` が WARN(FAIL相当) 2 件、かつ #13 が deploy 未発火のため、先に #13 の決着を待つ必要がある。着手直前に readiness を**再測**すること（ゲート鮮度: reviewedAt からの経過ではなく articleHash 一致で判定する）
   - **2026-09-02 主張境界レビュー（`oss-article-claim-boundary`）で high 1 / medium 2 を検出・反映済み**（レビュー詳細は `reviews/zenn/ai-second-brain-multi-agent-memory.md` 7 章）。G1 (high): 「記憶を共有する4ツール」に ChatGPT が含まれるが、記事のどこにも接続方法が書かれておらず、冒頭では ChatGPT を「共有できない側」と説明する矛盾があった → 実測（`~/.codex/AGENTS.md` / `~/.gemini/settings.json` に ChatGPT 接続の記述なし）に基づき「記憶を共有する3ツール（Claude/Codex/Gemini）＋ChatGPTは別枠（Hermes運用のプロンプト基盤／人間の手動転記）」に統一。F5 (medium): 同じ実行者説明が2段落連続していた重複を、G1 の修正と同時に1段落へ統合して解消。G2 (medium): Hermes を「役割の呼び名」と説明する本文が、公開済み note 記事（Hermes Agentを「依頼窓口」として導入、`https://note.com/mine_unilabo/n/nc1ac531190c9`）と粒度差で衝突して見える点を、`## 参考` 節へのリンク追加のみで対応（本文の断定は変更せず、AGENTS.md のクロスプラットフォーム参照規約に従い末尾リンク集配下に配置。`npm run check:note-ref` OK）。反映後 `npm run check:publish-readiness -- ai-second-brain-multi-agent-memory` は `blocked=false mustHigh=0` を維持、**articleHash は `5b87649768cb5df4a159a8c4e42ffbe115972ad5` → `b43e3cbbe4329377cece98789e90ffee73cb9822`** に更新。タイトル・`topics`・`published: false`・記事の中心的主張は不変
+  - **2026-09-05 main 段公開（`publishing` へ遷移）**: `published: false` → `true` のフリップのみを main へ入れた。**`release/zenn` へは未マージのため Zenn には未反映**（`https://zenn.dev/minewo/articles/ai-second-brain-multi-agent-memory` は未公開）。`done` への遷移条件は同 URL が HTTP 200 を返すこと。sync は本 PR の範囲外で、`npm run check:zenn-pace`（2026-09-05 実測: 前回公開 2026-09-04 02:27 JST から 44.1h 経過・OK）を再測してから `scripts/sync-release-zenn.sh` で行う
+  - `check:publish-readiness` の `articleHash` を `b43e3cbbe4329377cece98789e90ffee73cb9822` → `7deb7226639ef70ffe634d3221825e66bae9b0cc` へ更新した。**根拠: `git diff` の差分が front matter の `published: false` → `true` の 1 行のみで、本文は 1 文字も変わっていない**（blob hash は published 行の変更だけで必ず変わるため、この stale は「レビュー後に本文が変わった」ではない。`requires-human` 対象外の扱いは上記「`requires-human` への遷移条件」を参照）
 - `[ready]` **#11 (zenn) 締切 2026-09-07**: 「worktree 分離だけでは防げない — 並列AIセッションのGit事故を"事後検知"で機械化する」（仮）。一次情報: `scripts/check-pr-staleness.sh`＋テスト、`scripts/hooks/pre-commit|pre-push`、Round 3〜5 の実測インシデント（#404/#405 の squash 済み記事巻き戻し等、`memory/project_parallel_session_metrics.md`）。差別化: 市場は git worktree による事前分離記事が多数だが、同一 working tree での実事故観測データと検知系（staleness チェック・hooks）は空白（theme-discovery 2026-08-10、スコア 17/20）
 - `[done]` #7 (zenn-book) は **2026-06-01 公開完了**（下記 Done 参照）。本文・図・cover・5系統＋ultracode レビュー完了後、release/zenn PR #350 マージで go-live
 - `[ready-to-publish]` #9 (zenn) は「Bookを多層AIレビューで作った話」。内容は収束済み・公開可。タイミングのみ分離（Book公開→update同期→新規publish の順で間隔を空ける）

@@ -3,7 +3,7 @@ title: "AIエージェントの記憶を1つのObsidian Vaultに集約する —
 emoji: "🧠"
 type: "idea"
 topics: ["ai駆動開発", "obsidian", "claudecode", "codex", "memory"]
-published: false
+published: true
 ---
 
 ## 想定読者

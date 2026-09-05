@@ -13,6 +13,7 @@
 //     （Done セクションの行は `- 2026-08-31 zenn ...` のように `[state]` 接頭辞を持たないため
 //     自然に対象外になる）
 //   - state が `ready-to-publish` / `ready` / `drafting` / `in-review` の行のみ判定する
+//   - **`publishing` は判定を反転させる**（後述）
 //   - 行中から `` `articles/<slug>.md` `` 形式のパス参照を抽出する。**`articles_note/...`（note）は
 //     対象外**（"articles/" の直後が "_" ではなく "/" である参照のみを拾うため、正規表現上
 //     `articles_note/` は自然にマッチしない）
@@ -20,6 +21,17 @@
 //     （誤検知ゼロを優先。推測しない）
 //   - slug が取れない行、`articles/<slug>.md` が実在しない行も **スキップ**
 //   - 対象の `articles/<slug>.md` が `published: true` なら **FAIL**
+//
+// ■ `publishing` state（逆向きの乖離）
+//   Zenn の公開は2段階で、`main` へ `published: true` をマージしても公開されず、`release/zenn`
+//   へマージした時点で公開される。その間の「`published: true` だがまだ公開されていない」窓を表すのが
+//   `publishing`（定義は `docs/publish-queue.md` の状態遷移表）。この state では `published: true`
+//   が**正常**なので、上記の判定をそのまま当てると必ず FAIL してしまう。
+//   単に無視するのではなく判定を反転させ、`publishing` なのに `published: false` のままの行
+//   （main 段の flip PR が未マージ、または巻き戻った）を FAIL とする。無視すると
+//   「publishing にしたが flip を入れ忘れた／revert された」状態を誰も検知できず、
+//   release/zenn への sync 時に中身が `published: false` のまま出ていく事故につながる。
+//   判定不能な行をスキップする方針は `publishing` でも変えない（誤検知ゼロを維持）。
 //
 // ■ 誤検知ゼロを最優先する理由
 //   判定できない行を無理に判定すると、実際には正しい queue 行を FAIL 扱いしてしまい、
@@ -38,12 +50,16 @@ const ROOT = process.cwd();
 const QUEUE_PATH = "docs/publish-queue.md";
 const LABEL = "[check:queue-drift]";
 
+// `published: true` であってはならない state（見つけたら FAIL＝Done へ移し損ねている）
 const TARGET_STATES = new Set([
   "ready-to-publish",
   "ready",
   "drafting",
   "in-review",
 ]);
+
+// `published: true` であることが正常な state（`published: false` なら FAIL＝逆向きの乖離）
+const PUBLISHING_STATE = "publishing";
 
 // ---- 純関数（self-test 対象） ----
 
@@ -86,7 +102,8 @@ function evaluateQueue(queueContent, deps) {
   lines.forEach((line, idx) => {
     const parsed = parseQueueLine(line);
     if (!parsed) return;
-    if (!TARGET_STATES.has(parsed.state)) return;
+    const isPublishing = parsed.state === PUBLISHING_STATE;
+    if (!isPublishing && !TARGET_STATES.has(parsed.state)) return;
 
     const lineNo = idx + 1;
 
@@ -114,10 +131,15 @@ function evaluateQueue(queueContent, deps) {
       slug: parsed.slug,
     };
 
-    if (isPublishedTrue(body)) {
-      failures.push(entry);
-    } else {
+    const published = isPublishedTrue(body);
+    // publishing は published:true が正常。それ以外の state は published:true が乖離。
+    if (published === isPublishing) {
       checked.push(entry);
+    } else {
+      failures.push({
+        ...entry,
+        kind: isPublishing ? "not-published" : "already-published",
+      });
     }
   });
 
@@ -219,7 +241,13 @@ function selfTest() {
     "- `[ready-to-publish]` **#12 (note) 締切 2026-09-03**: 「note記事」（`articles_note/new/foo.md`）",
     // 6: 実在しない記事 → skip
     "- `[ready]` **#23 (zenn)**: 「未作成記事」（`articles/does-not-exist.md`）",
-    // 7: done セクションの行（[state] 接頭辞なし）→ そもそもマッチしない
+    // 7: publishing で published:true → checked（正常。main 段公開済み・release/zenn 待ち）
+    "- `[publishing]` **#24 (zenn) 締切 2026-09-13**: 「main段公開済み」（`articles/already-published.md`）",
+    // 8: publishing なのに published:false → FAIL（逆向きの乖離。flip 未マージ／巻き戻り）
+    "- `[publishing]` **#25 (zenn) 締切 2026-09-14**: 「flip 未反映」（`articles/still-draft.md`）",
+    // 9: publishing でも判定不能な行はスキップ（誤検知ゼロ方針を維持）
+    "- `[publishing]` **#26 (note) 締切 2026-09-15**: 「note記事」（`articles_note/new/bar.md`）",
+    // 10: done セクションの行（[state] 接頭辞なし）→ そもそもマッチしない
     "",
     "## Done",
     "",
@@ -228,18 +256,41 @@ function selfTest() {
 
   const result = evaluateQueue(queueFixture, deps);
 
-  eq("FAIL 件数（乖離2件）", result.failures.length, 2);
+  eq("FAIL 件数（乖離3件）", result.failures.length, 3);
   eq(
     "FAIL の slug 一覧",
     result.failures.map((f) => f.slug).sort(),
-    ["already-published", "already-published"].sort(),
+    ["already-published", "already-published", "still-draft"].sort(),
   );
-  eq("checked 件数（正常1件）", result.checked.length, 1);
-  eq("checked の slug", result.checked[0].slug, "still-draft");
   eq(
-    "skipped 件数（note 1件 + 実在しない 1件 = 2件。backlog は対象 state 外で不算入）",
+    "FAIL の kind 内訳（already-published 2 / not-published 1）",
+    result.failures.map((f) => f.kind).sort(),
+    ["already-published", "already-published", "not-published"].sort(),
+  );
+  eq(
+    "publishing × published:false が FAIL になる（逆向きの乖離）",
+    result.failures.some(
+      (f) => f.state === "publishing" && f.kind === "not-published",
+    ),
+    true,
+  );
+  eq("checked 件数（正常2件）", result.checked.length, 2);
+  eq(
+    "checked の slug（未公開の ready-to-publish と、publishing × published:true）",
+    result.checked.map((c) => c.slug).sort(),
+    ["already-published", "still-draft"].sort(),
+  );
+  eq(
+    "publishing × published:true は FAIL にならない",
+    result.checked.some(
+      (c) => c.state === "publishing" && c.slug === "already-published",
+    ),
+    true,
+  );
+  eq(
+    "skipped 件数（note 2件 + 実在しない 1件 = 3件。backlog は対象 state 外で不算入）",
     result.skipped.length,
-    2,
+    3,
   );
 
   const failed = t.filter((x) => !x.ok);
@@ -277,7 +328,9 @@ function main() {
     );
     for (const f of failures) {
       console.error(
-        `  ${QUEUE_PATH}:${f.line}  queue #${f.prNum || "?"} の ${f.slug} は published:true。Done へ移すこと`,
+        f.kind === "not-published"
+          ? `  ${QUEUE_PATH}:${f.line}  queue #${f.prNum || "?"} の ${f.slug} は state=publishing だが published:false。main 段の flip が未マージ／巻き戻っている`
+          : `  ${QUEUE_PATH}:${f.line}  queue #${f.prNum || "?"} の ${f.slug} は published:true。Done へ移すこと`,
       );
     }
     return 1;
