@@ -149,6 +149,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-07-23 — Bash ツールが ~/Documents 配下へ EPERM（macOS TCC）。ローカル git 不能時は gh -R / curl で外形確認、復旧は権限再付与かセッション再起動
 - 2026-08-20 — 同系統モデルだけのレビューでは仕様誤認を検出できない。検証手段（再実行・公式ドキュメント突合）で分ける
 - 2026-08-20 — Gemini CLI の個人無料枠が停止（IneligibleTierError）。L3 で Gemini を当てにしない
+- 2026-09-05 — 消費側を書く前に生成側の一次ソースを読む／`npm run <script> --dry-run` は `--` 忘れで実行される／書いた手順は1回実行して確かめる
 
 ---
 
@@ -1527,6 +1528,40 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 - **#595 以前の版を fork した Workflow にはこのガードが無い**。fork したスクリプトを使い回す場合は、本家の更新（特にガード追加）を取り込んでから起動する
 
 **根拠**: 2026-09-05 の実行。PR #595（マージ commit `d126e92`、`.claude/workflows/note-thesis-review-loop.js` / `scripts/check-note-thesis-snapshot.js` / `scripts/check-note-thesis-review-loop.js` / `package.json` を変更）を一次ソースとして確認
+
+---
+
+### 2026-09-05 — 消費側を書く前に生成側の一次ソースを読む／書いた手順は自分で1回実行して確かめる [Tooling][Gotcha]
+
+**観察**: 同日、同じ根本原因（**consumer 側を、producer 側・実行系の実挙動を確認せずに書いた**）から3つの欠陥が出た。
+
+1. **生成側の命名規則を読まずに削除スクリプトを書いた**。`scripts/clean-note-build.js`（PR #596）は `articles_note/build/` の WXR を記事ごと最新1本に整理する。初版は「`articles_note/new/<slug>.md` が無い slug は削除」だったが、生成側 `.claude/skills/note-export-import/scripts/md_to_wxr.py` の `derive_default_outname` は **単一ファイル指定 → ファイルの stem / 単一ディレクトリ指定 → ディレクトリ名（`new` / `drafts` / `published`、空なら `batch`） / 複数指定 → `bundle`** を返す。`articles_note/new/new.md` や `bundle.md` は定義上存在しないため、**ディレクトリ指定で生成した直後の WXR が即座に削除対象**になっていた。一次ソースを読んでいれば設計時点で分かった。
+2. **`npm run <script> --dry-run` は npm がフラグを食い、確認のつもりが実行になる**。使い捨ての `package.json` で probe した実測（npm 11.12.1）:
+
+   ```text
+   $ npm run probe --dry-run        # `--` なし
+   ARGV=[]
+   npm_config_dry_run="true"
+   SCRIPT ACTUALLY RAN
+
+   $ npm run probe -- --dry-run     # `--` あり
+   ARGV=["--dry-run"]
+   npm_config_dry_run=undefined
+   SCRIPT ACTUALLY RAN
+   ```
+
+   `--` を1つ忘れるだけで、script は `--dry-run` を受け取らないまま**実行される**。破壊的操作を伴う npm script では致命的。さらに悪いことに、私は `CLAUDE.md` の運用手順に `--dry-run` の使い方を書き、その踏み方を自分で促していた。
+3. **PR 作成前に3点 diff を見ず、他 PR の差分が混入した**。記事改善の PR で、ブランチが main をマージ済みだったため別 PR（#596）の3ファイルが diff に載った。`git diff <base>...HEAD --stat` を作成前に見れば即座に分かった。ブランチを base から作り直して復旧した。これは `CLAUDE.md` §`gh pr merge` 直前チェックリストと 2026-06-10 / 2026-04-20 のエントリに既に明記されている規律で、**新しい発見ではなく、書いてある手順を実行しなかった**という失敗である。
+
+**対策/学び**:
+
+- **消費側を書く前に生成側の一次ソースを読む**。関数名や docstring から挙動を推測せず、戻り値の全パターンを自分の目で確認する。今回なら `derive_default_outname` の3分岐。
+- 生成側の命名規則が「記事 slug ではない」ケースを持つなら、消費側は**予約語として明示的に除外**する。`clean-note-build.js` は `RESERVED_SLUGS = {new, drafts, published, bundle, batch}` を一切削除せず（束ねた生成物は provenance が不明で、新しい版が古い版の上位互換とは限らない）、`live` 判定も `new/` だけでなく `published/` `drafts/` を横断して note guid 名の WXR を守るようにした。
+- **破壊的な npm script では `npm_config_dry_run` も dry-run として扱う**。`clean-note-build.js` の `resolveDryRun(argv, env)` は `--dry-run` 引数と `npm_config_dry_run` の両経路を見て、**どちらの経路で dry-run と判定したかをログに出す**。加えて `--` を覚えなくてよい専用 script `clean:note-build:dry` を用意した。同じ形の script を追加するときは踏襲する。
+- **手順を書いたら、その手順どおりに1回実行して確かめる**。ドキュメントに書いた時点で他人（次の自分を含む）はそのとおり打つ。未実行の手順は仕様ではなく願望。
+- PR 作成前にも `git diff <base>...HEAD --stat` を見る。3点比較はマージ前だけの作法ではない。
+
+**根拠**: 2026-09-05 の作業。PR #596（`scripts/clean-note-build.js` 追加、マージ commit `ddb3ba4`）、`.claude/skills/note-export-import/scripts/md_to_wxr.py` の `derive_default_outname`、npm 11.12.1 での再実測。3点 diff の先行エントリは 2026-06-10 / 2026-04-20、同日の別事象（Workflow の cwd 基準相対パス）は PR #600 のエントリを参照
 
 ---
 
