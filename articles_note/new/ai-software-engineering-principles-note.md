@@ -4,27 +4,27 @@
 
 こんにちは、みねです。
 
-普段、自分たちのチームでは、アジャイルなProduct Developmentの中にAI駆動開発を取り入れています。
+普段、自分たちのチームでは、アジャイルなプロダクト開発の中にAI駆動開発を取り入れています。
 
-AIにコードを書いてもらうだけではなく、**人が考えるべきことと、Agentに任せることをどう分けるか**。そのために、SDD（仕様駆動開発）、TDD（テスト駆動開発）、DDD（ドメイン駆動設計）など、これまでのSoftware Engineeringの考え方をAI駆動開発へ取り入れながら試行錯誤しています。
+AIにコードを書いてもらうだけではなく、**人が考えるべきことと、AIエージェントに任せることをどう分けるか**。そのために、SDD（仕様駆動開発）、TDD（テスト駆動開発）、DDD（ドメイン駆動設計）など、これまでのソフトウェアエンジニアリングの考え方をAI駆動開発へ取り入れながら試行錯誤しています。
 
-Product Developmentでは、DiscoveryとDeliveryを並行して進めるDual-trackに近い形で開発しています。
+プロダクト開発では、DiscoveryとDeliveryを並行して進めるデュアルトラックに近い形で開発しています。
 
 Discoveryでは、何を作る価値があるのかを探る。Deliveryでは、現時点で価値があると判断したものをプロダクトとして正しく届ける。
 
-そしてAI駆動開発を取り入れると、**DiscoveryでもDeliveryでもAgentによる実装が発生します。**
+そしてAI駆動開発を取り入れると、**DiscoveryでもDeliveryでもエージェントによる実装が発生します。**
 
-DiscoveryではPoCやExperimentを作り、Deliveryではプロダクトとして届けるSoftwareを作る。
+DiscoveryではPoC（概念実証）や実験を作り、Deliveryではプロダクトとして届けるソフトウェアを作る。
 
 この記事では、その実践から得た一つの学びとして、SDDについて書きます。
 
 最近、そのSDDの使い方について一つ大きな気づきがありました。
 
-**同じようにAgentへ実装を任せる場合でも、DiscoveryとDeliveryでは、先に明らかにすべきものが違う。**
+**同じようにエージェントへ実装を任せる場合でも、DiscoveryとDeliveryでは、先に明らかにすべきものが違う。**
 
-きっかけは、Product Discoveryで行ったあるPoCでした。
+きっかけは、Discoveryで行ったあるPoCでした。
 
-Deliveryでは、リファインメントの中でPBIのIntentと受入基準を明確にし、設計と実行計画を作ってAgentへ渡すやり方がかなりうまく機能しています。
+Deliveryでは、リファインメントの中でPBIの意図と受入基準を明確にし、設計と実行計画を作ってエージェントへ渡すやり方がかなりうまく機能しています。
 
 ところが、新しい価値を確かめるDiscoveryのPoCに同じ型を当てると、どうも噛み合わない。
 
@@ -36,21 +36,21 @@ Deliveryでは、リファインメントの中でPBIのIntentと受入基準を
 
 でも、今は少し違う捉え方をしています。
 
-**SDDがDiscoveryに合わなかったのではなく、Delivery用に作ったSpecの型を、そのままDiscoveryへ当てていた。**
+**SDDがDiscoveryに合わなかったのではなく、Delivery用に作った仕様の型を、そのままDiscoveryへ当てていた。**
 
 **この「どちらでも作る」という状態が、今回の混線の原因の一つでした。**
 
 Deliveryでうまく機能していたSDDの型を、そのままDiscoveryの試作にも当てようとしていたからです。
 
-![AI駆動開発におけるDual-track](../assets/ai-dual-track-discovery-delivery.png)
+![AI駆動開発におけるデュアルトラック](../assets/ai-dual-track-discovery-delivery.png)
 
 ここでいうDiscoveryとDeliveryは、Scrumの構成要素を増やす話でも、Discoveryを終えてからDeliveryへ引き渡す工程分割でもありません。
 
 実際には、同じチームがDiscoveryとDeliveryを行き来します。Deliveryの途中で新しい不確実性が見つかればDiscoveryへ戻りますし、Discoveryでも学習のために実装することがあります。
 
-**分けたいのは工程ではなく、「いま何が不確実なのか」と、その不確実性に対してAgentへ何をContractとして渡すのかです。**
+**分けたいのは工程ではなく、「いま何が不確実なのか」と、その不確実性に対してエージェントへどんな実行上の前提を渡すのかです。**
 
-ここでいうContractは、顧客との契約や変更を固定する文書という意味ではありません。Agentが現在のIntent、制約、判断条件を理解して動くための、実行上の前提をまとめたものとして使っています。
+この記事では、その実行上の前提を**Contract**と呼びます。顧客との契約や変更を固定する文書という意味ではありません。エージェントが現在の意図、制約、判断条件を理解して動くための前提をまとめたものです。
 
 違いは「作る / 作らない」ではありません。**何のために作るのか、何を先に定義するのか**です。
 
@@ -62,38 +62,38 @@ Deliveryでうまく機能していたSDDの型を、そのままDiscoveryの試
 
 ---
 
-## Deliveryでは「受入基準」をSpecifyする
+## Deliveryでは「受入基準」を先に定義する
 
-自分たちのDelivery Flowでは、PBIを起点にAI駆動開発を進めています。
+自分たちのDeliveryの流れでは、PBIを起点にAI駆動開発を進めています。
 
 ~~~text
-Product Goal
+プロダクトゴール
     ↓
 PBI / リファインメント
-（Intent / 受入基準を明確化）
+（意図 / 受入基準を明確化）
     ↓
-Sprint Planning
-（Sprint Goal / 選択したPBI / Plan）
+スプリントプランニング
+（スプリントゴール / 選択したPBI / 計画）
     ↓
-Spec / 設計・実行計画
+仕様 / 設計・実行計画
     ↕
 AIによる実装・検証
-    ↺ 学びをPBI / Spec / Planへ反映
+    ↺ 学びをPBI / 仕様 / 計画へ反映
 ~~~
 
-自分たちの運用では、リファインメントの中でPBIのIntentと受入基準を明確にします。そのうえでSprint PlanningでSprint Goalを定め、取り組むPBIと、それらを届けるためのPlanを整理し、Specや設計・実行計画へ進みます。
+自分たちの運用では、リファインメントの中でPBIの意図と受入基準を明確にします。そのうえでスプリントプランニングでスプリントゴールを定め、取り組むPBIと、それらを届けるための計画を整理し、仕様や設計・実行計画へ進みます。
 
-ここで大事なのは、このFlowを一方向の工程として扱わないことです。実装や検証で分かったことをPBIやSpec、計画へ戻しながら進めます。
+ここで大事なのは、この流れを一方向の工程として扱わないことです。実装や検証で分かったことをPBIや仕様、計画へ戻しながら進めます。
 
 PBIは、Product Backlog Itemの略です。ここでは「今回実現したい変更や要求を、開発チームが扱える単位にしたもの」くらいの意味で使っています。
 
-Scrum GuideではProduct Backlogを、プロダクトを改善するために必要なものの「創発的で順序づけられたリスト」としています。Product Backlog Refinementでは、PBIをより小さく、より明確なItemへ分解・詳細化していきます。
+Scrum Guideではプロダクトバックログ（Product Backlog）を、プロダクトを改善するために必要なものの「創発的で順序づけられたリスト」としています。プロダクトバックログのリファインメントでは、PBIをより小さく、より明確な項目へ分解・詳細化していきます。
 
 この記事でも、PBIを最初から固定された要求として扱う意図はありません。
 
-また、Scrumの文脈ではPBIだけを孤立したチケットとして扱うのではなく、Product GoalやSprint Goalとのつながりが重要です。Agentへ渡す場合も、必要に応じて「この変更が何のために必要なのか」という上位のIntentを含めます。
+また、Scrumの文脈ではPBIだけを孤立したチケットとして扱うのではなく、プロダクトゴール（Product Goal）やスプリントゴール（Sprint Goal）とのつながりが重要です。エージェントへ渡す場合も、必要に応じて「この変更が何のために必要なのか」という上位の意図を含めます。
 
-このFlowでは、PBIをそのままAgentへ渡しません。
+この流れでは、PBIをそのままエージェントへ渡しません。
 
 なぜ作るのか。何を実現するのか。どんな振る舞いや条件を満たせば受け入れられるのか。何を変えないのか。何を検証するのか。
 
@@ -107,7 +107,7 @@ Scrum GuideではProduct Backlogを、プロダクトを改善するために必
 
 ここでいう受入基準は、**このPBIでどんな振る舞いや条件が実現されれば、意図した変更として受け入れられるか**を表します。
 
-これはScrumの**Definition of Done**とは別です。Definition of Doneは、Incrementがプロダクトに求められる品質基準を満たした状態を表す共通の定義です。一方、受入基準は個々のPBIで期待する振る舞いや条件を表します。
+これはScrumの**完成の定義（Definition of Done）**とは別です。完成の定義は、インクリメントがプロダクトに求められる品質基準を満たした状態を表す共通の定義です。一方、受入基準は個々のPBIで期待する振る舞いや条件を表します。
 
 例えば、
 
@@ -116,10 +116,10 @@ Scrum GuideではProduct Backlogを、プロダクトを改善するために必
 というPBIなら、
 
 ~~~text
-Intent:
+意図:
 管理者がユーザーを一時停止できる
 
-Acceptance Criteria:
+受入基準:
 - 管理者だけが停止できる
 - 停止されたユーザーはログインできない
 
@@ -129,7 +129,7 @@ Acceptance Criteria:
 
 のように定義できます。
 
-この状態なら、Agentに対して、
+この状態なら、エージェントに対して、
 
 - 何を実現するか
 - 何を変えないか
@@ -142,7 +142,7 @@ Deliveryでは、このSDDの型がかなりよく機能しました。
 
 ---
 
-## Discoveryに同じSpecを当てると、価値仮説が受入基準になった
+## Discoveryに同じ仕様を当てると、価値仮説が受入基準になった
 
 違和感が出たのは、既存プロダクトの利用フローの途中に新しい体験を加え、その体験が実際に使われるかを確かめる探索的なPoCでした。
 
@@ -163,13 +163,13 @@ Deliveryでは、このSDDの型がかなりよく機能しました。
 例えば、構造だけを単純化すると、
 
 ~~~text
-Acceptance Criteria:
+受入基準:
 - 新しい体験を利用できるようにする
 ~~~
 
 とは書けます。
 
-Softwareとしては、この条件を満たせます。
+ソフトウェアとしては、この条件を満たせます。
 
 でも、PoCで本当に確かめたかったのは、
 
@@ -194,11 +194,11 @@ Softwareとしては、この条件を満たせます。
 
 後者は価値仮説です。
 
-ここを区別せずにDeliveryのSpecへ入れると、
+ここを区別せずにDeliveryの仕様へ入れると、
 
 **「価値があるかもしれない」が「これを作るべき」に変わってしまう。**
 
-そしてAgentは、その区別をしてくれません。
+そしてエージェントは、その区別をしてくれません。
 
 こちらが価値仮説を要件として渡せば、その仮説も忠実に実装します。
 
@@ -210,53 +210,53 @@ Softwareとしては、この条件を満たせます。
 
 これはSDDの欠点ではありません。
 
-**Specifyする対象を間違えていた**ことが問題でした。
+**先に定義する対象を間違えていた**ことが問題でした。
 
 ---
 
-## SDDは「howの前にwhatを定義する」
+## SDDは「どう作るか」の前に「何を作るか」を定義する
 
 今回考え直すうえで、GitHub Spec KitのSDDの説明が参考になりました。
 
-GitHub Spec Kitでは、Spec-Driven Developmentを、**実装方法であるhowより先に、実現したいwhatを仕様として定義するIntent-drivenな開発**として説明しています。
+GitHub Spec Kitでは、Spec-Driven Developmentを、**実装方法である「どう作るか（how）」より先に、実現したい「何を作るか（what）」を仕様として定義する、意図を起点にした開発**として説明しています。
 
-実際、Spec Kitの基本Flowも、
+実際、Spec Kitの基本的な流れも、
 
 ~~~text
-Specify
+仕様化（Specify）
   ↓
-Plan
+計画（Plan）
   ↓
-Tasks
+タスク分解（Tasks）
   ↓
-Implementation
+実装（Implementation）
 ~~~
 
 となっていて、`/speckit.specify` では技術スタックではなく、まず「何を作るのか」「なぜ作るのか」に集中します。
 
-自分もSDDを、**分かっているIntentを実装前に外へ出し、Agentが実行できる形へ変える方法**として捉えてきました。
+自分もSDDを、**分かっている意図を実装前に外へ出し、エージェントが実行できる形へ変える方法**として捉えてきました。
 
-ここで今回引っかかったのが、whatという言葉です。
+ここで今回引っかかったのが、「何を作るか」という部分です。
 
 Deliveryでは、「何を作るか」はある程度分かっています。
 
-一方、Product Discoveryでは、**そのwhat自体に価値があるのかをまだ確かめている**ことがあります。
+一方、Discoveryでは、**その「何を作るか」自体に価値があるのかをまだ確かめている**ことがあります。
 
-つまり、問題はSpecを書くタイミングだけではありませんでした。
+つまり、問題は仕様を書くタイミングだけではありませんでした。
 
-**DiscoveryとDeliveryでは、Specifyする対象そのものが違う。**
+**DiscoveryとDeliveryでは、先に定義する対象そのものが違う。**
 
 この理解が、自分の中ではかなり大きな変化でした。
 
-なお、GitHub Spec KitにはSolution探索を扱うCreative Explorationがあり、さらに`/speckit.specify`の前段には「そもそも作る価値があるか」を評価する`assess`というDiscovery trackがあります。`assess`ではProblemやEvidenceを整理し、`go / needs-clarification / kill`を判断してからSDDへ渡します。
+なお、GitHub Spec Kitには解決策の探索を扱うCreative Explorationがあり、さらに`/speckit.specify`の前段には「そもそも作る価値があるか」を評価する`assess`というDiscoveryトラックがあります。`assess`では課題や根拠を整理し、`go`（進む） / `needs-clarification`（要確認） / `kill`（中止）を判断してからSDDへ渡します。
 
 ただし、`assess`自体はソースコードを変更せず、実装は`/speckit.specify`以降へ渡します。
 
-この記事で扱っているのは、そのDiscovery自体にPoCやExperimentとして最小限の実装が必要になるケースです。その実装をAgentへ渡すとき、Deliveryと同じ受入基準ではなく、**「何を学ぶための実装なのか」を先に外へ出す必要がある**と考えました。
+この記事で扱っているのは、そのDiscovery自体にPoCや実験として最小限の実装が必要になるケースです。その実装をエージェントへ渡すとき、Deliveryと同じ受入基準ではなく、**「何を学ぶための実装なのか」を先に外へ出す必要がある**と考えました。
 
 ---
 
-## Discoveryでは「学習条件」をSpecifyする
+## Discoveryでは「学習条件」を先に定義する
 
 ここまで考えて、自分の結論は、
 
@@ -264,49 +264,49 @@ Deliveryでは、「何を作るか」はある程度分かっています。
 
 ではなくなりました。
 
-むしろ、**SDDの「実装前にIntentを外部化する」という考え方を、DiscoveryのExperimentにも適用すると、Deliveryとは違うものを先に定義する必要がある**と考えています。
+むしろ、**SDDの「実装前に意図を外部化する」という考え方を、Discoveryの実験にも適用すると、Deliveryとは違うものを先に定義する必要がある**と考えています。
 
 以下はGitHub Spec KitやScrumの公式用語ではなく、自分たちの運用上の整理です。
 
-Deliveryで先に定義するのがIntentや受入基準なら、Discoveryで先に定義したいのは、
+Deliveryで先に定義するのが意図や受入基準なら、Discoveryで先に定義したいのは、
 
-- どんなProblemを見ているのか
-- どんなValue Hypothesisを持っているのか
+- どんな課題を見ているのか
+- どんな価値仮説を持っているのか
 - 何を確かめたいのか
 - 何が観測できれば次を判断できるのか
-- どんなEvidenceを得たいのか
-- そのEvidenceを見て、次にどんなDecisionを取るのか
+- どんな根拠を得たいのか
+- その根拠をもとに、次にどんな判断をするのか
 - 今回は何を固定しないのか
 
 です。
 
-例えば、実際の案件内容は伏せたうえで、今ならPoCのSpecを次のように考えます。
+例えば、実際の案件内容は伏せたうえで、今ならPoCの仕様を次のように考えます。
 
 ~~~text
-Problem:
+課題（Problem）:
 既存の利用フローの中で、
 対象ユーザーが十分に解決できていない課題がある
 
-Value Hypothesis:
+価値仮説（Value Hypothesis）:
 既存フローに新しい体験を加えることで、
 ユーザーに追加の価値を届けられる
 
-Learning Conditions:
+学習条件（Learning Conditions）:
 - 実際の利用文脈で、その体験が利用されるかを確認する
 - 利用されない場合、
   「価値そのものが弱い」のか
   「提供方法に問題がある」のかを区別できる情報を得る
 
-Evidence:
+根拠（Evidence）:
 - 実際の利用文脈での利用 / 非利用
 - 利用前後の行動
 - 利用しなかった理由
 - 利用後に得られた反応
 
-Decision:
-- 価値仮説を支持するEvidenceが得られた → 次のExperimentへ進む
-- 価値はありそうだが提供方法に問題がある → Solutionを変更する
-- 価値自体を支持するEvidenceが得られない → 仮説を見直す / Stopする
+判断（Decision）:
+- 価値仮説を支持する根拠が得られた → 次の実験へ進む
+- 価値はありそうだが提供方法に問題がある → 解決策を変更する
+- 価値自体を支持する根拠が得られない → 仮説を見直す / 中止する
 
 今回まだ固定しないこと:
 - 本実装としての最終仕様
@@ -319,63 +319,63 @@ Discoveryだから何も決めないわけではありません。
 
 ### 学習条件は、次の判断を支えるために置く
 
-Learning ConditionsやDiscovery Contractは、Scrumに新しいArtifactや承認Gateを追加するためのものではありません。
+学習条件やDiscoveryのContractは、Scrumに新しい成果物や承認ゲートを追加するためのものではありません。
 
 自分たちにとって、
 
 ~~~text
-Learning Conditions
+学習条件
   ↓
-Experiment
+実験
   ↓
-Evidence
+根拠
   ↓
-Decision
+判断
 ~~~
 
-は、**何を観測するのかを透明にし、得られたEvidenceをInspection（検査）し、次のAdaptation（適応）につなげるための補助的な実践**です。
+は、**何を観測するのかを透明にし、得られた根拠を検査（Inspection）し、次の適応（Adaptation）につなげるための補助的な実践**です。
 
-重要なのは、最初から完全なSpecを作ることではありません。Specはその時点での理解を透明にするもので、Evidenceが変われば見直します。
+重要なのは、最初から完全な仕様を作ることではありません。仕様はその時点での理解を透明にするもので、根拠が変われば見直します。
 
-すべてのExperimentで項目を詳細に埋める必要もありません。不確実性や失敗したときのコストに応じて、**次の判断に必要なものだけを外へ出す**。Contractを増やすことではなく、判断に必要な情報を明確にすることが目的です。
+すべての実験で項目を詳細に埋める必要もありません。不確実性や失敗したときのコストに応じて、**次の判断に必要なものだけを外へ出す**。Contractを増やすことではなく、判断に必要な情報を明確にすることが目的です。
 
 ### 価値仮説が混ざっていたら、受入基準から切り出す
 
 ここも今回の学びでした。
 
-Acceptance Criteriaを書いていて、そこに価値仮説が混ざっていると気づいたからといって、実装をすべて止める必要はありません。
+受入基準を書いていて、そこに価値仮説が混ざっていると気づいたからといって、実装をすべて止める必要はありません。
 
 受入基準に混ざっていた価値仮説を切り出し、**その仮説を確かめるための学習条件を定義する。**
 
-そして、その学習に必要な最小限の試作だけをAgentへ渡す。
+そして、その学習に必要な最小限の試作だけをエージェントへ渡す。
 
 ~~~text
 価値仮説
   ↓
-Learning Conditions
+学習条件
   ↓
-最小限のExperiment
+最小限の実験
   ↓
-Evidence
+根拠
   ↓
-Decision
-  ├─ 次のExperiment
-  ├─ Solution変更
-  ├─ 仮説見直し / Stop
-  └─ Evidenceが十分ならDeliveryへ
+判断
+  ├─ 次の実験
+  ├─ 解決策の変更
+  ├─ 仮説見直し / 中止
+  └─ 根拠が十分ならDeliveryへ
 ~~~
 
-価値仮説を支持するEvidenceが十分に得られ、Deliveryへ進む判断をしたら、Delivery側のPBIとして受入基準を整理します。
+価値仮説を支持する根拠が十分に得られ、Deliveryへ進む判断をしたら、Delivery側のPBIとして受入基準を整理します。
 
-ただし、これは一方向のHandoffではありません。Deliveryで得たEvidenceによって仮説を見直す必要が出れば、再びDiscoveryへ戻ります。
+ただし、これは一方向の引き渡しではありません。Deliveryで得た根拠によって仮説を見直す必要が出れば、再びDiscoveryへ戻ります。
 
 ---
 
-## DiscoveryとDeliveryで、Agentへ渡すContractを変える
+## DiscoveryとDeliveryで、エージェントへ渡すContractを変える
 
 前回、「[失敗をモデルのせいにしない。AI駆動開発を『Model + Harness』で考える](https://note.com/mine_unilabo/n/nd6a5d83d1488)」という記事を書きました。
 
-そこで、Agentを正しく動かすためのHarnessの土台として、目的、受入基準、制約、停止条件などを含むContractを考えました。
+そこで、エージェントを正しく動かすためのHarnessの土台として、目的、受入基準、制約、停止条件などを含むContractを考えました。
 
 今回の経験で、その続きを一つ理解できた気がします。
 
@@ -384,31 +384,31 @@ Decision
 自分の中では、今こう整理しています。
 
 ~~~text
-Discovery Contract
-- Problem
-- Value Hypothesis
-- Learning Conditions
-- Evidence
-- Decision
+DiscoveryのContract
+- 課題
+- 価値仮説
+- 学習条件
+- 根拠
+- 判断
 - 今回固定しないもの
 
-            ↕ Evidence / Decision
+            ↕ 根拠 / 判断
 
-Delivery Contract
-- Intent
-- Acceptance Criteria
-- Constraints
-- Verification
-- Stop Conditions
+DeliveryのContract
+- 意図
+- 受入基準
+- 制約
+- 検証
+- 停止条件
 ~~~
 
-HarnessがAgentに「どう動くか」を支えるものだとしたら、SDDはそのAgentへ**何を先に渡すか**を考えるものとして見えてきました。
+Harnessがエージェントに「どう動くか」を支えるものだとしたら、SDDはそのエージェントへ**何を先に渡すか**を考えるものとして見えてきました。
 
 Discoveryでは、学習すべきことをContractにする。
 
 Deliveryでは、実現すべきことをContractにする。
 
-そして、どちらのContractも固定された正解ではありません。Evidenceによって見直し、必要なら書き換えます。
+そして、どちらのContractも固定された正解ではありません。得られた根拠によって見直し、必要なら書き換えます。
 
 ---
 
@@ -422,9 +422,9 @@ Deliveryでは、実現すべきことをContractにする。
 
 でも、実際に問題だったのは、SDDそのものではありませんでした。
 
-**DiscoveryとDeliveryで、同じSpecの型を使っていたこと。**
+**DiscoveryとDeliveryで、同じ仕様の型を使っていたこと。**
 
-Deliveryでは、「何を実現し、どんな条件を満たせば受け入れられるか」を明らかにすることが、Agentの実装を支えます。
+Deliveryでは、「何を実現し、どんな条件を満たせば受け入れられるか」を明らかにすることが、エージェントの実装を支えます。
 
 一方Discoveryでは、まだ「何を作るべきか」自体が仮説であることがあります。
 
@@ -432,40 +432,40 @@ Deliveryでは、「何を実現し、どんな条件を満たせば受け入れ
 
 **「価値があるかもしれない」が「これを作るべき」に変わってしまう。**
 
-AI Agentは、その前提が仮説なのか要求なのかを自動では判断してくれません。
+エージェントは、その前提が仮説なのか要求なのかを自動では判断してくれません。
 
 むしろ実装能力が高いほど、**間違った仮説を、高い品質で、速く実装する**ことができます。
 
-だから、Agentへ実装を任せる前に、まず「いま何が不確実なのか」を見極める必要があります。
+だから、エージェントへ実装を任せる前に、まず「いま何が不確実なのか」を見極める必要があります。
 
 自分の中では、今こう整理しています。
 
-**Discovery**では、何を学ぶ必要があるのかを明らかにする。Learning Conditionsを置き、ExperimentからEvidenceを集め、そのEvidenceをもとに次のDecisionを行う。
+**Discovery**では、何を学ぶ必要があるのかを明らかにする。学習条件を置き、実験から根拠を集め、その根拠をもとに次の判断を行う。
 
-**Delivery**では、何を実現するのかを明らかにする。Intentや受入基準、制約、検証方法を整理し、Agentが実装できるContractとして渡す。
+**Delivery**では、何を実現するのかを明らかにする。意図や受入基準、制約、検証方法を整理し、エージェントが実装できるContractとして渡す。
 
 ただし、DiscoveryとDeliveryを二つの工程に分けたいわけではありません。
 
-同じチームが両方を行き来し、Deliveryで新しい不確実性が見つかればDiscoveryへ戻る。Discoveryで十分なEvidenceが得られればDeliveryへ進む。
+同じチームが両方を行き来し、Deliveryで新しい不確実性が見つかればDiscoveryへ戻る。Discoveryで十分な根拠が得られればDeliveryへ進む。
 
-**分けたいのは工程ではなく、扱っている不確実性と、Agentへ何をContractとして渡すかです。**
+**分けたいのは工程ではなく、扱っている不確実性と、エージェントへ何をContractとして渡すかです。**
 
 これは、AI駆動開発を進める中で改めて感じていることでもあります。
 
-AIによってSoftware Engineeringが不要になるのではなく、むしろSDDやTDD、DDDのようなこれまでの考え方を、**Agentが実装する前提でどう使い直すか**が重要になっている。
+AIによってソフトウェアエンジニアリングが不要になるのではなく、むしろSDDやTDD、DDDのようなこれまでの考え方を、**エージェントが実装する前提でどう使い直すか**が重要になっている。
 
 今回は、その中でもSDDについて一つ理解が進みました。
 
-これからAgentへ仕事を渡す前に、まず次の2つを確認したいと思っています。
+これからエージェントへ仕事を渡す前に、まず次の2つを確認したいと思っています。
 
 - **いま必要なのは、価値を確かめることか。それとも、現時点で価値があると判断したものを届けることか**
 - **この仕事で先に明らかにすべきなのは、受入基準か。それとも学習条件か**
 
 SDDを使うか、使わないかではない。
 
-**DiscoveryとDeliveryで、何をSpecifyするのかを変える。**
+**DiscoveryとDeliveryで、何を先に定義するのかを変える。**
 
-そして、その判断をEvidenceによって更新し続ける。
+そして、得られた根拠をもとに、その判断を更新し続ける。
 
 これが今回のPoCと、日々のAI駆動開発から得た一番大きな学びです。
 
@@ -474,19 +474,19 @@ SDDを使うか、使わないかではない。
 ## 参考
 
 - GitHub Spec Kit「What is Spec-Driven Development?」
-  - SDDを、howより先にwhatを定義するIntent-drivenな開発として整理する際の参考
+  - SDDを、「どう作るか」より先に「何を作るか」を定義する、意図を起点にした開発として整理する際の参考
   - https://github.com/github/spec-kit/blob/main/docs/concepts/sdd.md
 - GitHub Spec Kit README
-  - `/speckit.specify` でwhat / whyを定義し、Plan / Tasks / Implementationへ進むFlowの参考
+  - `/speckit.specify` で「何を作るか / なぜ作るか」を定義し、計画 / タスク分解 / 実装へ進む流れの参考
   - https://github.com/github/spec-kit
 - GitHub Spec Kit `assess` - Idea Assessment Pipeline Extension
-  - SDDの前段にDiscovery trackを置き、`go / needs-clarification / kill` を判断するFlowと、Discoveryではソースコードを変更しないGuardrailの参考
+  - SDDの前段にDiscoveryトラックを置き、`go / needs-clarification / kill` を判断する流れと、Discoveryではソースコードを変更しない制約の参考
   - https://github.com/github/spec-kit/blob/main/extensions/assess/README.md
 - The Scrum Guide（2020）
-  - Product Goal / Sprint Goal / Definition of Done、Empiricism、Product Backlog Refinementの用語と位置づけの確認
+  - プロダクトゴール / スプリントゴール / 完成の定義、経験主義、プロダクトバックログのリファインメントの用語と位置づけの確認
   - https://scrumguides.org/scrum-guide.html
 - Principles behind the Agile Manifesto
-  - 変化への適応、Simplicity、継続的な改善という観点の確認
+  - 変化への適応、シンプルさ、継続的な改善という観点の確認
   - https://agilemanifesto.org/principles.html
 - 前回の記事「失敗をモデルのせいにしない。AI駆動開発を『Model + Harness』で考える」
   - https://note.com/mine_unilabo/n/nd6a5d83d1488
