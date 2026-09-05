@@ -34,6 +34,19 @@ const STATE = match[1].toLowerCase()
 const SLUG = match[2]
 const ARTICLE = `articles_note/${STATE}/${SLUG}.md`
 
+const PRIORITY = { type: 'string', enum: ['must', 'high', 'medium', 'low'] }
+const FINDING = {
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    priority: PRIORITY,
+    location: { type: 'string', minLength: 1 },
+    reason: { type: 'string', minLength: 1 },
+    suggestion: { type: 'string', minLength: 1 },
+  },
+  required: ['priority', 'location', 'reason', 'suggestion'],
+}
+
 const CONTRACT_SCHEMA = {
   type: 'object',
   additionalProperties: false,
@@ -66,17 +79,36 @@ const DOMAIN_SCHEMA = {
   properties: {
     domains: { type: 'array', items: { type: 'string' } },
     selectedReviewers: { type: 'array', maxItems: 3, items: { type: 'string' } },
+    primarySourceAccess: { type: 'string', enum: ['available', 'partial', 'unavailable'] },
+    claims: {
+      type: 'array',
+      maxItems: 8,
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          claim: { type: 'string', minLength: 1 },
+          type: { type: 'string', enum: ['official_fact', 'team_practice', 'author_interpretation', 'unverified'] },
+          status: { type: 'string', enum: ['verified', 'contradicted', 'unverified', 'not-applicable'] },
+          source: { type: 'string' },
+          note: { type: 'string' },
+        },
+        required: ['claim', 'type', 'status', 'source', 'note'],
+      },
+    },
+    findings: { type: 'array', maxItems: 5, items: FINDING },
     passed: { type: 'boolean' },
     unverified: { type: 'boolean' },
-    blockingFindings: { type: 'integer', minimum: 0 },
     summary: { type: 'string', minLength: 1 },
   },
   required: [
     'domains',
     'selectedReviewers',
+    'primarySourceAccess',
+    'claims',
+    'findings',
     'passed',
     'unverified',
-    'blockingFindings',
     'summary',
   ],
 }
@@ -85,19 +117,32 @@ const LANGUAGE_SCHEMA = {
   type: 'object',
   additionalProperties: false,
   properties: {
-    passed: { type: 'boolean' },
-    findings: { type: 'integer', minimum: 0 },
-    highRiskFindings: { type: 'integer', minimum: 0 },
+    findings: {
+      type: 'array',
+      maxItems: 5,
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          pattern: { type: 'string', enum: ['S15', 'S16', 'S17', 'other'] },
+          risk: { type: 'string', enum: ['low', 'medium', 'high'] },
+          location: { type: 'string', minLength: 1 },
+          reason: { type: 'string', minLength: 1 },
+          suggestion: { type: 'string', minLength: 1 },
+        },
+        required: ['pattern', 'risk', 'location', 'reason', 'suggestion'],
+      },
+    },
     denseEnglishClusters: { type: 'integer', minimum: 0 },
     terminologyInconsistencies: { type: 'integer', minimum: 0 },
+    passed: { type: 'boolean' },
     summary: { type: 'string', minLength: 1 },
   },
   required: [
-    'passed',
     'findings',
-    'highRiskFindings',
     'denseEnglishClusters',
     'terminologyInconsistencies',
+    'passed',
     'summary',
   ],
 }
@@ -107,39 +152,58 @@ const VISUAL_SCHEMA = {
   additionalProperties: false,
   properties: {
     applicable: { type: 'boolean' },
+    images: {
+      type: 'array',
+      maxItems: 12,
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          path: { type: 'string', minLength: 1 },
+          location: { type: 'string', minLength: 1 },
+          status: { type: 'string', enum: ['KEEP', 'UPDATE', 'REMOVE', 'UNVERIFIED'] },
+          role: { type: 'string' },
+          reason: { type: 'string', minLength: 1 },
+        },
+        required: ['path', 'location', 'status', 'role', 'reason'],
+      },
+    },
+    addCandidates: {
+      type: 'array',
+      maxItems: 2,
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          location: { type: 'string', minLength: 1 },
+          reason: { type: 'string', minLength: 1 },
+          concept: { type: 'string', minLength: 1 },
+        },
+        required: ['location', 'reason', 'concept'],
+      },
+    },
     passed: { type: 'boolean' },
     unverified: { type: 'boolean' },
-    imageCount: { type: 'integer', minimum: 0 },
-    updateRequired: { type: 'integer', minimum: 0 },
-    addCandidates: { type: 'integer', minimum: 0 },
     summary: { type: 'string', minLength: 1 },
   },
-  required: [
-    'applicable',
-    'passed',
-    'unverified',
-    'imageCount',
-    'updateRequired',
-    'addCandidates',
-    'summary',
-  ],
+  required: ['applicable', 'images', 'addCandidates', 'passed', 'unverified', 'summary'],
 }
 
 const EDITORIAL_SCHEMA = {
   type: 'object',
   additionalProperties: false,
   properties: {
+    findings: { type: 'array', maxItems: 5, items: FINDING },
     passed: { type: 'boolean' },
     requiresThesisLoop: { type: 'boolean' },
-    blockingFindings: { type: 'integer', minimum: 0 },
     firstTimeReaderPassed: { type: 'boolean' },
     noteStylePassed: { type: 'boolean' },
     summary: { type: 'string', minLength: 1 },
   },
   required: [
+    'findings',
     'passed',
     'requiresThesisLoop',
-    'blockingFindings',
     'firstTimeReaderPassed',
     'noteStylePassed',
     'summary',
@@ -205,11 +269,13 @@ const domain = await agent(
 
 ${CONTRACT}
 
-記事の中心主張に実質的に関係する専門領域だけを検出し、最大3つの専門家ペルソナを選択してください。
-重要な外部依存主張は official_fact / team_practice / author_interpretation / unverified の境界を確認し、official_factは可能な限り一次情報で確認してください。
+重要: このWorkflow phaseは、上記のcustom Agent定義をReadしてレビュー契約を参照しますが、そのfrontmatterに書かれたWebFetch等のツール権限を継承するわけではありません。
+このphaseで実際に一次情報へアクセスできる能力がある場合だけprimarySourceAccess=available/partialとして検証してください。アクセスできない場合はprimarySourceAccess=unavailableとし、中心主張に関係するofficial_factを推測でverifiedにせず unverified=true にしてください。
 
-出力上のpassedは must/high 相当の未解決指摘がない場合のみtrue。
-unverifiedは中心主張に関係するofficial_factを必要な一次情報で確認できなかった場合true。
+記事の中心主張に実質的に関係する専門領域だけを検出し、最大3つの専門家ペルソナを選択してください。
+重要な外部依存主張は official_fact / team_practice / author_interpretation / unverified の境界を確認してください。
+findingsは blocking 指摘を優先し、最大5件。件数合わせはしません。
+passedは must/high 相当の未解決指摘がない場合のみtrue。
 StructuredOutputで返してください。`,
   { schema: DOMAIN_SCHEMA, label: 'note-finalize-domain', phase: 'DomainReview' }
 )
@@ -231,7 +297,7 @@ ${CONTRACT}
 - 同一概念の表記往復
 
 コード、URL、引用、製品名、コマンド、正式名称は保護してください。
-内容を書き換えず、公開前に修正必須のhighリスクがあるかを判定してください。
+findingsは重要なものを最大5件。内容を書き換えず、highリスクが残る場合のみpassed=falseにしてください。
 `npm run check:article-language-density -- ${ARTICLE}` は別のdeterministic WARN lintであり、このGateは文脈判断を担当します。
 StructuredOutputで返してください。`,
   { schema: LANGUAGE_SCHEMA, label: 'note-finalize-language', phase: 'LanguageReview' }
@@ -246,13 +312,14 @@ const visual = await agent(
 - .claude/skills/article-visual-review/SKILL.md
 - .claude/agents/article-visual-reviewer.md
 - ${ARTICLE}
-- ${ARTICLE} が参照する画像（利用可能なReadで確認できる場合）
+- ${ARTICLE} が参照する画像（このphaseで実際に画像本体を確認できる場合）
 
 ${CONTRACT}
 
+重要: custom Agent定義をReadしても、画像を読む能力が追加されるわけではありません。画像本体を実際に確認できない場合は、altやパスから意味を推測してKEEPにせず、対象画像をUNVERIFIEDにして unverified=true としてください。
+
 placement / semantic_consistency / terminology_consistency / redundancy / missing_visual / accessibility を確認してください。
-画像本体を確認できない場合は、altやファイル名だけでKEEPにせず unverified=true としてください。
-既存の check:note-images は形式・パス担当なので、ここでは意味整合を優先してください。
+追加図候補は最大2件。既存の check:note-images は形式・パス担当なので、ここでは意味整合を優先してください。
 StructuredOutputで返してください。`,
   { schema: VISUAL_SCHEMA, label: 'note-finalize-visual', phase: 'VisualReview' }
 )
@@ -276,6 +343,7 @@ ${CONTRACT}
 - noteのスマホ可読性・JTFスタイルに大きな問題がない
 - 同じ主張・用語説明・結論の重複が公開品質を下げていない
 
+findingsはmust/highを優先して最大5件。
 記事の主題・論理構造にmust/high相当の問題が残る場合のみ requiresThesisLoop=true としてください。
 軽微な表記だけを理由に重い3ループを要求しないでください。
 StructuredOutputで返してください。`,
