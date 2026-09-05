@@ -82,6 +82,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 ### D. 並列セッション / ブランチ干渉 / commit
 **現行正本**: `CLAUDE.md` §並列セッション耐性 / `scripts/hooks/pre-commit`
 - 2026-09-03 — 長時間ワークフローは実行中にベースごと入れ替わる
+- 2026-09-05 — Workflow のエージェントは相対パスをメインセッションの cwd 基準で解決する。cwd 移動で成果物が2箇所に分裂する
 - 2026-04-20 — 並列セッション干渉で commit が意図せず main に着地する
 - 2026-04-20 — 並列セッションによるブランチ干渉と復旧手順 / 切替頻度の観測データ
 - 2026-04-20 — 並列エージェント起動前に書き込み許可を事前確認する
@@ -1510,6 +1511,22 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 - 長文が必要な場合は前景 10 分で切らず、バックグラウンド実行にしてログを後から読む
 
 **根拠**: 2026-09-04 セッション。PR #571 のレビュー依頼で 3 回空振り（約 25 分のロス）、短縮版の 4 回目で成功し、そこで得た must 2 件を #571 へ反映した
+
+---
+
+### 2026-09-05 — Workflow のエージェントは相対パスをメインセッションの cwd 基準で解決する。実行中に cwd を動かすと成果物が2箇所に分裂する [Workflow][Gotcha]
+
+**観察**: `articles_note/new/ai-driven-development-experience-note.md` を対象に、5ループのレビュー改善 Workflow を PR #585 のブランチの worktree で起動した。実行中、オーガナイザー（メインセッション）が別 PR の作業のため作業ディレクトリを worktree → 別 worktree → main checkout と移した。その結果、**後半ループのエージェントが相対パスを main checkout 基準で解決**し、そこに記事のコピーを untracked ファイルとして作成・編集した。worktree 側は途中ループ止まり、main checkout 側が最終版という分裂が生じ、最終検証エージェントが検証したのは main checkout 側だった。Workflow の完了報告は全エージェント成功の正常終了で、**分裂は報告に一切現れなかった**。
+
+2026-09-03 の「長時間ワークフローは実行中にベースごと入れ替わる」は並列セッションがワーキングツリーを切り替えた事例だが、今回のドリフト源は**自分自身の作業ディレクトリ移動**だった。「worktree で隔離しているのでドリフト源は存在しない」という事前判断が誤りで、worktree はメインセッションの cwd 移動を隔離しない。
+
+**対策/学び**:
+- Workflow 実行中はメインセッションの作業ディレクトリを動かさない。別 PR の作業を挟むなら Workflow の完了を待つ
+- 同日マージの PR #595 が入れた snapshot guard（`scripts/check-note-thesis-snapshot.js`）が、この事象に直接効く。`capture` が `git rev-parse --show-toplevel` でリポジトリルートを **cwd から**解決したうえで、`branch`（`git branch --show-current`、detached なら `DETACHED`）/ `headSha`（`git rev-parse HEAD`）/ `articlePath` / `articleSha256`（記事本文の SHA-256）の4項目を記録する。各エージェントは `verify` で初回 snapshot と4項目を突き合わせ、1つでも異なれば `ABORT: article snapshot changed` を stderr に出して exit 2 で止まる。worktree と main checkout では `branch` と `headSha` が食い違うため、今回の分裂は verify 段階で捕捉される
+- `.claude/workflows/note-thesis-review-loop.js` では、Extract / 各ループの Review・Improve・Recheck / FinalVerify の**全プロンプト先頭に `verify` 実行が挿入**され、`snapshotOk=false` なら Read/Edit を続行せず返す規約になっている。Improve だけは編集後に `capture` を再実行し、`branch` / `headSha` / `articlePath` が初回と一致するかをワークフロー側でも突き合わせる（`sameExecutionContext`）。いずれかで不一致なら `aborted: 'article-snapshot-changed'` で終了する
+- **#595 以前の版を fork した Workflow にはこのガードが無い**。fork したスクリプトを使い回す場合は、本家の更新（特にガード追加）を取り込んでから起動する
+
+**根拠**: 2026-09-05 の実行。PR #595（マージ commit `d126e92`、`.claude/workflows/note-thesis-review-loop.js` / `scripts/check-note-thesis-snapshot.js` / `scripts/check-note-thesis-review-loop.js` / `package.json` を変更）を一次ソースとして確認
 
 ---
 
