@@ -127,6 +127,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-09-02 — 内部リンクと外部リンクでベストプラクティスは逆。「文脈内配置が良い」は同一ドメイン内の話
 - 2026-09-02 — 委託ワーカーは消去法の残りを断定に変える。一次情報が特定していない主張は確度を明示させる
 - 2026-09-04 — Codex CLI は長文プロンプトで exit 0 のまま無言終了する。疎通は成功していても落ちる
+- 2026-09-06 — WARN-only の新 lint を集約 check に直結すると既存資産に大量 WARN が出て signal/noise を壊す。対象限定で入口を分ける
 ### G. CI / tooling / マルチAI
 - 2026-08-27 — `catch` が ReferenceError を握りつぶすと実装の誤りが「検証したが不一致」に化ける（純関数テストは依存欠落を検出しない）
 - 2026-05-21 — 媒体実測の取得は `scripts/fetch-channel-metrics.mjs` に集約
@@ -147,6 +148,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-08-20 — 同系統モデルだけのレビューでは仕様誤認を検出できない。検証手段（再実行・公式ドキュメント突合）で分ける
 - 2026-08-20 — Gemini CLI の個人無料枠が停止（IneligibleTierError）。L3 で Gemini を当てにしない
 - 2026-09-05 — 消費側を書く前に生成側の一次ソースを読む／`npm run <script> --dry-run` は `--` 忘れで実行される／書いた手順は1回実行して確かめる
+- 2026-09-06 — Workflow phase が custom Agent 定義を Read してもその `tools` 権限は継承しない／Workflow スクリプトの構文崩れは `node --check` では検出できない
 
 ---
 
@@ -1559,6 +1561,31 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 - PR 作成前にも `git diff <base>...HEAD --stat` を見る。3点比較はマージ前だけの作法ではない。
 
 **根拠**: 2026-09-05 の作業。PR #596（`scripts/clean-note-build.js` 追加、マージ commit `ddb3ba4`）、`.claude/skills/note-export-import/scripts/md_to_wxr.py` の `derive_default_outname`、npm 11.12.1 での再実測。3点 diff の先行エントリは 2026-06-10 / 2026-04-20、同日の別事象（Workflow の cwd 基準相対パス）は PR #600 のエントリを参照
+
+### 2026-09-06 — WARN-only の新 lint を集約 `check` に直結しない。対象を絞る入口を分ける [Tooling][Workflow]
+
+**観察**: `scripts/check-article-language-density.js`（日本語段落中の英語名詞密集を検知する WARN-only lint）を追加した際、初版は `npm run check` から全記事を対象に走らせた。既存記事に **57 件の WARN** が出て、集約 check の出力が新規変更由来の指摘で埋もれた。新しい観点そのものは正しいのに、既存資産の在庫が一気に噴き出して signal/noise 比を壊した形。
+
+**対策/学び**:
+
+- 責務を分けた。`check:article-humanizer` を `check:article-humanizer-contract`（Harness の契約検査。CI 常時）と `check:article-language-density`（実記事の密度検査）に割り、**集約 `npm run check` には contract 側だけを繋いだ**。
+- 実記事の密度確認は `/finalize-note-article <target>` から **対象記事だけ**に走らせる（`npm run check:article-language-density -- articles_note/<state>/<slug>.md`）。引数なしで叩くと `articles_note/new|published` 全体が対象になるので、手で叩くときも必ず対象を渡す。
+- この分離は後戻りしやすいので、`scripts/check-note-finalize.js` に「集約 `check` が `check:article-language-density` を含んでいたら FAIL」という逆向きのガードを入れてある。
+- 一般化: **既存資産に対して在庫 WARN が出るタイプの lint は、集約ゲートではなく「これから触る対象」を指定する入口に置く**。集約側には契約・self-test だけを残す。
+
+**根拠**: PR #594（マージ commit `c2fbc4f`）。`package.json` の `check` は `check:article-humanizer-contract` を含み `check:article-language-density` を含まない。`scripts/check-article-language-density.js` の `DEFAULT_TARGETS` / `--` 引数処理、`scripts/check-note-finalize.js` の `must not scan all historical articles` ガード、`.claude/commands/finalize-note-article.md` L38。57 件という実数は PR #594 本文の記述。
+
+### 2026-09-06 — Workflow phase が custom Agent 定義を Read してもツール権限は継承しない [Platform][Gotcha]
+
+**観察**: `.claude/workflows/note-finalize.js` の DomainReview / VisualReview phase は、レビュー契約を参照するために `.claude/agents/article-domain-reviewer.md` / `article-visual-reviewer.md` を `Read` する。だがこれは**定義文書を読んでいるだけ**で、その frontmatter の `tools:`（`WebFetch` など）が phase の実行権限に加わるわけではない。「Agent 定義を読んだから一次情報を取りに行ける」と錯覚すると、実際には取得できていない主張を `verified` として返してしまう。
+
+**対策/学び**:
+
+- Workflow の prompt 側に明文化する。note-finalize は Domain phase に `primarySourceAccess: available / partial / unavailable` を返させ、**`unavailable` なら中心主張の `official_fact` を推測で `verified` にせず `unverified=true`** とする（L272-273）。Visual phase も同様に「Agent 定義を Read しても画像を読む能力は増えない」→ 画像本体を確認できなければ `KEEP` ではなく `UNVERIFIED`（L319）。
+- `unverified` が立った Gate は最終 verdict を `UNVERIFIED` に落とし、`READY` を名乗らせない。**能力の欠如を「合格」ではなく「未検証」に写像する**のが要点。
+- 関連: 2026-08-20 の「Skill の `allowed-tools` は事前承認であって排他的な権限制限ではない（排他制限は Custom Subagent の `tools`）」と同じ族の誤解。**権限の所在は「読んだ文書」ではなく「いま実行している主体」にある**。
+
+**根拠**: PR #594（マージ commit `c2fbc4f`）で追加された `.claude/workflows/note-finalize.js` L272-273 / L319、および `primarySourceAccess` の enum 定義（L91-101 付近）。PR #594 本文にも同趣旨の記載あり。
 
 ---
 

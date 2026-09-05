@@ -15,6 +15,41 @@ const PATHS = {
   package: 'package.json',
 }
 
+// Workflow スクリプトの「実体パース」検査。
+//
+// 背景: `.claude/workflows/note-finalize.js` の LanguageReview prompt に未エスケープの
+// バッククォートが混入し、外側のテンプレートリテラルを途中で閉じてしまって Workflow
+// ランタイムが "Script parse error" で起動できない状態になっていた。
+// `node --check` は .js を CJS として見るため exit 0 で通り、この壊れ方を検出できない。
+// Workflow ランタイムは top-level の `export` / `await` / `return` をすべて許すため、
+// ESM としてのパース（return が Illegal）でも CJS としてのパース（export が Unexpected）
+// でも再現しない。`export ` を落として AsyncFunction 本体としてパースするのが、
+// 4本の既存 workflow すべてが通り、かつ上記の壊れ方だけを落とす最小の近似になる。
+const WORKFLOW_DIR = '.claude/workflows'
+const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor
+
+function workflowParseError(source) {
+  const body = String(source).replace(/^export\s+(?=(?:const|let|var|function|async|class)\b)/gm, '')
+  try {
+    new AsyncFunction(body)
+    return null
+  } catch (error) {
+    return error.message
+  }
+}
+
+function checkWorkflowScripts() {
+  const errors = []
+  const dir = path.join(ROOT, WORKFLOW_DIR)
+  if (!fs.existsSync(dir)) return errors
+  for (const entry of fs.readdirSync(dir).sort()) {
+    if (!entry.endsWith('.js')) continue
+    const message = workflowParseError(fs.readFileSync(path.join(dir, entry), 'utf8'))
+    if (message) errors.push(`${WORKFLOW_DIR}/${entry} is not parseable by the Workflow runtime: ${message}`)
+  }
+  return errors
+}
+
 function frontMatter(markdown) {
   const match = String(markdown).match(/^---\r?\n([\s\S]*?)\r?\n---/)
   return match ? match[1] : ''
@@ -227,6 +262,24 @@ function selfTest() {
     throw new Error('noisy global language-density fixture was not rejected')
   }
 
+  // Workflow 実体パース検査。壊れ方は「テンプレートリテラル内の未エスケープバッククォート」。
+  const goodWorkflow = [
+    "export const meta = { name: 'w' }",
+    'const A = args.a',
+    'const prompt = `line',
+    '\\`npm run x -- ${A}\\` は説明',
+    'end`',
+    'await log(prompt)',
+    'return { ok: true }',
+  ].join('\n')
+  if (workflowParseError(goodWorkflow) !== null) {
+    throw new Error(`valid workflow fixture was rejected: ${workflowParseError(goodWorkflow)}`)
+  }
+  const brokenWorkflow = goodWorkflow.replace('\\`npm run x -- ${A}\\`', '`npm run x -- ${A}`')
+  if (workflowParseError(brokenWorkflow) === null) {
+    throw new Error('unescaped-backtick workflow fixture was not rejected')
+  }
+
   console.log('[test:note-finalize] PASS')
 }
 
@@ -236,7 +289,7 @@ function main() {
     return
   }
 
-  const errors = validate(readRepoFiles())
+  const errors = [...validate(readRepoFiles()), ...checkWorkflowScripts()]
   if (errors.length) {
     console.error('[check:note-finalize] FAIL')
     for (const error of errors) console.error(`- ${error}`)
@@ -246,4 +299,4 @@ function main() {
 }
 
 if (require.main === module) main()
-module.exports = { frontMatter, agentTools, requireTokens, validate }
+module.exports = { frontMatter, agentTools, requireTokens, validate, workflowParseError, checkWorkflowScripts }
