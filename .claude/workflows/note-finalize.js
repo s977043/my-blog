@@ -298,7 +298,7 @@ ${CONTRACT}
 
 コード、URL、引用、製品名、コマンド、正式名称は保護してください。
 findingsは重要なものを最大5件。内容を書き換えず、highリスクが残る場合のみpassed=falseにしてください。
-`npm run check:article-language-density -- ${ARTICLE}` は別のdeterministic WARN lintであり、このGateは文脈判断を担当します。
+\`npm run check:article-language-density -- ${ARTICLE}\` は別のdeterministic WARN lintであり、このGateは文脈判断を担当します。
 StructuredOutputで返してください。`,
   { schema: LANGUAGE_SCHEMA, label: 'note-finalize-language', phase: 'LanguageReview' }
 )
@@ -379,6 +379,14 @@ if (domain.unverified) unverified.push('domain')
 if (visual.unverified) unverified.push('visual')
 if (STATE === 'drafts') unverified.push('drafts-readonly-mirror')
 
+// note-thesis-review-loop の loops は 3（既定）か 5 のみ。5 のときだけ Loop4（専門領域の
+// 事実境界）と Loop5（言語密度・note表記規約・図）が回る（PR #604）。Loop4/5 の観点は
+// それぞれ domain / language・visual Gate に対応するので、これらが blocker のときだけ 5 に
+// 上げる。editorial / thesis-loop-required だけの NEEDS_CHANGES は Loop1-3（主題・論理構造 /
+// 読者理解 / 編集・密度）で扱える範囲なので、既定の 3 に据え置いて実行コストを増やさない。
+const DEEP_LOOP_BLOCKERS = ['domain', 'language', 'visual']
+const thesisLoopCount = blockers.some((b) => DEEP_LOOP_BLOCKERS.includes(b)) ? 5 : 3
+
 let verdict = 'READY'
 if (blockers.length > 0) verdict = 'NEEDS_CHANGES'
 else if (unverified.length > 0) verdict = 'UNVERIFIED'
@@ -410,7 +418,7 @@ return {
     verdict === 'READY'
       ? 'Human review後にPR / note反映へ進む'
       : editorial.requiresThesisLoop
-        ? `Workflow({ name: "note-thesis-review-loop", args: { article: "${ARTICLE}" } }) を別セッション干渉のない状態で実行する`
+        ? `Workflow({ name: "note-thesis-review-loop", args: { article: "${ARTICLE}", loops: ${thesisLoopCount} } }) を別セッション干渉のない状態で実行する`
         : verdict === 'NEEDS_CHANGES'
           ? 'blocking Gateの指摘を最小差分で修正して再実行する'
           : 'UNVERIFIED項目を確認できる環境で再実行する',
