@@ -2,7 +2,6 @@
 
 import argparse
 import json
-import os
 import struct
 import sys
 import tempfile
@@ -11,6 +10,12 @@ from pathlib import Path
 RECOMMENDED_WIDTH = 1280
 RECOMMENDED_HEIGHT = 670
 RECOMMENDED_RATIO = RECOMMENDED_WIDTH / RECOMMENDED_HEIGHT
+# note公式内で記述が競合している。ヘルプ「登録画像の推奨サイズ一覧」は現在も
+# 「各画像の容量は最大10MB」と記載する一方、note公式info（2024-06-28）は
+# 「アップロードできる画像サイズが10MBから20MBに増加」と告知している。
+# どちらが見出し画像の現行仕様かを一次情報で確定できていないため、
+# 保守的に厳しい側（10MB）を採用する。詳細は
+# references/note-official-guidelines.md §1 を参照。
 MAX_BYTES = 10 * 1024 * 1024
 RATIO_TOLERANCE = 0.015
 
@@ -107,7 +112,7 @@ def inspect_image(path: Path, strict: bool = False):
 
     if len(data) > MAX_BYTES:
         result["status"] = "FAIL"
-        result["findings"].append("file size exceeds note 10MB limit")
+        result["findings"].append("file size exceeds note 10MB limit (see MAX_BYTES note on the 10MB/20MB conflict)")
 
     if height == 0:
         result["status"] = "FAIL"
@@ -149,6 +154,28 @@ def fake_png(width: int, height: int):
     )
 
 
+def fake_jpeg(width: int, height: int):
+    # SOI + APP0 (skipped segment) + SOF0 (dimensions) + SOS, which is the
+    # minimum needed to exercise the jpeg_size() marker walk end to end.
+    app0_payload = b"JFIF\x00\x01\x01\x00\x00\x01\x00\x01\x00\x00"
+    sof0_payload = (
+        b"\x08"
+        + struct.pack(">H", height)
+        + struct.pack(">H", width)
+        + b"\x01\x01\x11\x00"
+    )
+    return (
+        b"\xff\xd8"
+        + b"\xff\xe0"
+        + struct.pack(">H", len(app0_payload) + 2)
+        + app0_payload
+        + b"\xff\xc0"
+        + struct.pack(">H", len(sof0_payload) + 2)
+        + sof0_payload
+        + b"\xff\xda"
+    )
+
+
 def self_test():
     with tempfile.TemporaryDirectory(prefix="note-cover-check-") as tmp:
         root = Path(tmp)
@@ -168,6 +195,43 @@ def self_test():
         missing_result = inspect_image(root / "missing.png", strict=True)
         if missing_result["status"] != "FAIL":
             raise RuntimeError(f"expected missing FAIL: {missing_result}")
+
+        # JPEG は独自の SOF マーカ走査を通る。PNG ケースだけでは jpeg_size() が
+        # 一度も実行されず、壊れても self-test が通ってしまう。
+        jpeg = root / "ok.jpg"
+        jpeg.write_bytes(fake_jpeg(RECOMMENDED_WIDTH, RECOMMENDED_HEIGHT))
+        jpeg_result = inspect_image(jpeg, strict=True)
+        if jpeg_result["format"] != "jpeg":
+            raise RuntimeError(f"expected jpeg format: {jpeg_result}")
+        if (jpeg_result["width"], jpeg_result["height"]) != (
+            RECOMMENDED_WIDTH,
+            RECOMMENDED_HEIGHT,
+        ):
+            raise RuntimeError(f"expected jpeg dimensions: {jpeg_result}")
+        if jpeg_result["status"] != "PASS":
+            raise RuntimeError(f"expected strict jpeg PASS: {jpeg_result}")
+
+        # MAX_BYTES 超過パス。寸法は推奨どおりなので、容量判定が消えると PASS に転ぶ。
+        oversized = root / "oversized.png"
+        base = fake_png(RECOMMENDED_WIDTH, RECOMMENDED_HEIGHT)
+        oversized.write_bytes(base + b"\x00" * (MAX_BYTES + 1 - len(base)))
+        oversized_result = inspect_image(oversized, strict=True)
+        if oversized_result["status"] != "FAIL":
+            raise RuntimeError(f"expected oversized FAIL: {oversized_result}")
+        if not any("file size exceeds" in f for f in oversized_result["findings"]):
+            raise RuntimeError(f"expected file size finding: {oversized_result}")
+
+        # 非 strict の WARN パス。比率は推奨どおりで寸法だけ違うケース。
+        warn = root / "warn.png"
+        warn.write_bytes(fake_png(1920, 1005))
+        warn_result = inspect_image(warn, strict=False)
+        if warn_result["status"] != "WARN":
+            raise RuntimeError(f"expected non-strict WARN: {warn_result}")
+
+        # 同じ寸法でも strict では FAIL になること（WARN と FAIL の分岐が生きているか）。
+        warn_strict_result = inspect_image(warn, strict=True)
+        if warn_strict_result["status"] != "FAIL":
+            raise RuntimeError(f"expected strict FAIL: {warn_strict_result}")
 
     print("[test:note-cover-image] PASS")
 
