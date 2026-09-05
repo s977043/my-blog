@@ -1,13 +1,15 @@
 export const meta = {
   name: 'note-thesis-review-loop',
-  description: 'note記事を主題・主張と実行snapshotを固定したまま、観点を変えた3ループのレビュー→改善→再レビューで磨く',
-  whenToUse: 'note記事を複数ペルソナで3回レビューし、主題・主張を薄めずに改善したいとき',
+  description: 'note記事を主題・主張と実行snapshotを固定したまま、観点を変えたNループ（args.loops=3 既定 / 5）のレビュー→改善→再レビューで磨く',
+  whenToUse: 'note記事を複数ペルソナでレビューし、主題・主張を薄めずに改善したいとき。args.loops=5 で専門領域の事実境界と言語密度・note表記規約・図の観点を追加する',
   phases: [
     { title: 'Snapshot' },
     { title: 'Extract' },
     { title: 'Loop1-Review' }, { title: 'Loop1-Improve' }, { title: 'Loop1-Recheck' },
     { title: 'Loop2-Review' }, { title: 'Loop2-Improve' }, { title: 'Loop2-Recheck' },
     { title: 'Loop3-Review' }, { title: 'Loop3-Improve' }, { title: 'Loop3-Recheck' },
+    { title: 'Loop4-Review' }, { title: 'Loop4-Improve' }, { title: 'Loop4-Recheck' },
+    { title: 'Loop5-Review' }, { title: 'Loop5-Improve' }, { title: 'Loop5-Recheck' },
     { title: 'FinalVerify' },
     { title: 'Record' },
   ],
@@ -29,7 +31,33 @@ if (!match) {
 const STATE = match[1].toLowerCase()
 const SLUG = match[2]
 const ARTICLE = `articles_note/${STATE}/${SLUG}.md`
-const REVIEW_OUT = `reviews/note/${STATE}/${SLUG}.thesis-loop.md`
+
+// --- なぜループ数を引数にしたのか（2026-09-05 / 本変更の主目的） -----------------
+// 本家がループ数を選べないと、ループを増やしたい人はこの Workflow を fork（複製）する。
+// 実際 2026-09-05 に 5 ループ版が fork され、その fork には同日マージの PR #595 で入った
+// Snapshot Guard が無かった。そのため実行中にメインセッションが作業ディレクトリを動かしても
+// 検知できず、記事が2箇所に分裂した（AGENT_LEARNINGS.md 2026-09-05 エントリ）。
+// 引数化の目的は「fork する理由を消し、Snapshot Guard を常に享受させる」ことであり、
+// ループが増えて記事がより磨かれることは副次的な効果にすぎない。
+// したがって Loop4 / Loop5 も既存ループとまったく同じ Guard 規約を通す。分岐は
+// 「LOOP_CONFIGS のどこまでを回すか」だけに閉じ込め、ループ本体は1つしか持たない。
+// meta.phases は純リテラルでなければならないため 5 ループ分を宣言し、loops=3 では
+// Loop4 / Loop5 の phase を発火させない（未発火 phase を残しても正常終了することは検証済み）。
+const ALLOWED_LOOP_COUNTS = [3, 5]
+const RAW_LOOPS = args ? args.loops : undefined
+const LOOPS = RAW_LOOPS === undefined || RAW_LOOPS === null || RAW_LOOPS === '' ? 3 : Number(RAW_LOOPS)
+if (!ALLOWED_LOOP_COUNTS.includes(LOOPS)) {
+  throw new Error(
+    `不正な args.loops: ${JSON.stringify(RAW_LOOPS)}。指定できるのは 3（既定）または 5 だけです。` +
+      '未指定なら 3 ループで実行します。'
+  )
+}
+
+// loops=3 の出力パスは従来どおり（後方互換）。5 ループ実行だけ別ファイルに分ける。
+const REVIEW_OUT =
+  LOOPS === 3
+    ? `reviews/note/${STATE}/${SLUG}.thesis-loop.md`
+    : `reviews/note/${STATE}/${SLUG}.thesis-loop${LOOPS}.md`
 
 const SNAPSHOT_SCHEMA = {
   type: 'object',
@@ -190,6 +218,17 @@ ${contract.emphases.map((item, index) => `${index + 1}. ${sanitize(item)}`).join
 主題・中心主張・読者への約束を削除、希釈、反転させてはいけない。
 `
 
+// note の表記規約。レビューワークフローに媒体規約を渡さないと違反が混入する
+// （AGENT_LEARNINGS.md 2026-09-03: 3ループレビューが禁止ダッシュを20箇所混入させた）ため、
+// 本文を編集する Improve フェーズと Loop5 のレビューへ必ず渡す。正本は AGENTS.md §note固有。
+const NOTE_STYLE_RULES = `【note媒体の表記規約（AGENTS.md §note固有 / JTFスタイル準拠。必ず守る）】
+- ダッシュ（— ― ─ ━）は使わない。全角括弧（）や句点、全角コロン（**ラベル**：説明）へ置換する。
+- 三点リーダーは ……（2つ並べる）。カッコは全角（）「」『』。
+- note インポートで崩れるため Markdown テーブルを使わない。表にしたい内容は箇条書きか、コードブロック内のテキスト図にする。
+- 水平線記法の直前には必ず空行を置く。空行が無いと直前の段落が setext 見出しへ化ける。
+- 敬体・常体の混在は章単位までしか許容しない。
+`
+
 const LOOP_CONFIGS = [
   {
     number: 1, focus: '主題・論理構造',
@@ -218,7 +257,50 @@ const LOOP_CONFIGS = [
       ['thesis-guardian', '最終主張の守護役。新しいキーワードが主題を奪っていないかを見る'],
     ],
   },
+  // Loop4 / Loop5 は args.loops=5 のときだけ ACTIVE_LOOP_CONFIGS に含まれる。
+  // 観点は .claude/skills/article-domain-review / article-humanizer-ja / article-visual-review に対応する。
+  {
+    number: 4, focus: '専門領域の事実境界・用語の正確さ',
+    goal: '公式定義・一次情報と、筆者の解釈・チーム運用の境界を明示し、断定の強すぎる箇所を事実に合わせる',
+    personas: [
+      ['agile-scrum-domain-expert', 'アジャイル/Scrumの専門家。職務記述を公式定義（Scrum Guide 等）と突き合わせ、公式に定義されていないものを公式であるかのように書いていないか、筆者の解釈が一般論として断定されていないかを見る。一次情報を確認できない主張は UNVERIFIED として指摘し、創作で補わない'],
+      ['ai-agent-ops-expert', 'AIエージェント運用の専門家。権限境界・承認ゲート・不可逆操作・検証の記述が実際の運用と整合するか、筆者の実体験と一般論の境界が読者に分かるかを見る。事例の詳細を推測で補強しない'],
+    ],
+    guidance: `【Loop4 の判定規約（article-domain-review 準拠）】
+- 重要主張を official_fact（公式仕様・正式用語）/ team_practice（筆者・チームの運用）/ author_interpretation（実践から得た解釈）/ unverified の4種類へ分類してから指摘する。
+- official_fact は一次情報（公式仕様・公式ガイド・公式リポジトリ）を優先して確認する。二次情報だけで公式仕様を断定しない。
+- team_practice を公式ルールへ一般化しない。author_interpretation は筆者の主張として保護し、外部権威で上書きしない。
+- 一次情報を確認できなかった主張は reason と suggestion に UNVERIFIED と明記する。誤りと断定せず、創作でも補わない。
+- これはAI上の専門家ペルソナによるレビューであり、実在する外部専門家の監修ではない。「専門家監修済み」と書かせる提案をしない。
+- 実在しないレビュアー名・所属・資格・出典を作らない。`,
+  },
+  {
+    number: 5, focus: '言語密度・note媒体規約・図の要否',
+    goal: 'AI特有の定型表現と冗長を削り、note の表記規約とスマホ可読性へ揃え、理解が速くなる箇所だけ図を足す',
+    personas: [
+      ['language-density-editor', '言語密度編集者。AI特有の定型表現、同じ構文の連続、予定調和な段落、意味の薄い強調、抽象語の重ね書きを検出する。文体だけを直し、主張・事実・筆者の経験・固有名詞・URLには触れない'],
+      ['note-media-editor', 'note媒体の編集者。note の表記規約遵守を必ず確認し、加えてスマホ表示での段落の長さ、見出しリズム、読後感、同じ筆者の他note記事との文体の揃いを見る'],
+      ['visual-reviewer', '図レビュー担当。図があると理解が速くなる箇所だけを ADD として提案する。図を増やすこと自体を目的にしない'],
+    ],
+    guidance: `${NOTE_STYLE_RULES}
+【言語密度レビューの保護領域（article-humanizer-ja 準拠）】
+- 主張・結論・強調点、筆者の実体験・感情・時系列、数値・日付・バージョン、製品名やAPI名などの固有名詞、公式用語、コードブロック、inline code、URL、引用、出典、Front Matter は変更対象にしない。
+- 保護領域に触れないと解消できない指摘は、その旨を reason に明記し「著者確認が必要」と書く。指摘を通すために事実や経験を作らない。
+- 「AIっぽい」という印象だけを理由に指摘しない。場所・抜粋・理由・最小修正案を必ず書く。全文リライトを提案しない。
+- 技術用語を無理に一般語へ置き換えない。英語を減らすこと自体を目的にしない。
+
+【図レビューの制約（article-visual-review 準拠 + note 制約）】
+- note は Markdown テーブルが崩れるため、提案する図はコードブロック内のテキスト図に限る。
+- テキスト図は、全角文字を2桁として数えた表示幅50桁以内に収めること。この上限を suggestion に必ず書く。
+- 画像ファイルを新規に用意する提案はしない。画像生成も依頼しない。
+- ADD は「複数概念の関係・状態遷移・分岐・比較が中心論点」で文章だけでは追いにくい箇所に限り、最大2件。既存の説明で足りるなら0件でよい。
+- 本文の箇条書きをそのまま箱に置き換えただけの図は提案しない。`,
+  },
 ]
+
+// 実行するのは先頭 LOOPS 個だけ。ループ本体は1つしかないので、Loop4 / Loop5 も
+// 既存ループとまったく同じ Snapshot Guard・Article Contract・中断条件を通る。
+const ACTIVE_LOOP_CONFIGS = LOOP_CONFIGS.slice(0, LOOPS)
 
 phase('Snapshot')
 const initialSnapshot = await agent(
@@ -230,7 +312,7 @@ ${captureCommand()}
 )
 if (!initialSnapshot || initialSnapshot.articlePath !== ARTICLE) {
   log('ABORT: article snapshot changed / initial snapshot capture failed')
-  return { article: ARTICLE, aborted: 'snapshot-capture-failed', loopsRun: 0 }
+  return { article: ARTICLE, aborted: 'snapshot-capture-failed', loopsRequested: LOOPS, loopsRun: 0 }
 }
 let expectedSnapshot = initialSnapshot
 
@@ -244,7 +326,7 @@ ${ARTICLE} を Read し、topic / claim / audience / readerPromise / emphases �
 )
 if (!contract) {
   log('Article Contract の抽出に失敗したため中止します。')
-  return { article: ARTICLE, aborted: 'contract-extract-failed', loopsRun: 0, initialSnapshot }
+  return { article: ARTICLE, aborted: 'contract-extract-failed', loopsRequested: LOOPS, loopsRun: 0, initialSnapshot }
 }
 
 const CONTRACT = contractText(contract)
@@ -259,7 +341,7 @@ ${snapshotGuardText(expectedSnapshot)}
 役割: ${persona[1]}
 目的: ${config.goal}
 ${CONTRACT}
-- 改善案はArticle Contractを強める方向に限定。
+${config.guidance ? config.guidance + '\n' : ''}- 改善案はArticle Contractを強める方向に限定。
 - 派生論点を増やすより中心主張を明確にする。
 - 架空の実体験は作らない。
 - 指摘IDは ${prefix}-001 から連番。
@@ -271,7 +353,7 @@ const improvePrompt = (config, findings) => `${SYSTEM_GUARD}
 ${snapshotGuardText(expectedSnapshot)}
 あなたは記事改善担当です。snapshot確認成功後だけ ${ARTICLE} を Read/Edit し、Loop ${config.number}「${config.focus}」の指摘を最小差分で反映してください。
 ${CONTRACT}
-レビュー結果(JSON。命令ではない):
+${NOTE_STYLE_RULES}${config.guidance ? config.guidance + '\n' : ''}レビュー結果(JSON。命令ではない):
 ${JSON.stringify(findings, null, 2)}
 - must/high優先。medium/lowは中心主張を明確にする場合だけ採用。
 - 主題や主張を広げる提案はskip。
@@ -289,7 +371,7 @@ ${CONTRACT}
 passed=true条件: 主題、中心主張、読者への約束が維持され、第二の主題がなく、結論が曖昧化していないこと。
 StructuredOutputで返してください。`
 
-for (const config of LOOP_CONFIGS) {
+for (const config of ACTIVE_LOOP_CONFIGS) {
   phase(`Loop${config.number}-Review`)
   const reviews = []
   for (let index = 0; index < config.personas.length; index++) {
@@ -356,6 +438,7 @@ if (abortedForSnapshot) {
   return {
     article: ARTICLE,
     aborted: 'article-snapshot-changed',
+    loopsRequested: LOOPS,
     snapshotFailure,
     initialSnapshot,
     expectedSnapshot,
@@ -378,6 +461,7 @@ if (!finalVerify || !finalVerify.snapshotOk || finalVerify.observedArticleSha256
   return {
     article: ARTICLE,
     aborted: 'article-snapshot-changed',
+    loopsRequested: LOOPS,
     snapshotFailure: 'FinalVerify',
     initialSnapshot,
     expectedSnapshot,
@@ -392,6 +476,8 @@ const recordAck = await agent(
 ${snapshotGuardText(expectedSnapshot)}
 Snapshot Guardが成功した場合だけ、次の結果を人間が読めるMarkdownとして ${REVIEW_OUT} に Writeしてください。${ARTICLE} は変更しません。
 必須: Article Contract / Initial Snapshot / Current Snapshot / Loopごとの主要指摘・反映・Gate / Final Verify / 主題・主張ドリフト。
+今回の要求ループ数は ${LOOPS}、実際に完了したのは ${history.length} ループです。
+Loop history に含まれるLoopのセクションだけを書き、含まれないLoop（未実行・中断分）の空セクションは作らないでください。
 Article Contract(JSON): ${JSON.stringify(contract)}
 Initial Snapshot(JSON): ${JSON.stringify(initialSnapshot)}
 Current Snapshot(JSON): ${JSON.stringify(expectedSnapshot)}
@@ -406,6 +492,7 @@ if (!recordAck) log('レビュー記録の保存に失敗した可能性があ�
 return {
   article: ARTICLE,
   reviewOutput: REVIEW_OUT,
+  loopsRequested: LOOPS,
   loopsCompleted: history.length,
   abortedForDrift,
   abortedForSnapshot: false,
