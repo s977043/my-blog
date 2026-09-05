@@ -42,6 +42,7 @@ jobs:
         run: |
           npm run test:article-humanizer
           npm run test:note-finalize
+          python3 .claude/skills/note-cover-image/scripts/check_note_cover.py --self-test
 
       - name: Check Zenn content
         run: npm run check
