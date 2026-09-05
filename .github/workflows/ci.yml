@@ -50,6 +50,7 @@ jobs:
           npm run test:zenn-image-format
           npm run test:note-setext
           npm run test:queue-drift
+          npm run test:orphan-docs
           npm run test:clean-note-build
           npm run test:learnings-index
           npm run test:suggest-theme
