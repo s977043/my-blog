@@ -81,6 +81,8 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 
 ### D. 並列セッション / ブランチ干渉 / commit
 **現行正本**: `CLAUDE.md` §並列セッション耐性 / `scripts/hooks/pre-commit`
+- 2026-09-03 — 長時間ワークフローは実行中にベースごと入れ替わる
+- 2026-09-05 — Workflow のエージェントは相対パスをメインセッションの cwd 基準で解決する。cwd 移動で成果物が2箇所に分裂する
 - 2026-04-20 — 並列セッション干渉で commit が意図せず main に着地する
 - 2026-04-20 — 並列セッションによるブランチ干渉と復旧手順 / 切替頻度の観測データ
 - 2026-04-20 — 並列エージェント起動前に書き込み許可を事前確認する
@@ -107,6 +109,9 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 
 ### F. review / 記事品質 / convention
 **現行正本**: `.claude/agents/*` / `AGENTS.md` §表現規約
+- 2026-09-03 — レビューワークフローに媒体固有の表記規約を渡さないと違反が混入する
+- 2026-09-03 — レビューループは数値の「単位」を保存しない
+- 2026-09-03 — 自作OSS記事では「過剰な自己批判」も一次情報と矛盾する
 - 2026-04-16 — reviews/ はプラットフォームで3分割する
 - 2026-04-16 — 新規 Agent 作成直後は harness 未リロード
 - 2026-04-16 — note記事は JTF スタイル準拠が必須 / published/ 反映は ⚠️ バナー必須
@@ -121,6 +126,8 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-08-27 — レビュー成果物は `articleHash` を `git hash-object` と突き合わせてから信じる
 - 2026-09-02 — 内部リンクと外部リンクでベストプラクティスは逆。「文脈内配置が良い」は同一ドメイン内の話
 - 2026-09-02 — 委託ワーカーは消去法の残りを断定に変える。一次情報が特定していない主張は確度を明示させる
+- 2026-09-04 — Codex CLI は長文プロンプトで exit 0 のまま無言終了する。疎通は成功していても落ちる
+- 2026-09-06 — WARN-only の新 lint を集約 check に直結すると既存資産に大量 WARN が出て signal/noise を壊す。対象限定で入口を分ける
 ### G. CI / tooling / マルチAI
 - 2026-08-27 — `catch` が ReferenceError を握りつぶすと実装の誤りが「検証したが不一致」に化ける（純関数テストは依存欠落を検出しない）
 - 2026-05-21 — 媒体実測の取得は `scripts/fetch-channel-metrics.mjs` に集約
@@ -140,6 +147,8 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-07-23 — Bash ツールが ~/Documents 配下へ EPERM（macOS TCC）。ローカル git 不能時は gh -R / curl で外形確認、復旧は権限再付与かセッション再起動
 - 2026-08-20 — 同系統モデルだけのレビューでは仕様誤認を検出できない。検証手段（再実行・公式ドキュメント突合）で分ける
 - 2026-08-20 — Gemini CLI の個人無料枠が停止（IneligibleTierError）。L3 で Gemini を当てにしない
+- 2026-09-05 — 消費側を書く前に生成側の一次ソースを読む／`npm run <script> --dry-run` は `--` 忘れで実行される／書いた手順は1回実行して確かめる
+- 2026-09-06 — Workflow phase が custom Agent 定義を Read してもその `tools` 権限は継承しない／Workflow スクリプトの構文崩れは `node --check` では検出できない
 
 ---
 
@@ -1413,6 +1422,55 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 
 ---
 
+### 2026-09-03 — 長時間ワークフローは実行中にベースごと入れ替わる [Workflow][Gotcha]
+
+**観察**: `note-thesis-review-loop`（3ループ・約45分・18エージェント）の実行中に、並列セッションがワーキングツリーを `main` へ切り替えた。ワークフローは**切り替わった先の古い記事（282行・再構成前）を編集し続け**、319行の成果物を作って正常終了した。`abortedForDrift=false` / `finalPassed=true` / `unresolvedImportant=0` と、返り値はすべて成功を示していた。成果物は系統が違うため丸ごと破棄。45分と約130万トークンを失った。
+
+既存の「並列セッション干渉」エントリはブランチ切替と commit 混入が対象だったが、これは**長時間バックグラウンド処理の入力ファイルが実行中に別物へ差し替わる**という別の形。ワークフローの返り値だけでは検知できない。
+
+**対策/学び**:
+- 長時間ワークフロー完了時は、返り値を信じる前に **`git branch --show-current` と対象ファイルの行数・主題マーカーを実測する**。今回は「再構成で入れたはずの語句が0件」で検知できた
+- 検知したら成果物をスクラッチパッドへ退避 → `git checkout --` で作業ツリーを戻す → 正しいブランチへ復帰 → 再実行。誤ベースの成果物から拾える指摘はほぼない（前提が違うため）
+- 隔離したい場合は worktree だが、`EnterWorktree` は「ユーザーまたは CLAUDE.md が明示的に worktree を指示した場合のみ」使用可。勝手に使わない
+
+**根拠**: PR #575（1回目 run `wf_344dba80-c63` を破棄、2回目 `wf_843c1612-5d3` で正常完了）
+
+### 2026-09-03 — レビューワークフローに媒体固有の表記規約を渡さないと違反が混入する [Workflow][Convention]
+
+**観察**: 3ループレビューが note 記事に**禁止表記のダッシュ（`—` `——`）を20箇所混入**させた。`AGENTS.md` §note固有（JTFスタイル準拠）に「ダッシュは使用しない → 全角括弧や句点で置換」と明記されているが、ワーカーは主題・論理・読者理解の観点しか見ておらず表記規約を参照していなかった。検出したのは Copilot の PR 行コメント。混入箇所はタイトル / 見出し / 挿入句 `——A——` / ラベル区切り `**X** — Y` の4種類に散っていた。
+
+**対策/学び**:
+- 記事改善を委託するときは、委託プロンプトの情報源に **`AGENTS.md` の媒体固有セクション**を明示的に含める
+- レビュー系ワークフローの完了後、コミット前に `grep -n "—\|―" <file>` を1回走らせる
+- 置換は既存 `articles_note/published/*.md` の表記に合わせる。ラベル区切りは全角コロン `**ラベル**：説明` が既存記事の標準
+- 恒久対策は `npm run check` へのダッシュ検出追加（未実装）
+
+**根拠**: PR #575（Copilot 行コメント4件、commit `a6e6e7c`）
+
+### 2026-09-03 — レビューループは数値の「単位」を保存しない [Workflow][Gotcha]
+
+**観察**: 3ループレビューが、実行系 K1 の分母61を「スキル単位ではなく**ケース単位**の件数」と書き換えた。`metrics_k1.py` の実出力は `Skills with passing canary: 42 / 61` で単位はスキル。数値そのものは保持されるが、**数値が何を数えているかの説明が言い換えの過程で入れ替わる**。さらに後続の圧縮パスで、一度直した「19スキル」が別の箇所で「19件」へ再発した。
+
+**対策/学び**:
+- レビューループ後は、数値の**存在**（grep で件数一致）だけでなく、**単位と分母の説明**を一次情報と突き合わせる
+- 同じ数値が複数箇所に出る記事では、単位表記の揺れを `grep -n "<数値>"` で全件並べて確認する。1箇所直して終わりにしない
+- 数値の書き換え・丸めは禁止できても、「説明の言い換え」は禁止しにくい。**検証側で捕まえる前提**で運用する
+
+**根拠**: PR #575（commit `059a9b4` で初回修正、圧縮パス後に再発し最終 commit で再修正）
+
+### 2026-09-03 — 自作OSS記事では「過剰な自己批判」も一次情報と矛盾する [Convention][Workflow]
+
+**観察**: `oss-article-claim-boundary` を自作OSS＋社内リポジトリのチーム展開記に適用したところ、検出された must 3件のうち2件が**誇張ではなく自己批判の行きすぎ**だった。「配布前のレビューゲートが存在しない」は、実際には main の branch protection が `required_approving_review_count: 1` で承認必須（事実として誤り）。「バージョンを固定する仕組みがない」も `plugin.json` に version と bump スクリプトがあり、無いのは利用側が pin する経路だけだった。
+
+自作ツールの記事では「贔屓目による誇張」を疑うのが定石だが、**贔屓目を打ち消そうとした自己批判のほうが先に一次情報と衝突した**。しかも記事の決め台詞がその誤った自己批判に乗っていたため、主張の芯が誤情報で支えられる形になっていた。
+
+**対策/学び**:
+- 主張境界レビューでは、褒めている箇所と同じ強度で**貶している箇所も一次情報に当てる**。「〜が存在しない」「〜の仕組みがない」という否定形の断定は特に照合する
+- 照合先はリポジトリ内の記述だけでなく、**GitHub API の branch protection / ruleset** まで見る。運用ルールがコードやドキュメントに書かれていないことがある
+- 直すときは自己批判を削らず、**欠けているものを正確に言い直す**（「レビューゲートがない」→「段階配布とロールバックがない」）。記事の力を保ったまま事実に合わせられる
+
+**根拠**: PR #575（`reviews/note/new/plangate-team-rollout.claim-boundary.md` must-1 / must-2）
+
 ### 2026-09-02 — 委託ワーカーは「消去法の残り」を断定に変える [Workflow][Gotcha]
 
 **観察**: 公開前記事のレビュー指摘（「安全機構」がどのレイヤーか未特定）の反映を subagent へ委託したところ、「エージェント実行ハーネスのツール許可レイヤーによる拒否を指す」と**断定した1文**を記事へ追加してきた。一次情報である `AGENT_LEARNINGS.md` 2026-06-18 エントリは「安全機構が判定してブロック」としか書いておらず、レイヤーを特定していない。ワーカーは Git hook を消去法で除外したところまでは正しかったが、**残った候補が複数（ツール許可レイヤー / サンドボックス）あるのに1つへ確定させた**。さらに根拠として別インシデント（2026-05-18 の Qiita publish で `/permissions` を使った件）を接続していた。
@@ -1426,6 +1484,108 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 - 完了報告の実物照合では、**追加された断定文の根拠を一次情報まで戻って確認する**。ワーカーが挙げた根拠が別文脈のものになっていないかを見る
 
 **根拠**: 2026-09-02 PR #574。初回報告を差し戻し、`pre-push` の実装（`check-gh-account.sh` の結果しか見ない）を根拠に否定側のみ断定する表現へ修正させた
+
+---
+
+### 2026-09-04 — Codex CLI は長文プロンプトで exit 0 のまま無言終了する [Tooling][Gotcha]
+
+**観察**: PR のレビューを `codex exec --sandbox read-only` へ委託したところ、**3 回連続で回答がゼロ**だった。いずれも exit code は 0 で、エラーメッセージも出ない。
+
+1. 前景実行 → 10 分でタイムアウト（出力なし）
+2. `nohup` + バックグラウンド → ログにプロンプトのエコーだけが残り終了。`Reading additional input from stdin...` の行があった
+3. `< /dev/null` で stdin を切る → 「差分と規約を照合します。一次情報も確認します」という**前置き 1 行だけ**出力して終了
+
+「Codex が壊れている」と判断しかけたが、`codex exec ... "1+1 の答えだけを数字で答えてください。"` の疎通テストは **19,054 tokens 使って正常に応答**した。つまり CLI もアカウントも生きていた。
+
+4 回目に**プロンプトを大幅に短縮**（観点を 3 つに絞り、diff を貼らず `git diff main...HEAD` を実行させる形へ）したところ、62,975 tokens を使って must 2 件・should 1 件の実のあるレビューが返った。
+
+**気づき**: 失敗が exit 0 で返るため、**成功と区別がつかない**。「実行できた＝結果が空だった」と読んでしまい、レビュー対象に問題がなかったのだと誤解しかねない。実際 2 回目は「Codex が Approve した」と解釈する余地があった。
+
+**対策/学び**:
+
+- `codex exec` は **stdin を必ず切る**（`< /dev/null`）。付けないと stdin 待ちで沈黙終了する
+- **プロンプトに diff やファイル本文を貼らない**。パスと実行すべきコマンドを渡し、Codex 自身に読ませる。貼った時点でそれは一次ソースではなく要約でもある
+- 観点は 3 つ程度に絞る。長い依頼文は分割する
+- **exit 0 を成功の証拠にしない**。出力に `tokens used` 行と実際の回答本文があるかを確認してから受理する。無ければ失敗として扱う
+- 疑わしいときは最小プロンプト（`1+1`）で疎通を切り分ける。CLI 全体の障害と、そのプロンプト固有の失敗を区別できる
+- 長文が必要な場合は前景 10 分で切らず、バックグラウンド実行にしてログを後から読む
+
+**根拠**: 2026-09-04 セッション。PR #571 のレビュー依頼で 3 回空振り（約 25 分のロス）、短縮版の 4 回目で成功し、そこで得た must 2 件を #571 へ反映した
+
+---
+
+### 2026-09-05 — Workflow のエージェントは相対パスをメインセッションの cwd 基準で解決する。実行中に cwd を動かすと成果物が2箇所に分裂する [Workflow][Gotcha]
+
+**観察**: `articles_note/new/ai-driven-development-experience-note.md` を対象に、5ループのレビュー改善 Workflow を PR #585 のブランチの worktree で起動した。実行中、オーガナイザー（メインセッション）が別 PR の作業のため作業ディレクトリを worktree → 別 worktree → main checkout と移した。その結果、**後半ループのエージェントが相対パスを main checkout 基準で解決**し、そこに記事のコピーを untracked ファイルとして作成・編集した。worktree 側は途中ループ止まり、main checkout 側が最終版という分裂が生じ、最終検証エージェントが検証したのは main checkout 側だった。Workflow の完了報告は全エージェント成功の正常終了で、**分裂は報告に一切現れなかった**。
+
+2026-09-03 の「長時間ワークフローは実行中にベースごと入れ替わる」は並列セッションがワーキングツリーを切り替えた事例だが、今回のドリフト源は**自分自身の作業ディレクトリ移動**だった。「worktree で隔離しているのでドリフト源は存在しない」という事前判断が誤りで、worktree はメインセッションの cwd 移動を隔離しない。
+
+**対策/学び**:
+- Workflow 実行中はメインセッションの作業ディレクトリを動かさない。別 PR の作業を挟むなら Workflow の完了を待つ
+- 同日マージの PR #595 が入れた snapshot guard（`scripts/check-note-thesis-snapshot.js`）が、この事象に直接効く。`capture` が `git rev-parse --show-toplevel` でリポジトリルートを **cwd から**解決したうえで、`branch`（`git branch --show-current`、detached なら `DETACHED`）/ `headSha`（`git rev-parse HEAD`）/ `articlePath` / `articleSha256`（記事本文の SHA-256）の4項目を記録する。各エージェントは `verify` で初回 snapshot と4項目を突き合わせ、1つでも異なれば `ABORT: article snapshot changed` を stderr に出して exit 2 で止まる。worktree と main checkout では `branch` と `headSha` が食い違うため、今回の分裂は verify 段階で捕捉される
+- `.claude/workflows/note-thesis-review-loop.js` では、Extract / 各ループの Review・Improve・Recheck / FinalVerify の**全プロンプト先頭に `verify` 実行が挿入**され、`snapshotOk=false` なら Read/Edit を続行せず返す規約になっている。Improve だけは編集後に `capture` を再実行し、`branch` / `headSha` / `articlePath` が初回と一致するかをワークフロー側でも突き合わせる（`sameExecutionContext`）。いずれかで不一致なら `aborted: 'article-snapshot-changed'` で終了する
+- **#595 以前の版を fork した Workflow にはこのガードが無い**。fork したスクリプトを使い回す場合は、本家の更新（特にガード追加）を取り込んでから起動する
+
+**根拠**: 2026-09-05 の実行。PR #595（マージ commit `d126e92`、`.claude/workflows/note-thesis-review-loop.js` / `scripts/check-note-thesis-snapshot.js` / `scripts/check-note-thesis-review-loop.js` / `package.json` を変更）を一次ソースとして確認
+
+---
+
+### 2026-09-05 — 消費側を書く前に生成側の一次ソースを読む／書いた手順は自分で1回実行して確かめる [Tooling][Gotcha]
+
+**観察**: 同日、同じ根本原因（**consumer 側を、producer 側・実行系の実挙動を確認せずに書いた**）から3つの欠陥が出た。
+
+1. **生成側の命名規則を読まずに削除スクリプトを書いた**。`scripts/clean-note-build.js`（PR #596）は `articles_note/build/` の WXR を記事ごと最新1本に整理する。初版は「`articles_note/new/<slug>.md` が無い slug は削除」だったが、生成側 `.claude/skills/note-export-import/scripts/md_to_wxr.py` の `derive_default_outname` は **単一ファイル指定 → ファイルの stem / 単一ディレクトリ指定 → ディレクトリ名（`new` / `drafts` / `published`、空なら `batch`） / 複数指定 → `bundle`** を返す。`articles_note/new/new.md` や `bundle.md` は定義上存在しないため、**ディレクトリ指定で生成した直後の WXR が即座に削除対象**になっていた。一次ソースを読んでいれば設計時点で分かった。
+2. **`npm run <script> --dry-run` は npm がフラグを食い、確認のつもりが実行になる**。使い捨ての `package.json` で probe した実測（npm 11.12.1）:
+
+   ```text
+   $ npm run probe --dry-run        # `--` なし
+   ARGV=[]
+   npm_config_dry_run="true"
+   SCRIPT ACTUALLY RAN
+
+   $ npm run probe -- --dry-run     # `--` あり
+   ARGV=["--dry-run"]
+   npm_config_dry_run=undefined
+   SCRIPT ACTUALLY RAN
+   ```
+
+   `--` を1つ忘れるだけで、script は `--dry-run` を受け取らないまま**実行される**。破壊的操作を伴う npm script では致命的。さらに悪いことに、私は `CLAUDE.md` の運用手順に `--dry-run` の使い方を書き、その踏み方を自分で促していた。
+3. **PR 作成前に3点 diff を見ず、他 PR の差分が混入した**。記事改善の PR で、ブランチが main をマージ済みだったため別 PR（#596）の3ファイルが diff に載った。`git diff <base>...HEAD --stat` を作成前に見れば即座に分かった。ブランチを base から作り直して復旧した。これは `CLAUDE.md` §`gh pr merge` 直前チェックリストと 2026-06-10 / 2026-04-20 のエントリに既に明記されている規律で、**新しい発見ではなく、書いてある手順を実行しなかった**という失敗である。
+
+**対策/学び**:
+
+- **消費側を書く前に生成側の一次ソースを読む**。関数名や docstring から挙動を推測せず、戻り値の全パターンを自分の目で確認する。今回なら `derive_default_outname` の3分岐。
+- 生成側の命名規則が「記事 slug ではない」ケースを持つなら、消費側は**予約語として明示的に除外**する。`clean-note-build.js` は `RESERVED_SLUGS = {new, drafts, published, bundle, batch}` を一切削除せず（束ねた生成物は provenance が不明で、新しい版が古い版の上位互換とは限らない）、`live` 判定も `new/` だけでなく `published/` `drafts/` を横断して note guid 名の WXR を守るようにした。
+- **破壊的な npm script では `npm_config_dry_run` も dry-run として扱う**。`clean-note-build.js` の `resolveDryRun(argv, env)` は `--dry-run` 引数と `npm_config_dry_run` の両経路を見て、**どちらの経路で dry-run と判定したかをログに出す**。加えて `--` を覚えなくてよい専用 script `clean:note-build:dry` を用意した。同じ形の script を追加するときは踏襲する。
+- **手順を書いたら、その手順どおりに1回実行して確かめる**。ドキュメントに書いた時点で他人（次の自分を含む）はそのとおり打つ。未実行の手順は仕様ではなく願望。
+- PR 作成前にも `git diff <base>...HEAD --stat` を見る。3点比較はマージ前だけの作法ではない。
+
+**根拠**: 2026-09-05 の作業。PR #596（`scripts/clean-note-build.js` 追加、マージ commit `ddb3ba4`）、`.claude/skills/note-export-import/scripts/md_to_wxr.py` の `derive_default_outname`、npm 11.12.1 での再実測。3点 diff の先行エントリは 2026-06-10 / 2026-04-20、同日の別事象（Workflow の cwd 基準相対パス）は PR #600 のエントリを参照
+
+### 2026-09-06 — WARN-only の新 lint を集約 `check` に直結しない。対象を絞る入口を分ける [Tooling][Workflow]
+
+**観察**: `scripts/check-article-language-density.js`（日本語段落中の英語名詞密集を検知する WARN-only lint）を追加した際、初版は `npm run check` から全記事を対象に走らせた。既存記事に **57 件の WARN** が出て、集約 check の出力が新規変更由来の指摘で埋もれた。新しい観点そのものは正しいのに、既存資産の在庫が一気に噴き出して signal/noise 比を壊した形。
+
+**対策/学び**:
+
+- 責務を分けた。`check:article-humanizer` を `check:article-humanizer-contract`（Harness の契約検査。CI 常時）と `check:article-language-density`（実記事の密度検査）に割り、**集約 `npm run check` には contract 側だけを繋いだ**。
+- 実記事の密度確認は `/finalize-note-article <target>` から **対象記事だけ**に走らせる（`npm run check:article-language-density -- articles_note/<state>/<slug>.md`）。引数なしで叩くと `articles_note/new|published` 全体が対象になるので、手で叩くときも必ず対象を渡す。
+- この分離は後戻りしやすいので、`scripts/check-note-finalize.js` に「集約 `check` が `check:article-language-density` を含んでいたら FAIL」という逆向きのガードを入れてある。
+- 一般化: **既存資産に対して在庫 WARN が出るタイプの lint は、集約ゲートではなく「これから触る対象」を指定する入口に置く**。集約側には契約・self-test だけを残す。
+
+**根拠**: PR #594（マージ commit `c2fbc4f`）。`package.json` の `check` は `check:article-humanizer-contract` を含み `check:article-language-density` を含まない。`scripts/check-article-language-density.js` の `DEFAULT_TARGETS` / `--` 引数処理、`scripts/check-note-finalize.js` の `must not scan all historical articles` ガード、`.claude/commands/finalize-note-article.md` L38。57 件という実数は PR #594 本文の記述。
+
+### 2026-09-06 — Workflow phase が custom Agent 定義を Read してもツール権限は継承しない [Platform][Gotcha]
+
+**観察**: `.claude/workflows/note-finalize.js` の DomainReview / VisualReview phase は、レビュー契約を参照するために `.claude/agents/article-domain-reviewer.md` / `article-visual-reviewer.md` を `Read` する。だがこれは**定義文書を読んでいるだけ**で、その frontmatter の `tools:`（`WebFetch` など）が phase の実行権限に加わるわけではない。「Agent 定義を読んだから一次情報を取りに行ける」と錯覚すると、実際には取得できていない主張を `verified` として返してしまう。
+
+**対策/学び**:
+
+- Workflow の prompt 側に明文化する。note-finalize は Domain phase に `primarySourceAccess: available / partial / unavailable` を返させ、**`unavailable` なら中心主張の `official_fact` を推測で `verified` にせず `unverified=true`** とする（L272-273）。Visual phase も同様に「Agent 定義を Read しても画像を読む能力は増えない」→ 画像本体を確認できなければ `KEEP` ではなく `UNVERIFIED`（L319）。
+- `unverified` が立った Gate は最終 verdict を `UNVERIFIED` に落とし、`READY` を名乗らせない。**能力の欠如を「合格」ではなく「未検証」に写像する**のが要点。
+- 関連: 2026-08-20 の「Skill の `allowed-tools` は事前承認であって排他的な権限制限ではない（排他制限は Custom Subagent の `tools`）」と同じ族の誤解。**権限の所在は「読んだ文書」ではなく「いま実行している主体」にある**。
+
+**根拠**: PR #594（マージ commit `c2fbc4f`）で追加された `.claude/workflows/note-finalize.js` L272-273 / L319、および `primarySourceAccess` の enum 定義（L91-101 付近）。PR #594 本文にも同趣旨の記載あり。
 
 ---
 
