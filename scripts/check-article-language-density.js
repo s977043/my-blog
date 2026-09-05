@@ -1,4 +1,18 @@
 #!/usr/bin/env node
+// Check: 日本語の記事で英語表記が密集している箇所を検出する（WARN のみ・exit code は常に 0）。
+//
+// ■ `npm run check` に **意図的に含めていない**
+//   全記事を対象にすると WARN が数百件（2026-09-06 実測で 657 cluster）出るため、
+//   集約ランナーの出力を埋めてしまい、他の検査の FAIL が読めなくなる。
+//   ブロッキングでもないので、chain に入れても止まる場面がない。
+//   代わりに `check:article-humanizer-contract` が chain に入っており、
+//   `npm run check:article-humanizer` / `npm run check:article-language-density` を
+//   **記事を書いた本人が単独で実行する**運用にしている。
+//   閾値を上げて誤検知を減らせた場合は、この判断を見直してよい。
+//
+// ■ 使い方
+//   npm run check:article-language-density   # 実データ（WARN のみ）
+//   npm run test:article-language-density    # self-test
 
 const fs = require('fs')
 const path = require('path')
