@@ -211,7 +211,7 @@ PASS: case15 空白入りパスでも既定コマンドを実行できる (exit=
 [test-cleanup-pr-worktree] all cases passed
 ```
 
-**16 ケース（case0〜case15）・59 アサーション、全 PASS。** 実 API を叩かないので CI に載せられる。
+**19 ケース・59 アサーション、全 PASS。** 実 API を叩かないので CI に載せられる。
 
 ## commit / push の水際は Git hook に置いた
 
