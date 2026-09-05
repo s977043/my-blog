@@ -50,6 +50,7 @@
     "test:clean-note-build": "node scripts/clean-note-build.js --self-test",
     "check": "npm run list:articles && npm run list:books && npm run check:qiita && npm run check:note-ref && npm run check:note-images && npm run check:note-tables && npm run check:qiita-publish-hygiene && npm run check:doc-freshness && npm run check:zenn-title && npm run check:fm-title && npm run check:faq-coverage && npm run check:internal-links && npm run check:zenn-pace && npm run check:learnings-index && npm run check:article-humanizer-contract && npm run check:note-finalize && npm run check:note-thesis-snapshot && npm run check:zenn-image-format && npm run check:note-setext && npm run check:queue-drift",
     "check:learnings-index": "node scripts/check-learnings-index.js",
+    "test:learnings-index": "node scripts/check-learnings-index.js --self-test",
     "suggest:theme": "node scripts/suggest-next-theme.js",
     "test:suggest-theme": "node scripts/suggest-next-theme.js --self-test"
   },
