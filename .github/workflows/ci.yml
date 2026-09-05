@@ -38,6 +38,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Content harness self-tests
+        run: |
+          npm run test:article-humanizer
+          npm run test:note-finalize
+
       - name: Check Zenn content
         run: npm run check
 
