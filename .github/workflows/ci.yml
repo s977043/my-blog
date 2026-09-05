@@ -38,12 +38,44 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # 新設 check スクリプトの初版バグ対策（#393/#417 の再発防止）として、
+      # self-test を持つ check スクリプトは原則すべてここで常時実行する。
+      # いずれも fixture ベースの hermetic テストで、ローカル実測 1 本あたり 0.4-0.8 秒。
+      # test:article-humanizer は contract / language-density の複合スクリプト。
       - name: Content harness self-tests
         run: |
           npm run test:article-humanizer
           npm run test:note-finalize
+          npm run test:note-thesis-snapshot
+          npm run test:zenn-image-format
+          npm run test:note-setext
+          npm run test:queue-drift
+          npm run test:clean-note-build
+          npm run test:learnings-index
+          npm run test:suggest-theme
           python3 .claude/skills/note-cover-image/scripts/check_note_cover.py --self-test
 
+      # check:pr-staleness の self-test。bash + 一時 git リポジトリを作るため
+      # 他の self-test より重い（ローカル実測 6.0 秒 / exit 0）が、CI 全体の
+      # ジョブ時間（timeout-minutes: 10）に対しては十分軽いので常時実行する。
+      # 分離しているのは、失敗時に「git fixture 起因か content 起因か」を
+      # ステップ名だけで切り分けられるようにするため。
+      - name: PR staleness harness self-test
+        run: npm run test:pr-staleness
+
+      # cleanup-pr-worktree.sh（PR マージ後のローカル後片付け）の self-test。
+      # #606 の「self-test を持つ check スクリプトは CI で常時実行する」方針の対象。
+      # 16 fixture 分の一時 git リポジトリ + worktree を作るため self-test 中では最も重い
+      # （ローカル実測 22 秒 / exit 0。うち約 4 秒は中断シグナル回帰ケースの意図的な待機）。
+      # それでもジョブの timeout-minutes: 10 に対しては十分軽いので常時実行する。
+      - name: PR cleanup harness self-test
+        run: npm run test:cleanup-pr
+
+      # npm run check は 20 個の検査を「全件実行してから失敗をまとめて報告」する
+      # 集約ランナー。以前は && チェーンだったため、前方の 1 件が落ちると後続が
+      # 一度も実行されず、1 回の CI で分かることが最初の失敗だけに縮んでいた
+      # （PR #605 で check:learnings-index が初めてブロッキングになり、後続 6 件が
+      # 未実行になった実例）。個々の検査の合否判定は変えていない。
       - name: Check Zenn content
         run: npm run check
 

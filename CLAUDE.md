@@ -10,9 +10,21 @@ Claude Code 向けのツールガイド。規約（何が正しいか）は `@AG
 2. `@AGENT_LEARNINGS.md` — 過去の失敗・成功パターン（同じ落とし穴を踏まない）
 3. 本ファイル — Claude Code で使えるツールの索引
 
-## Slash Commands / Subagents / Skills
+## Slash Commands / Subagents / Skills / Workflows
 
-各ツールの一覧と説明文はハーネスが毎セッション自動で読み込む（`.claude/commands/` = 12コマンド、`.claude/agents/` = 5エージェント、`.claude/skills/` = 3スキル）。個別の用途は各定義ファイルの frontmatter description を正とする。
+各ツールの一覧と説明文はハーネスが毎セッション自動で読み込む（`.claude/commands/` / `.claude/agents/` / `.claude/skills/` / `.claude/workflows/`）。個別の用途は各定義ファイルの frontmatter description を正とする。**本ファイルに件数は書かない**（増減の度に必ず陳腐化するため）。実態を数えたいときは `ls .claude/commands .claude/agents .claude/skills .claude/workflows`。
+
+`.claude/workflows/` は Workflow ツールから `Workflow({ name: "<file名から .js を除いたもの>", args: {...} })` で起動する多フェーズスクリプト。commands / skills と違い**ハーネスの一覧には出ない**ので、note 記事の最終化に関わるものだけここに索引を置く。
+
+### note 記事の最終化まわり（#594 / #604 で追加）
+
+**使い分け**: `note-finalize` は公開直前の**最終判定**で、記事を一切編集しない（review-only）。`note-thesis-review-loop` はその判定が NEEDS_CHANGES だったときに回す**改善ラウンド**で、Improve フェーズが記事本文を編集する。順序は finalize →（NEEDS_CHANGES なら）loop → finalize 再実行。
+
+- `/finalize-note-article <articles_note/<state>/<slug>.md>` … `.claude/commands/finalize-note-article.md`。下記 Workflow の入口
+- `Workflow({ name: "note-finalize", args: { article } })` … `.claude/workflows/note-finalize.js`。Domain / 言語密度 / 図 / 編集の独立 Gate を通し **`READY` / `NEEDS_CHANGES` / `UNVERIFIED`** を返す。記事は編集しない。`drafts/` は読み取り専用ミラー扱い
+- `Workflow({ name: "note-thesis-review-loop", args: { article, loops } })` … `.claude/workflows/note-thesis-review-loop.js`。主題・中心主張を固定したままレビュー→改善→再レビューを N ループ。**`args.loops` は 3（既定）か 5 のみ**。`5` を指定したときだけ Loop4（専門領域の事実境界）と Loop5（言語密度・note 表記規約・図）が付く。**記事本文が変わる**
+- Gate の観点定義スキル: `.claude/skills/article-domain-review/`（公式事実と筆者解釈の境界）/ `.claude/skills/article-humanizer-ja/`（AI 定型表現・英語名詞密度 S15-S17）/ `.claude/skills/article-visual-review/`（図の配置・意味・用語整合）
+- deterministic な補助 lint: `npm run check:article-language-density -- articles_note/<state>/<slug>.md`（**対象記事を必ず指定する**。引数なしだと `articles_note/new|published` 全体を走る）
 
 ### 公開系コマンドの経緯（旧・意図的非対応）
 
@@ -52,6 +64,12 @@ python3 .claude/skills/note-export-import/scripts/verify_wxr.py articles_note/bu
 ```
 
 依存: `pip install --break-system-packages markdownify markdown`（`verify_wxr.py` は標準ライブラリのみ）
+
+> **生成物の整理**: `articles_note/build/` は `md_to_wxr.py` が生成する `import-<slug>-YYYYMMDD-HHMM.xml` が溜まる（タイムスタンプは分粒度なので、同一分内の再実行は上書き、分をまたぐと旧版が残る）。note のインポートはファイル選択式で、**旧版を選ぶと古い本文の下書きがサーバ側に作られ、復旧に手動削除が必要**になる。WXR を生成したら `npm run clean:note-build` で記事ごと最新1本だけに整理する。build/ は `.gitignore` 済みで再生成可能なため削除は非破壊。
+>
+> - **確認だけしたいときは `npm run clean:note-build:dry`**（`--` 不要）。`npm run clean:note-build -- --dry-run` も同義。`--` を忘れた `npm run clean:note-build --dry-run` は npm がフラグを食って引数に届かないが、スクリプト側で `npm_config_dry_run` を見て dry-run 扱いにするため実削除にはならない（判定経路を1行ログに出す）
+> - 削除対象は `articles_note/{new,published,drafts}/<slug>.md` がどこにも無い slug の WXR と、同一 slug の旧版。published/ drafts/ のミラー（note guid 名）も live 判定に含めるので、guid 由来の WXR は消えない
+> - `new` / `drafts` / `published` / `bundle` / `batch` は `md_to_wxr.py` がディレクトリ指定・複数指定時に付ける**予約名**で、記事を逆引きできないため**旧版も含めて自動削除しない**（`kept (reserved)` としてログに出る。不要になったら手動で消す）
 
 ## 初回セットアップ（リポジトリ毎に1回）
 
