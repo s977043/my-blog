@@ -187,7 +187,7 @@ git diff origin/main...origin/<branch> --stat         # 3点比較。現 main �
 ```
 
 - `state != OPEN` の場合は何もしない（並列セッションが先行マージ済み）
-- 3点 diff（`...`）が PR 本文の想定範囲を超える場合は stale の疑い。**PR の `gh pr` 上の diff は head の base に対する差分なので、base が現 main からズレていると実害（巻き戻し）を隠す**。`git diff origin/main...origin/<branch>` で「現 main に対して入る正味差分」を必ず確認する（2026-06-10: #404/#405 が squash 済み記事を巻き戻したインシデント）
+- 3点 diff（`...`）が PR 本文の想定範囲を超える場合は stale の疑い。**PR の `gh pr` 上の diff は head の base に対する差分なので、base が現 main からズレていると実害（巻き戻し）を隠す**。`git diff origin/main...origin/<branch>` で「現 main に対して入る正味差分」を必ず確認する（2026-06-10: **#404 が** squash 済み記事を巻き戻したインシデント。同型の #405 は `gh pr` 上の diff が「+14行」に見えたが現 main に対しては全体を巻き戻す内容で、3点 diff で気づいてマージ前に close した）
 - **マージは常に `gh pr merge <n> --squash --delete-branch`**。このリポジトリは merge commit 禁止で、`--merge` は `GraphQL: Merge commits are not allowed` で失敗する
 - 詳細事例: `@AGENT_LEARNINGS.md` の「Stale PR は `git diff main..branch` で事前にリグレッション検出する」「並列セッションが squash 済み記事を別 base で再マージ」エントリ
 
