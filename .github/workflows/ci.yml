@@ -53,7 +53,7 @@ jobs:
           npm run test:clean-note-build
           npm run test:learnings-index
           npm run test:suggest-theme
-          python3 .claude/skills/note-cover-image/scripts/check_note_cover.py --self-test
+          npm run test:note-cover-image
 
       # check:pr-staleness の self-test。bash + 一時 git リポジトリを作るため
       # 他の self-test より重い（ローカル実測 6.0 秒 / exit 0）が、CI 全体の
