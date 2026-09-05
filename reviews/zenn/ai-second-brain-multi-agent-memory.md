@@ -1,8 +1,10 @@
-<!-- publish-readiness: blocked=false mustHigh=0 verified=true articleHash=b43e3cbbe4329377cece98789e90ffee73cb9822 loops=1 reviewedAt=2026-08-27T09:41:31Z -->
+<!-- publish-readiness: blocked=false mustHigh=0 verified=true articleHash=7deb7226639ef70ffe634d3221825e66bae9b0cc loops=1 reviewedAt=2026-08-27T09:41:31Z -->
 
 # レビュー成果物: ai-second-brain-multi-agent-memory
 
-- 対象記事: `articles/ai-second-brain-multi-agent-memory.md`（articleHash `b43e3cbbe4329377cece98789e90ffee73cb9822`。レビュー実施時点は `de26d5b3ce87a0dc09d4b700cbe5c8ad609e3606`、F1 反映後に `5b876497…`、2026-09-02 の主張境界レビュー反映後に `b43e3cbb…`）
+- 対象記事: `articles/ai-second-brain-multi-agent-memory.md`（articleHash `7deb7226639ef70ffe634d3221825e66bae9b0cc`。レビュー実施時点は `de26d5b3ce87a0dc09d4b700cbe5c8ad609e3606`、F1 反映後に `5b876497…`、2026-09-02 の主張境界レビュー反映後に `b43e3cbb…`、2026-09-05 の main 段公開フリップ後に `7deb7226…`）
+
+> **2026-09-05 の articleHash 更新について（本文は不変）**: `b43e3cbb…` → `7deb7226…` の差分は **front matter の `published: false` → `true` の 1 行のみ**であり、記事本文は 1 文字も変わっていない（`git diff articles/ai-second-brain-multi-agent-memory.md` で全差分が当該 1 行であることを確認済み）。`check:publish-readiness` の鮮度判定は blob hash 一致で行うため、公開フリップだけでも必ず stale になる。本レビューの結論（`blocked=false mustHigh=0 verified=true`）は本文に対する判定であり、フリップによって無効化されないため、再レビューは行わず hash のみを更新した。この扱いの根拠は `docs/publish-queue.md` の「`requires-human` への遷移条件」を参照。
 - Zennカテゴリー: Idea（`type: "idea"`。設計思想と運用ふりかえりが主で、Zenn 公式の Idea 定義と一致）
 - 構成タイプ: 概念解説・考察（記憶集約の設計 + 運用ふりかえり）
 - 改善ループ数: 2（レビュー自体は review-only。F1 を 1 回、2026-09-02 の主張境界指摘 3 件をもう 1 回、それぞれ改稿で反映した）
