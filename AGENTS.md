@@ -222,6 +222,7 @@ Co-Authored-By: <Model name and byline> <noreply@anthropic.com>
 - **コンテンツ方針**: `docs/content-channel-strategy.md`
 - **Claude Code ツール**: `CLAUDE.md`
 - **経験則ログ**: `AGENT_LEARNINGS.md`
+- **開発フロー自己採点の基準**: `docs/loop-audit/rubric.md` — 開発フローを印象でなく観測可能な条件で採点するルーブリック（採点結果は同ディレクトリ）
 - **運用スクリプト**: `.claude/skills/note-export-import/scripts/*.py`
 - **note記事品質チェックリスト**: `articles_note/checklists/note-article-quality-checklist.md`
 - **Skill / Agent / Command定義**: `.claude/skills/*/SKILL.md`, `.claude/agents/*.md`, `.claude/commands/*.md`
