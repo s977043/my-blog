@@ -141,6 +141,39 @@ git diff origin/main...HEAD --stat
 
 ---
 
+## 9. セッション終了時に detached worktree を掃除する
+
+`npm run cleanup:pr` は、**gitignore 対象ファイル（`node_modules` など）が残っている worktree の
+ディレクトリを削除しない**。ブランチだけ外して detached HEAD の worktree として残す。安全側として
+正しい挙動だが、ワーカーを回すほど worktree が溜まる（実測: 1 セッションで 3 件残り、手で掃除した）。
+
+セッションを終える前に一括で掃除する。**未コミット変更がある worktree は消さない**のが必須条件。
+
+```bash
+# 1. 一覧を見る（detached と表示されるものが掃除候補）
+git worktree list
+
+# 2. 候補ごとに未コミット変更の有無を確認する（0 行なら消してよい）
+git -C <worktree-path> status --porcelain
+
+# 3. 0 行だったものだけ削除する
+git worktree remove --force <worktree-path>
+
+# 4. 参照が消えた分を整理する
+git worktree prune
+git worktree list
+```
+
+`status --porcelain` が 1 行でも出たら**消さない**。中身を確認し、必要ならブランチを切って commit
+するか、`git stash push -u -m "<sentinel>"` で退避してから判断する（`CLAUDE.md` §並列セッション耐性）。
+`--force` が要るのは gitignore 対象ファイルが残っているためで、**未コミット変更を握り潰す許可ではない**。
+判定を飛ばして `--force` を打たない。
+
+掃除は `git worktree list` が期待どおりになるまで確認する（`CLAUDE.md` §セッション終了時のチェックリスト
+の stash / ブランチ / open PR の確認と合わせて実施する）。
+
+---
+
 ## 委託プロンプトに貼る定型ブロック
 
 ```markdown
