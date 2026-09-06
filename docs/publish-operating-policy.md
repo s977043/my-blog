@@ -83,6 +83,7 @@ agent が公開関連作業を進める際は、以下を満たすことを明�
 
 - [`content-channel-strategy.md`](./content-channel-strategy.md) — 媒体役割の正本
 - [`publish-queue.md`](./publish-queue.md) — 締切付き公開キュー
+- [`ultracode-quality-check-flow.md`](./ultracode-quality-check-flow.md) — 公開前の最終ゲートに使う網羅マルチエージェント品質チェックの標準フロー（実体は `.claude/workflows/ultracode-quality-check.js`）
 - [`channel-metrics/2026-05-21.md`](./channel-metrics/2026-05-21.md) — 直近の実測スナップショット
 - [`../AGENTS.md`](../AGENTS.md) — Zenn 公開フロー（release/zenn 経由）と Git 運用規約
 - [`../CLAUDE.md`](../CLAUDE.md) — Claude Code 固有のツールガイド
