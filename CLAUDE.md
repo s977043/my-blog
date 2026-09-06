@@ -27,6 +27,7 @@ Claude Code 向けのツールガイド。規約（何が正しいか）は `@AG
 - `Workflow({ name: "note-thesis-review-loop", args: { article, loops } })` … `.claude/workflows/note-thesis-review-loop.js`。主題・中心主張を固定したままレビュー→改善→再レビューを N ループ。**`args.loops` は 3（既定）か 5 のみ**。`5` を指定したときだけ Loop4（専門領域の事実境界）と Loop5（言語密度・note 表記規約・図）が付く。**記事本文が変わる**
 - Gate の観点定義スキル: `.claude/skills/article-domain-review/`（公式事実と筆者解釈の境界）/ `.claude/skills/article-humanizer-ja/`（AI 定型表現・英語名詞密度 S15-S17）/ `.claude/skills/article-visual-review/`（図の配置・意味・用語整合）
 - deterministic な補助 lint: `npm run check:article-language-density -- articles_note/<state>/<slug>.md`（**対象記事を必ず指定する**。引数なしだと `articles_note/new|published` 全体を走る）
+- **実運用の実測値**: [`docs/note-finalize-operation-log.md`](docs/note-finalize-operation-log.md)（8 run / 2 記事）。1 run あたり **約 11 分・5.45M トークン・サブエージェント 5 体**。READY まで再実行 6 回。Gate の既知の弱点（visual が図を見落とす run、段落長をバイト数で報告する editorial 指摘）も同ファイルに記録してある
 
 ### 公開系コマンドの経緯（旧・意図的非対応）
 
