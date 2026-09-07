@@ -93,6 +93,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-07-19 — check:pr-staleness 誤検知が1日4件。原因は lookback 和集合の過剰計上と macOS collation。#464 で resurrection 判定＋LC_ALL=C 修正
 - 2026-08-27 — ゲートは実行直前に最新の状態で測る（古い checkout の readiness は OK に化ける）
 
+- 2026-09-07 — PR 番号の飛びは並行セッションの作業衝突のサイン。`check:pr-conflict` で同一ファイルを触る open PR を検知する
 ### E. GitHub account / gh CLI / PR 運用
 **現行正本**: `CLAUDE.md` §作業開始時のチェックリスト / `scripts/hooks/pre-push`
 - 2026-05-21 — gh active account の自動切替を毎回 pre-push で検知する
@@ -150,6 +151,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-09-05 — 消費側を書く前に生成側の一次ソースを読む／`npm run <script> --dry-run` は `--` 忘れで実行される／書いた手順は1回実行して確かめる
 - 2026-09-06 — Workflow phase が custom Agent 定義を Read してもその `tools` 権限は継承しない／Workflow スクリプトの構文崩れは `node --check` では検出できない
 
+- 2026-09-07 — 検査系は「問題なし」と「検査できなかった」を別の値にする（Visual Gate の passed=true 丸め）
 ---
 
 ## 🧭 学びエントリ
@@ -1586,6 +1588,21 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 - 関連: 2026-08-20 の「Skill の `allowed-tools` は事前承認であって排他的な権限制限ではない（排他制限は Custom Subagent の `tools`）」と同じ族の誤解。**権限の所在は「読んだ文書」ではなく「いま実行している主体」にある**。
 
 **根拠**: PR #594（マージ commit `c2fbc4f`）で追加された `.claude/workflows/note-finalize.js` L272-273 / L319、および `primarySourceAccess` の enum 定義（L91-101 付近）。PR #594 本文にも同趣旨の記載あり。
+
+### 2026-09-07 — 「検知できない状態」を放置しない（検査不能を合格に丸めない / PR 番号の飛びは衝突のサイン） [Workflow][Gotcha]
+
+**観察**: 同じセッションで、検知手段が欠けていたことに起因する事象が 2 件出た。
+
+1. **検査不能を「合格」に丸めていた**。`.claude/workflows/note-finalize.js` の 4 Gate のうち、Domain Gate は一次情報を取得できないとき `unverified` を返す設計だったのに、Visual Gate は**図を 1 枚も認識できなくても `images: 0` のまま `passed: true`** を返し、その run が `READY` を出していた（対象 run: `wf_b5ce5593` / `wf_b400e3a8`）。同一ワークフロー内で Gate ごとに扱いが割れていた。
+2. **並行セッションの PR が同じファイルを書き換えていたのに気づけなかった**。`articles_note/new/harness-practice-note.md` を複数ゲートと外部レビューで仕上げている最中、並行セッションが**同じ 1 ファイルだけを +175/-128 で書き換える PR #623**（作成 `2026-09-06T09:32:01Z` / マージ `09:59:26Z`、author s977043）を出してマージした。こちらの PR #624（作成 `2026-09-06T09:35:19Z`）の CI を見たときに初めて気づき、**手がかりは PR 番号が 1 つ飛んでいたことだけ**だった。中心的な切り分けは別表現で残ったので実害は限定的だったが、気づく手段が無かったこと自体が問題。
+
+**対策/学び**:
+
+- **検査系を作るときは「問題なし」と「検査できなかった」を必ず別の値にする。** 同じ値へ丸めると、検査が動いていない状態が成功として報告される。note-finalize では `reconcileVisual` を FinalGate に置き、会計不一致・検査漏れ・自己矛盾を検出したら `passed` は書き換えず `unverified` を立てる（Domain Gate と同じ扱いに揃える）。**同一ワークフロー内で Gate ごとに扱いを変えない**のが要点。
+- **PR を起票した直後に番号が飛んでいたら、他セッションが並行して PR を作っているサイン**として扱う。連番の欠けは「気づける唯一の兆候」なので見逃さない。
+- 兆候頼みにしない仕組みとして `npm run check:pr-conflict`（`scripts/check-pr-file-conflict.js`）を追加した。現ブランチの変更ファイル（または引数指定のファイル）が他の open PR のファイル集合と重なるかを 1 回の `gh pr list --json files` で判定する。既定は WARN、`--strict` で exit 1。gh 未認証 / オフライン / レート制限では SKIP して誤検知しない。作業着手前とレビュー前に叩く。
+
+**根拠**: Issue #622 / PR #624（マージ commit `d8a620c`、`.claude/workflows/note-finalize.js` の `VISUAL_SCHEMA.scan` と `reconcileVisual`）。PR #623 は `gh pr view 623 --json createdAt,mergedAt,additions,deletions,files` で確認（1 ファイル / +175 / -128）。
 
 ---
 
