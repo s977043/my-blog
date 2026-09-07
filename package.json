@@ -47,6 +47,8 @@
     "test:note-setext": "node scripts/check-note-setext.js --self-test",
     "check:queue-drift": "node scripts/check-queue-drift.js",
     "check:orphan-docs": "node scripts/check-orphan-docs.js",
+    "check:pr-conflict": "node scripts/check-pr-file-conflict.js",
+    "test:pr-conflict": "node scripts/check-pr-file-conflict.js --self-test",
     "test:queue-drift": "node scripts/check-queue-drift.js --self-test",
     "test:orphan-docs": "node scripts/check-orphan-docs.js --self-test",
     "clean:note-build": "node scripts/clean-note-build.js",
