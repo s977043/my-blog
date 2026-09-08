@@ -33,6 +33,30 @@ Zenn / Qiita / note の3プラットフォームで公開する記事を単一�
 
 同じ本文を複数媒体へ転載せず、同じテーマを読者意図と媒体役割に合わせて書き分ける。
 
+### 媒体ごとの名義
+
+| 媒体 | 名義 | 企画の入口 |
+| --- | --- | --- |
+| Zenn | **個人のみ** | エージェント側から提案してよい |
+| Qiita | **個人のみ** | エージェント側から提案してよい |
+| note | 個人 / 会社公式（PRONI） | 個人は提案可。**会社公式はユーザーから指示が出る**（エージェント側から企画しない） |
+
+会社公式（PRONI）の記事は `PRONI-` 接頭辞のファイル名にし、社内のテックブログ投稿レギュレーションを通す（§記事の状態（note固有）参照）。会社プロダクトのリポジトリ（`site-management-system` 等）を一次情報にする記事は、名義が会社公式になるため Zenn / Qiita には出さない。
+
+### 題材の出どころ（記事作成まわりは書かない）
+
+**このリポジトリ（my-blog）発の題材は記事にしない。** my-blog はブログ運用基盤そのものなので、ここの `scripts/`・ワークフロー・運用ログを主題にすると「記事を作るための仕組みの記事」になる。記事の一次情報は**他リポジトリ（実プロダクト・プラグイン・OSS）から取る**。
+
+書かない例:
+
+- note の WXR インポート / エクスポート、`md_to_wxr.py`・`verify_wxr.py`
+- Zenn の rate-limit・`release/zenn` 運用・`sync-release-zenn.sh`
+- 記事向け lint（`check-article-language-density.js`・`check-article-humanizer.js`・`check-publish-readiness.js`）
+- 記事レビュー / 最終化ワークフロー（`note-finalize`・`note-thesis-review-loop`）とその運用ログ
+- 記事テーマの自動起票（`suggest-next-theme.js`）
+
+**影響**: `npm run suggest:theme` は signal 源が my-blog の `scripts/` と `AGENT_LEARNINGS.md` なので、この方針下では違反候補しか出さない。**候補の自動起票は使わない**（テーマ発掘は他リポジトリを対象に `theme-discovery` スキルで行う）。
+
 ## プラットフォーム別の配置規約
 
 | プラットフォーム | 記事本体 | 画像 | レビュー成果物 |
