@@ -2,7 +2,7 @@
 title: "PRは1分でマージできている。それでも終わった気がしなかった"
 emoji: "📦"
 type: "tech"
-topics: ["aiエージェント", "開発生産性", "アジャイル", "claudecode", "git"]
+topics: ["aiエージェント", "開発生産性", "アジャイル", "claudecode", "スクラム"]
 published: false
 ---
 
@@ -12,8 +12,10 @@ published: false
 **この記事で得られること**
 
 - PR のリードタイムが改善しても「終わった気がしない」ときに、どこを測ると在庫が見えるか
-- 個人リポジトリ3つの実測値（作業PR中央値・open issue・未pushブランチ・サブエージェントの稼働）
-- 稼働率を上げる運用が、フロー効率の指標を悪化させたまま「改善した」と読めてしまう仕組み
+- 個人リポジトリ3つの実測値（作業PR中央値・open issue・**リモートに対応ブランチが無いローカルブランチ**・サブエージェントの稼働）
+- 稼働率を上げる運用が、在庫（着手待ちの issue とリモートに対応ブランチが無いローカルブランチ）を伸ばしたまま「PRは改善した」と読めてしまう仕組み
+
+本記事では、`git ls-remote --heads origin` に同名のブランチが存在しないローカルブランチを **「リモートに対応ブランチが無いローカルブランチ」** と呼び、以降この表記で統一します（リモート名は `origin` を前提にしています）。
 
 **想定読者**: AIコーディングエージェントを日常運用していて、並列に走らせる運用を試している人
 
@@ -24,9 +26,10 @@ published: false
 
 - 作業PRのマージまでは中央値 **1.2分〜36.4分**。レビューも76〜98%で付いている。**PR工程は本当に速い**
 - それでも在庫は減っていない。**open PR 1件のリポジトリに、open issue が85件**あった
-- ローカルブランチ **147本のうち97本（66%）が一度も push されていない**
+- ローカルブランチ **147本のうち97本にリモートの対応ブランチが無く、切り分けると66本が未統合の作業**だった
 - PRのリードタイムだけ見ると、キューが伸びているのに「速くなった」と読める
-- 極端な形として、**10.5時間かけて着手宣言の1文だけを返したサブエージェント**がいた
+- 極端な形として、**10.5時間ぶんの枠を占有したまま、着手宣言の1文だけを返したサブエージェント**がいた
+- 対策は稼働率を下げることではなく、**PRのリードタイム以外（着手待ちの issue とローカルブランチ）も一緒に測る**こと。エージェントを待たせるのは無駄ではなく、WIP を制限するという設計判断です
 
 ## エージェントを遊ばせないようにしていた
 
@@ -48,11 +51,11 @@ AIエージェントで開発していると、並列に走らせたくなりま
 
 dependabot の PR は人間の作業と性質が違うので除外し、リリースPR（`release: vX.Y.Z` など、作成直後にマージされる運用のもの）も分けています。
 
-| リポジトリ | 作業PR | マージまで中央値 | レビューが付いたPR |
-| --- | --- | --- | --- |
-| growth-lab | 115件 | **1.2分** | 95件（83%） |
-| PlanGate | 190件 | **36.4分** | 186件（98%） |
-| river-review | 181件 | **31.3分** | 138件（76%） |
+| リポジトリ   | 作業PR | マージまで中央値 | レビューが付いたPR |
+| ------------ | ------ | ---------------- | ------------------ |
+| growth-lab   | 115件  | **1.2分**        | 95件（83%）        |
+| PlanGate     | 190件  | **36.4分**       | 186件（98%）       |
+| river-review | 181件  | **31.3分**       | 138件（76%）       |
 
 予想は外れました。滞留していません。
 
@@ -66,39 +69,51 @@ PR工程は、本当に速い。
 
 同じリポジトリで、PR以外のものを数えました。
 
-| リポジトリ | open PR | open issue | 30日超の issue |
-| --- | --- | --- | --- |
-| growth-lab | 3件 | 21件 | 6件 |
-| **PlanGate** | **1件** | **85件** | **33件** |
-| river-review | 2件 | 18件 | 5件 |
+| リポジトリ   | open PR | open issue | 30日超の issue |
+| ------------ | ------- | ---------- | -------------- |
+| growth-lab   | 3件     | 21件       | 6件            |
+| **PlanGate** | **1件** | **85件**   | **33件**       |
+| river-review | 2件     | 18件       | 5件            |
 
 PlanGate は open PR が1件しかないのに、open issue が85件あります。作りかけは実質ゼロなのに、**着手待ちが85件積んである**状態です。
 
 直近90日の起票と完了を比べると、差が開いているのが分かります。
 
-| リポジトリ | 起票 | 完了 | 差分 |
-| --- | --- | --- | --- |
-| PlanGate | 262件 | 186件 | **+76件** |
-| growth-lab | 22件 | 9件 | +13件 |
-| river-review | 221件 | 211件 | +10件 |
+| リポジトリ   | 起票      | 完了      | 差分      |
+| ------------ | --------- | --------- | --------- |
+| growth-lab   | 22件      | 9件       | +13件     |
+| **PlanGate** | **262件** | **186件** | **+76件** |
+| river-review | 221件     | 211件     | +10件     |
 
 そしてもう一箇所、PRより手前にも溜まっていました。ローカルブランチです。
 
 ```bash
-git for-each-ref --format='%(refname:short)' refs/heads/ | sort > local.txt
-git ls-remote --heads origin | sed 's|.*refs/heads/||' | sort > remote.txt
-comm -23 local.txt remote.txt | wc -l   # 未 push のローカルブランチ
+git for-each-ref --format='%(refname:short)' refs/heads/ | LC_ALL=C sort > /tmp/local.txt
+git ls-remote --heads origin | sed 's|.*refs/heads/||' | LC_ALL=C sort > /tmp/remote.txt
+comm -23 /tmp/local.txt /tmp/remote.txt | wc -l   # リモートに対応ブランチが無いローカルブランチ
 ```
+
+`comm` は両方の入力が同じ照合順で並んでいることが前提です。ブランチ名にハイフンやアンダースコアが混ざるとロケールで順序が変わるため、`LC_ALL=C sort` に固定しています。
 
 growth-lab の結果です。
 
 ```text
-ローカルブランチ : 147
-未 push          : 97   (66%)
-worktree         : 14   (うち 4 は実体が消えた prunable)
+ローカルブランチ         : 147
+リモートに対応ブランチ無し: 97   (66%)
+worktree                 : 14   (メインの作業ツリー1件を含む。うち 4 は実体が消えた prunable)
 ```
 
-**147本のうち97本が、一度も push されていません。** `chore/blog-sync-20260527-0712` のような日付入りの使い捨てブランチが数十本残っています。worktree も14件あり、うち4件はディレクトリの実体が消えて登録だけが残った状態でした。
+**147本のうち97本（66%）に、リモートの対応ブランチがありません。** `chore/blog-sync-20260527-0712` のような日付入りの使い捨てブランチが数十本残っています。worktree も14件あり、うち4件はディレクトリの実体が消えて登録だけが残った状態でした。
+
+この97本は「一度も push されていない」ものだけではありません。マージ後にリモート側だけ削除された残骸も同じ集合に入ります。`git merge-base --is-ancestor <branch> origin/main` で切り分けたところ、内訳はこうでした。
+
+```text
+リモートに対応ブランチ無し : 97
+  うち origin/main の祖先  : 31   (マージ済みの残骸)
+  正味の未統合ブランチ     : 66
+```
+
+**66本が、まだどこにも取り込まれていない作業です。** 残る31本はマージ後の掃除漏れで、在庫ではありません。それでも66本という数は、open PR 3件という見え方とはかけ離れています。
 
 在庫は減っていたのではなく、**PRという見やすい場所から、issue とローカルブランチという見えにくい場所へ移っていた**だけでした。
 
@@ -106,20 +121,25 @@ worktree         : 14   (うち 4 は実体が消えた prunable)
 
 在庫の話とは別に、稼働率そのものが嘘になっている例が見つかりました。
 
-サブエージェントの実行ログ（`~/.claude/projects/<project>/<session>/subagents/*.jsonl`）から、経過時間と実際に返したテキスト量を集計しました。
+サブエージェントの実行ログ（`~/.claude/projects/<project>/<session>/subagents/agent-*.jsonl`）から、経過時間と実際に返したテキスト量を集計しました。このパスは Claude Code の内部ログで、バージョンによって変わりうる点には注意してください。
 
-| エージェント（description） | 経過 | テキスト出力 |
-| --- | --- | --- |
-| River Review on learnings PR | **632.6分（10.5時間）** | **45文字** |
-| Security and ops review | **255.2分（4.25時間）** | **41文字** |
-| river-review | 147.3分 | 4,413文字 |
-| river-review | 28.5分 | 4,851文字 |
-| river-review | 8.1分 | 3,985文字 |
+| エージェント（description）  | 経過                    | テキスト出力 |
+| ---------------------------- | ----------------------- | ------------ |
+| River Review on learnings PR | **632.6分（10.5時間）** | **45文字**   |
+| Security and ops review      | **255.2分（4.25時間）** | **41文字**   |
+| river-review                 | 147.3分                 | 4,413文字    |
+| river-review                 | 28.5分                  | 4,851文字    |
+| river-review                 | 8.1分                   | 3,985文字    |
 
-上2件が10.5時間と4.25時間かけて返した全文が、これです。
+上表は 1 セッション分の `agent-*.jsonl` 全11件を経過時間の降順に並べ、そこから5件を抜粋したものです（母数と抽出条件は測定条件に記載しました）。「経過60分超かつテキスト出力100文字未満」に当てはまるのは、11件中この上2件です。
+
+上2件が10.5時間と4.25時間ぶんの枠を占有して返した全文が、これです。
 
 ```text
+# River Review on learnings PR（632.6分 / 45文字）
 I'll start by loading the River Review skill.
+
+# Security and ops review（255.2分 / 41文字）
 I'll start by reading the review targets.
 ```
 
@@ -127,7 +147,9 @@ I'll start by reading the review targets.
 
 「エージェントを遊ばせない」ために起動した並列エージェントが、**起動しているだけで何も産まないまま数時間、枠を占有していました**。稼働率を上げようとした結果、稼働率という指標自体が実態を表さなくなっています。
 
-なお、この2件がなぜ止まったのかはログに記録がありません。両方とも末尾が `user` 行で終わっており、応答を返さないまま外から止められた形跡と整合しますが、停止理由そのものは特定できていません。
+なお、632.6分はログの最初と最後の時刻の幅であり、その間ずっと処理し続けていたことを示すものではありません。それでも、その枠が並列度の1枠として占有されたままだったことは変わりません。
+
+この2件がなぜ止まったのかは、ログに記録がありません。両方とも末尾が `user` 行で終わっており、応答を返さないまま外から止められた形跡と整合しますが、停止理由そのものは特定できていません。
 
 ## なぜ気づけなかったのか
 
@@ -137,25 +159,29 @@ I'll start by reading the review targets.
 リードタイム = WIP ÷ スループット
 ```
 
+これは Little's law（`L = λW`、Little, J.D.C. "A Proof for the Queuing Formula: L = λW", _Operations Research_, 1961）の変形で、到着率と処理率が長期平均で釣り合う定常状態を仮定した近似です。そして本記事が扱っているのは、まさにその仮定が崩れて在庫が伸びている側の状態です。
+
 エージェントで速くなったのは「着手してから畳むまで」の区間だけでした。ここが速くなると、そのぶん気づきと起票が増えます。**起票のスループットが着手のスループットを超えると、在庫は着手前に積み上がります。**
 
 厄介なのは、そのとき見ている指標です。
 
 PR のリードタイムは、開発生産性の文脈で最もよく見る指標のひとつです。そして今回、そこは実際に改善していました。1.2分でマージできている。数字は良くなっている。
 
-**改善した指標と、伸びているキューが、別の場所にあります。** PRだけ見ていると「捌けている」と読めるし、実感としても進んでいる。その裏で issue が85件、未pushブランチが97本積み上がっていました。
+**改善した指標と、伸びているキューが、別の場所にあります。** PRだけ見ていると「捌けている」と読めるし、実感としても進んでいる。その裏で issue が85件、リモートに対応ブランチが無いローカルブランチが97本積み上がっていました。
 
 進捗の実感と、キューの伸びが逆方向を向く。これが「終わった気がしない」の正体でした。
+
+言い方を借りるなら、リソース効率（資源をどれだけ遊ばせないか）を上げにいって、フロー効率（1つの仕事がリードタイムのうちどれだけ実際に進んでいるか）を見ていなかった、ということになります（Modig & Åhlström『This is Lean』）。ただし本記事はフロー効率そのものを算出したわけではなく、在庫が積み上がっている場所を数えただけです。
 
 「エージェント疲れ」も、作業量ではなく **147本のブランチと85件の issue の文脈を人間が保持していること**として説明がつきます。並列度を上げるほど、この保持すべき文脈が増えます。
 
 そしてコストの負担先が非対称です。
 
-| コスト | 誰が払うか | 並列度を上げると |
-| --- | --- | --- |
-| エージェントの待機 | 誰も払わない | 変わらない |
-| 開始（分岐を作る・文脈を渡す） | 人間 | 増える |
-| 統合（レビュー・判断・マージ） | 人間 | 増える |
+| コスト                         | 誰が払うか   | 並列度を上げると |
+| ------------------------------ | ------------ | ---------------- |
+| エージェントの待機             | 誰も払わない | 変わらない       |
+| 開始（分岐を作る・文脈を渡す） | 人間         | 増える           |
+| 統合（レビュー・判断・マージ） | 人間         | 増える           |
 
 作業は並列にできますが、判断とマージは直列のままです。
 
@@ -165,9 +191,11 @@ PR のリードタイムは、開発生産性の文脈で最もよく見る指�
 
 - **単独運用の個人リポジトリ3つ**です。複数人のチーム開発では、レビュー待ちの性質もブランチの扱いも変わります
 - **並列度と在庫の相関は取っていません**。「並列度を上げたから在庫が増えた」という因果は示せていません。示せたのは「PR工程は速いのに在庫は前後にある」という同時点の状態です
-- **時系列がありません**。open PR や未pushブランチ数の推移を記録していないため、断面の値だけです
+- **時系列がありません**。open PR やリモートに対応ブランチが無いローカルブランチ数の推移を記録していないため、断面の値だけです
+- **「リモートに対応ブランチが無い」は「未push」と同義ではありません**。マージ後にリモート側だけ削除されたブランチも同じ集合に入ります。本文では `merge-base --is-ancestor` で切り分けて 97 = 31（取り込み済み）+ 66（未統合）としましたが、66本のうち「一度も push していないもの」と「push 後にリモートを消したもの」はさらに分離していません
 - サブエージェントがハングした**理由は特定できていません**
 - `PlanGate` と `river-review` は issue 駆動の運用で起票数がもともと多く、`growth-lab` とは母数の性質が違います
+- **フロー効率そのものは測っていません**。測ったのは PR のリードタイム・open issue・リモートに対応ブランチが無いローカルブランチ・worktree・サブエージェントの経過時間で、リードタイムに占める実作業時間の比率は算出していません
 
 「エージェントを遊ばせるな」が常に間違いだとも思っていません。言えるのは、**稼働率を上げる運用をするなら、PRのリードタイム以外も見ないと在庫の移動に気づけない**ということです。
 
@@ -175,41 +203,87 @@ PR のリードタイムは、開発生産性の文脈で最もよく見る指�
 
 同じことは数分で確認できます。
 
-未 push のローカルブランチと worktree:
+リモートに対応ブランチが無いローカルブランチと worktree（リモート名は `origin` を前提にしています）:
 
 ```bash
-git for-each-ref --format='%(refname:short)' refs/heads/ | sort > /tmp/local.txt
-git ls-remote --heads origin | sed 's|.*refs/heads/||' | sort > /tmp/remote.txt
-echo "local:  $(wc -l < /tmp/local.txt)"
-echo "未push: $(comm -23 /tmp/local.txt /tmp/remote.txt | wc -l)"
-git worktree list | wc -l
-git worktree list --porcelain | grep -c prunable   # 実体が消えた登録
+LOCAL=$(mktemp) REMOTE=$(mktemp)
+trap 'rm -f "$LOCAL" "$REMOTE"' EXIT
+
+# 比較の前にリモート追跡を最新化し、デフォルトブランチ名を実測する（master 等でも動くように）
+git fetch --prune origin
+BASE="origin/$(git symbolic-ref --short refs/remotes/origin/HEAD | sed 's|^origin/||')"
+
+git for-each-ref --format='%(refname:short)' refs/heads/ | LC_ALL=C sort > "$LOCAL"
+git ls-remote --heads origin | sed 's|.*refs/heads/||' | LC_ALL=C sort > "$REMOTE"
+echo "local:                    $(wc -l < "$LOCAL")"
+echo "リモートに対応ブランチ無し: $(comm -23 "$LOCAL" "$REMOTE" | wc -l)"
+
+# さらに $BASE へ取り込み済み（マージ後にリモート側だけ消えた残骸）を除く
+comm -23 "$LOCAL" "$REMOTE" \
+  | while read -r b; do git merge-base --is-ancestor "$b" "$BASE" 2>/dev/null || echo "$b"; done \
+  | wc -l   # $BASE 未取り込みのみ
+
+echo "worktree(追加分): $(( $(git worktree list | wc -l) - 1 ))"   # メインの作業ツリーを除く（本文の14件はメインを含む数）
+git worktree list --porcelain | grep -c prunable                   # 実体が消えた登録
 ```
+
+`origin/HEAD` が未設定なら `git remote set-head origin -a` で一度作っておきます。`git fetch` を挟まずに `origin/main` を直接参照すると、追跡 ref が古いまま比較されたり、デフォルトブランチが `master` のリポジトリで `merge-base` が常に失敗して未取り込み扱いになり、件数が過大になります。
 
 起票と完了のバランス:
 
 ```bash
-gh issue list --state open --limit 300 --json number --jq 'length'
-gh issue list --state all --limit 500 --json createdAt,closedAt \
-  --jq '[.[] | select(.createdAt > "'"$(date -u -v-90d +%Y-%m-%d)"'")] | length'
+SINCE=$(date -u -d '90 days ago' +%Y-%m-%d 2>/dev/null || date -u -v-90d +%Y-%m-%d)  # GNU / BSD 両対応
+
+gh issue list --state open --limit 1000 --json number --jq 'length'                             # 現在の在庫
+gh issue list --state all --search "created:>=$SINCE" --limit 1000 --json number --jq 'length'  # 起票
+gh issue list --state all --search "closed:>=$SINCE"  --limit 1000 --json number --jq 'length'  # 完了
 ```
+
+`--limit` は取得上限なので、それを超える規模のリポジトリでは件数が頭打ちになります。
+
+:::details PRリードタイムの集計
+
+```bash
+gh pr list --state merged --limit 200 \
+  --json title,author,createdAt,mergedAt \
+  --jq '.[]
+        | select((.author.login // "") | test("dependabot") | not)
+        | select(.title | (test("^(release:|chore\\(release\\))") or test("リリースノート")) | not)
+        | ((.mergedAt | fromdateiso8601) - (.createdAt | fromdateiso8601)) / 60' \
+  | sort -n \
+  | awk '{a[NR]=$1} END { if (NR==0) { print "n=0"; exit } printf "n=%d  median=%.1f min\n", NR, (NR%2 ? a[(NR+1)/2] : (a[NR/2]+a[NR/2+1])/2) }'
+```
+
+`.author.login // ""` は、作者が削除済みユーザーや一部の GitHub App で `author` が `null` になる PR で jq が落ちるのを防ぐためです。
+
+除外条件（dependabot・リリースPR）はリポジトリの運用に合わせて調整してください。
+:::
 
 見るのは絶対値ではなく、**PRのリードタイムが短いのに、この2つが増え続けていないか**です。増えているなら、在庫は消えたのではなく移動しています。
 
-エージェントを待たせるのは無駄ではなく、WIP を制限するという設計判断だと考えるようになりました。スクラムが WIP 制限を持つ理由も、結局は同じ場所にあったのだと思います。
+エージェントを待たせるのは無駄ではなく、WIP を制限するという設計判断だと考えるようになりました。スプリントで着手する量を区切るという発想も、かんばんの WIP 制限（Scrum.org『Kanban Guide for Scrum Teams』。Scrum Guide 2020 本文には WIP 制限の記述はありません）も、結局は同じ場所にあったのだと思います。
 
 ---
 
-## 事実検証
+## 測定条件と集計定義
 
 - 測定日時: 2026-09-08（UTC）。すべて筆者が実行した測定値です
 - PR は各リポジトリの直近 merged 200件が母数。`dependabot` 作成のPRと、リリースPR（タイトルが `release:` / `chore(release)` で始まるもの、および「リリースノート」を含むもの）を除外して「作業PR」としました。除外数は growth-lab が dependabot 15件・release 70件、PlanGate が 4件・6件、river-review が 19件・0件です
-- 「レビューが付いたPR」は GitHub API の `reviews` が空でないものを数えました。承認かコメントかは区別していません
+- 「レビューが付いたPR」は GitHub API の `reviews` が空でないものを数えました。承認かコメントかは区別しておらず、レビュアーの内訳（人間 / 自動レビュー）も分けていません。自動レビューを含む数値である点に注意してください
+- 「リモートに対応ブランチが無いローカルブランチ」は `git ls-remote --heads origin` に同名のブランチが存在しないものを数えました。「一度も push していないブランチ」に限定した数ではありません
 - issue の起票 / 完了は直近90日。open issue は測定時点の断面です
+- worktree の件数は `git worktree list` の行数で、メインの作業ツリー1件を含みます。prunable は `git worktree list --porcelain` の `prunable` 行の数です
+- サブエージェントの集計対象は `~/.claude/projects/<project>/<session>/subagents/` 配下の1セッション、`agent-*.jsonl` 11件です。本文の表はそのうち経過時間の降順で5件を抜粋したもので、「経過60分超かつテキスト出力100文字未満」に該当したのは11件中2件でした。1セッションの断面なので、この頻度が他のセッションでも同様かは測っていません
 - サブエージェントの経過時間は各 `agent-*.jsonl` の最初と最後の `timestamp` の差、テキスト出力は `message.role == "assistant"` の `type: "text"` 部分の文字数です。ツール呼び出しの往復は文字数に含めていません
+
+## 参考文献
+
+- Little, J.D.C. "A Proof for the Queuing Formula: L = λW", _Operations Research_ 9(3), 1961 — https://doi.org/10.1287/opre.9.3.383
+- Modig, N. & Åhlström, P. _This is Lean: Resolving the Efficiency Paradox_ — https://thisislean.com/
+- Scrum.org "Kanban Guide for Scrum Teams" — https://www.scrum.org/resources/kanban-guide-scrum-teams
+- Schwaber, K. & Sutherland, J. _The Scrum Guide_ (2020) — https://scrumguides.org/scrum-guide.html
 
 ## 関連記事
 
-- [AI時代に、なぜアジャイルの価値はさらに高まるのか](https://zenn.dev/minewo/articles/ai-agile-value-increases)
-- [品質ゲートは効かなかったのではなく、「呼ばれたか」を測れていなかった](https://zenn.dev/minewo/articles/ai-review-gate-not-called)
-- [危険コマンドを止めるhookを書いたのに、素通ししていた](https://zenn.dev/minewo/articles/claude-code-hook-fail-open)
+- [AI時代に、なぜアジャイルの価値はさらに高まるのか](/articles/ai-agile-value-increases)
+- [品質ゲートは効かなかったのではなく、「呼ばれたか」を測れていなかった](/articles/ai-review-gate-not-called)
