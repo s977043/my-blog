@@ -33,6 +33,30 @@ Zenn / Qiita / note の3プラットフォームで公開する記事を単一�
 
 同じ本文を複数媒体へ転載せず、同じテーマを読者意図と媒体役割に合わせて書き分ける。
 
+### 媒体ごとの名義
+
+| 媒体 | 名義 | 企画の入口 |
+| --- | --- | --- |
+| Zenn | **個人のみ** | エージェント側から提案してよい |
+| Qiita | **個人のみ** | エージェント側から提案してよい |
+| note | 個人 / 会社公式（PRONI） | 個人は提案可。**会社公式はユーザーから指示が出る**（エージェント側から企画しない） |
+
+会社公式（PRONI）の記事は `PRONI-` 接頭辞のファイル名にし、社内のテックブログ投稿レギュレーションを通す（§記事の状態（note固有）参照）。会社プロダクトのリポジトリ（`site-management-system` 等）を一次情報にする記事は、名義が会社公式になるため Zenn / Qiita には出さない。
+
+### 題材の出どころ（記事作成まわりは書かない）
+
+**このリポジトリ（my-blog）発の題材は記事にしない。** my-blog はブログ運用基盤そのものなので、ここの `scripts/`・ワークフロー・運用ログを主題にすると「記事を作るための仕組みの記事」になる。記事の一次情報は**他リポジトリ（実プロダクト・プラグイン・OSS）から取る**。
+
+書かない例:
+
+- note の WXR インポート / エクスポート、`md_to_wxr.py`・`verify_wxr.py`
+- Zenn の rate-limit・`release/zenn` 運用・`sync-release-zenn.sh`
+- 記事向け lint（`check-article-language-density.js`・`check-article-humanizer.js`・`check-publish-readiness.js`）
+- 記事レビュー / 最終化ワークフロー（`note-finalize`・`note-thesis-review-loop`）とその運用ログ
+- 記事テーマの自動起票（`suggest-next-theme.js`）
+
+**影響**: `npm run suggest:theme` は signal 源が my-blog の `scripts/` と `AGENT_LEARNINGS.md` なので、この方針下では違反候補しか出さない。**候補の自動起票は使わない**（テーマ発掘は他リポジトリを対象に `theme-discovery` スキルで行う）。
+
 ## プラットフォーム別の配置規約
 
 | プラットフォーム | 記事本体 | 画像 | レビュー成果物 |
@@ -54,6 +78,15 @@ Zenn / Qiita / note の3プラットフォームで公開する記事を単一�
 | `new/` | 未投稿の新規原稿。**編集の正（canonical）** | 自由に編集・反映可 |
 | `drafts/` | note実体のミラー（読み取り専用扱い） | **手編集しない**（次回エクスポート取り込みで上書き再生成）。整合は note 側と確認 |
 | `published/` | noteで公開済み | **反映PRに ⚠️ バナー必須**。noteはインポートで既存記事を上書き更新**できない**ため、マージ後はnote管理画面で手動反映 |
+
+### 会社公式（PRONI）記事のファイル名
+
+`articles_note/new/` には個人区分と会社公式区分の原稿が同居する。**会社公式（PRONI）の記事はファイル名を `PRONI-` で始める**（例: `PRONI-ai-software-engineering-principles-note.md`）。区分は本文冒頭の `> 区分:` 行にも書くが、それだけだとファイル一覧で判別できず、個人向けのつもりで編集する事故につながる。
+
+- 小文字 `proni-` は一覧上で埋もれるため使わない
+- `reviews/note/<state>/<slug>.md` は記事の slug に対応させる規約なので、記事をリネームしたらレビュー成果物も同時にリネームする
+- 大文字を含む slug は note ツールチェーンで安全（`md_to_wxr.py` の `derive_default_outname` は stem をそのまま使い小文字化しない / `clean-note-build.js` の `FILE_RE` は大文字にマッチする / 予約名 `new`・`drafts`・`published`・`bundle`・`batch` と衝突しない）
+- 会社公式記事は公開前に**社内のテックブログ投稿レギュレーション**（エンジニアレビュー2名 → note執筆ガイドライン適用 → 広報の事前確認依頼ワークフロー → デザイン室テンプレートのカバー画像）を通す。`/publish-zenn` `/publish-qiita` のような自動化パスは使えない
 
 ## クロスポスト時のリンク方針
 
