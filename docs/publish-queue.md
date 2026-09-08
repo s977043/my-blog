@@ -67,7 +67,6 @@ Zenn の公開は2段階である。`main` へ `published: true` をマージし
 - `[done]` #8 (open-design) は memory `project_open_design_article_scheduled` で記録済みの予定日。release/zenn rate-limit（24h/5本・1PR3本・24h間隔）を遵守
 - **`npm run suggest:theme -- --apply` による自動補充は停止中**（2026-09-08）。signal 源が my-blog の `scripts/` と `AGENT_LEARNINGS.md` で、`AGENTS.md` §題材の出どころ（記事作成まわりは書かない）に反する候補しか出さないため。テーマ発掘は他リポジトリを対象に `theme-discovery` スキルで行う。
 
-
 <!-- 2026-09-08: `[backlog]` 5 件（記事 lint / Zenn 公開運用 / テーマ自動起票）を方針変更により削除した。復活させない。 -->
 <!-- suggest:theme:insert-here 自動起票はこの行の直前に追記される。締切未設定の候補が締切つきの行より上に来ないよう、位置を固定している。移動・削除するとスクリプトが停止する。 -->
 
