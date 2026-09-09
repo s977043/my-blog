@@ -51,7 +51,7 @@ Zenn の公開は2段階である。`main` へ `published: true` をマージし
 
 ## Queue（締切順）
 
-- `[ready-to-publish]` **#12 (note) 締切 2026-09-03**: 「個人のAI開発ナレッジを、チームの改善ループへ育てるまで」（PR #575 で主題を「昇格→ループ→ハーネス」へ再構成しタイトル変更。旧題「AI駆動開発を「個人技」で終わらせない。チームの仕組みに変えるまで」）（`articles_note/new/plangate-team-rollout.md`。PR #524 マージ済み・構成レビュー完了〔P1/P2 指摘なし〕）。一次情報: Growth-Teams-Agent の `docs/team-onboarding/CHANGELOG.md`・`improvement-backlog.md`〔FB-001/031/032〕・`.agents/metrics/`、plangate README。**公開前に人間判断が要る残件**: ①チーム統計・GTA内部情報・改善バックログ由来の実数の公開可否 ②note公開時に目次をON ③ASCII図の実表示確認（2026-08-27 に code block の最大表示幅を 67→38 に圧縮済み。崩れる場合は全体図のみ画像化）
+- `[ready-to-publish]` **#12 (note) 締切 2026-09-03**: 「個人のAI開発ナレッジを、チームの改善ループへ育てるまで」（PR #575 で主題を「昇格→ループ→ハーネス」へ再構成しタイトル変更。旧題「AI駆動開発を「個人技」で終わらせない。チームの仕組みに変えるまで」）（`articles_note/new/PRONI-plangate-team-rollout.md`（2026-09-09 に会社公式へ転換）。PR #524 マージ済み・構成レビュー完了〔P1/P2 指摘なし〕）。一次情報: Growth-Teams-Agent の `docs/team-onboarding/CHANGELOG.md`・`improvement-backlog.md`〔FB-001/031/032〕・`.agents/metrics/`、plangate README。**公開前に人間判断が要る残件**: ①チーム統計・GTA内部情報・改善バックログ由来の実数の公開可否 ②note公開時に目次をON ③ASCII図の実表示確認（2026-08-27 に code block の最大表示幅を 67→38 に圧縮済み。崩れる場合は全体図のみ画像化）
 
   - 実測（2026-08-28 10:45 JST、マージから約1時間45分経過時点）: `https://zenn.dev/minewo/articles/river-review-judgment-placement` は **HTTP 403**、`https://zenn.dev/api/articles?username=minewo&order=latest` にも **未出現**
   - 対照群: `loop-maturity-rubric-audit` は同時刻に **HTTP 200** / API 出現あり（id 640688、published_at 2026-08-27 14:45 JST）。Zenn 連携そのものは生きている
