@@ -33,6 +33,52 @@ Zenn / Qiita / note の3プラットフォームで公開する記事を単一�
 
 同じ本文を複数媒体へ転載せず、同じテーマを読者意図と媒体役割に合わせて書き分ける。
 
+### 題材と媒体の対応（正本）
+
+**ネタ探しは全リポジトリを対象にしてよい。分かれるのは掲載可否だけ。**
+
+| 題材の出どころ | ネタ探し | Zenn / Qiita | note 個人 | note 会社公式 |
+| --- | --- | --- | --- | --- |
+| 個人リポジトリ | ✅ | ✅ | ✅ | — |
+| 会社リポジトリ | ✅ | ❌ | ❌ | ✅ |
+| my-blog（本リポジトリ） | ✅ | ❌ | ❌ | ❌ |
+
+**個人 / 会社の判定規則**: **リポジトリの所有者が `s977043` なら個人リポジトリ**（`growth-lab` / `PlanGate` / `river-review` / `ai-second-brain` など）。それ以外の所有者は会社リポジトリとして扱う（`unilabo` 所有の `site-management-system` と `imitsu-*` 系など）。GitHub 外で共有されるチーム資産（`Growth-Teams-Agent` など）も会社リポジトリ側に含める。
+
+```bash
+gh repo view <owner>/<repo> --json owner --jq .owner.login   # s977043 なら個人
+```
+
+**一覧の不在を根拠にしない**。`gh repo list s977043` は既定で 30 件までしか返さず、認証状態によって private が欠けることもある（一覧で確認するなら `--limit 200` のように上限を明示する）。判断に迷ったら会社リポジトリ側に倒す。
+
+会社リポジトリの題材を**調べること**は制限しない。現象の裏取りや仮説確認には使ってよい。
+
+ただし**掲載可否は匿名化では変わらない**。会社リポジトリで観測した事象は、数値・PR 番号・固有名を伏せても、事例として個人記事（Zenn / Qiita / note 個人）に書かない。会社の内部事情を出所とする記述そのものが対象になる。できるのは「その現象が実在するという確信を持ったうえで、**個人リポジトリの一次情報だけで主張を立て直す**」ところまで。
+
+**名義と企画の入口**
+
+| 媒体 | 名義 | 企画の入口 |
+| --- | --- | --- |
+| Zenn | **個人のみ** | エージェント側から提案してよい |
+| Qiita | **個人のみ** | エージェント側から提案してよい |
+| note | 個人 / 会社公式（PRONI） | 個人は提案可。**会社公式は企画の決定をユーザーが行う**。ネタ候補の収集と月次の時期リマインドはエージェント側からしてよい（PRONI テックブログは月1本が目標） |
+
+会社公式（PRONI）の記事は `PRONI-` 接頭辞のファイル名にし、社内のテックブログ投稿レギュレーションを通す（§記事の状態（note固有）参照）。
+
+### 題材の出どころ（記事作成まわりは書かない）
+
+**このリポジトリ（my-blog）発の題材は記事にしない。** my-blog はブログ運用基盤そのものなので、ここの `scripts/`・ワークフロー・運用ログを主題にすると「記事を作るための仕組みの記事」になる。記事の一次情報は**他リポジトリから取る**（どこから取れるかは §題材と媒体の対応 の表が正本）。会話でこのリポジトリの経験則を主張の根拠にするのも避ける。
+
+書かない例:
+
+- note の WXR インポート / エクスポート、`md_to_wxr.py`・`verify_wxr.py`
+- Zenn の rate-limit・`release/zenn` 運用・`sync-release-zenn.sh`
+- 記事向け lint（`check-article-language-density.js`・`check-article-humanizer.js`・`check-publish-readiness.js`）
+- 記事レビュー / 最終化ワークフロー（`note-finalize`・`note-thesis-review-loop`）とその運用ログ
+- 記事テーマの自動起票（`suggest-next-theme.js`）
+
+**影響**: `npm run suggest:theme` は signal 源が my-blog の `scripts/` と `AGENT_LEARNINGS.md` なので、この方針下では違反候補しか出さない。**候補の自動起票は使わない**（テーマ発掘は他リポジトリを対象に `theme-discovery` スキルで行う）。
+
 ## プラットフォーム別の配置規約
 
 | プラットフォーム | 記事本体 | 画像 | レビュー成果物 |
@@ -54,6 +100,15 @@ Zenn / Qiita / note の3プラットフォームで公開する記事を単一�
 | `new/` | 未投稿の新規原稿。**編集の正（canonical）** | 自由に編集・反映可 |
 | `drafts/` | note実体のミラー（読み取り専用扱い） | **手編集しない**（次回エクスポート取り込みで上書き再生成）。整合は note 側と確認 |
 | `published/` | noteで公開済み | **反映PRに ⚠️ バナー必須**。noteはインポートで既存記事を上書き更新**できない**ため、マージ後はnote管理画面で手動反映 |
+
+### 会社公式（PRONI）記事のファイル名
+
+`articles_note/new/` には個人区分と会社公式区分の原稿が同居する。**会社公式（PRONI）の記事はファイル名を `PRONI-` で始める**（例: `PRONI-ai-software-engineering-principles-note.md`）。区分は本文冒頭の `> 区分:` 行にも書くが、それだけだとファイル一覧で判別できず、個人向けのつもりで編集する事故につながる。
+
+- 小文字 `proni-` は一覧上で埋もれるため使わない
+- `reviews/note/<state>/<slug>.md` は記事の slug に対応させる規約なので、記事をリネームしたらレビュー成果物も同時にリネームする
+- 大文字を含む slug は note ツールチェーンで安全（`md_to_wxr.py` の `derive_default_outname` は stem をそのまま使い小文字化しない / `clean-note-build.js` の `FILE_RE` は大文字にマッチする / 予約名 `new`・`drafts`・`published`・`bundle`・`batch` と衝突しない）
+- 会社公式記事は公開前に**社内のテックブログ投稿レギュレーション**（エンジニアレビュー2名 → note執筆ガイドライン適用 → 広報の事前確認依頼ワークフロー → デザイン室テンプレートのカバー画像）を通す。`/publish-zenn` `/publish-qiita` のような自動化パスは使えない
 
 ## クロスポスト時のリンク方針
 
@@ -222,6 +277,7 @@ Co-Authored-By: <Model name and byline> <noreply@anthropic.com>
 - **コンテンツ方針**: `docs/content-channel-strategy.md`
 - **Claude Code ツール**: `CLAUDE.md`
 - **経験則ログ**: `AGENT_LEARNINGS.md`
+- **開発フロー自己採点の基準**: `docs/loop-audit/rubric.md` — 開発フローを印象でなく観測可能な条件で採点するルーブリック（採点結果は同ディレクトリ）
 - **運用スクリプト**: `.claude/skills/note-export-import/scripts/*.py`
 - **note記事品質チェックリスト**: `articles_note/checklists/note-article-quality-checklist.md`
 - **Skill / Agent / Command定義**: `.claude/skills/*/SKILL.md`, `.claude/agents/*.md`, `.claude/commands/*.md`

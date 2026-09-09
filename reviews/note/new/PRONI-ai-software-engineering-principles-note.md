@@ -1,6 +1,6 @@
 # PRONI公式版レビュー記録
 
-対象: `articles_note/new/proni-ai-software-engineering-principles-note.md`
+対象: `articles_note/new/PRONI-ai-software-engineering-principles-note.md`
 
 目的: 会社公式記事として、中心主張を変えずに、広報・技術編集・PdM・アジャイルコーチ・スクラムマスター・新規読者の6視点でレビューと改善を5ループ行う。
 

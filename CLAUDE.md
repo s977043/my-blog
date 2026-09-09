@@ -14,6 +14,8 @@ Claude Code 向けのツールガイド。規約（何が正しいか）は `@AG
 
 各ツールの一覧と説明文はハーネスが毎セッション自動で読み込む（`.claude/commands/` / `.claude/agents/` / `.claude/skills/` / `.claude/workflows/`）。個別の用途は各定義ファイルの frontmatter description を正とする。**本ファイルに件数は書かない**（増減の度に必ず陳腐化するため）。実態を数えたいときは `ls .claude/commands .claude/agents .claude/skills .claude/workflows`。
 
+**サブエージェントへ作業を委託するときは、[`docs/worker-discipline-template.md`](docs/worker-discipline-template.md) を読ませること。** worktree セットアップ（`npm ci` が要る）、触ってはいけないファイル、formatter churn の commit 後チェック、完了報告の形式、報告の作法をまとめてある。委託プロンプトへ「このファイルを読んでから着手すること」の1行を入れれば足りる。
+
 `.claude/workflows/` は Workflow ツールから `Workflow({ name: "<file名から .js を除いたもの>", args: {...} })` で起動する多フェーズスクリプト。commands / skills と違い**ハーネスの一覧には出ない**ので、note 記事の最終化に関わるものだけここに索引を置く。
 
 ### note 記事の最終化まわり（#594 / #604 で追加）
@@ -25,6 +27,7 @@ Claude Code 向けのツールガイド。規約（何が正しいか）は `@AG
 - `Workflow({ name: "note-thesis-review-loop", args: { article, loops } })` … `.claude/workflows/note-thesis-review-loop.js`。主題・中心主張を固定したままレビュー→改善→再レビューを N ループ。**`args.loops` は 3（既定）か 5 のみ**。`5` を指定したときだけ Loop4（専門領域の事実境界）と Loop5（言語密度・note 表記規約・図）が付く。**記事本文が変わる**
 - Gate の観点定義スキル: `.claude/skills/article-domain-review/`（公式事実と筆者解釈の境界）/ `.claude/skills/article-humanizer-ja/`（AI 定型表現・英語名詞密度 S15-S17）/ `.claude/skills/article-visual-review/`（図の配置・意味・用語整合）
 - deterministic な補助 lint: `npm run check:article-language-density -- articles_note/<state>/<slug>.md`（**対象記事を必ず指定する**。引数なしだと `articles_note/new|published` 全体を走る）
+- **実運用の実測値**: [`docs/note-finalize-operation-log.md`](docs/note-finalize-operation-log.md)（8 run / 2 記事）。1 run あたり **約 11 分・5.45M トークン・サブエージェント 5 体**。READY まで再実行 6 回。Gate の既知の弱点（visual が図を見落とす run、段落長をバイト数で報告する editorial 指摘）も同ファイルに記録してある
 
 ### 公開系コマンドの経緯（旧・意図的非対応）
 
@@ -185,7 +188,7 @@ git diff origin/main...origin/<branch> --stat         # 3点比較。現 main �
 ```
 
 - `state != OPEN` の場合は何もしない（並列セッションが先行マージ済み）
-- 3点 diff（`...`）が PR 本文の想定範囲を超える場合は stale の疑い。**PR の `gh pr` 上の diff は head の base に対する差分なので、base が現 main からズレていると実害（巻き戻し）を隠す**。`git diff origin/main...origin/<branch>` で「現 main に対して入る正味差分」を必ず確認する（2026-06-10: #404/#405 が squash 済み記事を巻き戻したインシデント）
+- 3点 diff（`...`）が PR 本文の想定範囲を超える場合は stale の疑い。**PR の `gh pr` 上の diff は head の base に対する差分なので、base が現 main からズレていると実害（巻き戻し）を隠す**。`git diff origin/main...origin/<branch>` で「現 main に対して入る正味差分」を必ず確認する（2026-06-10: **#404 が** squash 済み記事を巻き戻したインシデント。同型の #405 は `gh pr` 上の diff が「+14行」に見えたが現 main に対しては全体を巻き戻す内容で、3点 diff で気づいてマージ前に close した）
 - **マージは常に `gh pr merge <n> --squash --delete-branch`**。このリポジトリは merge commit 禁止で、`--merge` は `GraphQL: Merge commits are not allowed` で失敗する
 - 詳細事例: `@AGENT_LEARNINGS.md` の「Stale PR は `git diff main..branch` で事前にリグレッション検出する」「並列セッションが squash 済み記事を別 base で再マージ」エントリ
 

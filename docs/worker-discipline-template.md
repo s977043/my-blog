@@ -101,6 +101,14 @@ git diff origin/main...HEAD --stat
 - **別々のインシデント・別々の記録を接続して根拠にしない**
 - **委託プロンプトの説明文は一次ソースではない。** オーガナイザーの記述は要約なので、必ずファイルを開いて確認してから書く。確認できなかった項目は書かない
 - 「特定せよ」と読める指示でも、特定できなければ**「特定できる範囲を明示する」**に読み替えて返す
+- **委託プロンプトに書かれた数値は未検証の伝聞として扱う。** 記事・PR 本文・コミットメッセージに載せる前に、必ず自分でコマンドを実行して数え直し、**そのコマンドと出力を報告に含める**。訂正するときも同じで、「事前調査の訂正です」と書いた値が実測と合っていないことがある（オーガナイザーが `17 ケース`、ワーカーが `16 ケース` へ訂正、実測は 19 ケースラベル / 59 アサーション、という 3 段階の誤伝播が公開記事の直前まで残った実例がある）。数え方が複数ありうる対象（ケース数とアサーション数など）は、**どちらをどう数えたかをコマンドで示す**
+
+  ```bash
+  bash scripts/test-cleanup-pr-worktree.sh | grep -oE "case[0-9]+[a-z]*" | sort -u | wc -l   # ケースラベル数
+  bash scripts/test-cleanup-pr-worktree.sh | grep -c "^PASS:"                                # アサーション数
+  ```
+
+  数値そのものが合っていても「何を数えた数値か」は言い換えの過程でずれる（`AGENT_LEARNINGS.md` 2026-09-03「レビューループは数値の『単位』を保存しない」）。単位と分母もコマンド出力で裏を取る
 
 ---
 
@@ -121,9 +129,48 @@ git diff origin/main...HEAD --stat
 - 実装は `scripts/<name>.js` に `--self-test` フラグを生やす（既存の全 self-test がこの形。fixture は `scripts/fixtures/<name>/` に置く）
 - `package.json` に `check:<name>` と `test:<name>`（= `node scripts/<name>.js --self-test`）の 2 本を足す
 - `check:<name>` を `npm run check` の集約ランナーの `checks` リストに足す
+
+**ただし集約ランナーに足すのは「読むだけの検査」に限る。** ファイルを削除・変更する運用スクリプト
+（`cleanup:pr` / `publish:qiita` など）は `npm run check` に入れない。CI が副作用付きの操作を実行して
+しまう。この種のスクリプトは bash でもよく（`scripts/cleanup-pr-worktree.sh` / `scripts/check-pr-staleness.sh`
+が実例）、self-test を別ファイルへ切り出して `test:<name>` から `exec` する形も既存にある。
+その場合も **self-test を `.github/workflows/ci.yml` へ繋ぐことは必須**。
 - **`test:<name>` を `.github/workflows/ci.yml` の self-test ステップに足す**
 
 **最後の 1 手を忘れない。** script を書いても CI に wire されていなければガードは効かない（`AGENT_LEARNINGS.md` 2026-06-07）。2026-09-06 に未接続の self-test 9 件が一括発覚している（PR #606）。
+
+---
+
+## 9. セッション終了時に detached worktree を掃除する
+
+`npm run cleanup:pr` は、**gitignore 対象ファイル（`node_modules` など）が残っている worktree の
+ディレクトリを削除しない**。ブランチだけ外して detached HEAD の worktree として残す。安全側として
+正しい挙動だが、ワーカーを回すほど worktree が溜まる（実測: 1 セッションで 3 件残り、手で掃除した）。
+
+セッションを終える前に一括で掃除する。**未コミット変更がある worktree は消さない**のが必須条件。
+
+```bash
+# 1. 一覧を見る（detached と表示されるものが掃除候補）
+git worktree list
+
+# 2. 候補ごとに未コミット変更の有無を確認する（0 行なら消してよい）
+git -C <worktree-path> status --porcelain
+
+# 3. 0 行だったものだけ削除する
+git worktree remove --force <worktree-path>
+
+# 4. 参照が消えた分を整理する
+git worktree prune
+git worktree list
+```
+
+`status --porcelain` が 1 行でも出たら**消さない**。中身を確認し、必要ならブランチを切って commit
+するか、`git stash push -u -m "<sentinel>"` で退避してから判断する（`CLAUDE.md` §並列セッション耐性）。
+`--force` が要るのは gitignore 対象ファイルが残っているためで、**未コミット変更を握り潰す許可ではない**。
+判定を飛ばして `--force` を打たない。
+
+掃除は `git worktree list` が期待どおりになるまで確認する（`CLAUDE.md` §セッション終了時のチェックリスト
+の stash / ブランチ / open PR の確認と合わせて実施する）。
 
 ---
 

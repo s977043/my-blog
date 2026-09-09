@@ -11,7 +11,10 @@
 //   閾値を上げて誤検知を減らせた場合は、この判断を見直してよい。
 //
 // ■ 使い方
-//   npm run check:article-language-density   # 実データ（WARN のみ）
+//   npm run check:article-language-density -- articles_note/<state>/<slug>.md
+//     …対象記事を指定して実行する。**引数なしだと DEFAULT_TARGETS 全体**（articles /
+//     articles_note/new / articles_note/published / Qiita/public）を走り、上記のとおり
+//     WARN が数百件出て読めなくなる。単独実行するときも記事を指定すること。
 //   npm run test:article-language-density    # self-test
 
 const fs = require('fs')
