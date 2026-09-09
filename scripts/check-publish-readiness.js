@@ -12,7 +12,19 @@
 //   - reviews/zenn/<slug>.md が無い / readiness コメントが無い → skip（旧 /review-article 資産・WF 未実行。段階導入）
 //   - blocked=true  → WARN。STRICT=1 のときのみ FAIL(exit 1)（pace ゲート #391/#393 と同じ設計思想）
 //   - blocked が true/false 以外（unknown 等） → WARN（判定不能。非ブロッキング）
-//   - articleHash != 現記事の blob hash（git hash-object） → stale WARN（レビュー後に記事が変更されている。非ブロッキング）
+//   - articleHash != 現記事の blob hash（git hash-object） → 後述の「正規化比較」で本文差分の有無を確かめ、
+//     本文が変わっている場合のみ stale WARN（レビュー後に記事が変更されている。非ブロッキング）
+//
+// ■ published フリップのノイズ除去（本ファイルの本題）
+//   記録される articleHash は front matter を含む blob 全体の hash なので、公開時の
+//   `published: false → true` の 1 行だけで必ず不一致になる。本文が 1 文字も変わっていない
+//   公開フリップ PR でも構造的に stale WARN が出て、本物の本文ドリフトが埋もれていた。
+//   そこで比較を「front matter の `published:` 行を除いた内容」の hash で行う。
+//   記録側（`.claude/workflows/article-review-improve-loop.js` が subagent に
+//   `git hash-object <記事>` を実行させて埋める）は blob hash のまま変更していないため、
+//   記録された blob sha を `git cat-file -p` で復元し、その内容を同じ正規化に通してから比較する。
+//   復元できない sha（object DB に無い＝削除済みブランチ系統など）は判定不能として WARN に落とす。
+//   `published:` 以外の front matter（title / topics / emoji / type）の変更は従来どおり stale として検出される。
 //
 // ■ 設計書からの乖離（重要）
 //   設計書は `reviewedSha=<記事のその時点の commit>` を記録し「記事の最新 commit == reviewedSha」で
@@ -27,6 +39,7 @@
 //   - self-test（fixture）:     npm run test:publish-readiness
 
 const { execFileSync } = require("child_process");
+const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 
@@ -46,6 +59,25 @@ function parseReadiness(content) {
   return fields;
 }
 
+// front matter から `published:` の行だけを取り除く。front matter が無ければそのまま返す。
+// 除去対象は front matter 内の 1 行目のみ（本文中の "published:" は触らない）。
+function stripPublishedField(md) {
+  const s = String(md);
+  const m = s.match(/^---\r?\n([\s\S]*?\r?\n)---/);
+  if (!m) return s;
+  const fm = m[1].replace(/^published:[^\n]*\n/m, "");
+  return "---\n" + fm + "---" + s.slice(m[0].length);
+}
+
+// 「published 行を除いた記事内容」の hash。記録側の blob sha とは別系統の値なので、
+// 復元した旧 blob の内容も必ずこの関数に通してから比較する。
+function normalizedArticleHash(md) {
+  return crypto
+    .createHash("sha256")
+    .update(stripPublishedField(md), "utf8")
+    .digest("hex");
+}
+
 // front matter の published: true を判定する。
 function isPublishedTrue(md) {
   const fm = String(md).match(/^---\r?\n([\s\S]*?)\r?\n---/);
@@ -53,8 +85,13 @@ function isPublishedTrue(md) {
 }
 
 // 1 記事の判定。
-// target: { slug, articleHash, hasReviewFile, readiness }
-// returns: { slug, status: 'ok'|'blocked'|'unknown'|'stale'|'skip-no-review'|'skip-no-record', msg }
+// target: {
+//   slug, articleHash, hasReviewFile, readiness,
+//   normalizedHash?,                      // 現記事の「published 行を除いた内容」の hash
+//   resolveRecordedNormalizedHash?,       // (blobSha) => 同形式の hash | null（復元不能なら null）
+// }
+// returns: { slug, status: 'ok'|'blocked'|'unknown'|'stale'|'stale-unresolved'
+//                          |'skip-no-review'|'skip-no-record', msg }
 function evaluateTarget(target) {
   const { slug, articleHash, hasReviewFile, readiness } = target;
   if (!hasReviewFile) {
@@ -90,10 +127,39 @@ function evaluateTarget(target) {
     articleHash &&
     readiness.articleHash !== articleHash
   ) {
+    const recorded = readiness.articleHash;
+    const normalizedHash = target.normalizedHash;
+    // 記録側が将来 published 行を除いた hash を書くようになっても素通しできるようにしておく。
+    if (normalizedHash && recorded === normalizedHash) {
+      return {
+        slug,
+        status: "ok",
+        msg: `blocked=false（mustHigh=${readiness.mustHigh ?? "?"}, verified=${readiness.verified ?? "?"}, reviewedAt=${readiness.reviewedAt || "?"}）`,
+      };
+    }
+    const resolve = target.resolveRecordedNormalizedHash;
+    const recordedNormalized =
+      normalizedHash && typeof resolve === "function"
+        ? resolve(recorded)
+        : null;
+    if (recordedNormalized === null) {
+      return {
+        slug,
+        status: "stale-unresolved",
+        msg: `articleHash 不一致（recorded=${recorded.slice(0, 8)} current=${articleHash.slice(0, 8)}）だが、記録された版を object DB から復元できず本文差分を判定できない。手動で差分を確認する`,
+      };
+    }
+    if (recordedNormalized !== normalizedHash) {
+      return {
+        slug,
+        status: "stale",
+        msg: `レビュー後に記事本文が変更されている（articleHash 不一致: recorded=${recorded.slice(0, 8)} current=${articleHash.slice(0, 8)}。published 行を除いても内容が異なる）。再レビュー推奨`,
+      };
+    }
     return {
       slug,
-      status: "stale",
-      msg: `レビュー後に記事本文が変更されている（articleHash 不一致: recorded=${readiness.articleHash.slice(0, 8)} current=${articleHash.slice(0, 8)}）。再レビュー推奨`,
+      status: "ok",
+      msg: `blocked=false（mustHigh=${readiness.mustHigh ?? "?"}, verified=${readiness.verified ?? "?"}, reviewedAt=${readiness.reviewedAt || "?"}）/ articleHash は不一致だが差分は front matter の published 行のみで本文は不変`,
     };
   }
   return {
@@ -108,6 +174,34 @@ function evaluateTarget(target) {
 // シェルを介さず git を実行する（baseRef / file にシェル特殊文字が混じっても injection しない）
 function git(...args) {
   return execFileSync("git", args, { encoding: "utf8" });
+}
+
+// 記録された blob sha から「published 行を除いた内容」の hash を復元する。
+// object DB に無い（削除済みブランチ系統 / shallow clone）場合は null。
+const recordedNormalizedCache = new Map();
+function resolveRecordedNormalizedHash(sha) {
+  const key = String(sha);
+  if (!/^[0-9a-f]{40}$/.test(key)) return null;
+  if (recordedNormalizedCache.has(key)) return recordedNormalizedCache.get(key);
+  let result = null;
+  try {
+    const type = execFileSync("git", ["cat-file", "-t", key], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+    if (type === "blob") {
+      const content = execFileSync("git", ["cat-file", "-p", key], {
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "ignore"],
+        maxBuffer: 64 * 1024 * 1024,
+      });
+      result = normalizedArticleHash(content);
+    }
+  } catch {
+    result = null;
+  }
+  recordedNormalizedCache.set(key, result);
+  return result;
 }
 
 // diff モード: BASE...HEAD で変更された articles/*.md のうち、現在 published: true のものを対象にする
@@ -130,12 +224,20 @@ function findTargetFilesFromDiff(baseRef) {
 function buildTarget(file) {
   const slug = path.basename(file, ".md");
   const articleHash = git("hash-object", file).trim();
+  const normalizedHash = normalizedArticleHash(fs.readFileSync(file, "utf8"));
   const reviewPath = path.join(REVIEWS_DIR, `${slug}.md`);
   const hasReviewFile = fs.existsSync(reviewPath);
   const readiness = hasReviewFile
     ? parseReadiness(fs.readFileSync(reviewPath, "utf8"))
     : null;
-  return { slug, articleHash, hasReviewFile, readiness };
+  return {
+    slug,
+    articleHash,
+    normalizedHash,
+    hasReviewFile,
+    readiness,
+    resolveRecordedNormalizedHash,
+  };
 }
 
 // ---- self-test（fixture ベース） ----
@@ -210,16 +312,91 @@ function selfTest() {
   );
 
   // 5) stale（レビュー後に本文変更）→ stale
+  // 記録 hash からの復元は git を使うため、self-test では stub リゾルバを渡して hermetic に保つ。
   const stale = parseReadiness(read("review-stale.md"));
+  const RECORDED_SHA = "0123456789012345678901234567890123456789";
   assertEq(
-    "case stale → stale",
+    "case stale → stale（published 行を除いても内容が違う）",
     evaluateTarget({
       slug: "stale",
       articleHash: "ffffffffffffffffffffffffffffffffffffffff",
+      normalizedHash: "current-body",
+      resolveRecordedNormalizedHash: (sha) =>
+        sha === RECORDED_SHA ? "reviewed-body" : null,
       hasReviewFile: true,
       readiness: stale,
     }).status,
     "stale",
+  );
+
+  // 5b) published フリップだけ（本文は不変）→ ok。この PR の本題。
+  assertEq(
+    "case published フリップのみ → ok（stale にしない）",
+    evaluateTarget({
+      slug: "flip",
+      articleHash: "ffffffffffffffffffffffffffffffffffffffff",
+      normalizedHash: "same-body",
+      resolveRecordedNormalizedHash: (sha) =>
+        sha === RECORDED_SHA ? "same-body" : null,
+      hasReviewFile: true,
+      readiness: stale,
+    }).status,
+    "ok",
+  );
+
+  // 5c) 記録された blob を復元できない → 判定不能（WARN）
+  assertEq(
+    "case 復元不能 → stale-unresolved",
+    evaluateTarget({
+      slug: "unresolved",
+      articleHash: "ffffffffffffffffffffffffffffffffffffffff",
+      normalizedHash: "current-body",
+      resolveRecordedNormalizedHash: () => null,
+      hasReviewFile: true,
+      readiness: stale,
+    }).status,
+    "stale-unresolved",
+  );
+
+  // 5d) 記録側が将来 normalized hash を書いた場合も一致とみなす（前方互換）
+  assertEq(
+    "case 記録値が normalized hash → ok",
+    evaluateTarget({
+      slug: "forward-compat",
+      articleHash: "ffffffffffffffffffffffffffffffffffffffff",
+      normalizedHash: RECORDED_SHA,
+      resolveRecordedNormalizedHash: () => null,
+      hasReviewFile: true,
+      readiness: stale,
+    }).status,
+    "ok",
+  );
+
+  // 5e) 正規化そのもの: published 行だけの差は同一 hash、他の front matter / 本文の差は別 hash
+  const fmArticle = (published, title, body) =>
+    `---\ntitle: "${title}"\nemoji: "🦁"\ntype: "tech"\ntopics: ["ai"]\npublished: ${published}\n---\n\n${body}\n`;
+  assertEq(
+    "normalize: published:false→true で hash 不変",
+    normalizedArticleHash(fmArticle("false", "T", "本文")) ===
+      normalizedArticleHash(fmArticle("true", "T", "本文")),
+    true,
+  );
+  assertEq(
+    "normalize: title 変更は検出する",
+    normalizedArticleHash(fmArticle("true", "T", "本文")) ===
+      normalizedArticleHash(fmArticle("true", "T2", "本文")),
+    false,
+  );
+  assertEq(
+    "normalize: 本文変更は検出する",
+    normalizedArticleHash(fmArticle("true", "T", "本文")) ===
+      normalizedArticleHash(fmArticle("true", "T", "本文2")),
+    false,
+  );
+  assertEq(
+    "normalize: front matter 外の published: 行は除去しない",
+    stripPublishedField("# 見出し\n\npublished: true\n"),
+    "# 見出し\n\npublished: true\n",
   );
 
   // 6) readiness コメント無し → skip-no-record
@@ -352,4 +529,10 @@ function main() {
 }
 
 if (require.main === module) main();
-module.exports = { parseReadiness, isPublishedTrue, evaluateTarget };
+module.exports = {
+  parseReadiness,
+  isPublishedTrue,
+  stripPublishedField,
+  normalizedArticleHash,
+  evaluateTarget,
+};
