@@ -8,16 +8,27 @@
 //   並行作業のため一時的にリンクを外し、戻し忘れたのが原因で、横断レビューで初めて発覚した（PR #612 で手当て）。
 //   新設ドキュメントで同じことが繰り返されるので、機械で検知する。
 //
+// ■ 検出対象（どのドキュメントの孤立を見るか）
+//   `docs/**` と、`articles_note/` のうち**記事本体ではないサブディレクトリ**
+//   （`articles_note/guides/**` / `articles_note/checklists/**` など）。
+//   後者は note 記事の構成ガイド・品質チェックリストで、実体は「エージェント向けの指示
+//   ドキュメント」であり `docs/` 配下と同じ性質を持つ。ここを対象外にしていたため、
+//   2026-09-09 に `articles_note/guides/` の新設ファイルが被参照ゼロのまま main に入っても
+//   `npm run check` が素通りした（外部レビューで初めて発覚）。
+//
 // ■ 走査範囲（参照元としてどこを見るか）
 //   root の `*.md`（`AGENTS.md` / `CLAUDE.md` / `README.md` / `AGENT_LEARNINGS.md` など）、
-//   `docs/**`、`.claude/**`、`scripts/**`、`.github/**`、`package.json`。
-//   **意図的に `articles/` `articles_note/` `Qiita/` `books/` `reviews/` を除外する。**
+//   `docs/**`、`.claude/**`、`scripts/**`、`.github/**`、`articles_note/`（記事本体を除く）、
+//   `package.json`。
+//   **意図的に `articles/` `Qiita/` `books/` `reviews/` と、`articles_note/` の記事本体
+//   （`new/` `drafts/` `published/` `assets/` `export/` `build/`）を除外する。**
 //   これらは公開コンテンツで、記事本文がたまたま docs のパスに言及していても
 //   「エージェントや作業者が CLAUDE.md / AGENTS.md から辿り着ける」ことにはならない。
 //   ここを含めると「どこかには書いてある」で素通りし、本来の孤立を見逃す（PR #609 の再発）。
 //   逆に `scripts/` や `.github/` を外すと、スクリプトのコメントからだけ参照されている運用文書
 //   （実際に `check-zenn-publish-pace.js` が `publish-operating-policy.md` を参照している）を
-//   誤検知するので含める。
+//   誤検知するので含める。`articles_note/` の記事本体以外（`README.md` と guides/checklists）は
+//   ディレクトリの索引・相互参照であり、記事本文ではないので参照元に含める。
 //
 // ■ 参照の形式（実データを調べた結果）
 //   このリポジトリでは以下の 2 形式が混在している。両方を数える。
@@ -32,6 +43,8 @@
 // ■ 除外（実データを見て決めた）
 //   - `docs/archive/**` — 凍結資産。`docs/archive/README.md` が「解凍ラインを満たすまで参照しない」と
 //     明記しており、**参照されないことが正常**。ここを対象にすると恒常的な誤検知になる。
+//   - `articles_note/{new,drafts,published,assets,export,build}/**` — note 記事本体と画像。
+//     記事は相互参照しないので孤立判定に馴染まない。参照元としても数えない（上記「走査範囲」参照）。
 //   - `README.md`（basename 一致）— ディレクトリの索引ファイル。索引は「参照される側」ではなく
 //     「参照する側」なので、被参照ゼロを異常としない。
 //   それ以外（日付スナップショット等）は除外しない。孤立していれば実際に索引から辿れない。
@@ -52,13 +65,15 @@ const path = require("path");
 
 const ROOT = process.cwd();
 const LABEL = "[check:orphan-docs]";
-const DOCS_DIR = "docs";
+// 孤立を検出する対象ディレクトリ。`articles_note` は記事本体を除いた部分だけが対象になる
+// （除外は ARTICLE_BODY_PREFIXES で行う）。
+const DOC_DIRS = ["docs", "articles_note"];
 
 // 孤立を検出しても exit 0（WARN）。FAIL 化するときはここを true にする。
 const EXIT_ON_ORPHAN = false;
 
 // 参照元として走査するディレクトリ（ルート直下の *.md と package.json は別途）
-const SOURCE_DIRS = ["docs", ".claude", "scripts", ".github"];
+const SOURCE_DIRS = ["docs", ".claude", "scripts", ".github", "articles_note"];
 const SOURCE_EXTS = new Set([
   ".md",
   ".js",
@@ -73,13 +88,33 @@ const SOURCE_EXTS = new Set([
 ]);
 const SKIP_DIR_NAMES = new Set(["node_modules", ".git", ".remote"]);
 
-// 対象から外す docs 配下のパス接頭辞 / basename
+// 記事本体（`articles_note/` のうち note 記事・画像そのもの）。
+// 検出対象からも参照元からも外す。ここに無い `articles_note/` 直下のもの
+// （`guides/` `checklists/` `README.md` など）はエージェント向け指示ドキュメントとして扱う。
+const ARTICLE_BODY_PREFIXES = [
+  "articles_note/new",
+  "articles_note/drafts",
+  "articles_note/published",
+  "articles_note/assets",
+  "articles_note/export",
+  "articles_note/build",
+];
+
+// 対象から外すパス接頭辞 / basename
 const EXCLUDED_PREFIXES = ["docs/archive/"];
 const EXCLUDED_BASENAMES = new Set(["README.md"]);
 
 // ---- 純関数（self-test 対象） ----
 
+// 記事本体（走査対象にも参照元にもしない）か。ディレクトリ自身とその配下の両方を真にする。
+function isArticleBodyPath(relPath) {
+  return ARTICLE_BODY_PREFIXES.some(
+    (p) => relPath === p || relPath.startsWith(`${p}/`),
+  );
+}
+
 function isExcludedDoc(relPath) {
+  if (isArticleBodyPath(relPath)) return true;
   if (EXCLUDED_PREFIXES.some((p) => relPath.startsWith(p))) return true;
   return EXCLUDED_BASENAMES.has(path.posix.basename(relPath));
 }
@@ -136,6 +171,9 @@ function evaluate(docFiles, sources) {
 
   const referenced = new Set();
   for (const [relPath, content] of Object.entries(sources)) {
+    // 記事本体からの言及は参照として数えない（collectSources でも走査しないが、
+    // evaluate 単体でも同じ保証を持たせる）
+    if (isArticleBodyPath(relPath)) continue;
     const resolved = resolveTokens(extractRefTokens(content), relPath);
     for (const r of resolved) {
       // 自分自身への言及は参照とみなさない（PR #609 はこれで素通りした）
@@ -161,6 +199,8 @@ function walk(absDir, relDir, acc) {
     if (SKIP_DIR_NAMES.has(e.name)) continue;
     const rel = relDir ? `${relDir}/${e.name}` : e.name;
     const abs = path.join(absDir, e.name);
+    // 記事本体は走査自体を打ち切る（drafts/ published/ assets/ は件数が多い）
+    if (isArticleBodyPath(rel)) continue;
     if (e.isDirectory()) walk(abs, rel, acc);
     else acc.push(rel);
   }
@@ -168,9 +208,12 @@ function walk(absDir, relDir, acc) {
 }
 
 function collectDocFiles() {
-  return walk(path.join(ROOT, DOCS_DIR), DOCS_DIR, []).filter((f) =>
-    f.endsWith(".md"),
-  );
+  const acc = [];
+  for (const d of DOC_DIRS) {
+    if (!fs.existsSync(path.join(ROOT, d))) continue;
+    walk(path.join(ROOT, d), d, acc);
+  }
+  return acc.filter((f) => f.endsWith(".md"));
 }
 
 function collectSources() {
@@ -243,6 +286,36 @@ function selfTest() {
   eq("docs/archive/ 配下は対象外", isExcludedDoc("docs/archive/foo.md"), true);
   eq("README.md は対象外", isExcludedDoc("docs/loop-audit/README.md"), true);
   eq("通常の docs は対象", isExcludedDoc("docs/foo.md"), false);
+  eq(
+    "articles_note/published/ は記事本体",
+    isArticleBodyPath("articles_note/published/n123.md"),
+    true,
+  );
+  eq(
+    "articles_note/drafts ディレクトリ自身も記事本体",
+    isArticleBodyPath("articles_note/drafts"),
+    true,
+  );
+  eq(
+    "articles_note/guides/ は記事本体ではない",
+    isArticleBodyPath("articles_note/guides/foo.md"),
+    false,
+  );
+  eq(
+    "articles_note/guides/ は検出対象",
+    isExcludedDoc("articles_note/guides/foo.md"),
+    false,
+  );
+  eq(
+    "articles_note/checklists/ は検出対象",
+    isExcludedDoc("articles_note/checklists/foo.md"),
+    false,
+  );
+  eq(
+    "articles_note/new/ は対象外",
+    isExcludedDoc("articles_note/new/foo.md"),
+    true,
+  );
 
   // 4) fixture ベースの統合判定
   const docFiles = [
@@ -252,32 +325,56 @@ function selfTest() {
     "docs/orphan-doc.md", // 自分自身にしか出てこない → 検出
     "docs/archive/frozen.md", // 除外（凍結資産）
     "docs/README.md", // 除外（索引）
+    "articles_note/guides/referenced-guide.md", // articles_note/README.md から参照 → PASS
+    "articles_note/guides/orphan-guide.md", // 記事本文にしか出てこない → 検出
+    "articles_note/published/n1234567890.md", // 除外（記事本体）
   ];
   const sources = {
     "CLAUDE.md": read("CLAUDE.md"),
     "docs/index-like.md": read("index-like.md"),
     "scripts/some-check.js": read("some-check.js"),
     "docs/orphan-doc.md": read("orphan-doc.md"),
+    "articles_note/README.md": read("articles-note-readme.md"),
   };
 
   const result = evaluate(docFiles, sources);
-  eq("孤立は 1 件", result.orphans, ["docs/orphan-doc.md"]);
   eq(
-    "除外は archive と README の 2 件",
-    result.excluded.sort(),
-    ["docs/archive/frozen.md", "docs/README.md"].sort(),
+    "孤立は 2 件（docs と articles_note/guides の両方を検出する）",
+    result.orphans.sort(),
+    ["articles_note/guides/orphan-guide.md", "docs/orphan-doc.md"].sort(),
   );
-  eq("対象は 4 件", result.targets.length, 4);
+  eq(
+    "除外は archive / README / 記事本体の 3 件",
+    result.excluded.sort(),
+    [
+      "articles_note/published/n1234567890.md",
+      "docs/archive/frozen.md",
+      "docs/README.md",
+    ].sort(),
+  );
+  eq("対象は 6 件", result.targets.length, 6);
   eq(
     "自己言及だけのファイルは参照済みにならない",
     result.orphans.includes("docs/orphan-doc.md"),
     true,
   );
 
-  // 5) ガードが無い状態（= 参照を1本足すと解消する）ことの確認
+  // 5) 記事本体からの言及は参照として数えない
+  const withArticleMention = evaluate(docFiles, {
+    ...sources,
+    "articles_note/published/n1234567890.md": read("published-article.md"),
+  });
+  eq(
+    "記事本体が言及していても孤立のまま",
+    withArticleMention.orphans.includes("articles_note/guides/orphan-guide.md"),
+    true,
+  );
+
+  // 6) ガードが無い状態（= 参照を1本足すと解消する）ことの確認
   const fixed = evaluate(docFiles, {
     ...sources,
     "CLAUDE.md": `${read("CLAUDE.md")}\n- \`docs/orphan-doc.md\` を読むこと\n`,
+    "articles_note/README.md": `${read("articles-note-readme.md")}\n- \`guides/orphan-guide.md\`\n`,
   });
   eq("参照を1本足せば孤立ゼロになる", fixed.orphans, []);
 
@@ -297,8 +394,9 @@ function selfTest() {
 // ---- main ----
 
 function main() {
-  if (!fs.existsSync(path.join(ROOT, DOCS_DIR))) {
-    console.log(`${LABEL} skip: ${DOCS_DIR}/ が見つからない`);
+  const presentDirs = DOC_DIRS.filter((d) => fs.existsSync(path.join(ROOT, d)));
+  if (presentDirs.length === 0) {
+    console.log(`${LABEL} skip: ${DOC_DIRS.join(" / ")} が見つからない`);
     return 0;
   }
 
@@ -308,7 +406,7 @@ function main() {
 
   if (orphans.length > 0) {
     console.warn(
-      `${LABEL} WARN: どこからも参照されていない docs が ${orphans.length} 件（対象=${targets.length}, 除外=${excluded.length}）`,
+      `${LABEL} WARN: どこからも参照されていないドキュメントが ${orphans.length} 件（対象=${targets.length}, 除外=${excluded.length}）`,
     );
     for (const o of orphans) {
       console.warn(
@@ -332,4 +430,10 @@ if (require.main !== module) {
   process.exit(main());
 }
 
-module.exports = { extractRefTokens, resolveTokens, isExcludedDoc, evaluate };
+module.exports = {
+  extractRefTokens,
+  resolveTokens,
+  isArticleBodyPath,
+  isExcludedDoc,
+  evaluate,
+};
