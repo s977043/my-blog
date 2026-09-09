@@ -1,6 +1,6 @@
 # OSS記事 主張境界レビュー — plangate-team-rollout
 
-対象: `articles_note/new/plangate-team-rollout.md`（未公開 / 自作OSS PlanGate + 社内GTA）
+対象: `articles_note/new/PRONI-plangate-team-rollout.md`（未公開 / 自作OSS PlanGate + 社内GTA）
 照合日: 2026-09-02
 一次情報: `s977043/plangate` @ab439b9 / `unilabo/Growth-Teams-Agent` @5fc1b9f / GitHub API (branch protection)
 
