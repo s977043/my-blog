@@ -47,6 +47,7 @@ articles_note/
 
 - **note記事構成ベストプラクティス**: `guides/note-structure-best-practices.md`
 - **note記事品質チェックリスト**: `checklists/note-article-quality-checklist.md`
+- **実体験→設計知の執筆原則**: `guides/experience-driven-writing-principles.md`（構成ガイドを置き換えず、判断過程・削除した仕組み・観測事実と解釈の分離まで扱う補助方針）
 - 構成ガイドは、タイトル / リード / 見出し / 具体→失敗→一般化 / 保存できる持ち帰り / スマホ読了設計の正本
 - 品質チェックリストは、記事作成前・執筆中・公開前レビューで、テーマ設計 / サムネ・タイトル設計 / 本文構成 / 読者体験を確認する
 - Codex などのエージェントも、note記事の新規作成・構成レビュー時は**構成ガイドと品質チェックリストの両方**を参照する
@@ -66,7 +67,7 @@ articles_note/
 1. `guides/note-structure-best-practices.md` で、タイトル・リード・見出し・持ち帰りの構成方針を決める
 2. `checklists/note-article-quality-checklist.md` でテーマ・読者・読後変化を確認
 3. `new/<slug>.md` に執筆
-4. 公開前に構成ガイドと品質チェックリストで、タイトル・リード・本文構成・読者体験を確認
+4. 公開前に構成ガイドと品質チェックリストで、タイトル・リード・本文構成・読者体験を確認。実体験ベースの記事では `guides/experience-driven-writing-principles.md` の「企画・レビュー時の問い」も見る
 5. 記事で使う画像が `articles_note/assets/` にある場合は、**先に GitHub `main` に公開**
 6. `.claude/skills/note-export-import/scripts/md_to_wxr.py` で単一記事WXRを `articles_note/build/import-<slug>-YYYYMMDD-HHMM.xml` に変換（`--out` 省略時は日時自動付与）
    - 画像を note に自動取り込みさせる場合は `--base-url https://raw.githubusercontent.com/s977043/my-blog/main/articles_note/assets` を付ける
