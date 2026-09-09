@@ -215,7 +215,7 @@ main                      ← 通常運用（記事執筆、レビュー反映�
 
 ### 公開ルール
 
-> **rate-limit / 公開ペースの数値は `docs/publish-operating-policy.md` §「Rate-limit 遵守」が正本**。ここでは運用フローのみ示す。実効 ~24h/1本（`npm run check:zenn-pace` で 1件 WARN / 2件 FAIL）。
+> **rate-limit / 公開ペースの数値は `docs/publish-operating-policy.md` §「Rate-limit 遵守」が正本**。ここでは運用フローのみ示す。閾値の判定は `npm run check:zenn-pace` の出力を見る（**数値をこのファイルへ書き写さない**。写した時点で正本と二重管理になり、正本の更新が silent に陳腐化する）。
 
 - **`release/zenn` への merge は 24 時間あけて** 実施（連続バッチを避ける）。公開ペースは `npm run check:zenn-pace` で事前確認
 - **既存公開記事の update は単独 PR で `release/zenn` に流す**（新規 publish と分離。update が rate-limit に巻き込まれて公開済記事が古いままになる事故を防ぐ）
@@ -263,7 +263,7 @@ Co-Authored-By: <Model name and byline> <noreply@anthropic.com>
 
 ## 禁止事項
 
-- **自動マージ禁止**。著者レビューを必ず通す
+- **自動マージ禁止**。エージェントの判断でマージしない。ユーザーが当該 PR を指してセッション内で明示的にマージを指示した場合は、それが著者承認にあたる（過去の「進めて」を後続 PR の承認として持ち越さない）
 - `git push --force` to `main` は禁止
 - `published: true` / `articles_note/published/` 記事の勝手な変更禁止（⚠️ バナー付きPRで著者承認を得る）
 - `articles_note/export/` を git 管理下に入れない
