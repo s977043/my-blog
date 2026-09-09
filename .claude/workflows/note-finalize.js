@@ -182,12 +182,81 @@ const VISUAL_SCHEMA = {
         required: ['location', 'reason', 'concept'],
       },
     },
+    scan: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        fencedBlockCount: { type: 'integer', minimum: 0 },
+        imageRefCount: { type: 'integer', minimum: 0 },
+        blockClassification: {
+          type: 'array',
+          maxItems: 64,
+          items: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+              index: { type: 'integer', minimum: 0 },
+              isFigure: { type: 'boolean' },
+            },
+            required: ['index', 'isFigure'],
+          },
+        },
+      },
+      required: ['fencedBlockCount', 'imageRefCount', 'blockClassification'],
+    },
     passed: { type: 'boolean' },
     unverified: { type: 'boolean' },
     summary: { type: 'string', minLength: 1 },
   },
-  required: ['applicable', 'images', 'addCandidates', 'passed', 'unverified', 'summary'],
+  required: ['applicable', 'images', 'addCandidates', 'scan', 'passed', 'unverified', 'summary'],
 }
+
+// --- BEGIN reconcileVisual (scripts/check-note-finalize.js の self-test が実体を抽出して検証する) ---
+// Visual Gate の自己申告を deterministic に締め直す純関数（Issue #622）。
+// 「図を1枚も認識できなかった」を「問題なし」に丸めないための後段照合。
+// passed は書き換えない。unverified だけを立てる（Domain Gate の unverified と同じ扱いに揃える）。
+function reconcileVisual(visual) {
+  if (!visual || typeof visual !== 'object') return { unverified: true, reasons: ['visual-result-missing'] }
+  const reasons = []
+  const images = Array.isArray(visual.images) ? visual.images : []
+  const scan = visual.scan
+  if (!scan || !Array.isArray(scan.blockClassification)) {
+    reasons.push('visual-scan-missing')
+  } else {
+    const expected = Number(scan.fencedBlockCount) || 0
+    const seen = new Set(scan.blockClassification.map((b) => b.index))
+    let accounted = 0
+    for (let i = 0; i < expected; i += 1) if (seen.has(i)) accounted += 1
+    if (accounted < expected) reasons.push(`visual-block-accounting-incomplete(${accounted}/${expected})`)
+    const figures = scan.blockClassification.filter((b) => b.isFigure).length
+    const required = figures + (Number(scan.imageRefCount) || 0)
+    if (images.length < required) reasons.push(`visual-inspection-gap(images=${images.length},expected>=${required})`)
+  }
+  if (images.some((image) => image && image.status === 'UNVERIFIED')) reasons.push('visual-image-unverified')
+  if (images.length === 0) {
+    // 「images は空なのに本文が既存の図に言及している」自己矛盾の検出。
+    // 「既存の図は無い」を誤検知しないよう、既存 の直後 30 字以内で
+    // 「個数表現 → 図の語」の順に並ぶ場合だけ矛盾とみなす。個数を先に置いた言い方
+    // （既存の3つのASCII図）は存在の主張だが、「既存の図は無いので1点追加したい」は
+    // 図の語が先に来るため一致しない。
+    const EXISTING_COUNTED_VISUAL = /^既存[^。]{0,12}?(\d+|[一二三四五六七八九十]+)\s*[つ点個枚][^。]{0,12}?(図|ダイアグラム|ASCII|画像|イラスト)/
+    const texts = [visual.summary]
+    for (const candidate of Array.isArray(visual.addCandidates) ? visual.addCandidates : []) {
+      if (candidate) texts.push(candidate.location, candidate.reason, candidate.concept)
+    }
+    const contradicted = texts.some((text) => {
+      if (typeof text !== 'string') return false
+      for (let i = text.indexOf('既存'); i >= 0; i = text.indexOf('既存', i + 1)) {
+        const window = text.slice(i, i + 30)
+        if (EXISTING_COUNTED_VISUAL.test(window)) return true
+      }
+      return false
+    })
+    if (contradicted) reasons.push('visual-self-contradiction')
+  }
+  return { unverified: reasons.length > 0, reasons }
+}
+// --- END reconcileVisual ---
 
 const EDITORIAL_SCHEMA = {
   type: 'object',
@@ -318,6 +387,13 @@ ${CONTRACT}
 
 重要: custom Agent定義をReadしても、画像を読む能力が追加されるわけではありません。画像本体を実際に確認できない場合は、altやパスから意味を推測してKEEPにせず、対象画像をUNVERIFIEDにして unverified=true としてください。
 
+図の棚卸しは記憶や推測で行わず、次のコマンドを実行して出力をそのまま使ってください。
+\`node scripts/check-note-finalize.js --figure-inventory ${ARTICLE}\`
+- 出力の fencedBlockCount / imageRefCount を scan にそのまま写す。
+- 出力 blocks[] の index を1つ残らず scan.blockClassification に { index, isFigure } で分類する。コマンド例・ログ・設定・コード片は isFigure=false、図（ASCIIアート・構造図・フロー）は isFigure=true。
+- isFigure=true としたブロックと Markdown 画像参照は、必ず images[] に1件ずつ入れる（ASCIIアートの path は \`L<開始行>-L<終了行>\` 表記でよい）。
+数が合わない場合、Workflow は「図を検査できなかった」と判定して READY を出しません。
+
 placement / semantic_consistency / terminology_consistency / redundancy / missing_visual / accessibility を確認してください。
 追加図候補は最大2件。既存の check:note-images は形式・パス担当なので、ここでは意味整合を優先してください。
 StructuredOutputで返してください。`,
@@ -374,9 +450,14 @@ if (!visual.passed) blockers.push('visual')
 if (!editorial.passed) blockers.push('editorial')
 if (editorial.requiresThesisLoop) blockers.push('thesis-loop-required')
 
+const visualReconciliation = reconcileVisual(visual)
+if (visualReconciliation.reasons.length > 0) {
+  log(`visual gate reconciliation: ${visualReconciliation.reasons.join(', ')}`)
+}
+
 const unverified = []
 if (domain.unverified) unverified.push('domain')
-if (visual.unverified) unverified.push('visual')
+if (visual.unverified || visualReconciliation.unverified) unverified.push('visual')
 if (STATE === 'drafts') unverified.push('drafts-readonly-mirror')
 
 // note-thesis-review-loop の loops は 3（既定）か 5 のみ。5 のときだけ Loop4（専門領域の
@@ -408,6 +489,7 @@ return {
   verdict,
   blockers,
   unverified,
+  visualReconciliation,
   stateNote,
   contract,
   domain,

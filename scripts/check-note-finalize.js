@@ -50,6 +50,68 @@ function checkWorkflowScripts() {
   return errors
 }
 
+// 図の棚卸し（Issue #622）。Visual Gate に「記事のどこに fenced block と画像参照があるか」を
+// deterministic に渡すための inventory。図か否かの分類はここでは行わない。
+// コードブロックにはコマンド例も入るため、機械側で図を推定すると誤検知するので、
+// 分類は Visual Gate に返させ、Workflow 側は「全 index を分類したか」の会計だけを検査する。
+function figureInventory(markdown) {
+  const lines = String(markdown).split(/\r?\n/)
+  const blocks = []
+  const inBlock = new Set()
+  let open = null
+  for (let i = 0; i < lines.length; i += 1) {
+    const match = lines[i].match(/^ {0,3}(`{3,}|~{3,})(.*)$/)
+    if (!match) {
+      if (open) inBlock.add(i)
+      continue
+    }
+    const fence = match[1][0]
+    if (!open) {
+      open = { fence, length: match[1].length, startLine: i + 1, info: match[2].trim() }
+      inBlock.add(i)
+      continue
+    }
+    if (fence === open.fence && match[1].length >= open.length && match[2].trim() === '') {
+      inBlock.add(i)
+      blocks.push({
+        index: blocks.length,
+        startLine: open.startLine,
+        endLine: i + 1,
+        info: open.info,
+        lines: i + 1 - open.startLine - 1,
+      })
+      open = null
+      continue
+    }
+    inBlock.add(i)
+  }
+  let imageRefCount = 0
+  for (let i = 0; i < lines.length; i += 1) {
+    if (inBlock.has(i)) continue
+    imageRefCount += (lines[i].match(/!\[[^\]]*\]\(/g) || []).length
+  }
+  return {
+    fencedBlockCount: blocks.length,
+    imageRefCount,
+    unterminatedFence: open ? open.startLine : null,
+    blocks,
+  }
+}
+
+const RECONCILE_BEGIN = '// --- BEGIN reconcileVisual'
+const RECONCILE_END = '// --- END reconcileVisual ---'
+
+// workflow の実体から reconcileVisual を切り出して評価する。fixture のコピーではなく
+// 本番コードそのものを self-test にかけるため（AGENT_LEARNINGS 2026-07-03: ガード初版バグ）。
+function loadReconcileVisual(workflowSource) {
+  const start = workflowSource.indexOf(RECONCILE_BEGIN)
+  const end = workflowSource.indexOf(RECONCILE_END)
+  if (start < 0 || end < 0 || end < start) return null
+  const body = workflowSource.slice(start, end + RECONCILE_END.length)
+  // eslint-disable-next-line no-new-func
+  return new Function(`${body}\nreturn reconcileVisual`)()
+}
+
 function frontMatter(markdown) {
   const match = String(markdown).match(/^---\r?\n([\s\S]*?)\r?\n---/)
   return match ? match[1] : ''
@@ -145,7 +207,22 @@ function validate(files) {
     'claims:',
     'images:',
     'addCandidates:',
+    // Issue #622: Visual Gate が「検査できなかった」を passed=true に丸めないための契約
+    'reconcileVisual',
+    '--figure-inventory',
+    'blockClassification',
+    'visual-inspection-gap',
+    'visual-self-contradiction',
+    'visualReconciliation',
+    "required: ['applicable', 'images', 'addCandidates', 'scan', 'passed', 'unverified', 'summary']",
   ])
+
+  if (!/if \(visual\.unverified \|\| visualReconciliation\.unverified\)/.test(workflow)) {
+    errors.push('workflow must feed reconcileVisual result into the unverified list')
+  }
+  if (loadReconcileVisual(workflow) === null) {
+    errors.push('workflow missing extractable reconcileVisual block')
+  }
 
   const phaseOrder = ['Extract', 'DomainReview', 'LanguageReview', 'VisualReview', 'EditorialReview', 'FinalGate']
   let lastIndex = -1
@@ -219,7 +296,13 @@ function selfTest() {
     "{ title: 'Extract' } { title: 'DomainReview' } { title: 'LanguageReview' } { title: 'VisualReview' } { title: 'EditorialReview' } { title: 'FinalGate' }",
     "phase('Extract') phase('DomainReview') phase('LanguageReview') phase('VisualReview') phase('EditorialReview') phase('FinalGate')",
     "enum: ['available', 'partial', 'unavailable']",
-    'Terminology Contract READY NEEDS_CHANGES UNVERIFIED review-only requiresThesisLoop drafts-readonly-mirror primarySourceAccess custom Agent定義をRead findings: claims: images: addCandidates:',
+    'Terminology Contract READY NEEDS_CHANGES UNVERIFIED review-only requiresThesisLoop drafts-readonly-mirror primarySourceAccess custom Agent定義をRead findings: claims: images: addCandidates: --figure-inventory blockClassification visual-inspection-gap visual-self-contradiction',
+    "required: ['applicable', 'images', 'addCandidates', 'scan', 'passed', 'unverified', 'summary']",
+    'if (visual.unverified || visualReconciliation.unverified) {}',
+    fs.readFileSync(path.join(ROOT, PATHS.workflow), 'utf8').slice(
+      fs.readFileSync(path.join(ROOT, PATHS.workflow), 'utf8').indexOf(RECONCILE_BEGIN),
+      fs.readFileSync(path.join(ROOT, PATHS.workflow), 'utf8').indexOf(RECONCILE_END) + RECONCILE_END.length
+    ),
   ].join('\n')
   base[PATHS.command] = 'npm run check:article-language-density note-finalize READY NEEDS_CHANGES UNVERIFIED drafts 自動マージしない'
   base[PATHS.languageScript] = 'WARN only analyzeMarkdown --self-test'
@@ -280,12 +363,162 @@ function selfTest() {
     throw new Error('unescaped-backtick workflow fixture was not rejected')
   }
 
+  // --- Issue #622: Visual Gate の unverified 判定 ---
+  const workflowSource = fs.readFileSync(path.join(ROOT, PATHS.workflow), 'utf8')
+  const reconcileVisual = loadReconcileVisual(workflowSource)
+  if (!reconcileVisual) throw new Error('reconcileVisual could not be extracted from the workflow')
+
+  const scanOf = (fenced, figures, imageRefs) => ({
+    fencedBlockCount: fenced,
+    imageRefCount: imageRefs,
+    blockClassification: Array.from({ length: fenced }, (_, index) => ({ index, isFigure: index < figures })),
+  })
+  const expectReasons = (label, result, predicate) => {
+    if (!predicate(result)) throw new Error(`${label}: unexpected ${JSON.stringify(result)}`)
+  }
+
+  // 3図を認識して1件ずつ判定した run は unverified にしない（誤検知しない）
+  expectReasons(
+    'healthy visual run',
+    reconcileVisual({
+      images: [
+        { status: 'KEEP' },
+        { status: 'UPDATE' },
+        { status: 'KEEP' },
+      ],
+      addCandidates: [],
+      summary: '図3点を確認した。',
+      scan: scanOf(9, 3, 0),
+    }),
+    (r) => r.unverified === false && r.reasons.length === 0
+  )
+
+  // fenced block はあるが全部コマンド例 → images 0 は正しいので unverified にしない
+  expectReasons(
+    'command-only code blocks',
+    reconcileVisual({
+      images: [],
+      addCandidates: [],
+      summary: 'コードブロックはコマンド例のみで図は無い。',
+      scan: scanOf(5, 0, 0),
+    }),
+    (r) => r.unverified === false
+  )
+
+  // Issue #622 の再現: 図が3点あるのに images が空
+  expectReasons(
+    'issue-622 blind visual run',
+    reconcileVisual({
+      images: [],
+      addCandidates: [],
+      summary: 'ASCII図3点を確認した。',
+      scan: scanOf(9, 3, 0),
+    }),
+    (r) => r.unverified === true && r.reasons.some((x) => x.startsWith('visual-inspection-gap'))
+  )
+
+  // scan を返さない旧形式の結果は「検査できなかった」扱い
+  expectReasons(
+    'legacy result without scan',
+    reconcileVisual({ images: [], addCandidates: [], summary: 'x' }),
+    (r) => r.unverified === true && r.reasons.includes('visual-scan-missing')
+  )
+
+  // 全 block を分類しなかった run
+  expectReasons(
+    'incomplete block accounting',
+    reconcileVisual({
+      images: [],
+      addCandidates: [],
+      summary: 'x',
+      scan: { fencedBlockCount: 9, imageRefCount: 0, blockClassification: [{ index: 0, isFigure: false }] },
+    }),
+    (r) => r.unverified === true && r.reasons.some((x) => x.startsWith('visual-block-accounting-incomplete'))
+  )
+
+  // images[].status = UNVERIFIED を READY へ丸めない
+  expectReasons(
+    'image status UNVERIFIED',
+    reconcileVisual({
+      images: [{ status: 'UNVERIFIED' }],
+      addCandidates: [],
+      summary: 'x',
+      scan: scanOf(1, 1, 0),
+    }),
+    (r) => r.unverified === true && r.reasons.includes('visual-image-unverified')
+  )
+
+  // 自己矛盾: images は空なのに addCandidates が既存図の枚数に言及している
+  expectReasons(
+    'self contradiction',
+    reconcileVisual({
+      images: [],
+      addCandidates: [{ location: 'L1', reason: '既存の3つのASCII図はいずれもフローで、層構造の図は無い。', concept: 'c' }],
+      summary: 'x',
+      scan: scanOf(0, 0, 0),
+    }),
+    (r) => r.reasons.includes('visual-self-contradiction')
+  )
+
+  // 「既存の図は無い」は矛盾に数えない（個数表現が無い）
+  expectReasons(
+    'absence phrasing is not a contradiction',
+    reconcileVisual({
+      images: [],
+      addCandidates: [{ location: 'L1', reason: '既存の図は無いので1点追加したい。', concept: 'c' }],
+      summary: '図は存在しない。',
+      scan: scanOf(0, 0, 0),
+    }),
+    (r) => r.unverified === false
+  )
+
+  // --- figureInventory ---
+  const sample = [
+    '# t',
+    '```text',
+    'A --> B',
+    '```',
+    '文中の ![alt](img/a.png) 画像',
+    '```bash',
+    'npm run check',
+    '```',
+    '~~~',
+    '![not-a-ref](x.png)',
+    '~~~',
+  ].join('\n')
+  const inventory = figureInventory(sample)
+  if (inventory.fencedBlockCount !== 3) throw new Error(`fencedBlockCount=${inventory.fencedBlockCount}`)
+  if (inventory.imageRefCount !== 1) throw new Error(`imageRefCount=${inventory.imageRefCount}`)
+  if (inventory.blocks[0].info !== 'text' || inventory.blocks[0].startLine !== 2) {
+    throw new Error(`block0=${JSON.stringify(inventory.blocks[0])}`)
+  }
+  if (inventory.unterminatedFence !== null) throw new Error('unexpected unterminated fence')
+  const unterminated = figureInventory('```text\nA --> B\n')
+  if (unterminated.unterminatedFence !== 1) throw new Error('unterminated fence not reported')
+
   console.log('[test:note-finalize] PASS')
 }
 
 function main() {
   if (process.argv.includes('--self-test')) {
     selfTest()
+    return
+  }
+
+  const inventoryFlag = process.argv.indexOf('--figure-inventory')
+  if (inventoryFlag >= 0) {
+    const target = process.argv[inventoryFlag + 1]
+    if (!target) {
+      console.error('[check:note-finalize] --figure-inventory <article.md> が必要です')
+      process.exit(1)
+    }
+    const absolute = path.isAbsolute(target) ? target : path.join(ROOT, target)
+    if (!fs.existsSync(absolute)) {
+      console.error(`[check:note-finalize] file not found: ${target}`)
+      process.exit(1)
+    }
+    const inventory = figureInventory(fs.readFileSync(absolute, 'utf8'))
+    console.log(JSON.stringify({ article: target, ...inventory }, null, 2))
     return
   }
 
@@ -299,4 +532,4 @@ function main() {
 }
 
 if (require.main === module) main()
-module.exports = { frontMatter, agentTools, requireTokens, validate, workflowParseError, checkWorkflowScripts }
+module.exports = { frontMatter, agentTools, requireTokens, validate, workflowParseError, checkWorkflowScripts, figureInventory, loadReconcileVisual }
