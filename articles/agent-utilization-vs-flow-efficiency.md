@@ -3,7 +3,7 @@ title: "PRは1分でマージできている。それでもAIエージェント�
 emoji: "📦"
 type: "tech"
 topics: ["aiエージェント", "開発生産性", "アジャイル", "claudecode", "スクラム"]
-published: false
+published: true
 ---
 
 ![在庫は消えたのではなく、見えない場所へ移った](/images/agent-utilization-vs-flow-efficiency/hero.png)
