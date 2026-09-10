@@ -6,6 +6,8 @@ topics: ["claudecode", "aiエージェント", "bash", "セキュリティ", "ai
 published: false
 ---
 
+![危険コマンドを止める hook が、素通ししていた](/images/claude-code-hook-fail-open/hero.png)
+
 :::message
 **この記事で得られること**
 
