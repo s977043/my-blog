@@ -106,7 +106,7 @@ gh repo view <owner>/<repo> --json owner --jq .owner.login   # s977043 なら個
 `articles_note/new/` には個人区分と会社公式区分の原稿が同居する。**会社公式（PRONI）の記事はファイル名を `PRONI-` で始める**（例: `PRONI-ai-software-engineering-principles-note.md`）。区分は本文冒頭の `> 区分:` 行にも書くが、それだけだとファイル一覧で判別できず、個人向けのつもりで編集する事故につながる。
 
 - 小文字 `proni-` は一覧上で埋もれるため使わない
-- `reviews/note/<state>/<slug>.md` は記事の slug に対応させる規約なので、記事をリネームしたらレビュー成果物も同時にリネームする
+- `reviews/note/<state>/<slug>.md` は記事の slug に対応させる規約なので、記事をリネームしたら**レビュー成果物のファイル名と、その中身が参照している対象パスの両方**を更新する。ファイル名だけ直して中身を旧パスのまま残す漏れが実際に起きている（#641 → #642）。リネーム後に `grep -rln "<旧パス>" --include="*.md" .` で残存を確認する（`AGENT_LEARNINGS.md` と計測ログの旧パスは当時の事実の記録なので変更しない）
 - 大文字を含む slug は note ツールチェーンで安全（`md_to_wxr.py` の `derive_default_outname` は stem をそのまま使い小文字化しない / `clean-note-build.js` の `FILE_RE` は大文字にマッチする / 予約名 `new`・`drafts`・`published`・`bundle`・`batch` と衝突しない）
 - 会社公式記事は公開前に**社内のテックブログ投稿レギュレーション**（エンジニアレビュー2名 → note執筆ガイドライン適用 → 広報の事前確認依頼ワークフロー → デザイン室テンプレートのカバー画像）を通す。`/publish-zenn` `/publish-qiita` のような自動化パスは使えない
 
