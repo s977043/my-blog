@@ -1,7 +1,7 @@
 ---
 title: "AIを使い切ろうとしたら、人間の判断待ちが積み上がった"
 date: 2026-09-10
-status: growing
+status: published
 topics:
   - ai-driven-development
   - agile
@@ -10,6 +10,7 @@ topics:
   - wip
 source: experience
 promoted_to:
+  - https://x.com/mine_take/status/2097800316070855017
 ---
 
 # AIを使い切ろうとしたら、人間の判断待ちが積み上がった
@@ -80,4 +81,5 @@ AIが入って変わったのは、「作る側」の処理能力が一気に上
 
 - PBIを整えることでAIエージェントの長時間自律稼働が可能になったことを起点に記録開始
 - AIの稼働率最大化から、フロー全体を見る方向へ関心が移った
+- X記事として公開: https://x.com/mine_take/status/2097800316070855017
 - 今後、具体例と計測結果を追記して仮説を検証する
