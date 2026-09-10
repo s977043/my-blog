@@ -45,6 +45,7 @@ AI駆動開発の実践で得た小さな原体験・違和感・仮説を、長
 | Date | Title | Status | Topics |
 | --- | --- | --- | --- |
 | 2026-09-10 | [AIを使い切ろうとしたら、人間の判断待ちが積み上がった](./2026-09-10-flow-efficiency.md) | `growing` | AI駆動開発 / Agile / Flow Efficiency / WIP |
+| 2026-09-03 | [AI駆動開発で重要になるのは「作る力」ではなく「作らない判断力」だと思う](./2026-09-03-dont-build-judgment.md) | `draft` | AI駆動開発 / Product Discovery / Decision Making / Time to Learning |
 
 ## AIへの依頼例
 
