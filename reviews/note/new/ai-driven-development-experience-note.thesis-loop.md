@@ -246,7 +246,7 @@ AIは経験を不要にしていない。経験の価値は、コードを書く
 |---|---|---|
 | `articles_note/published/n103182c44979.md` | AI時代のエンジニアリング設計と6つの問い | 本記事は5つの職務経験から判断機能を抽出するキャリア回顧 |
 | `articles_note/new/agent-harness-engineering-note.md` | Modelと周辺システムを含むHarness設計 | 本記事は人の経験を5つの判断とタスク欄へ外部化することが中心 |
-| `articles_note/new/ai-software-engineering-principles-note.md` | DiscoveryとDeliveryの契約設計 | 本記事は役割横断経験がAI指揮にどう再利用されるかが中心 |
+| `articles_note/new/PRONI-ai-software-engineering-principles-note.md`（旧・個人版は 2026-09-10 に削除。会社公式版へ一本化） | DiscoveryとDeliveryの契約設計 | 本記事は役割横断経験がAI指揮にどう再利用されるかが中心 |
 
 ## 最終検証
 
