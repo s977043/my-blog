@@ -40,6 +40,20 @@ const EXIT_ON_WARN = false; // WARN 止まり（段階導入）
 
 const KEITAI =
   /(です|ます|ました|ません|でしょう|ください|ましょう|でした|ですね|ですが|ますが)$/;
+/**
+ * 文末の括弧を落としてから文体を見る。
+ * 「……公開しています（Loop engineering）。」のように、敬体の直後へ補足の括弧が付く形が
+ * 実データに多く、これを常体と誤判定していた（2026-09-10 実測で誤検出 5 件）。
+ */
+function stripTrailingParen(core) {
+  let s = core;
+  for (let i = 0; i < 3; i += 1) {
+    const next = s.replace(/[（(][^（()）]*[)）]$/, "").trimEnd();
+    if (next === s) break;
+    s = next;
+  }
+  return s;
+}
 const SKIP_TAIL = /(か|ね|よ|な)$/; // 疑問・呼びかけ・詠嘆は文体判定から外す
 
 /** 行から Markdown の装飾を落とす。強調を先に消さないと文末が取れない */
@@ -95,7 +109,7 @@ function analyze(text) {
       .map((s) => s.trim())
       .filter((s) => s.endsWith("。"))
       .forEach((sentence) => {
-        const core = sentence.slice(0, -1);
+        const core = stripTrailingParen(sentence.slice(0, -1));
         if (SKIP_TAIL.test(core)) return;
         if (KEITAI.test(core)) {
           current.kei += 1;
@@ -208,6 +222,21 @@ function selfTest() {
   // 見出しで章が分かれる
   const twoSecs = analyze("## A\n\n敬体です。\n\n## B\n\n違う。\n");
   eq("章が2つに分かれる", twoSecs.length, 2);
+
+  // 回帰3: 文末の補足括弧。敬体の直後に（…）が付く形を常体と誤判定していた
+  const paren = analyze(
+    "## 章\n\n公開しています（Loop engineering）。\n\n敬体です。\n",
+  );
+  eq("文末の補足括弧を落としてから判定する", paren[0].jou, 0);
+
+  const nestedParen = analyze(
+    "## 章\n\n分けて管理しています（個々の呼称は本題ではないので省きます）。\n\n敬体です。\n",
+  );
+  eq("括弧内に句点があっても敬体と判定する", nestedParen[0].jou, 0);
+
+  // 括弧を落としても常体なら、きちんと常体のまま
+  const parenJoutai = analyze("## 章\n\n対象が違う（前述）。\n\n敬体です。\n");
+  eq("括弧を落として常体なら常体のまま", parenJoutai[0].jou, 1);
 
   console.log(`\n${LABEL} self-test ${fail === 0 ? "OK" : "FAILED"}: ${pass}/${pass + fail}`);
   process.exit(fail === 0 ? 0 : 1);
