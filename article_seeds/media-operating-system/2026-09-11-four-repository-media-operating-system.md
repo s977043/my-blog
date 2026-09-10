@@ -144,6 +144,8 @@ Intelligenceでは、ユーザーの行動や施策の結果を観測する。
 
 ここで重視しているのが、ObservationとDecisionを分けることだ。
 
+たとえば、
+
 「検索流入が20%減った」
 
 という観測と、
@@ -201,7 +203,7 @@ Growth
 
 これはAI Agentを使う場合に特に重要になる。
 
-たとえば分析Agentには、複数のデータを読む権限を持たせたい。
+たとえば分析Agentには、分析に必要なデータソースを読む権限を持たせたい。
 
 しかし、そのAgentが分析結果を根拠に、そのまま広告費を変更したり、外部へ投稿したりする必要はない。
 
@@ -209,27 +211,29 @@ Growth
 
 ```text
 Intelligence
-Read broadly
+Read only required data
 ↓
 Observe / Analyze / Recommend
 
 Growth
-Write narrowly
+Write only approved targets
 ↓
 Decide / Execute
 ```
 
 という違いを作れる。
 
-Observation側には広いRead権限。
+Observation側には分析に必要な範囲のRead権限。
 
-Action側には制限されたWrite権限。
+Action側には、実行対象を限定したWrite権限。
 
-Repository BoundaryがそのままSecurity Boundaryになるわけではないが、境界が分かれている方がLeast Privilegeは設計しやすい。
+どちらにも必要最小限の権限だけを与える。
+
+Repository BoundaryがそのままSecurity Boundaryになるわけではないが、責務が分かれている方がLeast Privilegeを設計しやすい。
 
 コード整理だけではなく、
 
-**「誰が何を変更できるか」まで含めた境界**
+**「誰が何を読み、何を変更できるか」まで含めた境界**
 
 として意味を持つのではないかと考えている。
 
