@@ -64,7 +64,7 @@
     "test:note-cover-image": "python3 .claude/skills/note-cover-image/scripts/check_note_cover.py --self-test"
   },
   "dependencies": {
-    "zenn-cli": "^0.5.3"
+    "zenn-cli": "^0.5.4"
   },
   "devDependencies": {
     "@qiita/qiita-cli": "^1.10.0"
