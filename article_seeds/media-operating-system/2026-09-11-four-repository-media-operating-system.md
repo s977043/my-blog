@@ -335,41 +335,101 @@ Observability
 
 AI Agentを入れるほど、この差は大きくなると考えている。
 
-## この設計が良いかどうかを、何で判断するか
+## 検証したい仮説は、一つではない
 
 ここまで書いておいて、この4境界が正しいとはまだ言えない。
 
 2026年9月11日時点では、採用したばかりのArchitecture Decisionだ。
 
-そこで、設計そのものを運用データで検証したい。
+ただし、運用で検証したい仮説を整理すると、少なくとも二つある。
 
-| 指標 | 見たいこと |
-| --- | --- |
-| Cross-repo Change Rate | 1つの変更で複数境界を同時変更する頻度 |
-| Contract Stability | 境界間のInterfaceがどれくらい安定しているか |
-| Permission Isolation | Agentや自動化の権限を境界ごとに限定できているか |
-| Core Reuse Rate | 共通部分を別媒体でも再利用できるか |
-| Reproducibility | 2媒体目をどれだけ小さな追加コストで立ち上げられるか |
+### Boundary Hypothesis
 
-たとえばCross-repo Change Rateが高い状態が続くなら、境界と実際の変更理由が一致していない可能性がある。
+一つ目は、Content / Media / Intelligence / Growthという4つの境界が、実際のReason to Changeと合っているか。
 
-Contractを毎週壊しているなら、分割位置が早すぎるかもしれない。
+ここで見たいのは、境界ごとに独立して変更できること、境界をまたぐ調整コストが許容範囲に収まること、Agentの権限を責務に合わせて制限できることだ。
 
-権限を分けたのに、結局すべてのAgentへ全リポジトリのWrite権限を渡しているなら、分割による安全性の仮説も成立していない。
+### Shared Core Hypothesis
+
+二つ目は、IntelligenceやGrowthの一部を複数媒体で共有できるか。
+
+これはBoundary Hypothesisとは別の仮説だ。
+
+2媒体目でIntelligenceやGrowthの実装を共有できなかったとしても、同じ4境界がそれぞれの媒体で機能するなら、Boundary Hypothesisまで失敗したことにはならない。
+
+逆に、Shared Coreを再利用できても、変更のたびに複数境界を巻き込んだり、権限分離が崩れたりするなら、境界設計が成功したとは言いにくい。
+
+**境界の妥当性と、実装の再利用性を同じ判定にしない。**
+
+ここは分けて観測する。
+
+## 何を測るか
+
+検証指標も、二つの仮説とフローへの影響を分けて見る。
+
+| 観点 | 指標 | 見たいこと |
+| --- | --- | --- |
+| Boundary | Unexpected Cross-repo Change Rate | 本来は独立しているはずなのに、複数境界の同時変更が必要になった頻度 |
+| Boundary | Coordination Cost per Change | 境界をまたぐ変更で必要になった調整・レビュー・待ち時間 |
+| Boundary | Contract Breaking Change Rate | 境界間Contractの破壊的変更がどれくらい発生したか |
+| Boundary | Permission Isolation | Agentや自動化のRead / Write権限を責務ごとに限定できているか |
+| Shared Core | Core Reuse Rate | 2媒体目で共通実装をどこまで再利用できたか |
+| Shared Core | Media-specific Override Rate | 共通化した部分に媒体固有の例外がどれくらい必要になったか |
+| Flow | Time to Publish | コンテンツ作成から公開までの時間 |
+| Flow | Time to Experiment | 仮説を持ってから施策を実行し、観測可能になるまでの時間 |
+| Flow | New Media Lead Time | 新しい媒体を立ち上げ、最初の検証を開始できるまでの時間 |
+
+単純なCross-repo Change Rateだけでは判断しない。
+
+たとえば計測イベントの仕様を変えるとき、MediaとIntelligenceを同時に変更することは自然に起こり得る。
+
+問題にしたいのは、**本来独立しているはずの変更まで、予期せず別の境界を巻き込むこと**だ。
+
+Contractも、変更回数だけでは判断しない。
+
+立ち上げ直後のDiscoveryでは、Contractが頻繁に変わること自体は不自然ではない。
+
+見るべきなのは、破壊的変更によってどれだけ調整が発生したか、そして運用を続ける中でContractが安定する方向へ収束しているかだと思っている。
+
+さらに、Architectureが綺麗でも、公開や実験のLead Timeが悪化していれば目的を達成していない。
+
+```text
+Architecture
+    ↓
+Flow
+    ↓
+Business Outcome
+```
+
+というつながりまで見たい。
+
+現時点では収益などのBusiness Outcomeへ直接因果を置くには早いので、まずはTime to PublishやTime to Experimentのような、Architectureから近いフロー指標を観測する。
 
 数字そのものより、
 
-**どんな事実が出たら、このArchitecture Decisionを疑うか**
+**どんな事実が出たら、どの仮説を疑うのか**
 
-をあらかじめ持っておきたい。
+をあらかじめ分けて持っておきたい。
 
-## 本当のテストは2媒体目
+## 2媒体目では、二つの仮説を分けて検証する
 
-今回の構造が本当に意味を持つか確認できるのは、一つ目のメディアを作り終えたときではないと思っている。
+2媒体目は、このArchitectureを検証する重要な機会になる。
 
-2媒体目を作るときだ。
+ただし、検証したいことは「共通コードをどれだけ使えたか」だけではない。
 
-理想的には、
+たとえば2媒体目が、
+
+```text
+Media A                         Media B
+Content A                      Content B
+Media A                        Media B
+Intelligence A                 Intelligence B
+Growth A                       Growth B
+```
+
+のように媒体ごとの実装を持ったとしても、4つの境界が同じReason to Changeで機能し、独立変更しやすければBoundary Hypothesisには意味がある。
+
+一方で、次のように一部を共有できる可能性もある。
 
 ```text
 Media A
@@ -379,15 +439,19 @@ Media B    │
 Content B ─┘
 ```
 
-のように、一部の能力を再利用できる。
+これが無理なく成立すれば、Shared Core Hypothesisにも一定の根拠が得られる。
 
-もし2媒体目を作るときに、計測も分析もGrowthの仕組みもすべてコピーし直すことになれば、今回の抽象化はうまくいっていない。
+逆に、Shared Coreを作るために媒体固有の例外が大量に増えるなら、共通化しない方がよいかもしれない。
 
-逆に、一つ目で作った仕組みの大部分を再利用し、媒体固有のContentとMediaを追加するだけで済むなら、この境界には一定の意味があったと言える。
+だから2媒体目では、
 
-**1媒体目を作れたことではなく、2媒体目をどれだけ小さく作れるか。**
+1. 同じ境界構造を再現できるか
+2. 運用フローを再現できるか
+3. 実装のどこまでを安全に共有できるか
 
-そこを一つの検証ポイントにしたい。
+を別々に見る。
+
+**「同じ設計を再現できること」と「同じコードを再利用できること」は同じではない。**
 
 ## Media Operating Systemを作っているのかもしれない
 
@@ -419,15 +483,27 @@ Growthで次の行動を決める。
 
 またContentやMediaへ戻す。
 
-もしこれを複数のメディアで再利用できるなら、作っているものは個別のWebメディアだけではない。
+もしこれを複数のメディアで再現できるなら、作っているものは個別のWebメディアだけではない。
 
 **Webメディアを作り、届け、計測し、改善し続けるためのMedia Operating System**
 
 と呼べるかもしれない。
 
-ただし、「Operating System」と名前を付ければそうなるわけではない。
+ただし、ここでいう再利用は共通コードだけを意味しない。
 
-2媒体目で再利用できなければ、この仮説は棄却する。
+- 境界の切り方を再利用できる
+- Contractの考え方を再利用できる
+- Agentの権限モデルを再利用できる
+- 計測から施策へ戻す運用フローを再利用できる
+- その上で、共通化に意味がある実装だけをShared Coreとして再利用できる
+
+この順番で考えたい。
+
+コードを共有できなくても、設計や運用モデルを再現できる可能性はある。
+
+逆に共通コードだけ増えても、媒体を増やすたびに調整コストが膨らむならOperating Systemとは呼びにくい。
+
+名前を付けたことで完成した気にならず、2媒体目以降でどのレイヤーまで再現できたかを検証する。
 
 ## 「4」が本質ではない
 
@@ -458,15 +534,17 @@ Growth
 
 これが正解だったかは、まだ分からない。
 
-Cross-repo変更を追う。
+予期しないCross-repo変更を追う。
 
-Contractが安定するかを見る。
+Contractの破壊的変更と調整コストを見る。
 
 AI Agentの権限分離が本当に効くか確かめる。
 
-そして2媒体目を作る。
+公開や実験のLead Timeがどう変わるかを見る。
 
-結果が悪ければ、境界を変える。
+そして2媒体目では、境界の再現性とShared Coreの再利用性を別々に検証する。
+
+結果が悪ければ、境界も共通化の範囲も変える。
 
 だからこの記事も、完成したArchitectureの説明としてではなく、
 
@@ -476,11 +554,14 @@ AI Agentの権限分離が本当に効くか確かめる。
 
 ## 次に試したいこと
 
-- [ ] Cross-repo Change Rateを1か月分計測する
-- [ ] 境界間Contractの変更履歴を残し、破壊的変更の頻度を見る
+- [ ] Unexpected Cross-repo Change Rateを1か月分記録する
+- [ ] Cross-repo変更ごとの調整・レビュー・待ち時間を記録する
+- [ ] 境界間Contractの破壊的変更と、その変更コストを追う
 - [ ] AgentごとのRead / Write権限が境界と一致しているか確認する
-- [ ] 2媒体目でIntelligence / GrowthのCoreをどこまで再利用できるか検証する
-- [ ] 2媒体目の立ち上げコストを記録し、1媒体目との差を見る
+- [ ] Time to Publish / Time to Experimentを観測し、分割前後の変化を見る
+- [ ] 2媒体目で同じ境界構造・運用フローを再現できるか検証する
+- [ ] 2媒体目でIntelligence / GrowthのどこまでをShared Core化できるか別途検証する
+- [ ] Shared Coreに媒体固有の例外がどれだけ発生するか記録する
 
 ## 追記ログ
 
@@ -489,4 +570,12 @@ AI Agentの権限分離が本当に効くか確かめる。
 - Content / Media / Intelligence / Growthの4境界を採用
 - 「4リポジトリがベストプラクティス」という主張ではなく、Reason to Changeによる境界設計の仮説として記録
 - 成功判定をCross-repo Change Rate / Contract Stability / Permission Isolation / Core Reuse Rate / Reproducibilityで検証する方針にした
-- 本当の検証ポイントを2媒体目での再利用性とした
+- 2媒体目での再利用性を重要な検証ポイントとした
+
+### 2026-09-17
+
+- 別視点レビューを受け、Boundary HypothesisとShared Core Hypothesisを分離
+- 単純なCross-repo Change Rateではなく、Unexpected Cross-repo Change RateとCoordination Costを重視する方針へ変更
+- Contractの変更回数ではなく、破壊的変更・変更コスト・時間経過による収束を見る方針へ変更
+- Architecture内部の指標だけでなく、Time to Publish / Time to Experiment / New Media Lead Timeを観測対象へ追加
+- 2媒体目では「境界構造の再現」「運用フローの再現」「Shared Coreの再利用」を別々に判定する方針へ変更
