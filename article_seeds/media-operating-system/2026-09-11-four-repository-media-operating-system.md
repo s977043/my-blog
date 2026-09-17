@@ -420,11 +420,11 @@ Business Outcome
 たとえば2媒体目が、
 
 ```text
-Media A                         Media B
-Content A                      Content B
-Media A                        Media B
-Intelligence A                 Intelligence B
-Growth A                       Growth B
+Medium A                        Medium B
+├ Content A                     ├ Content B
+├ Media A                       ├ Media B
+├ Intelligence A                ├ Intelligence B
+└ Growth A                      └ Growth B
 ```
 
 のように媒体ごとの実装を持ったとしても、4つの境界が同じReason to Changeで機能し、独立変更しやすければBoundary Hypothesisには意味がある。
@@ -432,10 +432,10 @@ Growth A                       Growth B
 一方で、次のように一部を共有できる可能性もある。
 
 ```text
-Media A
+Medium A
 Content A ─┐
            ├→ Shared Intelligence / Growth
-Media B    │
+Medium B   │
 Content B ─┘
 ```
 
