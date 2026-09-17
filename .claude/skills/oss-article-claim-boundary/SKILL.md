@@ -133,5 +133,6 @@ Approve / Comment / Request changes
 - 読みやすさ、3ペルソナ、Zenn記法は `article-reviewer`
 - 採否して本文へ入れるのは `article-review-apply`
 - 実装済み / 原則 / 層 / Promotion / commit固定は本スキル
+- **他者のOSSを外から読んで解説する記事**は `docs/article-guides/oss-explainer-writing.md`。本スキルは自分が作ったOSSの設計記事が対象
 
 両方必要なときは、本スキルを先に通し、残った読みやすさだけを `article-reviewer` に渡す。

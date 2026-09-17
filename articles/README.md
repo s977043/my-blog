@@ -18,6 +18,7 @@ articles/
 
 - **媒体役割・多媒体展開**: `docs/content-channel-strategy.md`
 - **Zenn記事の構成判断**: `docs/article-guides/zenn-structure-best-practices.md`
+- **他者のOSSを解説する記事の判断**: `docs/article-guides/oss-explainer-writing.md`
 - **新規記事の構成検討入口**: `.claude/skills/tech-blog-writing/SKILL.md`
 - **レビュー実行・出力形式**: `.claude/agents/article-reviewer.md` / `.claude/commands/review-article.md`
 - 構成ガイドは固定テンプレートではなく、記事の目的・検索意図・読者・検証内容に応じて使い分ける
