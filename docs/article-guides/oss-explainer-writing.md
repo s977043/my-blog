@@ -2,7 +2,9 @@
 
 自分が作っていないOSSを読み、その設計を解説する記事のための実践ガイド。
 
-2026-09-16時点で、AOSA（The Architecture of Open Source Applications）の章構成、技術ブログ一般の作法、および外部読解型の実例分析をもとに整理した。
+2026-09-16時点で、AOSA（The Architecture of Open Source Applications）の章構成、技術ブログ一般の作法、および外部読解型の実例1本（catatsuy「Open Code Review解説」 https://zenn.dev/catatsuy/scraps/38cff6340dcb60 ）の分析をもとに整理した。
+
+**このガイドはまだ運用実績がない**。`zenn-structure-best-practices.md` がこのリポジトリの公開実績を根拠に持つのに対し、本ガイドは外部事例の分析から導出した仮説である。実際に1本書いた時点で、効かなかった項目を削り、必要だった項目を足す。
 
 ## 正本の境界
 
@@ -118,9 +120,12 @@ AOSAは各章が「主要コンポーネントは何か」「どう相互作用�
 - [ ] 結論が「良い/悪い」ではなく分類の提示になっている
 - [ ] 読む前の予想と、外れた点が書いてある
 
-## 参考
+## 参考資料
 
-- The Architecture of Open Source Applications — https://aosabook.org/en/
-- AOSA Volume 1 Introduction — https://aosabook.org/en/v1/intro1.html
-- Writing Technical Blog Posts About Coding Projects — https://developer.vonage.com/en/blog/how-to-write-technical-blog-posts-about-coding-projects
-- How to write a great technical blog post — https://www.freecodecamp.org/news/how-to-write-a-great-technical-blog-post-414c414b67f6/
+調査時点: 2026-09-16
+
+- The Architecture of Open Source Applications: https://aosabook.org/en/
+- AOSA Volume 1「Introduction」: https://aosabook.org/en/v1/intro1.html
+- Vonage「Writing Technical Blog Posts About Coding Projects」: https://developer.vonage.com/en/blog/how-to-write-technical-blog-posts-about-coding-projects
+- freeCodeCamp「How to write a great technical blog post」: https://www.freecodecamp.org/news/how-to-write-a-great-technical-blog-post-414c414b67f6/
+- catatsuy「Open Code Review解説」（本ガイドが分析した外部読解型の実例）: https://zenn.dev/catatsuy/scraps/38cff6340dcb60
