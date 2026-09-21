@@ -78,7 +78,7 @@ allowed-tools:
 
 ## Timing Review
 
-`story.md` と `speaker-notes.md` のtarget timeを合計する。
+`deck.md` の各slideにある `time` を登壇時間の正本として合計する。`story.md` のsection target timeと `speaker-notes.md` のtarget_timeは整合確認に使うが、同じ時間を二重加算しない。
 
 判定:
 
