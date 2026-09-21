@@ -3,6 +3,8 @@ name: talk-planning
 description: テーマ・メモ・調査結果・Issue・既存記事のいずれからでも、登壇のAudience・時間・中心主張・持ち帰り・根拠・制約をTalk Briefとして固定する。記事作成を前提にしない。
 allowed-tools:
   - Read
+  - Write
+  - Edit
   - Grep
   - Glob
 ---
