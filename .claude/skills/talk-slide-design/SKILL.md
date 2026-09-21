@@ -187,7 +187,7 @@ Rehearsal Verification = UNVERIFIED
 
 ## 完了条件
 
-- [ ] 全slideにmessage / attention / layout / time
+- [ ] 全slideにmessage / attention / layout / columns / time
 - [ ] 1 slide = 1 attention target
 - [ ] story.mdと一致
 - [ ] design.mdに違反していない
