@@ -77,7 +77,7 @@ talks/$1/deck.md
 
 をMarp互換Markdownとして作る。
 
-各スライドに可能な限り次の内部コメントを置く。
+各スライドに必ず次の内部コメントを置く。`check:talk` が `message` と `time` の欠落をエラーにする。
 
 ```markdown
 <!--
