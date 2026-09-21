@@ -556,7 +556,7 @@ function writeFixture(dir, valid) {
     '# Talk Visual Contract\n\n## Contract Snapshot\n\n- audience: AIをチーム導入するエンジニア\n- duration_minutes: 10\n- core_thesis: 品質保証を生成後に閉じる\n\n## Base\n\n- design_system: talks/DESIGN.md\n\n## Machine Constraints\n\n```json\n{"aspectRatio":"16:9","maxColumns":2,"maxBullets":5,"maxCodeLines":12,"minFigureFontPt":16,"requireAttentionTarget":true,"requireRenderVerification":true,"requireRehearsalVerification":true}\n```\n');
 
   fs.writeFileSync(path.join(dir, 'deck.md'), valid
-    ? '---\nmarp: true\nsize: 16:9\n---\n\n# Title\n\n<!--\nmessage: 品質保証を閉じる\nattention: タイトル\nlayout: hook\ntime: 1:00\n-->\n\n---\n\n# End\n\n<!--\nmessage: verifierを持ち帰る\nattention: Takeaway\nlayout: takeaway\ntime: 1:00\n-->\n'
+    ? '---\nmarp: true\nsize: 16:9\n---\n\n# Title\n\n<!--\nmessage: 品質保証を閉じる\nattention: タイトル\nlayout: hook\ncolumns: 1\ntime: 1:00\n-->\n\n---\n\n# End\n\n<!--\nmessage: verifierを持ち帰る\nattention: Takeaway\nlayout: takeaway\ncolumns: 1\ntime: 1:00\n-->\n'
     : '---\nmarp: true\nsize: 16:9\n---\n\n# Title\n\nmessage: visible text must not count\ntime: 1:99\n');
 
   fs.writeFileSync(path.join(dir, 'speaker-notes.md'), valid
