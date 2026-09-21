@@ -12,6 +12,7 @@ size: 16:9
 message: この登壇で扱うテーマを一言で示す
 attention: タイトル
 layout: hook
+columns: 1
 time: 0:30
 evidence:
 -->
@@ -24,6 +25,7 @@ evidence:
 message: 聴衆が自分事として考える問いを置く
 attention: 問い
 layout: question
+columns: 1
 time: 1:00
 evidence:
 -->
@@ -36,6 +38,7 @@ evidence:
 message:
 attention:
 layout: evidence
+columns: 1
 time:
 evidence:
 -->
@@ -48,6 +51,7 @@ evidence:
 message:
 attention:
 layout: progressive-diagram
+columns: 1
 time:
 evidence:
 -->
@@ -60,6 +64,7 @@ evidence:
 message: Talk Briefのcore_thesisと一致させる
 attention: 一文のTakeaway
 layout: takeaway
+columns: 1
 time: 1:00
 evidence:
 -->
