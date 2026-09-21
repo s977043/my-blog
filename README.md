@@ -10,7 +10,7 @@ my-blog/
 ├── articles/               Zenn記事本体 (.md)           → articles/README.md
 ├── Qiita/                  Qiita記事本体 (public/*.md)  → Qiita/README.md
 ├── articles_note/          note記事のローカル管理        → articles_note/README.md
-├── books/                  Zennの本（chaptersを含む）
+├── talks/                  登壇資料・Speaker Notes       → talks/README.md\n├── books/                  Zennの本（chaptersを含む）
 ├── images/                 Zenn記事用画像（<slug>/ごと）
 ├── reviews/
 │   ├── zenn/               Zenn記事のレビュー成果物
