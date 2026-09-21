@@ -180,6 +180,16 @@ Render Verification: PASS / UNVERIFIED
 Verdict: READY / NEEDS_CHANGES / UNVERIFIED
 ```
 
+## Deterministic Check
+
+Final Gateの前に必ず実行する。
+
+```bash
+npm run check:talk -- $1
+```
+
+required files、Talk Briefの必須項目、各slideのmessage/time、時間予算、review verdictを機械検査する。
+
 ## Render Verification
 
 初回実装ではMarp CLIやPDF検査を必須にしない。
