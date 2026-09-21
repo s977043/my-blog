@@ -1,6 +1,6 @@
 ---
 name: talk-slide-design
-description: Story ArchitectureからMarp互換の登壇スライドを作る。1 slide = 1 message、Progressive Disclosure、図中テキスト最小化、投影可読性、Speaker Notesへの説明分離を重視する。
+description: Talk Brief・Story Architecture・Visual ContractからMarp互換の登壇スライドを作る。1 slide = 1 attention target、視覚階層、Progressive Disclosure、投影可読性、Speaker Notesとの責務分離を重視する。
 allowed-tools:
   - Read
   - Write
@@ -10,46 +10,91 @@ allowed-tools:
 
 # talk-slide-design
 
-`brief.md` と `story.md` から `deck.md` を作るためのSkill。
+`brief.md`、`story.md`、`design.md`、`talks/DESIGN.md` から `deck.md` を作るためのSkill。
 
-初回実装では特定テーマや外部Marpツールを必須依存にしない。
-生成物は標準Marp互換Markdownを基本とする。
+Design Contractを生成中に勝手に再設計しない。
+変更が必要なら `design.md` のexceptionまたはreview findingとして扱う。
 
-## 1 slide = 1 message
+## 1 slide = 1 attention target
 
-各スライドに内部コメントで `message` を1つ置く。
+各スライドには「主張」と「今見てほしいもの」を分けて記録する。
 
 ```markdown
 <!--
 message: AIを使い切ることより、価値が流れることを優先する
+attention: Human Reviewへ集中するQueue
+layout: progressive-diagram
 time: 1:00
+evidence:
 -->
 ```
 
-1枚に複数の結論がある場合は分割する。
+- `message`: このスライドで理解してほしい意味
+- `attention`: その瞬間に聴衆が見るPrimary
+- `layout`: Slide Family / visual role
+- `time`: 予定説明時間
+- `evidence`: 必要な場合の根拠
+
+複数の補助要素は許容するが、Primary attentionを複数にしない。
+
+## Visual Hierarchy
+
+優先順位:
+
+1. attention target
+2. messageを補強するsecondary information
+3. 出典や補足
+
+全部を同じ強さで表示しない。
+
+章名だけのタイトルより、そのページで理解してほしい意味を示す見出しを優先する。
 
 ## スライドは原稿ではない
 
 避ける:
 
 - 長い本文段落
-- 文章をそのまま箇条書きへ変換
+- 記事をそのまま箇条書きへ変換
 - 図の箱の中に説明文を詰め込む
 - Speaker Notesと同じ文章を表示する
+- 収まらないためのfont縮小
 
 優先する:
 
 - 短い見出し
-- キーワード
-- 数値
-- 対比
-- 図
-- 具体例
-- 1つの問い
+- Key phrase
+- Big number
+- Contrast
+- Diagram
+- Concrete example
+- One question
+
+## Slide Families
+
+`design.md` で選択した型をStoryの役割に応じて使う。
+
+- Hook
+- Question
+- Big Statement
+- Big Number
+- Evidence
+- Example
+- Quote
+- Before / After
+- Comparison
+- Progressive Diagram
+- Architecture / Model
+- Code Focus
+- Screenshot / Demo
+- Transition
+- Takeaway
+- Closing
+
+表現を散らすためだけに型を変えない。
 
 ## Progressive Disclosure
 
-複雑な図は複製して段階的に要素を追加する。
+複雑な図は同じ骨格を維持し、attention targetを順番に増やす。
 
 ```text
 State A
@@ -61,79 +106,94 @@ State A + B + C
 完成モデル
 ```
 
-同じ図を複数ページに分けることを「重複」と判定しない。
-話の進行に必要な段階表示なら意図的な再利用とする。
+同じ図を複数ページに分けることを重複とは判定しない。
 
-## 図中テキスト
+各ページで:
 
-箱の中は名前・短いラベルを優先する。
-説明は口頭またはSpeaker Notesへ置く。
+- 何が追加されたか
+- 今どこを見るか
+- Speakerが何を説明するか
 
-目安:
+を一致させる。
 
-- 図中ラベルは短く
-- 重要な図中文字は投影時に読めるサイズを確保する
-- 16pt未満相当の文字を前提にしない
-- 本文テキストは小さく詰めるより、スライドを分割する
+## Figures
 
-数値は絶対標準ではなくレビュー時の警告目安として扱う。
+- 図がPrimaryかSecondaryかを決める
+- Primaryなら版面を十分使う
+- 箱の中は短い名前・ラベル中心
+- 実在する境界だけを境界として描く
+- 矢印は説明上の都合で嘘をつかない
+- 要素が多すぎる場合は分割する
 
-## Slide Types
-
-必要な型だけ使う。
-
-- title
-- question
-- fact
-- quote
-- comparison
-- timeline
-- system / model
-- progressive figure
-- code
-- takeaway
-
-同じ型を連続させすぎない。
+`minFigureFontPt` はsourceだけでは保証できないため、Render Verificationで実物を確認する。
 
 ## Code Slide
 
-コードは説明対象だけ残す。
-
 - 全ファイルを貼らない
 - 差分・重要行だけ
+- attention targetは原則1か所
+- `design.md` のmaxCodeLinesを超えない
 - 口頭で説明できない行を載せない
-- 小さな文字へ縮小して解決しない
+- 小さい文字へ縮小して解決しない
+
+## Bullet Density
+
+箇条書きは列挙のためではなく、attention targetを補助するために使う。
+
+`design.md` のmaxBulletsを超える場合は:
+
+1. 削る
+2. groupingする
+3. splitする
+
+の順に検討する。
 
 ## Evidence
 
 外部事実・数値・引用には参照先を `references.md` またはスライド内の短い出典へ保持する。
 
-出典情報を可読性のために削除しない。
+可読性のために根拠を消さない。
+詳細URLをSpeaker Notes / referencesへ逃がすことはできる。
 
 ## Speaker Notesとの責務分離
 
 Deck:
-- 視線を向けてほしい情報
+- attention target
+- visual evidence
+- key phrase
+- minimum necessary context
 
 Speaker Notes:
-- 口頭説明
-- 背景
-- 遷移文
-- 注意点
-- 補足事例
-- 言わないこと
+- explanation
+- background
+- transition
+- visual description
+- cautions
+- examples
+- do_not_say
 
-## 参考設計
+## Render前提
 
-`minorun365/minorun-marp-skill` の story / figures / design の責務分離を参考にするが、コード・テーマ・ツールをコピー前提にしない。
+Markdown上で綺麗に見えても完成とはしない。
+
+Deck生成時点では:
+
+```text
+Render Verification = UNVERIFIED
+Rehearsal Verification = UNVERIFIED
+```
+
+を前提にする。
 
 ## 完了条件
 
-- [ ] 全スライドに実質1つのmessage
-- [ ] story.mdの流れと一致
+- [ ] 全slideにmessage / attention / layout / time
+- [ ] 1 slide = 1 attention target
+- [ ] story.mdと一致
+- [ ] design.mdに違反していない
 - [ ] core_thesisが変わっていない
 - [ ] 説明文を詰め込んでいない
-- [ ] Progressive Disclosure候補を適切に分割
+- [ ] Progressive Disclosureがattentionの順番になっている
 - [ ] 視認性を文字縮小で解決していない
 - [ ] 重要な出典が保持されている
 - [ ] Speaker Notesへ逃がす情報が分離されている
