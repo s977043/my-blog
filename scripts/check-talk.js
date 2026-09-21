@@ -369,6 +369,13 @@ function validateTalk(dir) {
       }
       if (!metadata.layout) errors.push('deck.md: slide ' + n + ' has no layout metadata');
 
+      const columns = Number.parseInt(metadata.columns, 10);
+      if (!metadata.columns || !/^\\d+$/.test(metadata.columns)) {
+        errors.push('deck.md: slide ' + n + ' has invalid or missing columns metadata');
+      } else if (constraints && (columns < 1 || columns > constraints.maxColumns)) {
+        errors.push('deck.md: slide ' + n + ' uses ' + columns + ' columns; maxColumns is ' + constraints.maxColumns);
+      }
+
       if (!metadata.time) {
         errors.push('deck.md: slide ' + n + ' has no time budget');
         slideTimes.push(null);
