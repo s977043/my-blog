@@ -10,7 +10,10 @@ size: 16:9
 
 <!--
 message: この登壇で扱うテーマを一言で示す
+attention: タイトル
+layout: hook
 time: 0:30
+evidence:
 -->
 
 ---
@@ -18,8 +21,11 @@ time: 0:30
 # 問い
 
 <!--
-message: 聴衆が自分事として考える問い
+message: 聴衆が自分事として考える問いを置く
+attention: 問い
+layout: question
 time: 1:00
+evidence:
 -->
 
 ---
@@ -28,8 +34,10 @@ time: 1:00
 
 <!--
 message:
-evidence:
+attention:
+layout: evidence
 time:
+evidence:
 -->
 
 ---
@@ -38,8 +46,10 @@ time:
 
 <!--
 message:
-visual:
+attention:
+layout: progressive-diagram
 time:
+evidence:
 -->
 
 ---
@@ -48,5 +58,8 @@ time:
 
 <!--
 message: Talk Briefのcore_thesisと一致させる
+attention: 一文のTakeaway
+layout: takeaway
 time: 1:00
+evidence:
 -->
