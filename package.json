@@ -61,7 +61,9 @@
     "test:learnings-index": "node scripts/check-learnings-index.js --self-test",
     "suggest:theme": "node scripts/suggest-next-theme.js",
     "test:suggest-theme": "node scripts/suggest-next-theme.js --self-test",
-    "test:note-cover-image": "python3 .claude/skills/note-cover-image/scripts/check_note_cover.py --self-test"
+    "test:note-cover-image": "python3 .claude/skills/note-cover-image/scripts/check_note_cover.py --self-test",
+    "check:talk": "node scripts/check-talk.js",
+    "test:talk": "node scripts/check-talk.js --self-test"
   },
   "dependencies": {
     "zenn-cli": "^0.5.4"
