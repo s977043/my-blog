@@ -225,7 +225,7 @@ npm run check:talk -- $1
 - Visual Contract
 - Contract Snapshot drift
 - Takeaways 1〜3件
-- slide message / attention / layout / time
+- slide message / attention / layout / columns / time
 - bullet / code density
 - slide ↔ Speaker Notes対応
 - planned time
