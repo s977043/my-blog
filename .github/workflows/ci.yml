@@ -75,7 +75,7 @@ jobs:
       - name: PR cleanup harness self-test
         run: npm run test:cleanup-pr
 
-      # npm run check は 20 個の検査を「全件実行してから失敗をまとめて報告」する
+      # npm run check は複数の検査を「全件実行してから失敗をまとめて報告」する
       # 集約ランナー。以前は && チェーンだったため、前方の 1 件が落ちると後続が
       # 一度も実行されず、1 回の CI で分かることが最初の失敗だけに縮んでいた
       # （PR #605 で check:learnings-index が初めてブロッキングになり、後続 6 件が
