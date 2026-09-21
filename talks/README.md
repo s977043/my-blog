@@ -105,6 +105,22 @@ talks/
 - `.claude/skills/article-visual-review/SKILL.md`
   - 図の意味整合・冗長性の考え方を参照。ただし登壇資料固有の配置判定は `talk-slide-design` / `talk-review` を優先
 
+## 機械検査
+
+最終化前に次を実行する。
+
+```bash
+npm run check:talk -- <slug>
+```
+
+すべての登壇成果物をまとめて確認する場合は引数を省略する。
+
+```bash
+npm run check:talk
+```
+
+required files、Talk Brief、slide message/time、総時間、review verdictを検査する。
+
 ## 参考
 
 スライド作成の設計思想として以下を参照する。ただしコード・テーマ・検査ツールは初回実装ではvendoringしない。
