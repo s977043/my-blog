@@ -43,7 +43,7 @@ Claude Code 向けのツールガイド。規約（何が正しいか）は `@AG
 ```bash
 npm run preview            # Zenn プレビュー
 npm run preview:qiita      # Qiita プレビュー
-npm run check              # Zenn + Qiita 構造チェック + note参照lint
+npm run check              # 記事・登壇資料を含むリポジトリ全体の集約チェック
 npm run new:qiita -- <slug>
 npm run pull:qiita
 npm run publish:qiita -- <slug>   # Qiita公開はこのproject標準scriptで叩く（生 npx qiita publish は安全機構でブロックされやすい）。実行前に必ず npm run check
