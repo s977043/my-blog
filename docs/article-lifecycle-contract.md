@@ -198,16 +198,30 @@ Article Graph は候補発見の補助であり、記事本数を最大化する
 
 ## 8. Metrics / Learning への接続
 
-本フェーズでは Metrics schema と自動提案は実装しない。
+Metrics取得そのものは既存の `scripts/fetch-channel-metrics.mjs`、`docs/channel-metrics/`、`docs/content-channel-strategy.md` を再利用する。
 
-既存の `scripts/fetch-channel-metrics.mjs`、`docs/channel-metrics/`、`docs/content-channel-strategy.md` を再利用し、次フェーズで次を追加する。
+### Seed ID と公開記事の接続
+
+追加の対応台帳は作らない。Seed の `promoted_to` を正本とし、`docs/article-graph.json` の `promoted_to` edge と各媒体APIの公開URLを join する。
+
+`fetch-channel-metrics.mjs` は公開記事ごとに次を追加する。
+
+```json
+{
+  "seed_ids": ["seed-YYYYMMDD-example"]
+}
+```
+
+URL比較では query / hash / 末尾スラッシュを正規化する。Zenn は username + slug から公開URLを組み立て、Qiita / note はAPIが返すURLを使う。
 
 ```text
 Seed ID
   ↓
-Article
+promoted_to
   ↓
 Published URL
+  ↓
+Channel Metrics + seed_ids
   ↓
 Metrics Snapshot
   ↓
@@ -218,4 +232,10 @@ Human Accept / Reject
 Next Seed or Strategy Update
 ```
 
-1記事の数字だけで Skill / Strategy を自動更新しない。Learning は Proposal として扱い、根拠レビューと Human Gate を通す。
+`seed_ids` が空でもMetrics取得自体は失敗ではない。まだSeedへ紐付いていない既存記事を表す。
+
+### Learning
+
+Learning Proposalの自動生成・Skill / Strategy自動更新はまだ行わない。
+
+1記事の数字だけで Skill / Strategy を自動更新しない。Learning は Proposal として扱い、複数観測または明確な反証を根拠にし、Human Gate を通す。
