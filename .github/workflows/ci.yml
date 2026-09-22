@@ -172,7 +172,7 @@ jobs:
           assert "../assets/" not in html and "src=\"assets/" not in html, "local image reference remains"
           assert "<table" not in html, "unexpected table emitted"
           assert "AIに記事を書かせる前に" in (item.findtext("title") or ""), "title mismatch"
-          assert "学びが戻る仕組み" in html, "body marker missing"
+          assert "自動化する中心を" in html, "body marker missing"
 
           print("[ok] WXR XML well-formed")
           print("[ok] required wp:* tags present")
