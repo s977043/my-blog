@@ -78,6 +78,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-05-15 — note 用 SVG は Chrome headless + font-family 注入 / WXR round-trip はテーブル平坦化
 - 2026-05-04 — note公式由来の小容量PNGは false positive として許容
 - 2026-05-16 — note `new/` と `drafts/` の重複は用途で正を分ける
+- 2026-09-23 — note WXR はCI構造preflightと公式export完全比較を二段階に分ける。検査側の誤判定も疑う
 
 ### D. 並列セッション / ブランチ干渉 / commit
 **現行正本**: `CLAUDE.md` §並列セッション耐性 / `scripts/hooks/pre-commit`
@@ -156,6 +157,23 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 ---
 
 ## 🧭 学びエントリ
+
+### 2026-09-23 — note WXR は「構造preflight」と「公式export比較」を二段階に分ける [Workflow][Tooling][Gotcha]
+
+**観察**: `content-closed-loop-note` のCanary公開準備で、リポジトリ自身の `md_to_wxr.py` をGitHub Actions上で実行した。WXR生成自体は成功したが、最初の一回限りpreflightは「タイトルにだけ存在する文字列が本文HTMLにもある」と誤ってassertしFAILした。WXR不具合ではなく**検査側の誤判定**だった。assertを実在する本文マーカーへ直すと、XML parse・必須 `wp:*`・著者・画像参照・Artifact uploadがすべて成功した。
+
+同時に、既存 `verify_wxr.py` は公式note export ZIPが無い環境では実行不能だったため、CIで再利用できないことが分かった。そこで `--structure-only` とfixture self-testを追加し、その後note公式ヘルプの現行インポート条件（UTF-8 / 20MB以下 / 1000記事以下 / `<rss>` / `excerpt, content, wfw, dc, wp` 名前空間）まで早期検証へ取り込んだ。最終self-testは **11/11 PASS**、既存Content checks / Dependency reviewもPASSした。
+
+**対策/学び**:
+
+- **WXR検証を二段階に分ける**。CI・一時環境では `verify_wxr.py --structure-only`、公開前Human Gateでは通常 `verify_wxr.py` で公式exportと比較する。structure-onlyのPASSを「公式形式への完全準拠」とは扱わない
+- 構造preflightでは、XML well-formedだけでなく **UTF-8 / 20MB / 1000件 / rss root / 必須namespace prefix+URI / channel,item / minimum wp:* / author / image URL** を見る
+- 検査がFAILしたら生成物だけでなく**検査条件そのものも疑う**。特に「タイトルは本文から分離される」など変換器の仕様を無視したassertはfalse negativeを作る
+- 新しいcheckはfixtureベースのself-testを同梱しCIへwireする。今回の `verify_wxr.py --self-test` は valid / namespace欠落・URI違い / non UTF-8 / >1000 / >20MB / wp欠落 / creator警告 / local image / non-rss / invalid XML の11ケース
+- WXR検証コマンドでは `import-*.xml` のglobを使わず、**対象1ファイルを明示**する。過去世代が複数残るとshell展開で別引数になりうる
+- Human Gateを短縮するため、WXR本体・SHA-256・目視チェックリストを1つのPublish Packetとして渡す
+
+**根拠**: Issue #670、PR #672、PR #673。Canary WXR SHA-256 `9135972be3ccce13040264e48786fff59cb0060524b10a57fb02a252db2601c4`。PR #673 CIで `verify_wxr` self-test 11/11 PASS。
 
 ### 2026-09-07 — 自分が書いた引用の帰属は、外部一次情報と同じ厳しさで検証する [Workflow][Gotcha]
 
