@@ -6,7 +6,7 @@
 >
 > レビュー日: 2026-09-23
 >
-> 詳細: [3ループ論旨レビュー](./content-closed-loop-note.thesis-loop.md)
+> 詳細: [3ループ論旨レビュー](./content-closed-loop-note.thesis-loop.md) / [Final Gate](./content-closed-loop-note.finalize.md)
 
 ## 記事タイプと想定読者
 
@@ -26,7 +26,7 @@
 | note可読性 | OK | 実装用語を日本語化・初出説明し、表は使用していない |
 | Human Gate | OK | 公開・Strategy更新の自動化は行わず判断境界を明示 |
 | 論旨レビュー | OK | 3ループすべてThesis Gate合格、Must/High 0 |
-| 公開状態 | Final Gate待ち | deterministic CIと公開前Human Gateを残す |
+| 公開状態 | READY | Final Gate合格。WXR生成・公式export照合・note公開はHuman Gateとして残す |
 
 ## 良い点
 
@@ -49,6 +49,6 @@
 
 ## 最終判定
 
-**記事レビューとしては公開前Final Gateへ進行可能。**
+**Final GateはREADY。note公開のHuman Gateへ進行可能。**
 
 ただし本記事の目的上、公開しただけではCanary完了ではない。公開URLをSeedへ戻し、Metricsで `seed_id` を再接続し、Learning Proposalまで作って初めてClosed Loopの端から端までの検証が完了する。
