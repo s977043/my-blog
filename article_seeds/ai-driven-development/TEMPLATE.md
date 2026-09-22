@@ -1,14 +1,22 @@
 ---
+seed_id: seed-YYYYMMDD-short-slug
 title: ""
 date: YYYY-MM-DD
 status: seed
 topics:
   - ai-driven-development
 source: experience
+source_url:
+source_ref:
+evidence_status: observed
 promoted_to:
+article_type_candidates:
+  - experience
 ---
 
 # タイトル
+
+> Metadata contract は `../TEMPLATE.md` と `../../docs/article-lifecycle-contract.md` を正とする。
 
 ## 最近起きたこと
 
@@ -34,9 +42,19 @@ promoted_to:
 
 Agile / Scrum / Kanban / Lean / TDD / DDD / SDD / Software Engineering / Engineering Management / Harness Engineering など、既存知識と接続できる場合だけ書く。
 
+## 記事化の角度
+
+- Experience:
+- Tutorial:
+- Analysis:
+- Insight:
+- Evidence:
+
+Graph 上の空きを埋めるためだけに記事化しない。
+
 ## 次に試したいこと
 
-- [ ] 
+- [ ]
 
 ## 追記ログ
 
