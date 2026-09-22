@@ -19,6 +19,7 @@
       "source_ref": "",
       "evidence_status": "",
       "promoted_to": [],
+      "article_type_candidates": [],
       "legacy": true
     },
     {
@@ -38,6 +39,7 @@
       "source_ref": "",
       "evidence_status": "",
       "promoted_to": [],
+      "article_type_candidates": [],
       "legacy": true
     },
     {
@@ -60,6 +62,7 @@
       "promoted_to": [
         "https://x.com/mine_take/status/2097800316070855017"
       ],
+      "article_type_candidates": [],
       "legacy": true
     },
     {
@@ -79,6 +82,7 @@
       "source_ref": "",
       "evidence_status": "",
       "promoted_to": [],
+      "article_type_candidates": [],
       "legacy": true
     },
     {
@@ -98,6 +102,7 @@
       "source_ref": "",
       "evidence_status": "",
       "promoted_to": [],
+      "article_type_candidates": [],
       "legacy": true
     },
     {
@@ -117,6 +122,7 @@
       "source_ref": "",
       "evidence_status": "",
       "promoted_to": [],
+      "article_type_candidates": [],
       "legacy": true
     },
     {
@@ -135,6 +141,7 @@
       "source_ref": "",
       "evidence_status": "",
       "promoted_to": [],
+      "article_type_candidates": [],
       "legacy": true
     },
     {
@@ -154,6 +161,7 @@
       "source_ref": "",
       "evidence_status": "",
       "promoted_to": [],
+      "article_type_candidates": [],
       "legacy": true
     },
     {
@@ -174,6 +182,7 @@
       "source_ref": "",
       "evidence_status": "",
       "promoted_to": [],
+      "article_type_candidates": [],
       "legacy": true
     }
   ],
