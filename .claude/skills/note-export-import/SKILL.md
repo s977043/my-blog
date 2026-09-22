@@ -57,7 +57,13 @@ articles_note/
 1. `new/<slug>.md` を用意（著者が執筆）
 2. 記事に SVG 画像がある場合: 先に Chrome headless で PNG 変換し `articles_note/assets/` に配置する（上記「SVG→PNG 変換」参照）
 3. `scripts/md_to_wxr.py new/<slug>.md --base-url <公開Raw URL>` で `build/import-<slug>-YYYYMMDD-HHMM.xml` を生成
-4. CI / 参照ZIPなし環境では `scripts/verify_wxr.py build/import-<slug>-YYYYMMDD-HHMM.xml --structure-only` で最低限構造を検証
+4. CI / 参照ZIPなし環境では `scripts/verify_wxr.py build/import-<slug>-YYYYMMDD-HHMM.xml --structure-only` で最低限構造とnote公式の受入条件を検証
+   - UTF-8
+   - 20MB以下
+   - 1000記事以下
+   - `<rss>` ルート
+   - `excerpt` / `content` / `wfw` / `dc` / `wp` 名前空間宣言
+   - `channel/item`、最低限の `wp:*`、著者フィールド
 5. 公開前Human Gateでは **`scripts/verify_wxr.py build/import-<slug>-YYYYMMDD-HHMM.xml` を通常実行**し、必須 wp:* の欠落と著者フィールドの対応を公式エクスポートと突き合わせる
 6. note管理画面: プロフィール → 自分の記事 → インポート → WXR選択
 7. `build/import-<slug>-YYYYMMDD-HHMM.xml` をアップロード → インポート開始
@@ -129,7 +135,7 @@ done
 
 - `scripts/wxr_to_md.py` — WXR + assets → `published/ drafts/ assets/` を再生成
 - `scripts/md_to_wxr.py` — `new/<slug>.md` → 単一記事WXR を `build/import-<slug>-YYYYMMDD-HHMM.xml` に出力
-- `scripts/verify_wxr.py` — `--structure-only` で参照ZIP不要の最低限構造チェック。通常実行では公式エクスポート形式と突き合わせ、note importerが必要な `<item>` 配下 `wp:*` の欠落や著者フィールドの対応違いを検出
+- `scripts/verify_wxr.py` — `--structure-only` で参照ZIP不要の最低限構造 + note公式受入条件（UTF-8 / 20MB / 1000記事 / 必須名前空間）をチェック。通常実行ではさらに公式エクスポート形式と突き合わせ、note importerが必要な `<item>` 配下 `wp:*` の欠落や著者フィールドの対応違いを検出
 
 `wxr_to_md.py` / `md_to_wxr.py` は `pip install --break-system-packages markdownify markdown` が必要。`verify_wxr.py` は標準ライブラリのみ。
 
