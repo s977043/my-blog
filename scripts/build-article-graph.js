@@ -139,6 +139,7 @@ function readSeedRecord(root, file) {
     source_ref: meta.source_ref || "",
     evidence_status: meta.evidence_status || "",
     promoted_to: normalizeList(meta.promoted_to),
+    article_type_candidates: normalizeList(meta.article_type_candidates),
     legacy: !optedIn,
     errors,
     warnings,
@@ -218,13 +219,13 @@ function renderMarkdown(graph) {
     "",
     "## Seeds",
     "",
-    "| ID | Date | Status | Source | Evidence | Title | Path | Promotions |",
-    "| --- | --- | --- | --- | --- | --- | --- | ---: |",
+    "| ID | Date | Status | Source | Evidence | Types | Title | Path | Promotions |",
+    "| --- | --- | --- | --- | --- | --- | --- | --- | ---: |",
   ];
 
   for (const n of graph.nodes) {
     lines.push(
-      `| \`${escCell(n.id)}\` | ${escCell(n.date)} | ${escCell(n.status)} | ${escCell(n.source)} | ${escCell(n.evidence_status || (n.legacy ? "legacy" : ""))} | ${escCell(n.title)} | \`${escCell(n.path)}\` | ${n.promoted_to.length} |`
+      `| \`${escCell(n.id)}\` | ${escCell(n.date)} | ${escCell(n.status)} | ${escCell(n.source)} | ${escCell(n.evidence_status || (n.legacy ? "legacy" : ""))} | ${escCell((n.article_type_candidates || []).join(", "))} | ${escCell(n.title)} | \`${escCell(n.path)}\` | ${n.promoted_to.length} |`
     );
   }
 
