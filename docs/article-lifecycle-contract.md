@@ -84,6 +84,8 @@ source_url:
 source_ref:
 evidence_status: observed
 promoted_to:
+article_type_candidates:
+  - experience
 ```
 
 ### `seed_id`
@@ -136,6 +138,14 @@ promoted_to:
 
 Article Graph はこの値から `promoted_to` edge を作る。
 
+### `article_type_candidates`
+
+記事化するときに検討したい角度を任意で残す。
+
+例: `experience` / `tutorial` / `analysis` / `insight` / `evidence`。
+
+これは候補であり、媒体・記事タイプの最終決定ではない。Graph 上の空きを埋める目的で自動採用しない。
+
 ## 5. Legacy compatibility
 
 既存 Seed は一括書き換えしない。
@@ -166,6 +176,7 @@ v1 の Graph が扱うのは意図的に狭い。
 
 - Seed node
 - provenance metadata
+- article type candidates
 - `promoted_to` edge
 - legacy migration warning
 
