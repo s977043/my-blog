@@ -214,6 +214,8 @@ Metrics取得そのものは既存の `scripts/fetch-channel-metrics.mjs`、`doc
 
 URL比較では query / hash / 末尾スラッシュを正規化する。Zenn は username + slug から公開URLを組み立て、Qiita / note はAPIが返すURLを使う。
 
+Metricsへ出す `seed_ids` は明示的な `seed_id` を持つ non-legacy Seed のみ。`legacy:*` はファイルパス由来で移動に弱いため、永続的なMetricsキーとして使わない。
+
 ```text
 Seed ID
   ↓
