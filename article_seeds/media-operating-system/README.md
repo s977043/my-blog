@@ -16,6 +16,8 @@ Webメディアを継続的に作り、届け、計測し、改善する仕組�
 | --- | --- | --- | --- |
 | 2026-09-11 | [Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった](./2026-09-11-four-repository-media-operating-system.md) | `seed` | Architecture / Reason to Change / AI Agent / Growth |
 | 2026-09-23 | [記事作成を自動化するより、Signal→Seed→公開後学習を閉じたい](./2026-09-23-content-closed-loop.md) | `seed` | Content Operations / Feedback Loop / Provenance / AI Agent |
+| 2026-09-23 | [AIエージェントを増やす前に、役割と委譲境界を分ける](./2026-09-23-agent-role-boundaries.md) | `seed` | Orchestration / Role Boundary / Delegation / AI Agent |
+| 2026-09-23 | [自動投稿より先に、公開前の契約とfail-closedを固定する](./2026-09-23-publish-contract.md) | `seed` | Publishing / Validation / Fail Closed / Content Operations |
 
 ## 検証の基本方針
 
