@@ -29,6 +29,8 @@ function unquote(value) {
   return v;
 }
 
+// Seed contract 専用の最小 parser。一般 YAML parser ではない。
+// 対応するのは top-level scalar と `- item` list のみ。複雑な Evidence は本文へ置く。
 function parseFrontmatter(content) {
   const lines = content.replace(/\r\n/g, "\n").split("\n");
   if (lines[0] !== "---") return {};
