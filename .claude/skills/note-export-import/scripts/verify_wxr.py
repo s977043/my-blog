@@ -43,6 +43,10 @@ NS = {
 
 WP_NS_PREFIX = "{http://wordpress.org/export/1.2/}"
 
+NOTE_IMPORT_MAX_BYTES = 20 * 1024 * 1024
+NOTE_IMPORT_MAX_ITEMS = 1000
+REQUIRED_NAMESPACE_PREFIXES = {"excerpt", "content", "wfw", "dc", "wp"}
+
 MINIMUM_WP_ITEM_TAGS = {
     "post_id",
     "post_date",
@@ -94,21 +98,58 @@ def auto_detect_reference() -> Path | None:
 
 
 def check_structure(generated_path: Path) -> list[str]:
-    """公式exportなしで、note importer向けの最低限構造を検証する。"""
+    """公式exportなしで、note importer向けの最低限構造と公開仕様を検証する。"""
     errors: list[str] = []
+
+    size = generated_path.stat().st_size
+    if size > NOTE_IMPORT_MAX_BYTES:
+        errors.append(
+            f"[ERROR] WXR が note の 20MB 上限を超過: {size} bytes > {NOTE_IMPORT_MAX_BYTES} bytes"
+        )
+
+    raw = generated_path.read_bytes()
+    try:
+        raw.decode("utf-8")
+    except UnicodeDecodeError as e:
+        return errors + [f"[FATAL] WXR がUTF-8として読めない: {e}"]
+
+    try:
+        namespace_prefixes = {
+            prefix
+            for _event, (prefix, _uri) in ET.iterparse(generated_path, events=("start-ns",))
+            if prefix
+        }
+    except ET.ParseError as e:
+        return errors + [f"[FATAL] 生成WXRがXMLとして不正: {e}"]
+
+    missing_ns = REQUIRED_NAMESPACE_PREFIXES - namespace_prefixes
+    if missing_ns:
+        errors.append(
+            f"[ERROR] WXRに必須名前空間宣言が欠落: {sorted(missing_ns)}"
+        )
 
     try:
         tree = ET.parse(generated_path)
     except ET.ParseError as e:
-        return [f"[FATAL] 生成WXRがXMLとして不正: {e}"]
+        return errors + [f"[FATAL] 生成WXRがXMLとして不正: {e}"]
 
-    channel = tree.getroot().find("channel")
+    root = tree.getroot()
+    if localname(root.tag) != "rss":
+        return errors + [f"[FATAL] ルート要素が <rss> ではない: <{localname(root.tag)}>"]
+
+    channel = root.find("channel")
     if channel is None:
-        return ["[FATAL] <channel> 要素が見つからない"]
+        return errors + ["[FATAL] <channel> 要素が見つからない"]
 
-    item = channel.find("item")
-    if item is None:
-        return ["[FATAL] 生成WXRに <item> が存在しない"]
+    items = channel.findall("item")
+    if len(items) > NOTE_IMPORT_MAX_ITEMS:
+        errors.append(
+            f"[ERROR] 記事数が note の1000件上限を超過: {len(items)}"
+        )
+    if not items:
+        return errors + ["[FATAL] 生成WXRに <item> が存在しない"]
+
+    item = items[0]
 
     missing_wp = MINIMUM_WP_ITEM_TAGS - item_wp_tags(item)
     if missing_wp:
@@ -159,7 +200,7 @@ def check_structure(generated_path: Path) -> list[str]:
 
 def self_test() -> int:
     valid = """<?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:wp="http://wordpress.org/export/1.2/">
+<rss xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:wp="http://wordpress.org/export/1.2/">
 <channel>
 <wp:author><wp:author_login><![CDATA[mine_unilabo]]></wp:author_login><wp:author_display_name><![CDATA[mine_unilabo]]></wp:author_display_name></wp:author>
 <item><title><![CDATA[x]]></title><dc:creator><![CDATA[みね]]></dc:creator><content:encoded><![CDATA[<p>x</p>]]></content:encoded>
@@ -176,6 +217,37 @@ def self_test() -> int:
         tests: list[tuple[str, bool]] = []
 
         tests.append(("valid fixture passes", check_structure(valid_path) == []))
+
+        missing_ns = root / "missing-ns.xml"
+        missing_ns.write_text(valid.replace(' xmlns:wfw="http://wellformedweb.org/CommentAPI/"', ""))
+        tests.append((
+            "missing official namespace fails",
+            any(e.startswith("[ERROR]") and "wfw" in e for e in check_structure(missing_ns)),
+        ))
+
+        non_utf8 = root / "non-utf8.xml"
+        non_utf8.write_bytes(b"\xff\xfe<rss></rss>")
+        tests.append((
+            "non UTF-8 is fatal",
+            any(e.startswith("[FATAL]") and "UTF-8" in e for e in check_structure(non_utf8)),
+        ))
+
+        too_many = root / "too-many.xml"
+        extra_item = "<item></item>" * NOTE_IMPORT_MAX_ITEMS
+        too_many.write_text(valid.replace("</channel>", extra_item + "</channel>"))
+        tests.append((
+            "more than 1000 items fails",
+            any(e.startswith("[ERROR]") and "1000" in e for e in check_structure(too_many)),
+        ))
+
+        too_large = root / "too-large.xml"
+        with too_large.open("wb") as fh:
+            fh.seek(NOTE_IMPORT_MAX_BYTES)
+            fh.write(b"x")
+        tests.append((
+            "more than 20MB fails",
+            any(e.startswith("[ERROR]") and "20MB" in e for e in check_structure(too_large)),
+        ))
 
         missing = root / "missing.xml"
         missing.write_text(valid.replace("<wp:post_type><![CDATA[post]]></wp:post_type>", ""))
