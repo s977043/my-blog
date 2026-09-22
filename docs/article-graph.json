@@ -226,7 +226,9 @@
       "source_url": "https://note.com/like_tulip76/n/n7548bacaf90b",
       "source_ref": "",
       "evidence_status": "verified",
-      "promoted_to": [],
+      "promoted_to": [
+        "articles_note/new/content-closed-loop-note.md"
+      ],
       "article_type_candidates": [
         "analysis",
         "insight",
@@ -265,6 +267,11 @@
       "from": "legacy:article_seeds/ai-driven-development/2026-09-10-flow-efficiency",
       "relation": "promoted_to",
       "to": "https://x.com/mine_take/status/2097800316070855017"
+    },
+    {
+      "from": "seed-20260923-content-closed-loop",
+      "relation": "promoted_to",
+      "to": "articles_note/new/content-closed-loop-note.md"
     }
   ],
   "warnings": [
