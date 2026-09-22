@@ -77,6 +77,8 @@ Signal / Experience
 
 2026-09-23 以降に新規作成・明示移行する Seed は、既存 frontmatter に加えて以下を持つ。
 
+Article Graph が読む metadata は **top-level scalar と list のみ**に限定する。Graph builder は汎用 YAML parser ではない。複雑な根拠・構造化データは frontmatter へ入れず本文に残す。
+
 ```yaml
 seed_id: seed-YYYYMMDD-short-slug
 source: experience
