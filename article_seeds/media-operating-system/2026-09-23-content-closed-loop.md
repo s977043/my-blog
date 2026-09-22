@@ -14,6 +14,7 @@ source_url: https://note.com/like_tulip76/n/n7548bacaf90b
 source_ref:
 evidence_status: verified
 promoted_to:
+  - articles_note/new/content-closed-loop-note.md
 article_type_candidates:
   - analysis
   - insight
@@ -124,8 +125,8 @@ Graph上の空きを埋める目的では記事化しない。Canary運用の結
 ## 次に試すこと
 
 - [x] このSeedがArticle Graphで explicit provenance として1件認識されることを確認する
-- [ ] Seedから記事へ昇格するときに `promoted_to` が自然に更新できるか確認する
-- [ ] 公開後MetricsとSeed IDを接続する最小schemaを設計する
+- [x] Seedから記事へ昇格するときに `promoted_to` が自然に更新できるか確認する
+- [x] 公開後MetricsとSeed IDを接続する最小schemaを設計する
 - [ ] Learning Proposalを1件作り、Human Accept / Rejectまで通す
 
 ## 追記ログ
@@ -134,4 +135,6 @@ Graph上の空きを埋める目的では記事化しない。Canary運用の結
 
 - Article Lifecycle / Provenance / read-only Article Graph 導入後の最初のCanary Seedとして登録
 - 既存Seedはmigrationせず、このSeedから新contractを実運用で検証する
-- Article Graphで Seeds 10 / Explicit provenance 1 / Legacy 9 として認識されることを確認
+- Article Graphで explicit provenance として認識されることを確認
+- `articles_note/new/content-closed-loop-note.md` へ昇格し、`promoted_to` を接続
+- 公開後Metricsへ `seed_ids` をjoinする実装までmainへ反映済み
