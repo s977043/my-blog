@@ -102,6 +102,15 @@ python3 .claude/skills/note-export-import/scripts/wxr_to_md.py <zip> --out artic
 # 新規記事をインポート用WXRに変換
 python3 .claude/skills/note-export-import/scripts/md_to_wxr.py articles_note/new/<slug>.md
 
+# 参照ZIPがないCI/一時環境で最低限構造だけを検証
+python3 .claude/skills/note-export-import/scripts/verify_wxr.py \
+  articles_note/build/import-<slug>-*.xml \
+  --structure-only
+
+# 公開前は公式export ZIPと比較する完全検証を実施
+python3 .claude/skills/note-export-import/scripts/verify_wxr.py \
+  articles_note/build/import-<slug>-*.xml
+
 # 画像をGitHub公開URLに書き換えてWXR生成
 python3 .claude/skills/note-export-import/scripts/md_to_wxr.py \
   articles_note/new/<slug>.md \
