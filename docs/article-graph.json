@@ -184,6 +184,31 @@
       "promoted_to": [],
       "article_type_candidates": [],
       "legacy": true
+    },
+    {
+      "id": "seed-20260923-content-closed-loop",
+      "path": "article_seeds/media-operating-system/2026-09-23-content-closed-loop.md",
+      "title": "記事作成を自動化するより、Signal→Seed→公開後学習を閉じたい",
+      "date": "2026-09-23",
+      "status": "seed",
+      "topics": [
+        "media-operating-system",
+        "ai-agent",
+        "content-operations",
+        "feedback-loop",
+        "publishing"
+      ],
+      "source": "external",
+      "source_url": "https://note.com/like_tulip76/n/n7548bacaf90b",
+      "source_ref": "",
+      "evidence_status": "verified",
+      "promoted_to": [],
+      "article_type_candidates": [
+        "analysis",
+        "insight",
+        "experience"
+      ],
+      "legacy": false
     }
   ],
   "edges": [
