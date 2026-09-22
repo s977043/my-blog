@@ -269,6 +269,8 @@ function selfTest(root) {
     "  - a",
     "  - b",
     "promoted_to:",
+    "article_type_candidates:",
+    "  - experience",
     "source: experience",
     "evidence_status: observed",
     "---",
@@ -277,6 +279,7 @@ function selfTest(root) {
   eq("frontmatter scalar", fm.title, "Example: seed");
   eq("frontmatter list", fm.topics, ["a", "b"]);
   eq("empty list", fm.promoted_to, []);
+  eq("article type candidates list", fm.article_type_candidates, ["experience"]);
   eq("legacy id", legacyId("article_seeds/example/foo.md"), "legacy:article_seeds/example/foo");
 
   eq(
