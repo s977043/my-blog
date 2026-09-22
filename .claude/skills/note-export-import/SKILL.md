@@ -57,8 +57,8 @@ articles_note/
 1. `new/<slug>.md` を用意（著者が執筆）
 2. 記事に SVG 画像がある場合: 先に Chrome headless で PNG 変換し `articles_note/assets/` に配置する（上記「SVG→PNG 変換」参照）
 3. `scripts/md_to_wxr.py new/<slug>.md --base-url <公開Raw URL>` で `build/import-<slug>-YYYYMMDD-HHMM.xml` を生成
-4. CI / 参照ZIPなし環境では `scripts/verify_wxr.py build/import-*.xml --structure-only` で最低限構造を検証
-5. 公開前Human Gateでは **`scripts/verify_wxr.py build/import-*.xml` を通常実行**し、必須 wp:* の欠落と著者フィールドの対応を公式エクスポートと突き合わせる
+4. CI / 参照ZIPなし環境では `scripts/verify_wxr.py build/import-<slug>-YYYYMMDD-HHMM.xml --structure-only` で最低限構造を検証
+5. 公開前Human Gateでは **`scripts/verify_wxr.py build/import-<slug>-YYYYMMDD-HHMM.xml` を通常実行**し、必須 wp:* の欠落と著者フィールドの対応を公式エクスポートと突き合わせる
 6. note管理画面: プロフィール → 自分の記事 → インポート → WXR選択
 7. `build/import-<slug>-YYYYMMDD-HHMM.xml` をアップロード → インポート開始
 8. 3日以内にメール通知 → 下書きが作成される
