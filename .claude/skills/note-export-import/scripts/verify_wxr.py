@@ -270,6 +270,13 @@ def self_test() -> int:
             any(e.startswith("[WARN]") and "https" in e for e in check_structure(local_image)),
         ))
 
+        wrong_root = root / "wrong-root.xml"
+        wrong_root.write_text(valid.replace("<rss ", "<feed ", 1).replace("</rss>", "</feed>"))
+        tests.append((
+            "non-rss root is fatal",
+            any(e.startswith("[FATAL]") and "<rss>" in e for e in check_structure(wrong_root)),
+        ))
+
         invalid = root / "invalid.xml"
         invalid.write_text("<rss>")
         tests.append((
