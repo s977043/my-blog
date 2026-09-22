@@ -37,6 +37,8 @@ article_type_candidates:
 出典:
 - https://note.com/like_tulip76/n/n7548bacaf90b
 
+`evidence_status: verified` は、上記の構成・時刻・利用技術・メトリクス参照が元記事に記載されていることを確認した、という意味。著者が述べる運用成果や「投稿が一度も飛んでいない」といった実績を独立に再現・検証した意味ではない。
+
 ## 自分の解釈
 
 参考になる中心は「1日3記事」やPlaywrightによる自動投稿そのものではない。
@@ -121,7 +123,7 @@ Graph上の空きを埋める目的では記事化しない。Canary運用の結
 
 ## 次に試すこと
 
-- [ ] このSeedがArticle Graphで explicit provenance として1件認識されることを確認する
+- [x] このSeedがArticle Graphで explicit provenance として1件認識されることを確認する
 - [ ] Seedから記事へ昇格するときに `promoted_to` が自然に更新できるか確認する
 - [ ] 公開後MetricsとSeed IDを接続する最小schemaを設計する
 - [ ] Learning Proposalを1件作り、Human Accept / Rejectまで通す
@@ -132,3 +134,4 @@ Graph上の空きを埋める目的では記事化しない。Canary運用の結
 
 - Article Lifecycle / Provenance / read-only Article Graph 導入後の最初のCanary Seedとして登録
 - 既存Seedはmigrationせず、このSeedから新contractを実運用で検証する
+- Article Graphで Seeds 10 / Explicit provenance 1 / Legacy 9 として認識されることを確認
