@@ -102,7 +102,7 @@ python3 .claude/skills/note-export-import/scripts/wxr_to_md.py <zip> --out artic
 # 新規記事をインポート用WXRに変換
 python3 .claude/skills/note-export-import/scripts/md_to_wxr.py articles_note/new/<slug>.md
 
-# 参照ZIPがないCI/一時環境で最低限構造だけを検証
+# 参照ZIPがないCI/一時環境で最低限構造 + note公式受入条件を検証
 python3 .claude/skills/note-export-import/scripts/verify_wxr.py \
   articles_note/build/import-<slug>-YYYYMMDD-HHMM.xml \
   --structure-only
