@@ -39,13 +39,14 @@ NS = {
     "dc": "http://purl.org/dc/elements/1.1/",
     "wp": "http://wordpress.org/export/1.2/",
     "excerpt": "http://wordpress.org/export/1.2/excerpt/",
+    "wfw": "http://wellformedweb.org/CommentAPI/",
 }
 
 WP_NS_PREFIX = "{http://wordpress.org/export/1.2/}"
 
-NOTE_IMPORT_MAX_BYTES = 20 * 1024 * 1024
+NOTE_IMPORT_MAX_BYTES = 20_000_000
 NOTE_IMPORT_MAX_ITEMS = 1000
-REQUIRED_NAMESPACE_PREFIXES = {"excerpt", "content", "wfw", "dc", "wp"}
+REQUIRED_NAMESPACES = {key: NS[key] for key in ("excerpt", "content", "wfw", "dc", "wp")}
 
 MINIMUM_WP_ITEM_TAGS = {
     "post_id",
@@ -103,9 +104,9 @@ def check_structure(generated_path: Path) -> list[str]:
 
     size = generated_path.stat().st_size
     if size > NOTE_IMPORT_MAX_BYTES:
-        errors.append(
+        return [
             f"[ERROR] WXR が note の 20MB 上限を超過: {size} bytes > {NOTE_IMPORT_MAX_BYTES} bytes"
-        )
+        ]
 
     raw = generated_path.read_bytes()
     try:
@@ -114,18 +115,32 @@ def check_structure(generated_path: Path) -> list[str]:
         return errors + [f"[FATAL] WXR がUTF-8として読めない: {e}"]
 
     try:
-        namespace_prefixes = {
-            prefix
-            for _event, (prefix, _uri) in ET.iterparse(generated_path, events=("start-ns",))
+        namespace_map = {
+            prefix: uri
+            for _event, (prefix, uri) in ET.iterparse(generated_path, events=("start-ns",))
             if prefix
         }
     except ET.ParseError as e:
         return errors + [f"[FATAL] 生成WXRがXMLとして不正: {e}"]
 
-    missing_ns = REQUIRED_NAMESPACE_PREFIXES - namespace_prefixes
+    missing_ns = set(REQUIRED_NAMESPACES) - set(namespace_map)
     if missing_ns:
         errors.append(
             f"[ERROR] WXRに必須名前空間宣言が欠落: {sorted(missing_ns)}"
+        )
+
+    wrong_ns = [
+        (prefix, namespace_map[prefix], expected)
+        for prefix, expected in REQUIRED_NAMESPACES.items()
+        if prefix in namespace_map and namespace_map[prefix] != expected
+    ]
+    if wrong_ns:
+        errors.append(
+            "[ERROR] WXRの名前空間URIが公式WordPress形式と不一致: "
+            + ", ".join(
+                f"{prefix}={actual!r} (expected {expected!r})"
+                for prefix, actual, expected in wrong_ns
+            )
         )
 
     try:
@@ -223,6 +238,13 @@ def self_test() -> int:
         tests.append((
             "missing official namespace fails",
             any(e.startswith("[ERROR]") and "wfw" in e for e in check_structure(missing_ns)),
+        ))
+
+        wrong_ns = root / "wrong-ns.xml"
+        wrong_ns.write_text(valid.replace("http://wellformedweb.org/CommentAPI/", "https://example.com/wfw/"))
+        tests.append((
+            "wrong official namespace URI fails",
+            any(e.startswith("[ERROR]") and "名前空間URI" in e for e in check_structure(wrong_ns)),
         ))
 
         non_utf8 = root / "non-utf8.xml"
