@@ -15,6 +15,7 @@ Webメディアを継続的に作り、届け、計測し、改善する仕組�
 | Date | Title | Status | Topics |
 | --- | --- | --- | --- |
 | 2026-09-11 | [Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった](./2026-09-11-four-repository-media-operating-system.md) | `seed` | Architecture / Reason to Change / AI Agent / Growth |
+| 2026-09-23 | [記事作成を自動化するより、Signal→Seed→公開後学習を閉じたい](./2026-09-23-content-closed-loop.md) | `seed` | Content Operations / Feedback Loop / Provenance / AI Agent |
 
 ## 検証の基本方針
 

@@ -6,8 +6,8 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 
 ## Summary
 
-- Seeds: 9
-- Explicit provenance contract: 0
+- Seeds: 10
+- Explicit provenance contract: 1
 - Legacy seeds: 9
 - Promotion edges: 1
 
@@ -24,6 +24,7 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 | `legacy:article_seeds/ai-driven-development/2026-09-10-retire-pr-count-kpi` | 2026-09-10 | seed | experience | legacy |  | 「1人あたりPR数」をKPIから外した | `article_seeds/ai-driven-development/2026-09-10-retire-pr-count-kpi.md` | 0 |
 | `legacy:article_seeds/ai-driven-development/2026-09-10-small-team-cant-measure-speed` | 2026-09-10 | seed | experience | legacy |  | 5人チームでは「改善速度」を安定して測れなかった | `article_seeds/ai-driven-development/2026-09-10-small-team-cant-measure-speed.md` | 0 |
 | `legacy:article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system` | 2026-09-11 | seed | experience | legacy |  | Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった | `article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md` | 0 |
+| `seed-20260923-content-closed-loop` | 2026-09-23 | seed | external | verified | analysis, insight, experience | 記事作成を自動化するより、Signal→Seed→公開後学習を閉じたい | `article_seeds/media-operating-system/2026-09-23-content-closed-loop.md` | 0 |
 
 ## Promotions
 
