@@ -54,11 +54,17 @@ function normalizePromotionUrl(raw) {
 }
 
 function promotionIndexFromGraph(graph) {
+  const stableSeedIds = new Set(
+    (graph?.nodes || [])
+      .filter((node) => node?.id && node.legacy === false)
+      .map((node) => node.id),
+  );
   const tmp = new Map();
   for (const edge of graph?.edges || []) {
     if (edge?.relation !== 'promoted_to') continue;
+    if (!stableSeedIds.has(edge.from)) continue;
     const url = normalizePromotionUrl(edge.to);
-    if (!url || !edge.from) continue;
+    if (!url) continue;
     if (!tmp.has(url)) tmp.set(url, new Set());
     tmp.get(url).add(edge.from);
   }
@@ -251,13 +257,21 @@ function selfTest() {
   eq('非URLは対象外', normalizePromotionUrl('articles/foo.md'), null);
 
   const index = promotionIndexFromGraph({
+    nodes: [
+      { id: 'seed-a', legacy: false },
+      { id: 'seed-b', legacy: false },
+      { id: 'legacy:old', legacy: true },
+      { id: 'seed-local', legacy: false },
+    ],
     edges: [
       { from: 'seed-b', relation: 'promoted_to', to: 'https://note.com/mine/n/abc?x=1' },
       { from: 'seed-a', relation: 'promoted_to', to: 'https://note.com/mine/n/abc' },
+      { from: 'legacy:old', relation: 'promoted_to', to: 'https://note.com/mine/n/legacy' },
       { from: 'seed-local', relation: 'promoted_to', to: 'articles/foo.md' },
     ],
   });
   eq('同一URLのseed IDsを一意・sort', index.get('https://note.com/mine/n/abc'), ['seed-a', 'seed-b']);
+  eq('legacy seed IDはMetrics連携対象外', index.has('https://note.com/mine/n/legacy'), false);
 
   const linked = linkSeedIds(
     [{ slug: 'z1', title: 'Z', liked_count: 1 }],
