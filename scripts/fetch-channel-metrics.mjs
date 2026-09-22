@@ -8,6 +8,7 @@
 //   node scripts/fetch-channel-metrics.mjs                # 全媒体・標準出力に JSON
 //   node scripts/fetch-channel-metrics.mjs --channel zenn # 単一媒体のみ
 //   node scripts/fetch-channel-metrics.mjs --pretty       # 人間可読 Markdown サマリ
+//   node scripts/fetch-channel-metrics.mjs --self-test    # Seed URL join の hermetic self-test
 //
 // 取得しない: GA4（管理画面側のため要手動取得）→ Markdown スナップショットで併記する想定。
 //
@@ -259,8 +260,8 @@ function selfTest() {
   eq('同一URLのseed IDsを一意・sort', index.get('https://note.com/mine/n/abc'), ['seed-a', 'seed-b']);
 
   const linked = linkSeedIds(
-    [{ slug: 'z1', title: 'Z' }],
-    [{ url: 'https://qiita.com/u/items/q1?from=x', title: 'Q' }],
+    [{ slug: 'z1', title: 'Z', liked_count: 1 }],
+    [{ url: 'https://qiita.com/u/items/q1?from=x', title: 'Q', likes_count: 1, stocks_count: 2 }],
     [{ note_url: 'https://note.com/mine/n/abc?sub_rt=share', title: 'N', like_count: 2, anonymous_like_count: 1 }],
     new Map([
       ['https://zenn.dev/minewo/articles/z1', ['seed-z']],
@@ -271,9 +272,19 @@ function selfTest() {
   eq('Zenn URLを構築してjoin', linked.zenn[0].seed_ids, ['seed-z']);
   eq('Qiita query差分を吸収してjoin', linked.qiita[0].seed_ids, ['seed-q']);
   eq('note query差分を吸収してjoin', linked.note[0].seed_ids, ['seed-n']);
+  const unlinked = attachSeedIds([{ url: 'https://example.com/no-match' }], (a) => a.url, index);
+  eq('未連携記事は空配列', unlinked[0].seed_ids, []);
 
   const sum = summarize(linked.zenn, linked.qiita, linked.note);
   eq('linked_articlesを集計', [sum.zenn.linked_articles, sum.qiita.linked_articles, sum.note.linked_articles], [1, 1, 1]);
+  const rendered = renderMarkdown({
+    fetched_at: '2026-09-23T00:00:00.000Z',
+    summary: sum,
+    zenn: linked.zenn,
+    qiita: linked.qiita,
+    note: linked.note,
+  });
+  eq('MarkdownにSeed linkを表示', rendered.includes('seed-n | N'), true);
 
   const failed = tests.filter((t) => !t.ok);
   for (const t of tests) console.log(`  ${t.ok ? 'ok  ' : 'FAIL'} ${t.name}`);
