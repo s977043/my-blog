@@ -61,6 +61,7 @@ npm ci   # 必須
 - commit の直前に `git branch --show-current` と `git status --short` を確認する（並列セッションのブランチ干渉対策。手順の詳細は `CLAUDE.md` §並列セッション耐性）
 - push は `gh` の active account が `s977043` でないと pre-push hook がブロックする（`scripts/hooks/pre-push`）。事前に `npm run gh:ensure`
 - マージは squash only（`--merge` は GraphQL エラーになる）
+- worktree 内では、隔離ガードが **`&&` / `;` で連結した git コマンド**と、**本文に `git` という語を含む `gh pr create --body "$(cat <<EOF ...)"`** を拒否することがある。git コマンドは1つずつ分けて実行し、PR 本文は scratchpad のファイルに書いて `gh pr create --body-file <path>` で渡す（2026-09-23 のワーカーで観測）
 
 ---
 
