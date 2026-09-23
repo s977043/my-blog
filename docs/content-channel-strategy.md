@@ -202,16 +202,21 @@ this document keeps the shared positioning, short bio copy, and link order align
 
 Unify profiles so that readers immediately understand the theme.
 
+最終更新: 2026-09-23（issue #231 の 2026-06-01 版コメントを起点に、2026-09 時点の公開記事・Book と実測値へ合わせて更新）。
+
+- 文字数上限: Zenn / Qiita / note いずれのプロフィール欄も**上限未確認**。貼り付け時に入り切らない場合は、各文案の最終行（媒体リンク行）から削る
+- 表記: OSS 名は現行の記事タイトルに合わせて **River Review** に統一する（2026-06-01 版コメントの「River Reviewer」は旧称）
+- note 文案はダッシュを使わない（`AGENTS.md`「note 固有（JTFスタイル準拠）」）。Book 名は全角括弧で区切って表記する
+
 ### Zenn profile draft
 
 ```text
 AIコーディングをチーム開発に乗せる運用設計を検証しています。
 PlanGate / River Review / Agent Skills / AI-readable repository を中心に、
-Claude Code・Codex・GitHub Actions・Next.js・Laravelでの実践ログを発信中。
+Claude Code・Codex・GitHub Actions での実践ログを発信中。
 
-詳しい検証ログ: Growth Lab
-思想・背景: note
-OSS: GitHub
+📕 Book「AI にコードを書かせる前にやること — PlanGate 実践ガイド」公開中
+検証ログ: Growth Lab ／ 思想・背景: note ／ OSS: GitHub
 ```
 
 ### Qiita profile draft
@@ -220,10 +225,8 @@ OSS: GitHub
 AIコーディングエージェントをチーム開発で安全に使うための運用設計を検証しています。
 PlanGate / River Review / Agent Skills / AI-readable repository などを書いています。
 
-note: 背景・思想
-Zenn: 技術深掘り
-Growth Lab: 検証ログ
-GitHub: OSS
+Zenn Book「PlanGate 実践ガイド」で、計画・実装・検証の型を体系化しました。
+note: 背景・思想 ／ Zenn: 技術深掘り＋Book ／ Growth Lab: 検証ログ ／ GitHub: OSS
 ```
 
 ### note profile direction
@@ -231,46 +234,54 @@ GitHub: OSS
 Use note as the narrative hub.
 
 - Explain the background and team-operation perspective.
-- Link to Zenn for technical details.
+- Link to the Zenn Book as the systematic guide, and to Zenn for technical details.
 - Link to Qiita for short practical articles.
 - Link to Growth Lab for canonical guides.
 - Link to GitHub for OSS repositories.
+- 実測（2026-09-14）では note は外部・検索流入が柱で、note 内の露出（imp）がボトルネック。プロフィールは note 内回遊より「他媒体から来た読者を Book と Zenn へ渡す」役割を優先する
 
 ### note profile draft
 
 ```text
 AIコーディングをチーム開発に乗せる運用設計について書いています。
-PlanGate / River Review / Agent Skills を中心に、
-AIエージェントを個人の便利ツールで終わらせず、チームの開発フローにどう組み込むかを考えています。
+PlanGate / River Review / Agent Skills を中心に、AIエージェントを個人の便利ツールで終わらせず、チームの開発フローにどう組み込むかを考えています。
 
-技術深掘り: Zenn
-実践メモ: Qiita
-検証ログ: Growth Lab
-OSS: GitHub
+体系ガイド（Zenn Book「AIにコードを書かせる前にやること」PlanGate実践ガイド）: https://zenn.dev/minewo/books/plangate-guide
+技術深掘り: Zenn ／ 実践メモ: Qiita ／ 検証ログ: Growth Lab ／ OSS: GitHub
 ```
 
 ### Current entry-point candidates
 
 Use these as the visible first-step articles when updating pinned articles, pickup articles, or profile links.
+すべて 2026-09-23 に `curl -s -o /dev/null -w "%{http_code}"` で HTTP 200 を確認済み。
 
-| Channel | Entry point |
-| --- | --- |
-| note | [AIにコードを書かせる前に、人間が承認する場所を作る](https://note.com/mine_unilabo/n/n02992266d622) as the fixed entry article |
-| Zenn | [PlanGate v8.6.0 metrics and governance](https://zenn.dev/minewo/articles/plangate-v86-hook-enforcement) / [AI-readable repository design](https://zenn.dev/minewo/articles/ai-legible-repository-design) |
-| Qiita | [PlanGate v8.6.0 metrics and governance](https://qiita.com/s977043/items/5ebff79112ecf1af872c) / `Qiita/public/river-reviewer-agent-skills.md` (River Review and Agent Skills, publish candidate) |
-| Growth Lab | canonical guides and validation logs for PlanGate and River Review |
-| GitHub | PlanGate / River Review / repository docs and issues |
+| Channel | Entry point | 選定理由 |
+| --- | --- | --- |
+| note | [AIにコードを書かせる前に、人間が承認する場所を作る](https://note.com/mine_unilabo/n/n02992266d622) as the fixed entry article | PlanGate の入口。固定記事候補（従来どおり） |
+| note | [AI駆動開発でSDDを考え直した。DiscoveryとDeliveryでは「先に定義するもの」が違った](https://note.com/mine_unilabo/n/n062a695d5af9) | 2026-09-11 公開。公開3日でスキ/PV 11.6%（2026-09-14 実測）と直近で最も反応が高い |
+| note | [「プロンプトを磨けば勝てる」をやめた：AIレビューを運用に乗せる“Agent Skills”設計](https://note.com/mine_unilabo/n/nd21c3f1df22e) | River Review / Agent Skills の思想側の入口 |
+| Zenn | [Book: AI にコードを書かせる前にやること — PlanGate 実践ガイド](https://zenn.dev/minewo/books/plangate-guide) | 2026-06-01 公開。体系ガイドの最終到達点 |
+| Zenn | [AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計](https://zenn.dev/minewo/articles/river-review-judgment-placement) | 2026-08-31 公開。公開4日で表示 2,056 回（2026-09-04 実測） |
+| Zenn | [AIが迷わないリポジトリ設計：長いプロンプトより先に整える4つの置き場所](https://zenn.dev/minewo/articles/ai-legible-repository-design) | AI-readable repository design の入口（従来どおり） |
+| Zenn | [PlanGate v8.6.0 metrics and governance](https://zenn.dev/minewo/articles/plangate-v86-hook-enforcement) | Metrics and governance の入口（従来どおり） |
+| Zenn | [AIにマージさせない。PRをMERGE_READYまで運ぶ状態機械の設計](https://zenn.dev/minewo/articles/ai-merge-ready-state-machine) | ♡率 15.4% に対し表示 26 回（2026-09-04 実測）。反応は高いが届いていないため、入口として露出を足す |
+| Qiita | [PlanGate v8.6.0 metrics and governance](https://qiita.com/s977043/items/5ebff79112ecf1af872c) | Pickup 候補（従来どおり） |
+| Qiita | [プロンプトを磨くのをやめた：チームのレビュー知識を Agent Skills に変える River Review 体験](https://qiita.com/s977043/items/607d78c35745b17f9bc8) | Pickup 候補。旧表の「publish candidate」（`Qiita/public/river-reviewer-agent-skills.md`）が公開済みになったもの |
+| Qiita | [AIコードレビューはPRだけ見ていていいのか？ 開発の流れ全体をレビューするOSS「River Review」を作った](https://qiita.com/s977043/items/5a4665e78c4bd1a5c1bc) | Pickup 候補。River Review 本体の紹介 |
+| Qiita | [AIコーディング前に確認する5項目: Goal / Scope / Non-goals / Test / Risks](https://qiita.com/s977043/items/b8dacca4ce2d9079454a) | Pickup 候補。検索入口型の短い実務 Tips |
+| Growth Lab | canonical guides and validation logs for PlanGate and River Review | 記事単位の URL は本表では持たない |
+| GitHub | PlanGate / River Review / repository docs and issues | 記事単位の URL は本表では持たない |
 
 ### Manual update checklist
 
-Use this order when applying the strategy outside the repository.
+リポジトリ側の文面準備は完了済み。残りは各サービス設定画面での手作業のみ。この順で実施する。
 
-1. Update the Zenn profile with the Zenn profile draft.
-2. Update the Qiita profile with the Qiita profile draft.
-3. Update the note profile with the note profile draft and links to Zenn (https://zenn.dev/minewo), Qiita (https://qiita.com/s977043), Growth Lab (https://the3396.com/articles), and GitHub (https://github.com/s977043).
-4. Set Qiita Pickup Articles to the current AI-development entry points.
-5. Set the note fixed article to the PlanGate entry article above.
-6. Revisit this document after publishing the Qiita River Review / Agent Skills candidate to update the entry-point URL in the table above.
+- [ ] Zenn プロフィールを「Zenn profile draft」で更新する（https://zenn.dev/minewo の設定画面）
+- [ ] Qiita プロフィールを「Qiita profile draft」で更新する（https://qiita.com/s977043 の設定画面）
+- [ ] note プロフィールを「note profile draft」で更新し、リンク欄に Zenn（https://zenn.dev/minewo）、Qiita（https://qiita.com/s977043）、Growth Lab（https://the3396.com/articles）、GitHub（https://github.com/s977043）を設定する
+- [ ] Qiita の Pickup Articles を上表の Qiita 行から選んで設定する（設定可能な件数は未確認）
+- [ ] note の固定記事を上表の note 1行目（PlanGate 入口）に設定するか判断し、設定する
+- [ ] 貼り付け後、各プロフィールページを開いて改行・リンクの表示崩れがないか確認する
 
 ## Existing article update priorities
 
