@@ -241,3 +241,28 @@ Next Seed or Strategy Update
 Learning Proposalの自動生成・Skill / Strategy自動更新はまだ行わない。
 
 1記事の数字だけで Skill / Strategy を自動更新しない。Learning は Proposal として扱い、複数観測または明確な反証を根拠にし、Human Gate を通す。
+
+#### Editorial Learning Proposal
+
+公開後Metricsとは別に、レビューや編集で得た修正知見は **Editorial Learning Proposal** として扱ってよい。これはLifecycle stateを追加せず、`REVIEWED` 前後からLearningへ出る補助経路である。
+
+```text
+Review Finding
+  ↓
+Accept / Hold / Reject + reason
+  ↓
+Editorial Learning Proposal
+  ↓
+AGENT_LEARNINGS.md の更新条件を満たすか確認
+  ↓
+Human Accept / Reject
+  ↓
+必要なら canonical guide / Skill / deterministic check へ昇格
+```
+
+- 採否と理由の記録は既存 Review / Applier の成果物を再利用し、専用DBを増やさない
+- `AGENT_LEARNINGS.md` の更新条件を正とし、単発の好みや一度きりの文面修正を恒久ルール化しない
+- 同じ指摘の再発、再現できる成功パターン、著者からの明示的な継続指示などをProposal候補として扱う
+- Proposalは「どの規則へ昇格するか」を示すだけで、Skill / Guide / CIを自動更新しない
+- 安定した機械判定が可能なものだけ deterministic check 候補にする。意味判断を要するものは Skill / Guide に残す
+- 却下されたレビュー指摘も、同型の誤提案が繰り返される場合は「禁止・境界ルール」のProposal候補になりうる
