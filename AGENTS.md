@@ -5,18 +5,19 @@
 人間の開発者にも同じ情報が有用なので、`README.md` と重複しない範囲で「判断の根拠となるルール」に絞って記述する。
 
 - **規約（本ファイル）** — 何が正しいか
-- **コンテンツ方針**: `docs/content-channel-strategy.md` — note / Zenn / Qiita / Growth Lab / GitHub を横断した記事運用方針
+- **コンテンツ方針**: `docs/content-channel-strategy.md` — note / Zenn / Qiita / Growth Lab / izanami / GitHub を横断した記事運用方針
 - **ツール使い方**: `CLAUDE.md` — Claude Code固有のSkill/Agent/Commandインデックスと操作
 - **経験則**: `AGENT_LEARNINGS.md` — 過去の失敗・成功パターン（追記型ログ）
 
 ## リポジトリ概要
 
-Zenn / Qiita / note の3プラットフォームで公開する記事を単一リポジトリで並行管理するモノレポ。
+Zenn / Qiita / note / izanami の4プラットフォームで公開する記事を単一リポジトリで並行管理するモノレポ。
 
 詳細は `README.md` と各ディレクトリの `README.md`:
 - `articles/README.md` — Zenn
 - `Qiita/README.md` — Qiita
 - `articles_note/README.md` — note（WXRインポート/エクスポート運用を含む）
+- `articles_izanami/README.md` — izanami（新規原稿と企画候補）
 
 記事作成・更新・レビュー・導線設計を行う場合は、媒体別の配置規約だけでなく `docs/content-channel-strategy.md` も参照し、媒体横断のポジショニングと役割分担に沿って判断する。
 
@@ -37,11 +38,11 @@ Zenn / Qiita / note の3プラットフォームで公開する記事を単一�
 
 **ネタ探しは全リポジトリを対象にしてよい。分かれるのは掲載可否だけ。**
 
-| 題材の出どころ | ネタ探し | Zenn / Qiita | note 個人 | note 会社公式 |
-| --- | --- | --- | --- | --- |
-| 個人リポジトリ | ✅ | ✅ | ✅ | — |
-| 会社リポジトリ | ✅ | ❌ | ❌ | ✅ |
-| my-blog（本リポジトリ） | ✅ | ❌ | ❌ | ❌ |
+| 題材の出どころ | ネタ探し | Zenn / Qiita | note 個人 | note 会社公式 | izanami |
+| --- | --- | --- | --- | --- | --- |
+| 個人リポジトリ | ✅ | ✅ | ✅ | — | ✅ |
+| 会社リポジトリ | ✅ | ❌ | ❌ | ✅ | 原則❌（明示承認した個別プロジェクトのみ例外） |
+| my-blog（本リポジトリ） | ✅ | ❌ | ❌ | ❌ | ❌ |
 
 **個人 / 会社の判定規則**: **リポジトリの所有者が `s977043` なら個人リポジトリ**（`growth-lab` / `PlanGate` / `river-review` / `ai-second-brain` など）。それ以外の所有者は会社リポジトリとして扱う（`unilabo` 所有の `site-management-system` と `imitsu-*` 系など）。GitHub 外で共有されるチーム資産（`Growth-Teams-Agent` など）も会社リポジトリ側に含める。
 
@@ -51,9 +52,11 @@ gh repo view <owner>/<repo> --json owner --jq .owner.login   # s977043 なら個
 
 **一覧の不在を根拠にしない**。`gh repo list s977043` は既定で 30 件までしか返さず、認証状態によって private が欠けることもある（一覧で確認するなら `--limit 200` のように上限を明示する）。判断に迷ったら会社リポジトリ側に倒す。
 
+**izanami に限る個別例外**: ユーザーの明示指示により、`3396-cc/interactive-ocean`（クラゲ水槽）を izanami の記事題材として扱ってよい。根拠は公開リポジトリ・公開ドキュメント・公開アプリで確認できる情報に限定し、非公開の会社情報・内部指標・非公開実装詳細は使わない。この例外は当該プロジェクトと izanami に限り、他媒体や他の会社リポジトリへ拡張しない。
+
 会社リポジトリの題材を**調べること**は制限しない。現象の裏取りや仮説確認には使ってよい。
 
-ただし**掲載可否は匿名化では変わらない**。会社リポジトリで観測した事象は、数値・PR 番号・固有名を伏せても、事例として個人記事（Zenn / Qiita / note 個人）に書かない。会社の内部事情を出所とする記述そのものが対象になる。できるのは「その現象が実在するという確信を持ったうえで、**個人リポジトリの一次情報だけで主張を立て直す**」ところまで。
+ただし**掲載可否は匿名化では変わらない**。会社リポジトリで観測した事象は、数値・PR 番号・固有名を伏せても、事例として個人記事（Zenn / Qiita / note 個人 / izanami）に書かない。会社の内部事情を出所とする記述そのものが対象になる。できるのは「その現象が実在するという確信を持ったうえで、**個人リポジトリの一次情報だけで主張を立て直す**」ところまで。上記の izanami 個別例外はユーザーが明示したプロジェクトと公開情報に限る。
 
 **名義と企画の入口**
 
@@ -62,6 +65,7 @@ gh repo view <owner>/<repo> --json owner --jq .owner.login   # s977043 なら個
 | Zenn | **個人のみ** | エージェント側から提案してよい |
 | Qiita | **個人のみ** | エージェント側から提案してよい |
 | note | 個人 / 会社公式（PRONI） | 個人は提案可。**会社公式は企画の決定をユーザーが行う**。ネタ候補の収集と月次の時期リマインドはエージェント側からしてよい（PRONI テックブログは月1本が目標） |
+| izanami | 個人（明示例外を除く） | エージェント側から個人OSS / アプリの記事案を提案してよい |
 
 会社公式（PRONI）の記事は `PRONI-` 接頭辞のファイル名にし、社内のテックブログ投稿レギュレーションを通す（§記事の状態（note固有）参照）。
 
@@ -86,6 +90,7 @@ gh repo view <owner>/<repo> --json owner --jq .owner.login   # s977043 なら個
 | Zenn | `articles/<slug>.md` | `images/<slug>/*.png` | `reviews/zenn/<slug>.md` |
 | Qiita | `Qiita/public/<slug>.md` | 記事内マークダウン | `reviews/qiita/<slug>.md` |
 | note | `articles_note/<state>/<slug>.md` | `articles_note/assets/*.png` | `reviews/note/<state>/<slug>.md` |
+| izanami | `articles_izanami/<slug>.md` | 記事内マークダウン | 固有のレビュー成果物は現時点で設けない |
 
 `<state>` = `new` / `drafts` / `published`（note固有）
 
@@ -143,9 +148,9 @@ gh repo view <owner>/<repo> --json owner --jq .owner.login   # s977043 なら個
 
 **なぜ次節と扱いを分けるのか**: 次節の制約は「他媒体への誘導が読者体験を損なう」ことを理由に定めたもので、同一媒体内の回遊には当てはまらない。同一プラットフォーム内の自記事参照は、読者にとって同じ場所での続きの提示になる。
 
-### 記事内クロスプラットフォーム参照（note ↔ Zenn ↔ Qiita）
+### 記事内クロスプラットフォーム参照（note ↔ Zenn ↔ Qiita ↔ izanami）
 
-他プラットフォームの自分の投稿を参照する場合は、**本文中の主張の根拠/導入として持ち出さず、末尾の参考/関連リンク集に留める**。
+他プラットフォームの自分の投稿を参照する場合は、**本文中の主張の根拠/導入として持ち出さず、末尾の参考/関連リンク集に留める**。izanami 記事から Zenn / Qiita / note の記事へリンクする場合も同じ。
 
 - ✅ OK: `## 参考` / `## 関連記事` / 末尾リンク集などの、記事末尾のリンクセクション配下
 - ❌ NG: 本文中の「姉妹記事」「本編」「設計思想ベース」等の言及、`:::message` や導入段落内のリンク
