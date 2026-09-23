@@ -55,3 +55,5 @@ Graph 上の空きを埋めるためだけに記事化しない。
 ### YYYY-MM-DD
 
 - 実験結果、反証、仮説の変更を追記
+
+<!-- Plan Approval後のみ、`## Approved Article Plan: <channel>/<slug>` を追記する。初期Seedでは空欄テンプレートを置かない。 -->
