@@ -249,6 +249,8 @@ Research結果は少なくとも次の3種類へ分ける。
 - `NEEDS_INPUT`: 記事価値はあるが、著者の経験・証拠・条件が不足している
 - `PARK`: 現時点では一般論または範囲が広すぎる。作業や検証を先に行う
 
+ここでの `READY` は **記事ネタモード内のローカル判定**であり、`docs/article-lifecycle-contract.md` の Lifecycle state `READY`（既存Final Gate通過）とは別物。ローカル `READY` を理由に公開準備完了へ遷移させない。
+
 判定観点:
 
 - 読者の具体的な問題があるか
