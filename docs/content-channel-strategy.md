@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document defines the publishing strategy for note, Zenn, Qiita, and Growth Lab.
+This document defines the publishing strategy for note, Zenn, Qiita, Growth Lab, and izanami.
 
 The goal is to grow access by treating the channels as one technical content portfolio, not as isolated article destinations.
 
@@ -28,6 +28,8 @@ This positioning connects the existing topics into a single recognizable categor
 - AI-readable repository design: make repositories easier for agents to navigate.
 - Metrics and governance: evaluate AI development workflows with numbers, not impressions.
 
+izanami also has a separately scoped discovery track for the user's named individual apps and OSS projects. This track can cover app-building problems outside the shared positioning above; it does not change the positioning of the existing channels.
+
 ## Channel roles
 
 2025-2026 の各媒体動向（Codex 方針検討 + Gemini 検証で更新）を反映した役割定義。
@@ -38,6 +40,7 @@ This positioning connects the existing topics into a single recognizable categor
 | Zenn | 体系化された技術知識（ストック資産・逆引きリファレンス） | アーキテクチャ、実装詳細、スキーマ、設計判断。将来の自分と読者の資産 | 深掘りだけでなく逆引きリファレンス用途で SEO が強い |
 | Qiita | 検索入口＋議論の火種（鮮度・コミュニティ評価） | 短い実務 Tips、トラブルシュート、最初の一歩。最新トレンドへの即応 | 単なる Tips 置き場ではなく鮮度・正確性のアルゴリズム評価が厳格化。AI 生成コンテンツガイドライン遵守が必須 |
 | Growth Lab | Canonical long-form hub | Complete guides, validation logs, evergreen documentation | 体系ガイドの最終到達点 |
+| izanami | 個人開発・OSSの発見チャネル | 個人OSSやアプリの課題起点の記事、設計・実装から得た実践知 | 役立つ記事を主役にし、関連プロダクトへの導線と読者の反応を検証する。SEOスコアや被リンク数は成果の保証・品質判定に使わない |
 | GitHub | Source of truth for OSS | README, releases, issues, implementation docs | OSS の実装真実 |
 
 ## Data-driven channel weighting（2026-05 実測スナップショット）
@@ -104,16 +107,59 @@ Design articles so that readers can move through this path.
 2. Zenn: understand the technical design and implementation.
 3. note: understand the background, motivation, and team-operation perspective.
 4. Growth Lab: read the canonical guide or validation log.
-5. GitHub: star, try, file an issue, or contribute.
+5. GitHub or the app: star, try, install, file feedback, or contribute.
+
+izanami is an additional discovery entry point into the relevant OSS or app, not a required step in this sequence. Its articles should help readers understand a concrete problem and decide whether the linked project is useful to them.
 
 Do not publish the same body to every platform. Reframe the same topic for each reader intent.
 
+## izanami channel policy
+
+izanami is an additional distribution channel for practical articles connected to the author's OSS and apps. Its purpose is to help relevant readers discover a product, try it, and provide feedback. It does not replace the existing canonical documentation or article channels.
+
+### Editorial scope
+
+- Select topics from existing articles and project experience, then write a **new izanami article** for a reader problem that the existing article does not already answer in the same way.
+- Reusing the same first-hand observations, code, and verified facts is allowed. Reusing the original article's structure and wording with superficial edits is not; the new article must offer a distinct reader benefit, framing, and conclusion.
+- Use the project repository and its public documentation as the source of truth for current implementation claims. Link to the relevant repository, app, or canonical guide where it helps the reader act.
+- Product links must be relevant to the article's solution and clearly identified. Do not make the article a product announcement or add unrelated links solely to obtain backlinks.
+- Keep links to articles on other publishing platforms in a short references/related-links section at the end, consistent with the cross-platform linking rule below. Contextual links to the product being explained may appear where useful.
+- When an izanami article is a materially reworked version of an existing article, follow the canonical-source opening-link rule in Cross-posting rules. A distinct article with a different reader problem may cite related articles at the end without presenting itself as a repost.
+- Treat izanami's title, summary, tag, and SEO/LLMO checks as editorial aids. Do not optimize to a score at the expense of accuracy or reader value.
+
+### Project eligibility and evidence boundaries
+
+The default source boundary in `AGENTS.md` still applies. Personal repositories owned by `s977043` are eligible. Company-owned repositories and their observations remain excluded from personal publishing unless the user explicitly authorizes a specific project and channel.
+
+For this izanami initiative, the user explicitly authorized coverage of PlanGate, River Review, Growth Lab, PocketEitan, and the jellyfish aquarium project. This authorization is limited to these named projects and izanami. The jellyfish aquarium repository is owned by `3396-cc`; use only information that is already public in its repository or product page, and do not include private company context, internal metrics, or non-public implementation details. This exception does not change eligibility for Zenn, Qiita, or personal note articles.
+
+Before drafting each article, record the existing article(s) that supplied its topic and the project references used to verify its claims. If either the existing article or public project evidence cannot be identified, keep that topic in the idea state until the source is confirmed.
+
+### Search, links, and measurement
+
+- Product awareness, referral visits, adoption, and naturally earned third-party citations are desired outcomes to observe, not guaranteed results. An izanami article's link to the author's project is an outbound referral link from izanami and an inbound backlink to the project. However, the sampled izanami product page marks its external product link `rel="nofollow"`; do not assume these links pass ranking signals or promise SEO benefit. Verify the actual article/product link attributes when publishing, and measure referral value separately from search visibility. Do not create content or arrange links primarily to manipulate search rankings. Track external sites that independently cite or link to the project separately when measurable.
+- Do not publish duplicate or near-duplicate articles to manufacture search coverage. Google may choose which similar URL to show, and canonical hints are not a guaranteed syndication control. Since izanami-specific indexing controls have not been verified, publish only independently useful articles; do not rely on a canonical setting being available.
+- Prefer a small initial trial, then review available article views, engagement/feedback, tracked outbound visits, repository or app visits, and attributable adoption signals after about 30 days. Mark unavailable measures as unmeasured. Continue, adjust, or stop based on observed reader and product outcomes, not post count or SEO tool scores alone.
+- Product listing and article publishing are separate actions and should be evaluated separately. Listing a product does not justify publishing an article that lacks independent reader value.
+
+### Repository management
+
+Izanami article sources are maintained in `articles_izanami/`. Each Markdown file is the sole local source for that izanami article and its metadata; do not keep a second published mirror. Record the source article paths, project evidence references, publication status, and live izanami URL with the article. The directory README documents the file contract and points back to this section for policy.
+
+### References
+
+- [izanami Content Guide](https://izanami.dev/docs/content-guide) and [Community Guidelines](https://izanami.dev/guideline) — reader value, originality, and promotional-content boundaries.
+- [izanami Editor](https://izanami.dev/docs/editor) — article summaries, quality checks, tags, and reader feedback features.
+- [Google: Creating Helpful, Reliable, People-First Content](https://developers.google.com/search/docs/fundamentals/creating-helpful-content) — original information, first-hand expertise, and reader satisfaction.
+- [Google: Canonicalization troubleshooting](https://developers.google.com/search/docs/crawling-indexing/canonicalization-troubleshooting) — canonical hints and syndicated-content caveats.
+- [Google: Spam Policies](https://developers.google.com/search/docs/essentials/spam-policies) — link spam and scaled-content abuse boundaries.
+
 ## Cross-posting rules（重複コンテンツ・カニバリ回避）
 
-1テーマ多媒体展開は露出最大化に有効だが、本文を微調整しただけの再投稿は検索エンジンに実質同一と判定され、ドメイン最強の1本以外がインデックス未登録になるリスクがある（Gemini 検証指摘）。
+1テーマ多媒体展開は露出を増やせる一方、読者価値がほぼ同じページを複数公開しても検索結果へ別々に表示されるとは限らない。Google は類似・重複ページの canonical 化を行い、シンジケート記事では canonical 指定だけで複製先の検索表示を確実に防げないとしている（上記 Google 公式資料）。
 
 - **正本を1つ決める**: テーマごとに「正本（canonical）媒体」を1つ決め、他媒体は再構成版と位置づける。デフォルトの正本方向は **note（一次体験・思想）→ Zenn/Qiita へ抽出**。技術仕様が主役のテーマは Zenn を正本にしてよい（テーマ単位で選択）
-- **冒頭に正本明示リンク**: 再構成版の冒頭に「本記事は〈正本媒体〉を正本とし、媒体特性に合わせて再構成したものです」と1文＋正本へのリンクを置く。スパム判定回避と読者の回遊を兼ねる
+- **冒頭に正本明示リンク**: 再構成版の冒頭に「本記事は〈正本媒体〉を正本とし、媒体特性に合わせて再構成したものです」と1文＋正本へのリンクを置く。読者へ関係を明示し、正本を伝える補助情報として使う。検索エンジンが正本として選ぶことを保証するものではない
 - **本文を実質変える**: 媒体ごとに読者意図に合わせて再構成（同一段落の使い回しをしない）。note=体験/思想、Zenn=体系/実装、Qiita=実務 Tips/トラブルシュート
 - **カニバリ自己チェック**: 自分の既存記事と検索意図が被らないか公開前に確認（同テーマ複数記事はシリーズ化し相互リンクで束ねる）
 

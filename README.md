@@ -10,6 +10,7 @@ my-blog/
 ├── articles/               Zenn記事本体 (.md)           → articles/README.md
 ├── Qiita/                  Qiita記事本体 (public/*.md)  → Qiita/README.md
 ├── articles_note/          note記事のローカル管理        → articles_note/README.md
+├── articles_izanami/       izanami記事のローカル管理     → articles_izanami/README.md
 ├── books/                  Zennの本（chaptersを含む）
 ├── images/                 Zenn記事用画像（<slug>/ごと）
 ├── reviews/
@@ -27,6 +28,7 @@ my-blog/
 - [`articles/README.md`](./articles/README.md) — Zenn記事の構成・slug規約・Front Matter
 - [`Qiita/README.md`](./Qiita/README.md) — Qiita記事の構成・`public/.remote/`の役割
 - [`articles_note/README.md`](./articles_note/README.md) — noteエクスポートとインポートの運用フロー
+- [`articles_izanami/README.md`](./articles_izanami/README.md) — izanami向け新規原稿と企画候補
 
 ## 共通ポジショニング
 
