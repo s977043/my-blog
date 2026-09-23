@@ -159,7 +159,7 @@ PROMOTED
   ↓
 PLANNED
   ↓
-Human Gate
+Plan Approval (Human)
   ↓
 DRAFTED以降は既存Writer / Review / Final Gateへ委譲
 ```
@@ -167,7 +167,8 @@ DRAFTED以降は既存Writer / Review / Final Gateへ委譲
 - Seedのprovenanceと状態定義は `docs/article-lifecycle-contract.md` を正とする
 - `PROMOTED` へ進める場合は、外部Signalの出典と `evidence_status` を明示する
 - `PLANNED` は「読者課題・中心主張・根拠・媒体・構成・書かない範囲」が揃った状態とする
-- 本文生成へ進む前に、中心主張と構成について Human Gate を置く
+- 本文生成へ進む前に、中心主張と構成について **Plan Approval（Human）** を置く
+- Plan ApprovalはLifecycle stateを追加しない。Lifecycleの `APPROVED` は既存契約どおり **公開承認** を意味する
 - `DRAFTED` 以降は既存の媒体別レビュー、Final Gate、公開ポリシーへ委譲する
 - 公開後のMetrics / Learningは本スキルで自動更新せず、Lifecycle契約に従って次のSignalへ戻す
 
@@ -270,7 +271,7 @@ Research結果は少なくとも次の3種類へ分ける。
 
 媒体を決めた後に構成案を出す場合は、「正本と関連ルール」で指定した**媒体別構成ガイドを必ず読み直す**。
 
-#### A-4. Article Planを作り、Human Gateへ渡す
+#### A-4. Article Planを作り、Plan Approvalへ渡す
 
 `READY` の記事案は、本文を書く前に次を1つのArticle Planへ固定する。
 
@@ -295,10 +296,10 @@ Observed / Verified / Hypothesis を区別した根拠
 
 ## Lifecycle
 現在: PLANNED
-次: Human Gate
+次: Plan Approval (Human)
 ```
 
-Human Gateでは、少なくとも **Reader Problem / Central Claim / Outline / Out of Scope** の4点を確認する。承認前に長文本文を生成しない。
+Plan Approvalでは、少なくとも **Reader Problem / Central Claim / Outline / Out of Scope** の4点を確認する。これは公開承認を表すLifecycleの `APPROVED` とは別の局所ゲートであり、新しいLifecycle stateは追加しない。承認前に長文本文を生成しない。
 
 `/check-tech-blog` の review-only 実行では、Article Planを提案してよいが、記事本文やSeed metadataを変更しない。承認済みの計画が明示されている場合のみ、後続の既存執筆フローへ引き渡す。
 
@@ -376,7 +377,7 @@ READY | NEEDS_INPUT | PARK
 ## Lifecycle
 - 現在:
 - 次:
-- Human Gateが必要な判断:
+- Plan Approvalが必要な判断:
 
 ## 中心主張候補
 1文
@@ -443,7 +444,7 @@ PASS | NEEDS_REVISION | BLOCKED
 - 出典を確認できない外部主張を断定しない
 - 一般論を無理に一次経験へ見せかけない
 - 記事の中心主張を、著者確認なく別の主張へ変えない
-- Human Gate前に長文本文を自動生成しない
+- Plan Approval前に長文本文を自動生成しない
 - 検索上位記事の多数派を、それだけで正しい主張・構成とみなさない
 - `docs/article-lifecycle-contract.md` の状態・provenance・Metrics / Learning規約を本スキル内へ複製しない
 - 公開、マージ、`published` / `ignorePublish` の切替を行わない
