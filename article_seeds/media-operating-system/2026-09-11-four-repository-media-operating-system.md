@@ -620,7 +620,7 @@ AI Agentの権限分離が本当に効くか確かめる。
 2. Content / Media / Intelligence / Growth に分けた
 3. 最後まで迷ったのは Intelligence と Growth だった
 4. 分ければ分けるほど良いわけではなかった
-5. リポジトリを分けただけでは境界にならない
+5. リポジトリを分けるだけでは、境界を運用できない
 6. 正しかったかは、これから実運用で測る
 7. 持ち帰るのは「4」ではなく、変更理由で境界を見直す4つの問い
 
@@ -628,3 +628,7 @@ AI Agentの権限分離が本当に効くか確かめる。
 
 - Plan Approval artifact: https://github.com/s977043/my-blog/issues/685
 - 2026-09-23: Human Plan Approval後にDraftへ移行
+
+### Plan Change Log
+
+- 2026-09-23: Draftレビューで見出し5を「リポジトリを分けるだけでは、境界を運用できない」へ表現調整。中心主張・Scope・章の役割は変更なし。
