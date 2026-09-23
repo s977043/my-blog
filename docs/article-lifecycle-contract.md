@@ -43,7 +43,7 @@ Signal / Experience
 | `CAPTURED` | Signal / Experience を保存した | Seed候補 |
 | `TRIAGED` | 記事化する価値・根拠を確認した | 判断メモ |
 | `PROMOTED` | Article Seed として採用した | `article_seeds/**/*.md` |
-| `PLANNED` | 読者課題・中心主張・媒体を決めた | 記事設計。Plan Approval後は元Seedの `Approved Article Plan` が承認記録 |
+| `PLANNED` | 読者課題・中心主張・媒体を決めた | 記事設計。Plan Approval後は元Seedの媒体/slug別 `Approved Article Plan` が承認記録 |
 | `DRAFTED` | 承認済みArticle Planを入力契約として記事本文がある | note / Zenn / Qiita 原稿 |
 | `REVIEWED` | 既存レビューを通した | review artifact |
 | `READY` | 既存 Final Gate が公開準備完了と判定した | READY verdict |
@@ -56,7 +56,7 @@ Signal / Experience
 
 ## 3. Human Gate
 
-`PLANNED → DRAFTED` の間に置く **Plan Approval（Human）** は局所ゲートであり、Lifecycle stateではない。承認内容は元Seed本文の `## Approved Article Plan` に記録し、別の承認台帳を作らない。Lifecycleの `APPROVED` は公開承認だけを意味する。
+`PLANNED → DRAFTED` の間に置く **Plan Approval（Human）** は局所ゲートであり、Lifecycle stateではない。承認内容は元Seed本文の `## Approved Article Plan: <channel>/<slug>` に記録し、別の承認台帳を作らない。1つのSeedから複数記事へ派生する場合はPlanを上書きせず追加する。Lifecycleの `APPROVED` は公開承認だけを意味する。
 
 次は自律実行してよい。
 
