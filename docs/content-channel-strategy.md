@@ -46,7 +46,8 @@ This positioning connects the existing topics into a single recognizable categor
 
 **指標の基準に注意**: 2026-09 の値は媒体ごとに取得日と指標が異なる（Zenn は統計ダッシュボードの表示回数、note はダッシュボードの imp / PV / スキ）。2026-05 の GA4 PV とも基準が異なる可能性があるため、**新旧の数値、および 2026-09 の媒体間の数値を直接比較しない**。
 
-**詳細データ（2026-05）**: [`channel-metrics/2026-05-21.md`](./channel-metrics/2026-05-21.md) — トップ10一覧・PV/like 分類・既知課題のフル記録。2026-09 分の詳細データファイルは未作成
+**詳細データ（2026-09、最新）**: [`channel-metrics/2026-09-14.md`](./channel-metrics/2026-09-14.md) — Zenn（2026-09-04）/ note（2026-09-14）の集計日・取得元・指標の違いと、上位記事・低リーチ記事・既知課題のフル記録
+**詳細データ（2026-05、履歴）**: [`channel-metrics/2026-05-21.md`](./channel-metrics/2026-05-21.md) — トップ10一覧・PV/like 分類・既知課題のフル記録
 **公開操作の境界**: [`publish-operating-policy.md`](./publish-operating-policy.md) — 自律実行範囲・著者ゲート・rate-limit 遵守
 
 ### 2026-09 実測（最新）
@@ -469,7 +470,7 @@ Track the following signals.
 2. Set current AI-development articles as visible entry points.
 3. Add cross-links to PlanGate, River Review, Agent Skills, and AI-readable repository articles.
 4. Confirm note fixed entry article choice for the current growth goal.
-5. Publish two Qiita search-entry articles.
+5. ~~Publish two Qiita search-entry articles.~~ 完了（2本とも公開済み。上記「Week 2」参照）
 6. Publish one note hub article.
 
 ## Editorial guardrails
