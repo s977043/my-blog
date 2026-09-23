@@ -28,8 +28,9 @@ description: テックブログのネタ発見、一次経験の整理、媒体�
 最初に次を読む。
 
 1. `AGENTS.md` — 全媒体共通の規約
-2. `docs/content-channel-strategy.md` — 媒体役割、書き分け、多媒体展開の正本
-3. 対象媒体の構成・運用ルール
+2. `docs/article-lifecycle-contract.md` — Seed provenance、Lifecycle state、Human Gate、Metrics / Learning 接続の正本
+3. `docs/content-channel-strategy.md` — 媒体役割、書き分け、多媒体展開の正本
+4. 対象媒体の構成・運用ルール
    - **Zenn**: `docs/article-guides/zenn-structure-best-practices.md` と `articles/README.md`
    - **note**: `articles_note/guides/note-structure-best-practices.md`、`articles_note/checklists/note-article-quality-checklist.md`、`articles_note/README.md`
    - **Qiita**: `Qiita/README.md` など既存の媒体固有ルール
@@ -145,6 +146,53 @@ AIが追加した一般論を残すこと自体を品質とみなさない。
 | 概念解説 | 何と何を区別すべきか | 問題提起 → 定義 → 比較 → 具体例 → 適用判断 |
 | 比較検討 | どの条件で何を選ぶか | 要件 → 候補 → 評価軸 → 検証 → 結論 |
 
+## Lifecycle上の責務
+
+本スキルは Article Lifecycle 全体を実行する Orchestrator ではない。主に上流の次の区間を担当する。
+
+```text
+CAPTURED
+  ↓
+TRIAGED
+  ↓
+PROMOTED
+  ↓
+PLANNED
+  ↓
+Human Gate
+  ↓
+DRAFTED以降は既存Writer / Review / Final Gateへ委譲
+```
+
+- Seedのprovenanceと状態定義は `docs/article-lifecycle-contract.md` を正とする
+- `PROMOTED` へ進める場合は、外部Signalの出典と `evidence_status` を明示する
+- `PLANNED` は「読者課題・中心主張・根拠・媒体・構成・書かない範囲」が揃った状態とする
+- 本文生成へ進む前に、中心主張と構成について Human Gate を置く
+- `DRAFTED` 以降は既存の媒体別レビュー、Final Gate、公開ポリシーへ委譲する
+- 公開後のMetrics / Learningは本スキルで自動更新せず、Lifecycle契約に従って次のSignalへ戻す
+
+## Research方針
+
+Researchは「検索上位の平均的な記事を再構成するため」ではなく、一次経験の主張境界を確認し、読者が必要とする不足情報を補うために使う。
+
+優先順位は次の通り。
+
+1. 著者自身の一次経験・観測・実行ログ
+2. 対象プロダクトや仕様の一次情報
+3. 再現可能な検証結果
+4. 検索意図・関連する二次情報
+5. 競合・上位記事の構成
+
+外部記事の見出し集合を、そのまま構成へ変換しない。一次経験が弱い場合は検索量で補強せず、`NEEDS_INPUT` または `PARK` にする。
+
+Research結果は少なくとも次の3種類へ分ける。
+
+- **Observed**: 著者が実際に観測したこと
+- **Verified**: 一次情報や再現検証で確認した外部事実
+- **Hypothesis**: 解釈・仮説。事実として書かない
+
+検索流入を狙う記事では検索意図を確認するが、SEOを中心主張より上位の目的にしない。
+
 ## ワークフロー
 
 ### Mode A: 記事ネタを確認する
@@ -222,6 +270,38 @@ AIが追加した一般論を残すこと自体を品質とみなさない。
 
 媒体を決めた後に構成案を出す場合は、「正本と関連ルール」で指定した**媒体別構成ガイドを必ず読み直す**。
 
+#### A-4. Article Planを作り、Human Gateへ渡す
+
+`READY` の記事案は、本文を書く前に次を1つのArticle Planへ固定する。
+
+```markdown
+## Reader Problem
+誰の、どの問題を扱うか
+
+## Central Claim
+この記事で最も伝える1文
+
+## Evidence
+Observed / Verified / Hypothesis を区別した根拠
+
+## Channel / Article Type
+媒体と主タイプ
+
+## Outline
+必要最小限の見出し
+
+## Out of Scope
+今回は書かない論点
+
+## Lifecycle
+現在: PLANNED
+次: Human Gate
+```
+
+Human Gateでは、少なくとも **Reader Problem / Central Claim / Outline / Out of Scope** の4点を確認する。承認前に長文本文を生成しない。
+
+`/check-tech-blog` の review-only 実行では、Article Planを提案してよいが、記事本文やSeed metadataを変更しない。承認済みの計画が明示されている場合のみ、後続の既存執筆フローへ引き渡す。
+
 ### Mode B: 既存記事を確認する
 
 対象パス:
@@ -263,6 +343,26 @@ AIが追加した一般論を残すこと自体を品質とみなさない。
 - noteの詳細レビュー: `/review-note-article <state>/<slug>`
 - 多視点検証: `/multi-review <path> <観点>`
 
+レビュー後の状態遷移は `docs/article-lifecycle-contract.md` に従う。ここで `REVIEWED` / `READY` / `APPROVED` を独自定義しない。
+
+```text
+Existing Article
+  ↓
+媒体別Review
+  ↓
+既存Final Gate
+  ↓
+Human Approval
+  ↓
+Publish
+  ↓
+Metrics
+  ↓
+Learning Proposal
+```
+
+本スキルの役割は、次に渡すべき既存フローを明示するところまでとする。
+
 ## 出力形式
 
 ### 記事ネタモード
@@ -272,6 +372,11 @@ AIが追加した一般論を残すこと自体を品質とみなさない。
 
 ## 判定
 READY | NEEDS_INPUT | PARK
+
+## Lifecycle
+- 現在:
+- 次:
+- Human Gateが必要な判断:
 
 ## 中心主張候補
 1文
@@ -303,6 +408,11 @@ READY | NEEDS_INPUT | PARK
 ## 総合判定
 PASS | NEEDS_REVISION | BLOCKED
 
+## Lifecycle
+- 現在:
+- 次:
+- 委譲先:
+
 ## 記事の核
 - 想定読者:
 - 読者課題:
@@ -333,12 +443,16 @@ PASS | NEEDS_REVISION | BLOCKED
 - 出典を確認できない外部主張を断定しない
 - 一般論を無理に一次経験へ見せかけない
 - 記事の中心主張を、著者確認なく別の主張へ変えない
+- Human Gate前に長文本文を自動生成しない
+- 検索上位記事の多数派を、それだけで正しい主張・構成とみなさない
+- `docs/article-lifecycle-contract.md` の状態・provenance・Metrics / Learning規約を本スキル内へ複製しない
 - 公開、マージ、`published` / `ignorePublish` の切替を行わない
 - `articles_note/drafts/` を編集しない
 
 ## 参考
 
 - `AGENTS.md`
+- `docs/article-lifecycle-contract.md`
 - `docs/content-channel-strategy.md`
 - `docs/article-guides/zenn-structure-best-practices.md`
 - `articles_note/guides/note-structure-best-practices.md`
