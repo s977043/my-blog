@@ -307,15 +307,16 @@ Plan Approvalでは、少なくとも **Reader Problem / Central Claim / Outline
 
 #### A-5. 承認済みArticle PlanをSeedへ残し、Draftへ引き渡す
 
-Plan Approvalを得たら、別台帳は作らず、元Seed本文へ `## Approved Article Plan` として承認済み内容を追記する。frontmatterへ複雑な計画構造を追加しない。
+Plan Approvalを得たら、別台帳は作らず、元Seed本文へ `## Approved Article Plan: <channel>/<slug>` として承認済み内容を追記する。frontmatterへ複雑な計画構造を追加しない。1つのSeedから複数媒体・複数記事へ派生する場合は、派生記事ごとに別Planとして追記し、既存Planを上書きしない。
 
 最低限、次を残す。
 
 ```markdown
-## Approved Article Plan
+## Approved Article Plan: note/example-slug
 
 - approved_at: YYYY-MM-DD
 - channel: note | zenn | qiita
+- slug: example-slug
 - article_type:
 - reader_problem:
 - central_claim:
@@ -331,7 +332,7 @@ Plan Approvalを得たら、別台帳は作らず、元Seed本文へ `## Approve
 2. ...
 ```
 
-ここで記録するのは「承認された執筆契約」であり、公開承認ではない。承認後に中心主張やOut of Scopeを変更する場合は、変更理由をSeedへ追記してからDraftへ反映する。
+ここで記録するのは「承認された執筆契約」であり、公開承認ではない。多媒体展開では同一本文を使い回さず、媒体ごとのReader Problem / Central Claim / Outlineを個別に承認する。承認後に中心主張やOut of Scopeを変更する場合は、対象Planの下へ変更理由を追記してからDraftへ反映する。
 
 Draftの配置は既存媒体規約を再利用する。
 
