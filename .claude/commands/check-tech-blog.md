@@ -54,7 +54,7 @@ idea: AIに実装させる前にPlanレビューを入れたら手戻りが減�
 
 ### 記事ネタの場合
 
-- `READY` / `NEEDS_INPUT` / `PARK`
+- `READY` / `NEEDS_INPUT` / `PARK`（記事ネタ用ローカル判定。Lifecycle state `READY` とは別）
 - Lifecycle上の現在地 / 次状態 / Plan Approval対象
 - 中心主張候補
 - 一次経験・独自性
