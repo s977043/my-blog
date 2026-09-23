@@ -62,6 +62,7 @@ npm ci   # 必須
 - push は `gh` の active account が `s977043` でないと pre-push hook がブロックする（`scripts/hooks/pre-push`）。事前に `npm run gh:ensure`
 - マージは squash only（`--merge` は GraphQL エラーになる）
 - worktree 内では、隔離ガードが **`&&` / `;` で連結した git コマンド**と、**本文に `git` という語を含む `gh pr create --body "$(cat <<EOF ...)"`** を拒否することがある。git コマンドは1つずつ分けて実行し、PR 本文は scratchpad のファイルに書いて `gh pr create --body-file <path>` で渡す（2026-09-23 のワーカーで観測）
+  - パスに `GitHub` を含むだけで（例: `~/Documents/GitHub/...` 配下の scratchpad）、`for` ループや `>` リダイレクトと組み合わせると同じく拒否されることがある。ループやリダイレクトを使う処理は Python スクリプトへ寄せるか、コマンドを分ける。`gh pr create --body-file <path>` 単体は通る（同日、別ワーカーで観測）
 
 ---
 
