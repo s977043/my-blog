@@ -165,7 +165,7 @@
       "legacy": true
     },
     {
-      "id": "legacy:article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system",
+      "id": "seed-20260911-media-operating-system-boundaries",
       "path": "article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md",
       "title": "Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった",
       "date": "2026-09-11",
@@ -180,10 +180,15 @@
       "source": "experience",
       "source_url": "",
       "source_ref": "",
-      "evidence_status": "",
-      "promoted_to": [],
-      "article_type_candidates": [],
-      "legacy": true
+      "evidence_status": "observed",
+      "promoted_to": [
+        "articles_note/new/media-operating-system-boundary-by-change.md"
+      ],
+      "article_type_candidates": [
+        "experience",
+        "analysis"
+      ],
+      "legacy": false
     },
     {
       "id": "seed-20260923-agent-role-boundaries",
@@ -269,6 +274,11 @@
       "to": "https://x.com/mine_take/status/2097800316070855017"
     },
     {
+      "from": "seed-20260911-media-operating-system-boundaries",
+      "relation": "promoted_to",
+      "to": "articles_note/new/media-operating-system-boundary-by-change.md"
+    },
+    {
       "from": "seed-20260923-content-closed-loop",
       "relation": "promoted_to",
       "to": "articles_note/new/content-closed-loop-note.md"
@@ -282,7 +292,6 @@
     "article_seeds/ai-driven-development/2026-09-10-no-publication-gate.md: legacy seed (seed_id/evidence_status not required retroactively)",
     "article_seeds/ai-driven-development/2026-09-10-north-star-intervention-depth.md: legacy seed (seed_id/evidence_status not required retroactively)",
     "article_seeds/ai-driven-development/2026-09-10-retire-pr-count-kpi.md: legacy seed (seed_id/evidence_status not required retroactively)",
-    "article_seeds/ai-driven-development/2026-09-10-small-team-cant-measure-speed.md: legacy seed (seed_id/evidence_status not required retroactively)",
-    "article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md: legacy seed (seed_id/evidence_status not required retroactively)"
+    "article_seeds/ai-driven-development/2026-09-10-small-team-cant-measure-speed.md: legacy seed (seed_id/evidence_status not required retroactively)"
   ]
 }
