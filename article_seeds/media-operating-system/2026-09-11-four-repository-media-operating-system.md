@@ -1,4 +1,5 @@
 ---
+seed_id: seed-20260911-media-operating-system-boundaries
 title: "Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった"
 date: 2026-09-11
 status: seed
@@ -9,7 +10,14 @@ topics:
   - ai-agent
   - growth
 source: experience
+source_url:
+source_ref:
+evidence_status: observed
 promoted_to:
+  - articles_note/new/media-operating-system-boundary-by-change.md
+article_type_candidates:
+  - experience
+  - analysis
 ---
 
 # Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった
@@ -579,3 +587,44 @@ AI Agentの権限分離が本当に効くか確かめる。
 - Contractの変更回数ではなく、破壊的変更・変更コスト・時間経過による収束を見る方針へ変更
 - Architecture内部の指標だけでなく、Time to Publish / Time to Experiment / New Media Lead Timeを観測対象へ追加
 - 2媒体目では「境界構造の再現」「運用フローの再現」「Shared Coreの再利用」を別々に判定する方針へ変更
+
+## Approved Article Plan: note/media-operating-system-boundary-by-change
+
+- approved_at: 2026-09-23
+- channel: note
+- slug: media-operating-system-boundary-by-change
+- article_type: experience / design decision
+- reader_problem: AIや自動化を使いながらWebメディアを育てると、記事制作・Web実装・計測・SNS/広告が同じ「成長」という目的に集まり、どこまでを同じシステムとして扱うべきか判断しにくい
+- central_claim: リポジトリを分ける基準は機能数やツールではなく「異なる理由で変更されるか」。4という数字は仮説であり、Reason to Changeに沿って境界を切り、実運用で分割コストと独立性を検証する
+- out_of_scope: 4リポジトリの一般的ベストプラクティス化、具体的なリポジトリ名、詳細実装、収益成果の断定、Shared Core成功の断定
+
+### Evidence Boundary
+
+- Observed:
+  - 2026-09-11に Content / Media / Intelligence / Growth の4境界を採用した
+  - IntelligenceとGrowthを Observation と Decision / Action の分離として扱った
+  - 2026-09-17のレビューで Boundary Hypothesis と Shared Core Hypothesis を分離した
+  - Unexpected Cross-repo Change / Coordination Cost / Permission Isolation / flow metrics を検証対象にした
+- Verified:
+  - 外部理論を4境界の正しさの証明には使わない
+  - 必要な外部概念は本文作成時に一次情報を確認し、定義以上の因果を主張しない
+- Hypothesis:
+  - Reason to Changeで境界を切ると不要な同時変更を減らせる可能性がある
+  - ObservationとActionの分離はAI Agentの権限制御を設計しやすくする可能性がある
+  - 4境界は2媒体目でも再現できる可能性がある
+  - Shared Coreの再利用性とBoundaryの妥当性は別に評価すべき
+
+### Outline
+
+1. 一つのメディアを作っていたら、変更理由が4つに分かれた
+2. Content / Media / Intelligence / Growth に分けた
+3. 最後まで迷ったのは Intelligence と Growth だった
+4. 分ければ分けるほど良いわけではなかった
+5. リポジトリを分けただけでは境界にならない
+6. 正しかったかは、これから実運用で測る
+7. 持ち帰るのは「4」ではなく、変更理由で境界を見直す4つの問い
+
+### Approval Trace
+
+- Plan Approval artifact: https://github.com/s977043/my-blog/issues/685
+- 2026-09-23: Human Plan Approval後にDraftへ移行
