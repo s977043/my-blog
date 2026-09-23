@@ -305,6 +305,48 @@ Plan Approvalでは、少なくとも **Reader Problem / Central Claim / Outline
 
 `/check-tech-blog` の review-only 実行では、Article Planを提案してよいが、記事本文やSeed metadataを変更しない。承認済みの計画が明示されている場合のみ、後続の既存執筆フローへ引き渡す。
 
+#### A-5. 承認済みArticle PlanをSeedへ残し、Draftへ引き渡す
+
+Plan Approvalを得たら、別台帳は作らず、元Seed本文へ `## Approved Article Plan` として承認済み内容を追記する。frontmatterへ複雑な計画構造を追加しない。
+
+最低限、次を残す。
+
+```markdown
+## Approved Article Plan
+
+- approved_at: YYYY-MM-DD
+- channel: note | zenn | qiita
+- article_type:
+- reader_problem:
+- central_claim:
+- out_of_scope:
+
+### Evidence Boundary
+- Observed:
+- Verified:
+- Hypothesis:
+
+### Outline
+1. ...
+2. ...
+```
+
+ここで記録するのは「承認された執筆契約」であり、公開承認ではない。承認後に中心主張やOut of Scopeを変更する場合は、変更理由をSeedへ追記してからDraftへ反映する。
+
+Draftの配置は既存媒体規約を再利用する。
+
+- Zenn: `articles/<slug>.md` を `published: false` で作る
+- note: `articles_note/new/<slug>.md` を編集正本として作る
+- Qiita: `npm run new:qiita -- <slug>` または既存雛形を使い、公開準備までは `ignorePublish: true` を維持する
+
+Draftには承認済みArticle Planの **Reader Problem / Central Claim / Evidence Boundary / Outline / Out of Scope** を入力契約として渡す。外部記事や検索結果から新しい中心主張を追加しない。
+
+Draft作成後は、新しいレビュー系を作らず既存フローへ渡す。
+
+- Zenn: `/review-article <slug>` または `/article-pipeline <slug>`
+- note: `/review-note-article new/<slug>` または `/article-pipeline-note new/<slug>`
+- Qiita: 現行のQiitaレビュー運用へ委譲し、正式コマンドがないことを理由にZenn用コマンドを流用しない
+
 ### Mode B: 既存記事を確認する
 
 対象パス:
