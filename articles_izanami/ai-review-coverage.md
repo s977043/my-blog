@@ -4,7 +4,7 @@ summary: "AIコードレビューで指摘がなかったとき、レビュー�
 tags:
   - AI
   - コードレビュー
-  - OSS
+  - オープンソース
 status: published
 source_articles:
   - articles/river-review-judgment-placement.md
