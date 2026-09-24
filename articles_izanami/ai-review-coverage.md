@@ -4,8 +4,8 @@ summary: "AIコードレビューで指摘がなかったとき、レビュー�
 tags:
   - AI
   - コードレビュー
-  - OSS
-status: draft
+  - オープンソース
+status: published
 source_articles:
   - articles/river-review-judgment-placement.md
   - articles/river-reviewer-v033-improvement-loop.md
@@ -15,8 +15,8 @@ project_sources:
   - https://github.com/s977043/river-review/blob/main/src/lib/gate-decision.mjs
   - https://github.com/s977043/river-review/blob/main/pages/reference/stable-interfaces.md
   - https://github.com/s977043/river-review/blob/main/pages/reference/loop-convergence-contract.md
-izanami_url:
-published_at:
+izanami_url: https://izanami.dev/post/6cb177a5-cb4b-42e0-bded-5b74e0bb6e6b
+published_at: 2026-09-24
 ---
 
 AIコードレビューで指摘が0件だったとき、安心してよいでしょうか。
