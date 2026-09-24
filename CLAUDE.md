@@ -102,7 +102,7 @@ git config core.hooksPath scripts/hooks
 3. **`gh auth status` で active account を確認** — `git push` / `gh pr create` / `gh pr merge` の **直前すべて** で s977043 になっている必要あり（kominem-unilabo のままだと push は credential helper 設定次第で通るが PR 操作は `must be a collaborator` で失敗 → 切替 → 再実行の手戻り）。**特に `gh auth setup-git` を実行した直後は active account が切り替わる副作用がある** ため、その後の PR 操作前に必ず再確認。**手戻りを避けるには `npm run gh:ensure`（= `check-gh-account.sh --fix`）を push/PR 操作の直前に走らせると、想定外アカウント時に自動で s977043 へ切替してくれる**（2026-06-11: setup-git 後の反転が push/PR/merge ごとに 403 を起こした実績）
    - **PreToolUse hook で自動ガード済み**: `.claude/settings.json` の PreToolUse hook（`scripts/hooks/claude-gh-account-guard.sh`）が `git push` / `gh pr create|merge|edit` / `gh api ...merge` の直前に `check-gh-account.sh --fix` を自動実行し、切替不能時のみブロックする（fail-open 設計）
    - ⚠️ **my-blog では `gh-account-guard` / `growth-core:gh-account-guard` スキルを使わない**。これらは Growth-Teams-Agent 用で期待アカウントが **kominem-unilabo**（このリポジトリの正である s977043 と逆）。起動すると再発してきた「kominem-unilabo への反転」を逆に強制しうる。アカウント検証は `npm run gh:ensure` を使う
-   - **逆向きにも注意**: 上記 PreToolUse hook は操作先を見ずに s977043 へ戻す。my-blog のセッションから別アカウントの repo（例: unilabo）へ push / PR するときは、`gh auth switch` を **push と同じ Bash コマンド内**で行い、最後に s977043 へ戻す（AGENT_LEARNINGS 2026-09-24）
+   - **逆向きにも注意**: 上記 PreToolUse hook は操作先の owner（`gh -R` / `git -C` / `cd` 先の origin）が s977043 以外なら補正しない（#689）。owner を判定できないコマンドでは s977043 へ戻すので、別アカウントの repo（例: unilabo）へ push / PR するときは `gh auth switch` を **push と同じ Bash コマンド内**で行い、最後に s977043 へ戻すのが確実（AGENT_LEARNINGS 2026-09-24）
 4. 対象ファイルがどのプラットフォームか確認（`@AGENTS.md` の配置規約表）
 5. `articles_note/published/` を触る場合は ⚠️ 規約を確認（`@AGENTS.md` 禁止事項）
 6. note 記事に画像を追加する場合: SVG → PNG 変換 → `articles_note/assets/` 配置 → **`file` でサイズ・寸法を確認**（プレースホルダ画像 <10KB を弾く） → main に先にマージ → WXR 生成の順序を守る。**WXR 生成は必ず `--base-url https://raw.githubusercontent.com/s977043/my-blog/main/articles_note/assets` を付ける**（未指定で画像参照が残ると `md_to_wxr.py` が exit 1 で失敗、意図的にローカル参照を残すなら `--allow-local-images`）
@@ -222,6 +222,6 @@ git diff origin/main...origin/<branch> --stat         # 3点比較。現 main �
 セッションを終える前に以下を確認する。stash や未マージブランチが残ると、次回作業者（自分含む）が混乱する。
 
 1. `git stash list` — 退避物がある場合、内容と所有者（自分 or 並列セッション）を確認。自分のものなら処遇判断（drop / 退避ブランチ保存）
-2. `git branch -vv | grep -v '^\* main'` — local stale ブランチを削除する。このリポジトリは squash マージなので、マージ済みでも `git branch -d`・`--is-ancestor`・3点 diff は「未マージ」と判定する。**`gh pr list --state all --head <branch>` が MERGED なら、SHA を控えてから `git branch -D`**（AGENT_LEARNINGS 2026-09-24）
+2. `git branch -vv | grep -v '^\* main'` — local stale ブランチを削除する。このリポジトリは squash マージなので、マージ済みでも `git branch -d`・`--is-ancestor`・3点 diff は「未マージ」と判定する。**`npm run clean:merged-branches` で PR が MERGED のブランチを洗い出し、`-- --apply` で削除**（SHA を表示するので復元可。AGENT_LEARNINGS 2026-09-24）
 3. `gh pr list --state open` — open PR が想定通りか確認、放置していないか
 4. **Zenn 公開系作業をした場合**: `npm run check:zenn-pace` で過去 24h の publish 切替件数を確認、rate-limit hit 兆候があれば次セッションへ申し送り
