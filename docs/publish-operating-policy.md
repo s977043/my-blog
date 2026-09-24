@@ -70,7 +70,9 @@ agent が公開関連作業を進める際は、以下を満たすことを明�
 
 ## メトリクス再計測サイクル
 
-- **頻度**: 月次または publish-queue の主要締切消化後
+> **現在凍結中**: 定期（月次）の再計測は行わない。凍結の範囲と解除条件は [`content-channel-strategy.md`](./content-channel-strategy.md) の Rolling 運用の注記と [`archive/README.md`](./archive/README.md) を正とする。以下は凍結解除後、または単発で計測するときの手順。
+
+- **頻度**: 凍結解除後は月次または publish-queue の主要締切消化後
 - **記録先**: `docs/channel-metrics/YYYY-MM-DD.md` を新規作成（既存ファイルは上書きしない＝履歴保持）
 - **更新箇所**: `docs/content-channel-strategy.md` の「Data-driven channel weighting」セクションから最新スナップショットへ参照リンク差し替え
 - **判断観点**:
