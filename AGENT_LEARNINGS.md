@@ -96,6 +96,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-08-27 — ゲートは実行直前に最新の状態で測る（古い checkout の readiness は OK に化ける）
 
 - 2026-09-07 — PR 番号の飛びは並行セッションの作業衝突のサイン。`check:pr-conflict` で同一ファイルを触る open PR を検知する
+- 2026-09-24 — squash マージ済みブランチは `--is-ancestor` でも3点 diff でも未マージに見える。PR の状態で判定する
 ### E. GitHub account / gh CLI / PR 運用
 **現行正本**: `CLAUDE.md` §作業開始時のチェックリスト / `scripts/hooks/pre-push`
 - 2026-05-21 — gh active account の自動切替を毎回 pre-push で検知する
@@ -109,6 +110,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-08-10 — Dependabot alerts API の 403 はスコープ不足とは限らない。まず `gh auth refresh`
 - 2026-08-12 — squash 自動削除設定下では `push origin --delete` が空振り。掃除は `git fetch --prune`
 - 2026-08-27 — Dependabot alerts API の 403 はスコープが揃っていても発生。まず `gh auth refresh`
+- 2026-09-24 — my-blog の gh hook は操作先を見ずに s977043 へ戻す。別アカウントの repo への push はコマンド内で切り替える
 
 ### F. review / 記事品質 / convention
 **現行正本**: `.claude/agents/*` / `AGENTS.md` §表現規約
@@ -1666,6 +1668,32 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 - 既存ガイドと並べる場合、根拠の強さが揃っているかを見る。`zenn-structure-best-practices.md` は公開実績を根拠に持つが、新規ガイドは外部事例の分析にすぎない。同じ棚に置くなら、その差を本文に書く
 
 **根拠**: PR #661（初回 commit `aa45a0f` → セルフレビュー反映 `7165d9d`。出典明示・未運用の明記・参考節の体裁統一の 3 点）
+
+---
+
+### 2026-09-24 — my-blog の gh アカウント hook は操作先を見ずに s977043 へ戻す。別リポジトリへの push はコマンド内で切り替える [Gotcha][Tooling]
+
+**観察**: my-blog で起動したセッションから、会社リポジトリ（`unilabo/site-management-system`）へ PR を出そうとした。直前のコマンドで `gh auth switch --user kominem-unilabo` しておいたのに、`git push` と `gh pr create` を含むコマンドが「Repository not found」「Could not resolve to a Repository」で失敗した。my-blog の PreToolUse hook（`.claude/settings.json` → `scripts/hooks/claude-gh-account-guard.sh` → `check-gh-account.sh --fix`）が、**push 系コマンドの直前に、操作先に関係なく active を s977043 へ戻していた**。これまでの記録（kominem-unilabo へ反転して my-blog の操作が 403 になる）とは逆向きの事象。
+
+**対策/学び**:
+
+- my-blog のセッションから別アカウントのリポジトリを操作するときは、**アカウントの切り替えを push / PR と同じ Bash コマンドの中で行い、最後に s977043 へ戻す**。hook はコマンド実行前に1回だけ走るので、コマンド内の切り替えは上書きされない
+- 失敗時は何も push されていないことを確認してから再実行する（今回は push 前に失敗した）
+- 根本対策の候補: global hook の `~/.claude/hooks/gh-account-guard.sh` は操作先 repo の origin から期待アカウントを解決する。my-blog の hook を「操作先が my-blog のときだけ」に絞るか、global 側へ一本化する（Claude Code 設定監査の F40。未対応）
+
+**根拠**: unilabo/site-management-system PR #1549 の作成時（2026-09-24）。1回目は失敗、コマンド内切り替えで成功
+
+### 2026-09-24 — squash マージ済みのブランチは `--is-ancestor` でも3点 diff でも「未マージ」に見える。判定は PR の状態で行う [Gotcha][Workflow]
+
+**観察**: ローカル環境の整理で stale ブランチを消そうとし、まず `git merge-base --is-ancestor <branch> origin/main` で判定したら、PR がマージ済みの5本が「未マージ」と出た。次に `git diff origin/main...<branch>` を見ると差分が残っていたため、「main に無い作業がある」と一度誤って報告した。どちらも、**squash マージでは元のコミットが main の祖先にならず、merge-base も古いまま**なので、マージ済みでも差分が出る。`git branch -d` も同じ理由で拒否する。
+
+**対策/学び**:
+
+- このリポジトリは squash マージのみなので、ローカルブランチがマージ済みかは **`gh pr list --state all --head <branch>` で PR の状態を見る**。MERGED なら `git branch -D` で消してよい
+- PR が無いブランチは、対象ファイルが main に存在するかと、ブランチ固有のコミット内容で判断する。祖先関係や3点 diff の結果だけで「未マージ」と結論しない
+- 消す前に `git rev-parse <branch>` で SHA を控えておけば、`git branch <name> <sha>` で戻せる
+
+**根拠**: 2026-09-23 のローカル整理（9 ブランチ削除。うち 5 本は PR #625 / #638 / #639 / #653 / #654 のマージ済み squash ブランチ）
 
 ---
 
