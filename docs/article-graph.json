@@ -265,6 +265,30 @@
         "insight"
       ],
       "legacy": false
+    },
+    {
+      "id": "seed-20260924-note-hub-plangate-river-skills",
+      "path": "article_seeds/note-hub-plangate-river-skills/2026-09-24-note-hub-plangate-river-skills.md",
+      "title": "計画を止める・判断を残す・手順を渡す：PlanGate / River Review / Agent Skills の入口",
+      "date": "2026-09-24",
+      "status": "seed",
+      "topics": [
+        "plangate",
+        "river-review",
+        "agent-skills",
+        "ai-driven-development",
+        "hub-article"
+      ],
+      "source": "external",
+      "source_url": "https://github.com/s977043/PlanGate",
+      "source_ref": "https://github.com/s977043/river-review / https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview",
+      "evidence_status": "verified",
+      "promoted_to": [],
+      "article_type_candidates": [
+        "insight",
+        "analysis"
+      ],
+      "legacy": false
     }
   ],
   "edges": [
