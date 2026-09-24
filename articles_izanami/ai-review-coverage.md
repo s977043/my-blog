@@ -52,15 +52,23 @@ River Reviewでは、レビュー実行単位ごとの状態を構造化して�
 
 ## どこまで自動で止められるか
 
-Review Coverageは実験的な機能です。既定では観測用で、通常のレビュー結果の判定を自動的に変えません。カバレッジGateを有効にするには、`RIVER_GATE_COVERAGE=1`、`river run --gate`、`--reviewers` の3つが必要です。たとえば、次のように実行します。
+Review Coverageは実験的な機能です。既定ではGateと判定（`decision`）を変えません。ただし、実行結果を比較する `river runs diff` の収束シグナルは既定でもカバレッジを参照し、LLM呼び出しに失敗した実行は「収束」と判定されなくなります。
 
-```sh
-RIVER_GATE_COVERAGE=1 river run . --gate --reviewers auto
+カバレッジGateを有効にするには、`RIVER_GATE_COVERAGE=1` と `--gate` を指定します。利用者向けの入口であるGitHub Actionでは、`gate: true` を指定し、stepの `env` に `RIVER_GATE_COVERAGE=1` を設定します。
+
+```yaml
+- uses: s977043/river-review/runners/github-action@v1.124.1
+  with:
+    gate: true
+  env:
+    RIVER_GATE_COVERAGE: "1"
 ```
+
+複数レビュアーのカバレッジが必要な場合だけ、`reviewers` 入力を追加します。単一レビュアーでも、LLM呼び出しを実際に試行した実行ではカバレッジが記録されます。
 
 有効な場合、`partial` または `not_executed` は独立したNO-GO条件として扱われます。
 
-この適用範囲には注意が必要です。現行の公開インターフェース文書では、カバレッジGateが有効なのは `river run --gate` 経路です。`review exec` では、実行エンジンが `reviewCoverage` を返さない限り、このGateは動作しません。また、現行のGitHub Action定義には `reviewers` 入力がなく、このGateを有効化する3条件をそのまま指定できません。対応範囲は利用する実行経路の公開インターフェースで確認してください。
+この適用範囲には注意が必要です。現行の公開インターフェース文書では、カバレッジGateが効くのは `--gate` を付けた `river run` 経路（Actionの `gate: true` を含む）です。`review exec` では、実行エンジンが `reviewCoverage` を返さない限り、このGateは動作しません。また、dry-runやAPIキー未設定のように意図的に実行しなかった場合はカバレッジ自体が記録されません。対応範囲は利用する実行経路の公開インターフェースで確認してください。
 
 そのため、導入時には「カバレッジが取れるか」「どの実行経路が対応しているか」「Gateを有効にしたか」を分けて確認します。**実験的な契約を、すべての実行経路で既に保証された機能として扱わない**ことが重要です。
 
