@@ -12,7 +12,7 @@ izanami 向けに新規執筆する記事の唯一のローカル原稿を管理
 - Front Matter に `title`、`summary`、`tags`、`status`（`idea` / `draft` / `published`）、`source_articles`、`project_sources`、`izanami_url`、`published_at` を記録する。URLや公開日が未確定なら空欄にする。
 - Front Matter はリポジトリ内の管理情報であり、izanami の本文には含めない。投稿時は記事本文だけを使う。
 - ファイルは原稿を書き始める時点（`draft`）で作る。`idea` の題材は下の候補表だけで管理する。
-- izanami への投稿は著者確認後に著者が行う。自動投稿は行わない。投稿後に `izanami_url`・`published_at` を記入し、同じ変更で `status` を `published` にする。
+- izanami への投稿は著者確認後に著者が行う。自動投稿は行わない。ブラウザで agent が入力を代行する場合も、保存・公開の操作は著者が行う（手順と注意点は [`docs/publish-operating-policy.md` のブラウザ経由の投稿・更新](../docs/publish-operating-policy.md#ブラウザ経由の投稿更新playwright)）。投稿後に `izanami_url`・`published_at` を記入し、同じ変更で `status` を `published` にする。
 
 ## 初期企画候補
 
