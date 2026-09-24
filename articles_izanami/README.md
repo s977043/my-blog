@@ -15,7 +15,7 @@ izanami 向けに新規執筆する記事の唯一のローカル原稿を管理
 
 ## 初期企画候補
 
-既存記事を起点に候補を整理した段階。記事化前に、izanami 向けの読者課題と公開リポジトリ上の根拠を個別に確認する。
+既存記事または公開リポジトリを起点に候補を整理した段階。記事化前に、izanami 向けの読者課題と公開リポジトリ上の根拠を個別に確認する。
 
 | プロダクト | 既存記事の候補 | 一次情報の候補 | izanami 向けの切り口候補 | 状態 | 次の確認 |
 | --- | --- | --- | --- | --- | --- |
@@ -25,7 +25,7 @@ izanami 向けに新規執筆する記事の唯一のローカル原稿を管理
 | クラゲ水槽（interactive-ocean） | [`articles_note/published/n27a5594f65a4.md`](../articles_note/published/n27a5594f65a4.md) | [`3396-cc/interactive-ocean`](https://github.com/3396-cc/interactive-ocean) の公開README・実装、[公開アプリ](https://ocean.the3396.com/jellyfish) | 眺める体験をブラウザ上で作るとき、見た目と動きをどう実装へ落としたか | `idea` | 公開リポジトリの根拠 |
 | 英単語帳アプリ（PocketEitan） | なし（元記事のない新規企画） | [`s977043/PocketEitan`](https://github.com/s977043/PocketEitan) の公開README・実装 | 学習上の具体的な課題と、それに対するアプリの設計・実装 | `idea` | 公開リポジトリの根拠 |
 
-状態列は Front Matter の `status` と同じ語彙を使う。`source_articles` は題材を選ぶ根拠で、元記事のない新規企画では空にする。`project_sources` は実装や仕様を確認した根拠を記録する。候補記事や角度は、内容の重複・情報鮮度・掲載可否を確認してから原稿へ昇格する。
+状態列は Front Matter の `status` と同じ語彙を使う。`source_articles` は題材を選ぶ根拠で、元記事のない新規企画では `source_articles: []` とする。`project_sources` は実装や仕様を確認した根拠を記録する。候補記事や角度は、内容の重複・情報鮮度・掲載可否を確認してから原稿へ昇格する。
 
 ## 初回試行案
 
