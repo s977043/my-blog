@@ -6,8 +6,8 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 
 ## Summary
 
-- Seeds: 12
-- Explicit provenance contract: 4
+- Seeds: 13
+- Explicit provenance contract: 5
 - Legacy seeds: 8
 - Promotion edges: 3
 
@@ -27,6 +27,7 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 | `seed-20260923-agent-role-boundaries` | 2026-09-23 | seed | external | verified | analysis, insight | AIエージェントを増やす前に、役割と委譲境界を分ける | `article_seeds/media-operating-system/2026-09-23-agent-role-boundaries.md` | 0 |
 | `seed-20260923-content-closed-loop` | 2026-09-23 | seed | external | verified | analysis, insight, experience | 記事作成を自動化するより、Signal→Seed→公開後学習を閉じたい | `article_seeds/media-operating-system/2026-09-23-content-closed-loop.md` | 1 |
 | `seed-20260923-publish-contract` | 2026-09-23 | seed | external | verified | analysis, tutorial, insight | 自動投稿より先に、公開前の契約とfail-closedを固定する | `article_seeds/media-operating-system/2026-09-23-publish-contract.md` | 0 |
+| `seed-20260924-note-hub-plangate-river-skills` | 2026-09-24 | seed | external | verified | insight, analysis | 計画を止める・判断を残す・手順を渡す：PlanGate / River Review / Agent Skills の入口 | `article_seeds/note-hub-plangate-river-skills/2026-09-24-note-hub-plangate-river-skills.md` | 0 |
 
 ## Promotions
 
