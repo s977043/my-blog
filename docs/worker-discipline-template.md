@@ -43,6 +43,7 @@ npm ci   # 必須
 | `Qiita/public/.remote/` | qiita-cli 専用キャッシュ。**commit 禁止**（pre-commit hook がブロック） |
 | `AGENTS.md` | `<claude-mem-context>` ブロックの混入を pre-commit hook がブロック。`git diff` で確認して `git checkout --` で破棄する |
 | `AGENT_LEARNINGS.md` | **追記型**。既存エントリを書き換えず末尾に足す（`AGENT_LEARNINGS.md` §このファイルの位置づけ）。§📇 テーマ別インデックスへの追記は `npm run check:learnings-index` が検証する |
+| `docs/article-graph.{json,md}` | 生成物。`article_seeds/` や記事を追加・変更したら `npm run build:article-graph` で再生成して同じ PR に含める。検証の `check:article-graph` は `npm run check` に入っておらず CI でだけ走るため、ローカルの check が通っても CI で落ちる（2026-09-24 #693） |
 | `articles_note/export/` | git 管理下に入れない |
 | `.claude/` 配下の既存規約 | ユーザー確認なしに変更しない |
 
