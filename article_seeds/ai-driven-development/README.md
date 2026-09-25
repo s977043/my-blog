@@ -1,0 +1,70 @@
+# AI駆動開発 Article Seeds
+
+AI駆動開発の実践で得た小さな原体験・違和感・仮説を、長文記事にする前の「記事の種」として保存する場所です。
+
+## 目的
+
+- 完成した主張より先に、一次情報である実体験を残す
+- 小さな気づきを1テーマ1ファイルで蓄積する
+- 後から複数のseedを横断し、共通パターンや長文記事のテーマを見つける
+- X記事、note、Zenn、登壇資料へ育てる前の素材にする
+
+## 基本フォーマット
+
+各seedは次の流れで記録します。
+
+1. 最近起きたこと
+2. そのとき考えていたこと
+3. 違和感
+4. 今の仮説
+5. 既存の知識との接続
+6. 次に試したいこと
+7. 追記ログ
+
+## Status
+
+| status | 意味 |
+| --- | --- |
+| `seed` | 気づきを記録した初期状態 |
+| `growing` | 実験・具体例・数字などを追記中 |
+| `candidate` | 長文記事へ昇格できそうな状態 |
+| `draft` | note / Zenn / X記事などの下書き化済み |
+| `published` | 公開済み |
+
+## 運用ルール
+
+- 「これ、記事になるかも」と思ったら完成させず、まずseedとして残す
+- 1ファイルに複数テーマを混ぜない
+- 実体験と仮説を分けて書く
+- 一般論を断定する前に、まず自分の観測事実を書く
+- 数値・具体例・反証・仮説変更が出たら追記する
+- 長文記事へ昇格したら `promoted_to` にリンクを記録する
+
+## Index
+
+| Date | Title | Status | Topics |
+| --- | --- | --- | --- |
+| 2026-09-10 | [AIを使い切ろうとしたら、人間の判断待ちが積み上がった](./2026-09-10-flow-efficiency.md) | `published` | AI駆動開発 / Agile / Flow Efficiency / WIP |
+| 2026-09-10 | [「1人あたりPR数」をKPIから外した](./2026-09-10-retire-pr-count-kpi.md) | `seed` | AI駆動開発 / Metrics / DORA |
+| 2026-09-10 | [速さではなく「任せ方の変化」を測ることにした](./2026-09-10-north-star-intervention-depth.md) | `seed` | AI駆動開発 / Metrics / North Star / Harness Engineering |
+| 2026-09-10 | [5人チームでは「改善速度」を安定して測れなかった](./2026-09-10-small-team-cant-measure-speed.md) | `seed` | AI駆動開発 / Metrics / Small Team / Lean |
+| 2026-09-10 | [汎用の改善と、チーム固有の知識は置き場所が違う](./2026-09-10-generic-vs-team-knowledge.md) | `seed` | AI駆動開発 / PlanGate / Knowledge Management / DDD |
+| 2026-09-10 | [「mainにマージした瞬間に全員へ反映」が怖くなった](./2026-09-10-no-publication-gate.md) | `seed` | AI駆動開発 / GTA / Continuous Delivery |
+| 2026-09-10 | [承認ゲートは開発を遅くするのか、速くするのか](./2026-09-10-approval-gate-speed.md) | `seed` | AI駆動開発 / PlanGate / Flow Efficiency / Lean |
+| 2026-09-03 | [AI駆動開発で重要になるのは「作る力」ではなく「作らない判断力」だと思う](./2026-09-03-dont-build-judgment.md) | `draft` | AI駆動開発 / Product Discovery / Decision Making / Time to Learning |
+
+## AIへの依頼例
+
+### 最近のseedから記事候補を探す
+
+```text
+article_seeds/ai-driven-development を確認して、最近追加された原体験から記事候補を抽出して。
+事実・仮説・既存知識との接続を分けて整理して。
+```
+
+### 複数seedを横断してパターンを探す
+
+```text
+article_seeds/ai-driven-development を横断して、3つ以上の実体験で共通しているパターンを探して。
+無理に一般化せず、どのseedのどの事実から導いたかを示して。
+```

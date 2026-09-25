@@ -5,18 +5,83 @@
 人間の開発者にも同じ情報が有用なので、`README.md` と重複しない範囲で「判断の根拠となるルール」に絞って記述する。
 
 - **規約（本ファイル）** — 何が正しいか
-- **コンテンツ方針**: `docs/content-channel-strategy.md` — note / Zenn / Qiita / Growth Lab / GitHub を横断した記事運用方針
+- **コンテンツ方針**: `docs/content-channel-strategy.md` — note / Zenn / Qiita / Growth Lab / izanami / GitHub を横断した記事運用方針
 - **ツール使い方**: `CLAUDE.md` — Claude Code固有のSkill/Agent/Commandインデックスと操作
 - **経験則**: `AGENT_LEARNINGS.md` — 過去の失敗・成功パターン（追記型ログ）
 
 ## リポジトリ概要
 
-Zenn / Qiita / note の3プラットフォームで公開する記事を単一リポジトリで並行管理するモノレポ。
+Zenn / Qiita / note / izanami の4プラットフォームで公開する記事を単一リポジトリで並行管理するモノレポ。
 
 詳細は `README.md` と各ディレクトリの `README.md`:
 - `articles/README.md` — Zenn
 - `Qiita/README.md` — Qiita
 - `articles_note/README.md` — note（WXRインポート/エクスポート運用を含む）
+- `articles_izanami/README.md` — izanami（新規原稿と企画候補）
+
+記事作成・更新・レビュー・導線設計を行う場合は、媒体別の配置規約だけでなく `docs/content-channel-strategy.md` も参照し、媒体横断のポジショニングと役割分担に沿って判断する。
+
+## コンテンツ方針
+
+記事作成・更新・レビューでは、以下を共通方針とする。詳細は `docs/content-channel-strategy.md` を正とする。
+
+- 共通ポジショニング: `AIコーディングをチーム開発に乗せる運用設計`
+- note: 背景・思想・マネジメント視点
+- Zenn: 技術深掘り・実装詳細
+- Qiita: 検索入口・短い実務Tips
+- Growth Lab: 正本・検証ログ・長期SEO
+- GitHub: OSSのソースオブトゥルース
+
+同じ本文を複数媒体へ転載せず、同じテーマを読者意図と媒体役割に合わせて書き分ける。
+
+### 題材と媒体の対応（正本）
+
+**ネタ探しは全リポジトリを対象にしてよい。分かれるのは掲載可否だけ。**
+
+| 題材の出どころ | ネタ探し | Zenn / Qiita | note 個人 | note 会社公式 | izanami |
+| --- | --- | --- | --- | --- | --- |
+| 個人リポジトリ | ✅ | ✅ | ✅ | — | ✅ |
+| 会社リポジトリ | ✅ | ❌ | ❌ | ✅ | 原則❌（明示承認した個別プロジェクトのみ例外） |
+| my-blog（本リポジトリ） | ✅ | ❌ | ❌ | ❌ | ❌ |
+
+**個人 / 会社の判定規則**: **リポジトリの所有者が `s977043` なら個人リポジトリ**（`growth-lab` / `PlanGate` / `river-review` / `ai-second-brain` など）。それ以外の所有者は会社リポジトリとして扱う（`unilabo` 所有の `site-management-system` と `imitsu-*` 系など）。GitHub 外で共有されるチーム資産（`Growth-Teams-Agent` など）も会社リポジトリ側に含める。
+
+```bash
+gh repo view <owner>/<repo> --json owner --jq .owner.login   # s977043 なら個人
+```
+
+**一覧の不在を根拠にしない**。`gh repo list s977043` は既定で 30 件までしか返さず、認証状態によって private が欠けることもある（一覧で確認するなら `--limit 200` のように上限を明示する）。判断に迷ったら会社リポジトリ側に倒す。
+
+**izanami に限る個別例外**: ユーザーの明示指示により、`3396-cc/interactive-ocean`（クラゲ水槽）を izanami の記事題材として扱ってよい。根拠は公開リポジトリ・公開ドキュメント・公開アプリで確認できる情報に限定し、非公開の会社情報・内部指標・非公開実装詳細は使わない。この例外は当該プロジェクトと izanami に限り、他媒体や他の会社リポジトリへ拡張しない。
+
+会社リポジトリの題材を**調べること**は制限しない。現象の裏取りや仮説確認には使ってよい。
+
+ただし**掲載可否は匿名化では変わらない**。会社リポジトリで観測した事象は、数値・PR 番号・固有名を伏せても、事例として個人記事（Zenn / Qiita / note 個人 / izanami）に書かない。会社の内部事情を出所とする記述そのものが対象になる。できるのは「その現象が実在するという確信を持ったうえで、**個人リポジトリの一次情報だけで主張を立て直す**」ところまで。上記の izanami 個別例外はユーザーが明示したプロジェクトと公開情報に限る。
+
+**名義と企画の入口**
+
+| 媒体 | 名義 | 企画の入口 |
+| --- | --- | --- |
+| Zenn | **個人のみ** | エージェント側から提案してよい |
+| Qiita | **個人のみ** | エージェント側から提案してよい |
+| note | 個人 / 会社公式（PRONI） | 個人は提案可。**会社公式は企画の決定をユーザーが行う**。ネタ候補の収集と月次の時期リマインドはエージェント側からしてよい（PRONI テックブログは月1本が目標） |
+| izanami | 個人（明示例外を除く） | エージェント側から個人OSS / アプリの記事案を提案してよい |
+
+会社公式（PRONI）の記事は `PRONI-` 接頭辞のファイル名にし、社内のテックブログ投稿レギュレーションを通す（§記事の状態（note固有）参照）。
+
+### 題材の出どころ（記事作成まわりは書かない）
+
+**このリポジトリ（my-blog）発の題材は記事にしない。** my-blog はブログ運用基盤そのものなので、ここの `scripts/`・ワークフロー・運用ログを主題にすると「記事を作るための仕組みの記事」になる。記事の一次情報は**他リポジトリから取る**（どこから取れるかは §題材と媒体の対応 の表が正本）。会話でこのリポジトリの経験則を主張の根拠にするのも避ける。
+
+書かない例:
+
+- note の WXR インポート / エクスポート、`md_to_wxr.py`・`verify_wxr.py`
+- Zenn の rate-limit・`release/zenn` 運用・`sync-release-zenn.sh`
+- 記事向け lint（`check-article-language-density.js`・`check-article-humanizer.js`・`check-publish-readiness.js`）
+- 記事レビュー / 最終化ワークフロー（`note-finalize`・`note-thesis-review-loop`）とその運用ログ
+- 記事テーマの自動起票（`suggest-next-theme.js`）
+
+**影響**: `npm run suggest:theme` は signal 源が my-blog の `scripts/` と `AGENT_LEARNINGS.md` なので、この方針下では違反候補しか出さない。**候補の自動起票は使わない**（テーマ発掘は他リポジトリを対象に `theme-discovery` スキルで行う）。
 
 記事作成・更新・レビュー・導線設計を行う場合は、媒体別の配置規約だけでなく `docs/content-channel-strategy.md` も参照し、媒体横断のポジショニングと役割分担に沿って判断する。
 
@@ -86,6 +151,7 @@ gh repo view <owner>/<repo> --json owner --jq .owner.login   # s977043 なら個
 | Zenn | `articles/<slug>.md` | `images/<slug>/*.png` | `reviews/zenn/<slug>.md` |
 | Qiita | `Qiita/public/<slug>.md` | 記事内マークダウン | `reviews/qiita/<slug>.md` |
 | note | `articles_note/<state>/<slug>.md` | `articles_note/assets/*.png` | `reviews/note/<state>/<slug>.md` |
+| izanami | `articles_izanami/<slug>.md` | 記事内マークダウン | 固有のレビュー成果物は現時点で設けない |
 
 `<state>` = `new` / `drafts` / `published`（note固有）
 
@@ -106,7 +172,7 @@ gh repo view <owner>/<repo> --json owner --jq .owner.login   # s977043 なら個
 `articles_note/new/` には個人区分と会社公式区分の原稿が同居する。**会社公式（PRONI）の記事はファイル名を `PRONI-` で始める**（例: `PRONI-ai-software-engineering-principles-note.md`）。区分は本文冒頭の `> 区分:` 行にも書くが、それだけだとファイル一覧で判別できず、個人向けのつもりで編集する事故につながる。
 
 - 小文字 `proni-` は一覧上で埋もれるため使わない
-- `reviews/note/<state>/<slug>.md` は記事の slug に対応させる規約なので、記事をリネームしたらレビュー成果物も同時にリネームする
+- `reviews/note/<state>/<slug>.md` は記事の slug に対応させる規約なので、記事をリネームしたら**レビュー成果物のファイル名と、その中身が参照している対象パスの両方**を更新する。ファイル名だけ直して中身を旧パスのまま残す漏れが実際に起きている（#641 → #642）。リネーム後に `grep -rln "<旧パス>" --include="*.md" .` で残存を確認する（`AGENT_LEARNINGS.md` と計測ログの旧パスは当時の事実の記録なので変更しない）
 - 大文字を含む slug は note ツールチェーンで安全（`md_to_wxr.py` の `derive_default_outname` は stem をそのまま使い小文字化しない / `clean-note-build.js` の `FILE_RE` は大文字にマッチする / 予約名 `new`・`drafts`・`published`・`bundle`・`batch` と衝突しない）
 - 会社公式記事は公開前に**社内のテックブログ投稿レギュレーション**（エンジニアレビュー2名 → note執筆ガイドライン適用 → 広報の事前確認依頼ワークフロー → デザイン室テンプレートのカバー画像）を通す。`/publish-zenn` `/publish-qiita` のような自動化パスは使えない
 
@@ -143,9 +209,9 @@ gh repo view <owner>/<repo> --json owner --jq .owner.login   # s977043 なら個
 
 **なぜ次節と扱いを分けるのか**: 次節の制約は「他媒体への誘導が読者体験を損なう」ことを理由に定めたもので、同一媒体内の回遊には当てはまらない。同一プラットフォーム内の自記事参照は、読者にとって同じ場所での続きの提示になる。
 
-### 記事内クロスプラットフォーム参照（note ↔ Zenn ↔ Qiita）
+### 記事内クロスプラットフォーム参照（note ↔ Zenn ↔ Qiita ↔ izanami）
 
-他プラットフォームの自分の投稿を参照する場合は、**本文中の主張の根拠/導入として持ち出さず、末尾の参考/関連リンク集に留める**。
+他プラットフォームの自分の投稿を参照する場合は、**本文中の主張の根拠/導入として持ち出さず、末尾の参考/関連リンク集に留める**。izanami 記事から Zenn / Qiita / note の記事へリンクする場合も同じ。
 
 - ✅ OK: `## 参考` / `## 関連記事` / 末尾リンク集などの、記事末尾のリンクセクション配下
 - ❌ NG: 本文中の「姉妹記事」「本編」「設計思想ベース」等の言及、`:::message` や導入段落内のリンク
@@ -161,7 +227,7 @@ Zenn 記事の場合、`note.com/mine_unilabo` へのリンクは `npm run check
 - ダッシュ（`—` `――` `──` `―`）は使用しない → 全角括弧 `（）` や句点で置換
 - 三点リーダーは `……`（2つ並べる）
 - カッコは全角 `（）「」『』`
-- 敬体／常体の混在は章単位のみ許容
+- 敬体／常体の混在は章単位のみ許容（未公開記事は `npm run check:article-sentence-style` が章ごとの常体率で検出する。全体が敬体なのに強調したい文だけ言い切る、という混ざり方が最も指摘されやすい）
 - note インポート用の画像は **公開HTTPS URL必須**。`../assets/...` のままでは取り込まれない（本文には残るが note 上で非表示）
 - **SVG は note インポート非対応**。必ず PNG に変換してから `articles_note/assets/` に配置する（変換は Chrome headless を使用。macOS では cairosvg は日本語フォント非対応）
 - note 用に新規画像を追加した場合、**先に GitHub `main` へ公開**してから WXR を生成する
@@ -215,7 +281,7 @@ main                      ← 通常運用（記事執筆、レビュー反映�
 
 ### 公開ルール
 
-> **rate-limit / 公開ペースの数値は `docs/publish-operating-policy.md` §「Rate-limit 遵守」が正本**。ここでは運用フローのみ示す。実効 ~24h/1本（`npm run check:zenn-pace` で 1件 WARN / 2件 FAIL）。
+> **rate-limit / 公開ペースの数値は `docs/publish-operating-policy.md` §「Rate-limit 遵守」が正本**。ここでは運用フローのみ示す。閾値の判定は `npm run check:zenn-pace` の出力を見る（**数値をこのファイルへ書き写さない**。写した時点で正本と二重管理になり、正本の更新が silent に陳腐化する）。
 
 - **`release/zenn` への merge は 24 時間あけて** 実施（連続バッチを避ける）。公開ペースは `npm run check:zenn-pace` で事前確認
 - **既存公開記事の update は単独 PR で `release/zenn` に流す**（新規 publish と分離。update が rate-limit に巻き込まれて公開済記事が古いままになる事故を防ぐ）
@@ -263,7 +329,7 @@ Co-Authored-By: <Model name and byline> <noreply@anthropic.com>
 
 ## 禁止事項
 
-- **自動マージ禁止**。著者レビューを必ず通す
+- **自動マージ禁止**。エージェントの判断でマージしない。ユーザーが当該 PR を指してセッション内で明示的にマージを指示した場合は、それが著者承認にあたる（過去の「進めて」を後続 PR の承認として持ち越さない）
 - `git push --force` to `main` は禁止
 - `published: true` / `articles_note/published/` 記事の勝手な変更禁止（⚠️ バナー付きPRで著者承認を得る）
 - `articles_note/export/` を git 管理下に入れない
