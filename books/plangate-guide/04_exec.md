@@ -2,7 +2,7 @@
 title: "実装フェーズを制御する（Exec）— 計画を守らせる強制力"
 ---
 
-> 検証バージョン: **PlanGate v8.10.0**（2026-05）。Hook の最新仕様は[公式の hook-enforcement ドキュメント](https://github.com/s977043/PlanGate/blob/main/docs/ai/hook-enforcement.md)を参照。
+> 検証バージョン: **PlanGate v8.10.0**（2026-05）で検証、**v8.22.0 時点の変更を反映**（2026-09。Hook の実装・配線状況と発火タイミング）。Hook の最新仕様は[公式の hook-enforcement ドキュメント](https://github.com/s977043/PlanGate/blob/main/docs/ai/hook-enforcement.md)を参照。
 
 前章で「精度の高い計画」を C-3 で承認するところまで来ました。本章はその続き ―― **承認した計画を、実装時に守らせる**仕組みです。
 
@@ -25,7 +25,15 @@ flowchart TB
 
 ## Hook 強制が「計画外」を機械的にブロックする
 
-PlanGate の Hook は、AI がツール（ファイル編集・コマンド実行）を使う**直前**に割り込み、計画からの逸脱を検知します。v8.10.0 時点で **12/12 の Hook** が実装されています（EH-1〜EH-9 + EHS-1〜EHS-3。EH-10 は RFC Draft で未実装）。
+PlanGate の Hook は、計画からの逸脱を機械的に検知します。v8.10.0 時点で **12/12 の Hook** が実装されていました（EH-1〜EH-9 + EHS-1〜EHS-3）。その後、保護ブランチ上の破壊的 git 操作を止める **EH-12**（配線は人間が適用してから有効）と、承認トークンの直書きを止める **EH-13** が追加されています。EH-10 / EH-11 は別用途で予約済みの番号です。
+
+ただし、すべての Hook が「AI がツールを使う直前」に割り込むわけではありません。v8.22.0 時点では、発火するタイミングが 3 つに分かれます。
+
+- **ツール使用の直前（Claude Code の PreToolUse）**: EH-1 / EH-2 / EH-3 / EH-6 / EH-9 / EH-13。AI 経由の編集・コマンド実行で常時発火します
+- **`bin/plangate verify` / `handoff --verify` の実行時のみ（CLI 層）**: EH-4 / EH-5 / EHS-1〜3。CLI を回さない運用では発火しません
+- **`bin/plangate doctor` での可視化のみ**: EH-7。実際にマージを止めるのは GitHub の branch protection 側の設定です
+
+実装済み 12 本のうち、Claude Code 側で発火経路まで配線されているのは EH-7 を除く **11/12** です。
 
 記号を全部暗記する必要はありません。大事なのは「**何を防ぐか**」です。主要な Hook を目的で並べると：
 
@@ -34,12 +42,14 @@ PlanGate の Hook は、AI がツール（ファイル編集・コマンド実�
 | 計画なしの実装 | EH-1 | `plan.md` がない状態で production code を編集 |
 | 承認なしの実装 | EH-2 | `c3.json` が APPROVED でないのに exec |
 | 承認後の計画すり替え | EH-3 | C-3 承認後に `plan.md` が改竄され `plan_hash` 不一致 |
-| 受入基準なしの検証 | EH-4 | `test-cases.md` がないのに V-1 を実行 |
-| 証跡なしの PR | EH-5 | 検証ログなしで PR 作成 |
+| 受入基準なしの検証 | EH-4 ※CLI | `test-cases.md` がないのに V-1 を実行 |
+| 証跡なしの PR | EH-5 ※CLI | 検証ログなしで PR 作成 |
 | スコープ外の編集 | EH-6 | PBI の `forbidden_files` に該当するファイルを編集 |
-| レビューなしのマージ | EH-7 | 2 段階レビュー（C-3/C-4）なしでマージ |
+| レビューなしのマージ | EH-7 ※doctor | 2 段階レビュー（C-3/C-4）なしでマージ |
 | 委譲先の勝手な commit | EH-9 ※ | no-commit 宣言の委譲文脈で git commit / push |
 
+> ※CLI は `bin/plangate verify` 実行時のみ発火、※doctor は `doctor` で配線状況を可視化するのみ（上記の 3 分類を参照）。
+>
 > ※ EH-9 は他の Hook と違い、**default でも block** されます（後述の3モード参照）。誤検知が起きにくく、起きると影響が大きい不変条件は最初から強制する、という設計です。
 
 これらはすべて、前章で書いた**計画の内容（スコープ・承認・受入基準）を根拠に**判定されます。計画が強制力の土台になっている、というのが本書の 2 本柱が連結する点です。
