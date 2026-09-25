@@ -1,5 +1,5 @@
 title: "AI にコードを書かせる前にやること — PlanGate 実践ガイド"
-summary: "AI にコードを任せる前に、計画で判断を終えておく。既存のソフトウェア開発の知識、アジャイル開発の定石、AI が正しく動くための知識を計画に組み込む方法を、PlanGate の公開サンプルと実際の Issue を通して解説する。"
+summary: "Claude Code や Codex に実装を任せる前に、計画で判断を終えておく。既存の開発知識・アジャイルの定石・AI 向けの知識を計画に組み込む方法を、PlanGate の公開サンプルと実際の Issue で解説。テックリードや EM が、そのまま使える計画の骨組みとレビューの観点を持ち帰れる。"
 topics: ["AI", "ClaudeCode", "生成AI", "開発手法", "TDD"]
 published: true
 price: 0
