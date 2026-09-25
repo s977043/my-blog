@@ -8,6 +8,7 @@
 //   node scripts/fetch-channel-metrics.mjs                # 全媒体・標準出力に JSON
 //   node scripts/fetch-channel-metrics.mjs --channel zenn # 単一媒体のみ
 //   node scripts/fetch-channel-metrics.mjs --pretty       # 人間可読 Markdown サマリ
+//   node scripts/fetch-channel-metrics.mjs --self-test    # Seed URL join の hermetic self-test
 //
 // 取得しない: GA4（管理画面側のため要手動取得）→ Markdown スナップショットで併記する想定。
 //
@@ -20,6 +21,11 @@
 //
 // 設計: `docs/publish-operating-policy.md` の「メトリクス再計測サイクル」で月次想定。
 // 個別ワンライナーで都度書き起こす運用を本スクリプトに置き換える。
+// Article lifecycle: docs/article-graph.json の promoted_to URL と公開記事URLを join し、seed_ids を付与する。
+
+import { readFileSync } from 'node:fs';
+
+const ARTICLE_GRAPH_URL = new URL('../docs/article-graph.json', import.meta.url);
 
 const ZENN_USERNAME = process.env.ZENN_USERNAME || 'minewo';
 const QIITA_USERNAME = process.env.QIITA_USERNAME || 's977043';
@@ -33,6 +39,57 @@ const value = (name) => {
 };
 const wantedChannel = value('--channel'); // 'zenn'|'qiita'|'note'|undefined(all)
 const pretty = flag('--pretty');
+
+function normalizePromotionUrl(raw) {
+  if (!raw || !/^https?:\/\//i.test(String(raw))) return null;
+  try {
+    const u = new URL(String(raw));
+    u.search = '';
+    u.hash = '';
+    if (u.pathname.length > 1) u.pathname = u.pathname.replace(/\/+$/, '');
+    return u.toString();
+  } catch {
+    return null;
+  }
+}
+
+function promotionIndexFromGraph(graph) {
+  const stableSeedIds = new Set(
+    (graph?.nodes || [])
+      .filter((node) => node?.id && node.legacy === false)
+      .map((node) => node.id),
+  );
+  const tmp = new Map();
+  for (const edge of graph?.edges || []) {
+    if (edge?.relation !== 'promoted_to') continue;
+    if (!stableSeedIds.has(edge.from)) continue;
+    const url = normalizePromotionUrl(edge.to);
+    if (!url) continue;
+    if (!tmp.has(url)) tmp.set(url, new Set());
+    tmp.get(url).add(edge.from);
+  }
+  return new Map([...tmp.entries()].map(([url, ids]) => [url, [...ids].sort()]));
+}
+
+function loadPromotionIndex() {
+  const graph = JSON.parse(readFileSync(ARTICLE_GRAPH_URL, 'utf8'));
+  return promotionIndexFromGraph(graph);
+}
+
+function attachSeedIds(items, getUrl, index) {
+  return items.map((item) => {
+    const url = normalizePromotionUrl(getUrl(item));
+    return { ...item, seed_ids: url ? (index.get(url) || []) : [] };
+  });
+}
+
+function linkSeedIds(zenn, qiita, note, index, zennUsername = ZENN_USERNAME) {
+  return {
+    zenn: attachSeedIds(zenn, (a) => `https://zenn.dev/${zennUsername}/articles/${a.slug}`, index),
+    qiita: attachSeedIds(qiita, (a) => a.url, index),
+    note: attachSeedIds(note, (a) => a.note_url, index),
+  };
+}
 
 async function fetchJson(url) {
   const r = await fetch(url, { headers: { 'user-agent': 'fetch-channel-metrics.mjs' } });
@@ -107,9 +164,9 @@ function summarize(zenn, qiita, note) {
   const noteLikes = note.reduce((s, a) => s + a.like_count, 0);
   const noteAnon = note.reduce((s, a) => s + a.anonymous_like_count, 0);
   return {
-    zenn: { articles: zenn.length, total_likes: zennLikes, avg_likes: round1(zennLikes / Math.max(1, zenn.length)) },
-    qiita: { articles: qiita.length, total_likes: qiitaLikes, total_stocks: qiitaStocks },
-    note: { articles: note.length, total_likes: noteLikes + noteAnon, breakdown: `${noteLikes}+${noteAnon}` },
+    zenn: { articles: zenn.length, linked_articles: zenn.filter((a) => a.seed_ids?.length).length, total_likes: zennLikes, avg_likes: round1(zennLikes / Math.max(1, zenn.length)) },
+    qiita: { articles: qiita.length, linked_articles: qiita.filter((a) => a.seed_ids?.length).length, total_likes: qiitaLikes, total_stocks: qiitaStocks },
+    note: { articles: note.length, linked_articles: note.filter((a) => a.seed_ids?.length).length, total_likes: noteLikes + noteAnon, breakdown: `${noteLikes}+${noteAnon}` },
   };
 }
 const round1 = (n) => Math.round(n * 10) / 10;
@@ -123,11 +180,11 @@ function renderMarkdown(payload) {
   const lines = [];
   lines.push(`# Channel metrics fetch — ${fetched_at.slice(0, 10)}`);
   lines.push('');
-  lines.push('| 媒体 | 記事数 | 反応合計 |');
-  lines.push('| --- | --- | --- |');
-  lines.push(`| Zenn | ${summary.zenn.articles} | likes ${summary.zenn.total_likes} (avg ${summary.zenn.avg_likes}) |`);
-  lines.push(`| Qiita | ${summary.qiita.articles} | LGTM ${summary.qiita.total_likes} / ストック ${summary.qiita.total_stocks} |`);
-  lines.push(`| note | ${summary.note.articles} | スキ ${summary.note.total_likes} (${summary.note.breakdown}) |`);
+  lines.push('| 媒体 | 記事数 | Seed連携 | 反応合計 |');
+  lines.push('| --- | --- | --- | --- |');
+  lines.push(`| Zenn | ${summary.zenn.articles} | ${summary.zenn.linked_articles} | likes ${summary.zenn.total_likes} (avg ${summary.zenn.avg_likes}) |`);
+  lines.push(`| Qiita | ${summary.qiita.articles} | ${summary.qiita.linked_articles} | LGTM ${summary.qiita.total_likes} / ストック ${summary.qiita.total_stocks} |`);
+  lines.push(`| note | ${summary.note.articles} | ${summary.note.linked_articles} | スキ ${summary.note.total_likes} (${summary.note.breakdown}) |`);
   lines.push('');
   lines.push('## Zenn TOP10 (likes)');
   for (const a of topN(zenn, 'liked_count')) {
@@ -148,6 +205,15 @@ function renderMarkdown(payload) {
     lines.push(`- ${a.total} (${a.like_count}+${a.anonymous_like_count}) | ${a.publish_at} | ${a.title}`);
   }
   lines.push('');
+  lines.push('## Article lifecycle links');
+  const linked = [
+    ...zenn.map((a) => ({ channel: 'zenn', title: a.title, seed_ids: a.seed_ids })),
+    ...qiita.map((a) => ({ channel: 'qiita', title: a.title, seed_ids: a.seed_ids })),
+    ...note.map((a) => ({ channel: 'note', title: a.title, seed_ids: a.seed_ids })),
+  ].filter((a) => a.seed_ids?.length);
+  if (linked.length === 0) lines.push('- 連携済み記事なし');
+  else for (const a of linked) lines.push(`- ${a.channel} | ${a.seed_ids.join(', ')} | ${a.title}`);
+  lines.push('');
   lines.push('## 次のステップ');
   lines.push('- GA4 から PV / UU / エンゲ秒を手動で取得し、`docs/channel-metrics/YYYY-MM-DD.md` を新規作成して併記する');
   lines.push('- `docs/content-channel-strategy.md` の Data-driven section から新スナップショットへ参照リンクを差し替える');
@@ -161,12 +227,14 @@ async function main() {
     want('qiita') ? fetchQiita() : [],
     want('note') ? fetchNote() : [],
   ]);
+  const promotionIndex = loadPromotionIndex();
+  const linked = linkSeedIds(zenn, qiita, note, promotionIndex);
   const payload = {
     fetched_at: new Date().toISOString(),
-    summary: summarize(zenn, qiita, note),
-    zenn,
-    qiita,
-    note,
+    summary: summarize(linked.zenn, linked.qiita, linked.note),
+    zenn: linked.zenn,
+    qiita: linked.qiita,
+    note: linked.note,
   };
   if (pretty) {
     process.stdout.write(renderMarkdown(payload));
@@ -177,7 +245,78 @@ async function main() {
   }
 }
 
-main().catch((e) => {
-  console.error('[fetch-channel-metrics] error:', e.message);
-  process.exit(1);
-});
+function selfTest() {
+  const tests = [];
+  const eq = (name, got, want) => tests.push({ name, ok: JSON.stringify(got) === JSON.stringify(want), got, want });
+
+  eq(
+    'URL query/hash/trailing slash を正規化',
+    normalizePromotionUrl('https://note.com/mine/n/abc/?sub_rt=share#x'),
+    'https://note.com/mine/n/abc',
+  );
+  eq('非URLは対象外', normalizePromotionUrl('articles/foo.md'), null);
+
+  const index = promotionIndexFromGraph({
+    nodes: [
+      { id: 'seed-a', legacy: false },
+      { id: 'seed-b', legacy: false },
+      { id: 'legacy:old', legacy: true },
+      { id: 'seed-local', legacy: false },
+    ],
+    edges: [
+      { from: 'seed-b', relation: 'promoted_to', to: 'https://note.com/mine/n/abc?x=1' },
+      { from: 'seed-a', relation: 'promoted_to', to: 'https://note.com/mine/n/abc' },
+      { from: 'legacy:old', relation: 'promoted_to', to: 'https://note.com/mine/n/legacy' },
+      { from: 'seed-local', relation: 'promoted_to', to: 'articles/foo.md' },
+    ],
+  });
+  eq('同一URLのseed IDsを一意・sort', index.get('https://note.com/mine/n/abc'), ['seed-a', 'seed-b']);
+  eq('legacy seed IDはMetrics連携対象外', index.has('https://note.com/mine/n/legacy'), false);
+
+  const linked = linkSeedIds(
+    [{ slug: 'z1', title: 'Z', liked_count: 1 }],
+    [{ url: 'https://qiita.com/u/items/q1?from=x', title: 'Q', likes_count: 1, stocks_count: 2 }],
+    [{ note_url: 'https://note.com/mine/n/abc?sub_rt=share', title: 'N', like_count: 2, anonymous_like_count: 1 }],
+    new Map([
+      ['https://zenn.dev/minewo/articles/z1', ['seed-z']],
+      ['https://qiita.com/u/items/q1', ['seed-q']],
+      ['https://note.com/mine/n/abc', ['seed-n']],
+    ]),
+  );
+  eq('Zenn URLを構築してjoin', linked.zenn[0].seed_ids, ['seed-z']);
+  eq('Qiita query差分を吸収してjoin', linked.qiita[0].seed_ids, ['seed-q']);
+  eq('note query差分を吸収してjoin', linked.note[0].seed_ids, ['seed-n']);
+  const unlinked = attachSeedIds([{ url: 'https://example.com/no-match' }], (a) => a.url, index);
+  eq('未連携記事は空配列', unlinked[0].seed_ids, []);
+
+  const sum = summarize(linked.zenn, linked.qiita, linked.note);
+  eq('linked_articlesを集計', [sum.zenn.linked_articles, sum.qiita.linked_articles, sum.note.linked_articles], [1, 1, 1]);
+  const rendered = renderMarkdown({
+    fetched_at: '2026-09-23T00:00:00.000Z',
+    summary: sum,
+    zenn: linked.zenn,
+    qiita: linked.qiita,
+    note: linked.note,
+  });
+  eq('MarkdownにSeed linkを表示', rendered.includes('seed-n | N'), true);
+
+  const failed = tests.filter((t) => !t.ok);
+  for (const t of tests) console.log(`  ${t.ok ? 'ok  ' : 'FAIL'} ${t.name}`);
+  if (failed.length) {
+    console.error(`\n[fetch-channel-metrics] self-test FAILED: ${failed.length}/${tests.length}`);
+    for (const f of failed) console.error(`  - ${f.name}: got=${JSON.stringify(f.got)} want=${JSON.stringify(f.want)}`);
+    process.exit(1);
+  }
+  console.log(`\n[fetch-channel-metrics] self-test OK: ${tests.length}/${tests.length}`);
+}
+
+if (flag('--self-test')) {
+  selfTest();
+} else {
+  main().catch((e) => {
+    console.error('[fetch-channel-metrics] error:', e.message);
+    process.exit(1);
+  });
+}
+
+export { normalizePromotionUrl, promotionIndexFromGraph, attachSeedIds, linkSeedIds, summarize };

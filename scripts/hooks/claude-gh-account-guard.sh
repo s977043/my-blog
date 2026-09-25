@@ -9,6 +9,7 @@
 # - stdin の hook JSON から tool_input.command を抽出
 # - 書き込み系コマンド（git push / gh pr create|merge|edit / gh api ...merge...）に
 #   マッチした場合のみ scripts/check-gh-account.sh --fix を実行
+# - ただし操作先の owner（gh -R / git -C / cd のパスの origin）が s977043 以外と判定できれば補正しない
 # - 検証 OK（または自動切替成功）→ exit 0 で通す
 # - 切替不能 → exit 2 + stderr でブロック（Claude に理由が返る）
 # - ガード自体の前提が崩れている場合（jq 無し / JSON 不正 / check スクリプト不在 /
@@ -57,6 +58,40 @@ is_target() {
 }
 
 is_target "$CMD" || exit 0
+
+# ---- 操作先が別アカウントの repo なら補正しない ---------------------------
+# このセッションが my-blog で起動していても、コマンドが別 owner の repo（例: 会社 org）を
+# 操作するなら s977043 へ戻すと push / PR が "Repository not found" で失敗する
+# （AGENT_LEARNINGS 2026-09-24）。操作先の owner を判定でき、それが期待 owner 以外なら素通りする。
+# 判定できない場合（変数を含むパス・存在しないパス・origin 無し）は従来どおり検証する。
+EXPECTED_OWNER="${GH_GUARD_EXPECTED_OWNER:-s977043}"
+
+target_owner() {
+  local c="$1" repo dir url
+  # gh の -R / --repo <owner>/<repo>
+  repo=$(printf '%s' "$c" | grep -oE '(^|[[:space:]])(-R|--repo)[[:space:]=]+[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+' | head -1 \
+    | sed -E 's/.*(-R|--repo)[[:space:]=]+//')
+  if [ -n "$repo" ]; then
+    printf '%s' "${repo%%/*}"
+    return 0
+  fi
+  # git -C <dir> / cd <dir>（最初に現れたもの）
+  dir=$(printf '%s' "$c" | grep -oE '(^|[;&|[:space:]])(git[[:space:]]+-C|cd)[[:space:]]+[^;&|[:space:]]+' | head -1 \
+    | sed -E 's/.*(-C|cd)[[:space:]]+//')
+  [ -n "$dir" ] || return 1
+  dir="${dir#\"}"; dir="${dir%\"}"; dir="${dir#\'}"; dir="${dir%\'}"
+  case "$dir" in "~"*) dir="$HOME${dir#\~}" ;; esac
+  [ -d "$dir" ] || return 1
+  url=$(git -C "$dir" remote get-url origin 2>/dev/null) || return 1
+  # https://github.com/<owner>/<repo>(.git) / git@github.com:<owner>/<repo>(.git)
+  printf '%s' "$url" | sed -nE 's#^(https?://[^/]+/|git@[^:]+:)([^/]+)/.*#\2#p'
+}
+
+OWNER=$(target_owner "$CMD" 2>/dev/null || true)
+if [ -n "$OWNER" ] && [ "$OWNER" != "$EXPECTED_OWNER" ]; then
+  echo "[claude-gh-account-guard] 操作先の owner が ${OWNER}（${EXPECTED_OWNER} 以外）なので、アカウント補正をスキップします" >&2
+  exit 0
+fi
 
 # ---- 検証スクリプトの解決 -----------------------------------------------
 # テスト用に GH_GUARD_CHECK_SCRIPT で差し替え可能。

@@ -1,0 +1,321 @@
+{
+  "schema_version": 1,
+  "generated_by": "scripts/build-article-graph.js",
+  "nodes": [
+    {
+      "id": "legacy:article_seeds/ai-driven-development/2026-09-03-dont-build-judgment",
+      "path": "article_seeds/ai-driven-development/2026-09-03-dont-build-judgment.md",
+      "title": "AI駆動開発で重要になるのは『作る力』ではなく『作らない判断力』だと思う",
+      "date": "2026-09-03",
+      "status": "draft",
+      "topics": [
+        "ai-driven-development",
+        "product-discovery",
+        "decision-making",
+        "time-to-learning"
+      ],
+      "source": "experience",
+      "source_url": "",
+      "source_ref": "",
+      "evidence_status": "",
+      "promoted_to": [],
+      "article_type_candidates": [],
+      "legacy": true
+    },
+    {
+      "id": "legacy:article_seeds/ai-driven-development/2026-09-10-approval-gate-speed",
+      "path": "article_seeds/ai-driven-development/2026-09-10-approval-gate-speed.md",
+      "title": "承認ゲートは開発を遅くするのか、速くするのか",
+      "date": "2026-09-10",
+      "status": "seed",
+      "topics": [
+        "ai-driven-development",
+        "plangate",
+        "flow-efficiency",
+        "lean"
+      ],
+      "source": "experience",
+      "source_url": "",
+      "source_ref": "",
+      "evidence_status": "",
+      "promoted_to": [],
+      "article_type_candidates": [],
+      "legacy": true
+    },
+    {
+      "id": "legacy:article_seeds/ai-driven-development/2026-09-10-flow-efficiency",
+      "path": "article_seeds/ai-driven-development/2026-09-10-flow-efficiency.md",
+      "title": "AIを使い切ろうとしたら、人間の判断待ちが積み上がった",
+      "date": "2026-09-10",
+      "status": "published",
+      "topics": [
+        "ai-driven-development",
+        "agile",
+        "flow-efficiency",
+        "kanban",
+        "wip"
+      ],
+      "source": "experience",
+      "source_url": "",
+      "source_ref": "",
+      "evidence_status": "",
+      "promoted_to": [
+        "https://x.com/mine_take/status/2097800316070855017"
+      ],
+      "article_type_candidates": [],
+      "legacy": true
+    },
+    {
+      "id": "legacy:article_seeds/ai-driven-development/2026-09-10-generic-vs-team-knowledge",
+      "path": "article_seeds/ai-driven-development/2026-09-10-generic-vs-team-knowledge.md",
+      "title": "汎用の改善と、チーム固有の知識は置き場所が違う",
+      "date": "2026-09-10",
+      "status": "seed",
+      "topics": [
+        "ai-driven-development",
+        "plangate",
+        "knowledge-management",
+        "ddd"
+      ],
+      "source": "experience",
+      "source_url": "",
+      "source_ref": "",
+      "evidence_status": "",
+      "promoted_to": [],
+      "article_type_candidates": [],
+      "legacy": true
+    },
+    {
+      "id": "legacy:article_seeds/ai-driven-development/2026-09-10-no-publication-gate",
+      "path": "article_seeds/ai-driven-development/2026-09-10-no-publication-gate.md",
+      "title": "「mainにマージした瞬間に全員へ反映」が怖くなった",
+      "date": "2026-09-10",
+      "status": "seed",
+      "topics": [
+        "ai-driven-development",
+        "gta",
+        "continuous-delivery",
+        "release-management"
+      ],
+      "source": "experience",
+      "source_url": "",
+      "source_ref": "",
+      "evidence_status": "",
+      "promoted_to": [],
+      "article_type_candidates": [],
+      "legacy": true
+    },
+    {
+      "id": "legacy:article_seeds/ai-driven-development/2026-09-10-north-star-intervention-depth",
+      "path": "article_seeds/ai-driven-development/2026-09-10-north-star-intervention-depth.md",
+      "title": "速さではなく「任せ方の変化」を測ることにした",
+      "date": "2026-09-10",
+      "status": "seed",
+      "topics": [
+        "ai-driven-development",
+        "metrics",
+        "north-star",
+        "harness-engineering"
+      ],
+      "source": "experience",
+      "source_url": "",
+      "source_ref": "",
+      "evidence_status": "",
+      "promoted_to": [],
+      "article_type_candidates": [],
+      "legacy": true
+    },
+    {
+      "id": "legacy:article_seeds/ai-driven-development/2026-09-10-retire-pr-count-kpi",
+      "path": "article_seeds/ai-driven-development/2026-09-10-retire-pr-count-kpi.md",
+      "title": "「1人あたりPR数」をKPIから外した",
+      "date": "2026-09-10",
+      "status": "seed",
+      "topics": [
+        "ai-driven-development",
+        "metrics",
+        "dora"
+      ],
+      "source": "experience",
+      "source_url": "",
+      "source_ref": "",
+      "evidence_status": "",
+      "promoted_to": [],
+      "article_type_candidates": [],
+      "legacy": true
+    },
+    {
+      "id": "legacy:article_seeds/ai-driven-development/2026-09-10-small-team-cant-measure-speed",
+      "path": "article_seeds/ai-driven-development/2026-09-10-small-team-cant-measure-speed.md",
+      "title": "5人チームでは「改善速度」を安定して測れなかった",
+      "date": "2026-09-10",
+      "status": "seed",
+      "topics": [
+        "ai-driven-development",
+        "metrics",
+        "small-team",
+        "lean"
+      ],
+      "source": "experience",
+      "source_url": "",
+      "source_ref": "",
+      "evidence_status": "",
+      "promoted_to": [],
+      "article_type_candidates": [],
+      "legacy": true
+    },
+    {
+      "id": "seed-20260911-media-operating-system-boundaries",
+      "path": "article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md",
+      "title": "Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった",
+      "date": "2026-09-11",
+      "status": "seed",
+      "topics": [
+        "media-operating-system",
+        "architecture",
+        "separation-of-concerns",
+        "ai-agent",
+        "growth"
+      ],
+      "source": "experience",
+      "source_url": "",
+      "source_ref": "",
+      "evidence_status": "observed",
+      "promoted_to": [
+        "articles_note/new/media-operating-system-boundary-by-change.md"
+      ],
+      "article_type_candidates": [
+        "experience",
+        "analysis"
+      ],
+      "legacy": false
+    },
+    {
+      "id": "seed-20260923-agent-role-boundaries",
+      "path": "article_seeds/media-operating-system/2026-09-23-agent-role-boundaries.md",
+      "title": "AIエージェントを増やす前に、役割と委譲境界を分ける",
+      "date": "2026-09-23",
+      "status": "seed",
+      "topics": [
+        "media-operating-system",
+        "ai-agent",
+        "orchestration",
+        "role-boundary",
+        "delegation"
+      ],
+      "source": "external",
+      "source_url": "https://note.com/like_tulip76/n/nddcd2081167b",
+      "source_ref": "",
+      "evidence_status": "verified",
+      "promoted_to": [],
+      "article_type_candidates": [
+        "analysis",
+        "insight"
+      ],
+      "legacy": false
+    },
+    {
+      "id": "seed-20260923-content-closed-loop",
+      "path": "article_seeds/media-operating-system/2026-09-23-content-closed-loop.md",
+      "title": "記事作成を自動化するより、Signal→Seed→公開後学習を閉じたい",
+      "date": "2026-09-23",
+      "status": "seed",
+      "topics": [
+        "media-operating-system",
+        "ai-agent",
+        "content-operations",
+        "feedback-loop",
+        "publishing"
+      ],
+      "source": "external",
+      "source_url": "https://note.com/like_tulip76/n/n7548bacaf90b",
+      "source_ref": "",
+      "evidence_status": "verified",
+      "promoted_to": [
+        "articles_note/new/content-closed-loop-note.md"
+      ],
+      "article_type_candidates": [
+        "analysis",
+        "insight",
+        "experience"
+      ],
+      "legacy": false
+    },
+    {
+      "id": "seed-20260923-publish-contract",
+      "path": "article_seeds/media-operating-system/2026-09-23-publish-contract.md",
+      "title": "自動投稿より先に、公開前の契約とfail-closedを固定する",
+      "date": "2026-09-23",
+      "status": "seed",
+      "topics": [
+        "media-operating-system",
+        "publishing",
+        "validation",
+        "fail-closed",
+        "content-operations"
+      ],
+      "source": "external",
+      "source_url": "https://note.com/like_tulip76/n/n4f2381b89827",
+      "source_ref": "",
+      "evidence_status": "verified",
+      "promoted_to": [],
+      "article_type_candidates": [
+        "analysis",
+        "tutorial",
+        "insight"
+      ],
+      "legacy": false
+    },
+    {
+      "id": "seed-20260924-note-hub-plangate-river-skills",
+      "path": "article_seeds/note-hub-plangate-river-skills/2026-09-24-note-hub-plangate-river-skills.md",
+      "title": "計画を止める・判断を残す・手順を渡す：PlanGate / River Review / Agent Skills の入口",
+      "date": "2026-09-24",
+      "status": "seed",
+      "topics": [
+        "plangate",
+        "river-review",
+        "agent-skills",
+        "ai-driven-development",
+        "hub-article"
+      ],
+      "source": "external",
+      "source_url": "https://github.com/s977043/PlanGate",
+      "source_ref": "https://github.com/s977043/river-review / https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview",
+      "evidence_status": "verified",
+      "promoted_to": [],
+      "article_type_candidates": [
+        "insight",
+        "analysis"
+      ],
+      "legacy": false
+    }
+  ],
+  "edges": [
+    {
+      "from": "legacy:article_seeds/ai-driven-development/2026-09-10-flow-efficiency",
+      "relation": "promoted_to",
+      "to": "https://x.com/mine_take/status/2097800316070855017"
+    },
+    {
+      "from": "seed-20260911-media-operating-system-boundaries",
+      "relation": "promoted_to",
+      "to": "articles_note/new/media-operating-system-boundary-by-change.md"
+    },
+    {
+      "from": "seed-20260923-content-closed-loop",
+      "relation": "promoted_to",
+      "to": "articles_note/new/content-closed-loop-note.md"
+    }
+  ],
+  "warnings": [
+    "article_seeds/ai-driven-development/2026-09-03-dont-build-judgment.md: legacy seed (seed_id/evidence_status not required retroactively)",
+    "article_seeds/ai-driven-development/2026-09-10-approval-gate-speed.md: legacy seed (seed_id/evidence_status not required retroactively)",
+    "article_seeds/ai-driven-development/2026-09-10-flow-efficiency.md: legacy seed (seed_id/evidence_status not required retroactively)",
+    "article_seeds/ai-driven-development/2026-09-10-generic-vs-team-knowledge.md: legacy seed (seed_id/evidence_status not required retroactively)",
+    "article_seeds/ai-driven-development/2026-09-10-no-publication-gate.md: legacy seed (seed_id/evidence_status not required retroactively)",
+    "article_seeds/ai-driven-development/2026-09-10-north-star-intervention-depth.md: legacy seed (seed_id/evidence_status not required retroactively)",
+    "article_seeds/ai-driven-development/2026-09-10-retire-pr-count-kpi.md: legacy seed (seed_id/evidence_status not required retroactively)",
+    "article_seeds/ai-driven-development/2026-09-10-small-team-cant-measure-speed.md: legacy seed (seed_id/evidence_status not required retroactively)"
+  ]
+}
