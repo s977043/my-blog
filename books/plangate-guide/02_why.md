@@ -105,7 +105,7 @@ PlanGate が埋めるのは、これらの**隙間**です。具体的には 2 �
 
 ## ゲートが「向かない」ケースもある
 
-公平のために書いておくと、承認ゲートが常に正解ではありません。PlanGate 自身も「[使わない方がいい領域](https://github.com/s977043/PlanGate/blob/main/docs/when-not-to-use.md)」を明示しています。
+公平のために書いておくと、承認ゲートが常に正解ではありません。PlanGate 自身も「[使わない方がいい領域](https://github.com/s977043/PlanGate/blob/main/docs/pages/explanation/product/when-not-to-use.md)」を明示しています。
 
 - **30 分で書き捨てる検証コード・スパイク** — 計画の前払いコストが見合わない
 - **データ探索・ノートブック** — 試行錯誤そのものが目的で、計画が固定できない
