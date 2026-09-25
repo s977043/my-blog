@@ -20,12 +20,12 @@ flowchart LR
 
 ## 前提環境
 
-PlanGate は POSIX shell + git + python3 があれば最小構成で動きます。AI ツールは挙動がバージョンで変わるため、固定して記録しておきます。
+PlanGate は POSIX shell + git + python3 + jq があれば最小構成で動きます。AI ツールは挙動がバージョンで変わるため、固定して記録しておきます。
 
 | 要件 | 最小 | 備考 |
 |------|------|------|
 | OS | macOS / Linux | Windows は WSL 推奨 |
-| 必須 | git / POSIX sh / python3 | CLI と Hook の基盤 |
+| 必須 | git / POSIX sh / python3 / jq | CLI と Hook の基盤。**v8.19.0 以降は `jq` が実質必須**で、無いと EH-13 が Edit / Write / Bash をすべて止める |
 | 推奨 | Claude Code | 計画生成・実装の主導線 |
 | 任意 | gh CLI / Codex | PR 操作・代替実装エージェント |
 
@@ -43,7 +43,7 @@ bin/plangate doctor --fix --yes
 
 > `doctor` 単体は環境チェックだけで、Hook の配線はしません。**配線には `doctor --fix` が必要**です。配線しないと後述の EH-1 / EH-2 は発火しません。
 
-> 💡 **Codex CLI を使う場合**：v8.10.0 で Codex parity が入り、Claude Code の `.claude/settings.json` と同様に、Codex CLI 用の `.codex/hooks.json`（`eh-bridge.sh`）経由で同じ EH 系 Hook が発火します。どちらのエージェントでも「承認なし実装の検知」は同じように効きます。
+> ⚠️ **Codex CLI を使う場合（v8.20.0 で訂正）**：本書の初版では「v8.10.0 の Codex parity で Codex CLI でも同じ Hook が発火する」と書いていましたが、PlanGate v8.20.0 で「Codex CLI 側の Hook の強制力は 0/11」と訂正されました。**Codex CLI では EH 系 Hook による検知は効きません**。Codex で使う場合は、計画と C-3 承認を人が確認する運用で補ってください。最新の対応状況は PlanGate の [hook-enforcement.md](https://github.com/s977043/PlanGate/blob/main/docs/ai/hook-enforcement.md) を確認してください。
 
 `bin/plangate` は単一の CLI エントリポイントです。主要なサブコマンドは次の通り（`bin/plangate help` 相当）。
 
@@ -97,6 +97,8 @@ doctor           環境チェック（--fix で Hook を配線）
 ## ここが本番 —「承認なし実装」を検知する瞬間
 
 チュートリアルの流れを、わざと**ステップ 4（C-3 承認）を飛ばして**ステップ 5 の実装に進んでみてください。`approvals/c3.json` が無い、または APPROVED でない状態で exec しようとすると、Hook（EH-2）が割り込みます（default モードの警告出力）。
+
+> ⚠️ **EH-2 が対象のタスクを特定できないと、警告は出ません**。EH-2 は環境変数 `PLANGATE_HOOK_TASK`、または編集するファイルのパスに含まれる `TASK-XXXX` からタスクを決めます。どちらも無いと判定をスキップして編集を許可します（`src/` などを編集しても警告は出ない）。試すときは `export PLANGATE_HOOK_TASK=TASK-0001` のように対象タスクを指定してください。
 
 ```text
 [Hook EH-2 WARNING] C-3 gate not cleared: approvals/c3.json not found (Hook EH-2)

@@ -70,7 +70,7 @@ PlanGate は、実装に入る前に次の 4 つの成果物を**同時に**生�
 | **standard** | 通常の機能開発 | フル plan + C-1（17 項目）+ C-3 |
 | **high-risk / critical** | スキーマ変更・破壊的変更・セキュリティ | フル plan + 外部レビュー + 人間 C-3 必須 |
 
-つまり「全部のタスクに重い計画を書け」とは言いません。**リスクに比例して計画の精度要求を上げる**のが PlanGate の型です。書き捨てコードに PBI INPUT を強制するのは過剰であり、公式も「[使わない方がいい領域](https://github.com/s977043/PlanGate/blob/main/docs/when-not-to-use.md)」として明記しています（探索的プロトタイピング、リアルタイム補完など）。
+つまり「全部のタスクに重い計画を書け」とは言いません。**リスクに比例して計画の精度要求を上げる**のが PlanGate の型です。書き捨てコードに PBI INPUT を強制するのは過剰であり、公式も「[使わない方がいい領域](https://github.com/s977043/PlanGate/blob/main/docs/pages/explanation/product/when-not-to-use.md)」として明記しています（探索的プロトタイピング、リアルタイム補完など）。
 
 ## C-3 承認ゲート — 計画が正しいと認めるまで実装させない
 
