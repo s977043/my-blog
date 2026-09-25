@@ -378,9 +378,9 @@ Use these as the visible first-step articles when updating pinned articles, pick
 - [x] Zenn プロフィールを「Zenn profile draft」で更新する（2026-09-25。GitHub・サイト欄は専用フィールドに設定済み）
 - [x] Qiita プロフィールを「Qiita profile draft」で更新する（2026-09-25）
 - [x] note プロフィールを「note profile draft」で更新する（2026-09-25）。note の設定画面には SNS 用の欄（Facebook・Instagram 等）しかなく、Zenn / Qiita / Growth Lab / GitHub のリンク欄はないため、Book の URL を本文に入れた
-- [ ] Qiita の Pickup Articles を上表の Qiita 行から選んで設定する（設定可能な件数は未確認）
-- [ ] note の固定記事を上表の note 1行目（PlanGate 入口）に設定するか判断し、設定する
-- [ ] 貼り付け後、各プロフィールページを開いて改行・リンクの表示崩れがないか確認する
+- [x] Qiita の Pickup Articles を設定する（2026-09-25。上限 3 件）: 「River Review を作った」「AIコーディング前に確認する5項目」「Agent Skills に変える River Review 体験」
+- [x] note の固定記事を PlanGate 入口（n02992266d622）に設定する（2026-09-25）。プロフィール → 固定記事 → Zenn Book の導線にそろえる
+- [x] 各プロフィールページで表示を確認する（2026-09-25。Qiita のピックアップ・note の固定記事と自己紹介を画面で確認、自己紹介は3媒体とも公開 API で確認）
 
 ## Existing article update priorities
 
