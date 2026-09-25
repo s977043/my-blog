@@ -2,7 +2,7 @@
 title: "検証フェーズ（Verify）— 計画どおりに作られたことを証明する"
 ---
 
-> 検証バージョン: **PlanGate v8.10.0**（2026-05）で検証、**v8.22.0 時点の変更を反映**（2026-09。EHS-1 の発火条件）。最新は[公式リポジトリ](https://github.com/s977043/PlanGate)を参照。
+> 検証バージョン: **PlanGate v8.10.0**（2026-05）。最新は[公式リポジトリ](https://github.com/s977043/PlanGate)を参照。
 
 前章までで「精度の高い計画（Plan）」を立て、「実装時にそれを守らせる（Exec）」ところまで来ました。本章はその後始末 ―― **計画どおりに作られたことを、後から説明できる形で証明する**段階です。
 
@@ -92,7 +92,7 @@ flowchart LR
 
 ### Q. V-3 の外部レビューは必須ですか？
 
-モードと実行経路によります。`EHS-1` が V-3 を必須化するのは、`standard` 以上のモードで、かつ Model Profile が `validation_bias: strict` のときに `bin/plangate verify` を通した場合だけです。CLI を回さない運用や strict でないプロファイルでは発火しないので、high-risk / critical で V-3 を確実に通したいなら、verify を strict プロファイルで実行する運用にします。軽いタスク（light / ultra-light）では省略可能です。強制力をリスクに比例させる、という第 3・4 章と同じ思想です。
+モードによります。`standard` 以上では `EHS-1` が V-3 を必須化します（high-risk / critical では特に）。軽いタスク（light / ultra-light）では省略可能です。強制力をリスクに比例させる、という第 3・4 章と同じ思想です。
 
 ### Q. handoff を毎回書くのは重くないですか？
 

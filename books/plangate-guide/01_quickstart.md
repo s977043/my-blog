@@ -2,7 +2,7 @@
 title: "クイックスタート — 「承認なし実装」が警告される／止まる体験"
 ---
 
-> 検証バージョン: **PlanGate v8.10.0**（2026-05）で検証、**v8.22.0 時点の変更を反映**（2026-09。インストール手順）。最新の手順は[公式 README](https://github.com/s977043/PlanGate/blob/main/README.md)を参照。
+> 検証バージョン: **PlanGate v8.10.0**（2026-05）で検証、**導入手順はプラグイン版に更新**（2026-09）。最新の手順は[公式 README](https://github.com/s977043/PlanGate/blob/main/README.md)を参照。
 
 はじめにで述べた本書の主張 ―― 「計画を承認し、それを実行時に守らせる」 ―― は、説明より一度体験するのが早いです。この章では、**承認（C-3）を取らずに実装へ進もうとすると PlanGate が検知する**ところまでを再現します。
 
@@ -31,9 +31,7 @@ PlanGate は POSIX shell + git + python3 + jq があれば最小構成で動き�
 
 ## インストール
 
-自分のプロジェクトへ導入する経路は 2 つあります（v8.22.0 時点の[公式 README](https://github.com/s977043/PlanGate/blob/main/README.md)）。
-
-**Option A: プラグインとして導入（公式の最推奨）**
+PlanGate は Claude Code / Codex のプラグインとして導入します（最新の手順は[公式 README](https://github.com/s977043/PlanGate/blob/main/README.md)）。
 
 Claude Code のセッション内で:
 
@@ -49,26 +47,7 @@ codex plugin marketplace add s977043/PlanGate
 codex plugin add plangate@plangate
 ```
 
-**Option B: clone して `install.sh` で導入**
-
-```bash
-git clone https://github.com/s977043/plangate.git ~/plangate
-cd path/to/your-project
-sh ~/plangate/install.sh --dry-run   # 変更内容を確認
-sh ~/plangate/install.sh             # .claude/ と .codex/ を自動検出して導入
-```
-
-どちらの経路でも、**導入しただけでは Hook は配線されません**。導入後に次を実行して `.claude/settings.json` へ Hook を配線します。
-
-```bash
-# 環境を診断（doctor 単体は検査のみ）
-~/plangate/bin/plangate doctor
-# Hook を配線する（--fix が必須。--dry-run で事前確認可）
-~/plangate/bin/plangate doctor --fix --dry-run
-~/plangate/bin/plangate doctor --fix --yes
-```
-
-**リポジトリ内で試す**場合は、PlanGate 自体を clone してその中で同じ `doctor` を実行しても構いません。この章のチュートリアルはどちらの環境でも再現できます。
+Hook による検知（後述の EH-1 / EH-2）も使う場合は、プラグインの導入とは別に Hook の配線が必要です。配線手順は公式 README を参照してください。この章のチュートリアルは、PlanGate 自体を clone して配線した環境で試せます。
 
 ```bash
 git clone https://github.com/s977043/PlanGate.git
