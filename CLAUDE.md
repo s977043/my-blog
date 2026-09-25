@@ -6,7 +6,7 @@ Claude Code 向けのツールガイド。規約（何が正しいか）は `@AG
 
 ## 読む順序
 
-1. `@AGENTS.md` — 全エージェント共通の**規約**（配置/表現/Git運用/禁止事項）
+1. @AGENTS.md — 全エージェント共通の**規約**（配置/表現/Git運用/禁止事項）。この行の import で毎セッション自動で読み込まれる。バッククォートで囲むと import されないので囲まない
 2. `@AGENT_LEARNINGS.md` — 過去の失敗・成功パターン（同じ落とし穴を踏まない）
 3. 本ファイル — Claude Code で使えるツールの索引
 
@@ -102,10 +102,11 @@ git config core.hooksPath scripts/hooks
 3. **`gh auth status` で active account を確認** — `git push` / `gh pr create` / `gh pr merge` の **直前すべて** で s977043 になっている必要あり（kominem-unilabo のままだと push は credential helper 設定次第で通るが PR 操作は `must be a collaborator` で失敗 → 切替 → 再実行の手戻り）。**特に `gh auth setup-git` を実行した直後は active account が切り替わる副作用がある** ため、その後の PR 操作前に必ず再確認。**手戻りを避けるには `npm run gh:ensure`（= `check-gh-account.sh --fix`）を push/PR 操作の直前に走らせると、想定外アカウント時に自動で s977043 へ切替してくれる**（2026-06-11: setup-git 後の反転が push/PR/merge ごとに 403 を起こした実績）
    - **PreToolUse hook で自動ガード済み**: `.claude/settings.json` の PreToolUse hook（`scripts/hooks/claude-gh-account-guard.sh`）が `git push` / `gh pr create|merge|edit` / `gh api ...merge` の直前に `check-gh-account.sh --fix` を自動実行し、切替不能時のみブロックする（fail-open 設計）
    - ⚠️ **my-blog では `gh-account-guard` / `growth-core:gh-account-guard` スキルを使わない**。これらは Growth-Teams-Agent 用で期待アカウントが **kominem-unilabo**（このリポジトリの正である s977043 と逆）。起動すると再発してきた「kominem-unilabo への反転」を逆に強制しうる。アカウント検証は `npm run gh:ensure` を使う
+   - **逆向きにも注意**: 上記 PreToolUse hook は操作先の owner（`gh -R` / `git -C` / `cd` 先の origin）が s977043 以外なら補正しない（#689）。owner を判定できないコマンドでは s977043 へ戻すので、別アカウントの repo（例: unilabo）へ push / PR するときは `gh auth switch` を **push と同じ Bash コマンド内**で行い、最後に s977043 へ戻すのが確実（AGENT_LEARNINGS 2026-09-24）
 4. 対象ファイルがどのプラットフォームか確認（`@AGENTS.md` の配置規約表）
 5. `articles_note/published/` を触る場合は ⚠️ 規約を確認（`@AGENTS.md` 禁止事項）
 6. note 記事に画像を追加する場合: SVG → PNG 変換 → `articles_note/assets/` 配置 → **`file` でサイズ・寸法を確認**（プレースホルダ画像 <10KB を弾く） → main に先にマージ → WXR 生成の順序を守る。**WXR 生成は必ず `--base-url https://raw.githubusercontent.com/s977043/my-blog/main/articles_note/assets` を付ける**（未指定で画像参照が残ると `md_to_wxr.py` が exit 1 で失敗、意図的にローカル参照を残すなら `--allow-local-images`）
-7. **Zenn 公開系の作業を進める前に**、`@AGENTS.md` の「Zenn 公開フロー（release/zenn ブランチ経由）」を確認。`articles/*.md` の `published: true` 切替や本文修正は **`release/zenn` ブランチへの merge をもって公開**となる。`main` への push は Zenn deploy をトリガーしない（rate-limit 対策）。24 時間あけてマージ / 既存 update と新規 publish は別 PR、を厳守（**rate-limit 数値の正本は `docs/publish-operating-policy.md` §Rate-limit 遵守**）。**release/zenn 系 PR を作る前に `npm run check:zenn-pace` で過去 24h の publish 切替件数を確認**（**実効 rate-limit が 24h/1本に近い**実観測に基づき、2 件以上で FAIL exit、1 件以上で WARN）。release/zenn への sync PR は `scripts/sync-release-zenn.sh "<commit message>"` で一括実行可能（`articles_note/drafts/` の rename/rename 競合を main 採用で自動解決）
+7. **Zenn 公開系の作業を進める前に**、`@AGENTS.md` の「Zenn 公開フロー（release/zenn ブランチ経由）」を確認。`articles/*.md` の `published: true` 切替や本文修正は **`release/zenn` ブランチへの merge をもって公開**となる。`main` への push は Zenn deploy をトリガーしない（rate-limit 対策）。24 時間あけてマージ / 既存 update と新規 publish は別 PR、を厳守（**rate-limit 数値の正本は `docs/publish-operating-policy.md` §Rate-limit 遵守**。閾値はここに書き写さない）。**release/zenn 系 PR を作る前に `npm run check:zenn-pace` を実行し、その出力で可否を判断する**。release/zenn への sync PR は `scripts/sync-release-zenn.sh "<commit message>"` で一括実行可能（`articles_note/drafts/` の rename/rename 競合を main 採用で自動解決）
    - **公開キュー (`docs/publish-queue.md`) と実態の乖離チェック**: queue から記事を公開準備に着手する前に、対象ファイルの `id:` フィールドと `curl -s -o /dev/null -w "%{http_code}" "https://qiita.com/s977043/items/<id>"` で web 状態を確認する。**id が null でなく web 200 なら既に公開済み**なので queue を Done へ移動するだけで終わる。queue を信じて二重公開準備に進むと10分以上のロスになる（2026-05-27 #2 ai-coding-preflight-checklist で実際に発生）
 8. **`git switch -c <new>` 直後に `git branch --show-current` で意図ブランチと一致するか確認** — Round 5 並列セッション干渉対策（PR #203 で観測、`memory/project_parallel_session_metrics.md` 参照）。不一致なら commit を作らず停止
 9. 既存 Skill / Agent / Command で対応できないか確認（上記表）
@@ -221,6 +222,6 @@ git diff origin/main...origin/<branch> --stat         # 3点比較。現 main �
 セッションを終える前に以下を確認する。stash や未マージブランチが残ると、次回作業者（自分含む）が混乱する。
 
 1. `git stash list` — 退避物がある場合、内容と所有者（自分 or 並列セッション）を確認。自分のものなら処遇判断（drop / 退避ブランチ保存）
-2. `git branch -vv | grep -v '^\* main'` — local stale ブランチを `git branch -d` で削除（merge 済確認後）
+2. `git branch -vv | grep -v '^\* main'` — local stale ブランチを削除する。このリポジトリは squash マージなので、マージ済みでも `git branch -d`・`--is-ancestor`・3点 diff は「未マージ」と判定する。**`npm run clean:merged-branches` で PR が MERGED のブランチを洗い出し、`-- --apply` で削除**（SHA を表示するので復元可。AGENT_LEARNINGS 2026-09-24）
 3. `gh pr list --state open` — open PR が想定通りか確認、放置していないか
 4. **Zenn 公開系作業をした場合**: `npm run check:zenn-pace` で過去 24h の publish 切替件数を確認、rate-limit hit 兆候があれば次セッションへ申し送り

@@ -77,6 +77,21 @@ assert "gh api の読み取り（merge 無し）は素通り"          0 0 "$STU
 assert "push を含む別コマンド（git stash push）は素通り"  0 0 "$STUB_NG" "git stash push -u -m sentinel"
 assert "クォート内文字列（echo 'git push ...'）は素通り"  0 0 "$STUB_NG" "echo 'git push origin main'"
 
+# --- 操作先が別 owner の repo: 補正しない（AGENT_LEARNINGS 2026-09-24）-------
+OTHER_REPO="$TMPDIR_T/other-repo"
+OWN_REPO="$TMPDIR_T/own-repo"
+git init -q "$OTHER_REPO" && git -C "$OTHER_REPO" remote add origin https://github.com/unilabo/site-management-system.git
+git init -q "$OWN_REPO" && git -C "$OWN_REPO" remote add origin git@github.com:s977043/my-blog.git
+
+assert "gh -R 別 owner は補正しない"                      0 0 "$STUB_NG" "gh pr create -R unilabo/site-management-system --base main --title t"
+assert "gh --repo=別 owner も補正しない"                  0 0 "$STUB_NG" "gh pr merge 1 --repo=unilabo/site-management-system --squash"
+assert "gh -R s977043/... は従来どおり検証"               0 1 "$STUB_OK" "gh pr create -R s977043/my-blog --base main"
+assert "cd <別 owner の repo> && git push は補正しない"   0 0 "$STUB_NG" "cd $OTHER_REPO && git push -u origin feat/x"
+assert "git -C <別 owner の repo> push は補正しない"      0 0 "$STUB_NG" "git -C $OTHER_REPO push origin feat/x"
+assert "git -C <s977043 の repo> push は検証"             0 1 "$STUB_OK" "git -C $OWN_REPO push origin feat/x"
+assert "cd <存在しないパス> は判定不能なので検証する"     2 1 "$STUB_NG" "cd /no/such/dir && git push origin main"
+assert "変数入りパスは判定不能なので検証する"             2 1 "$STUB_NG" 'cd $WT && git push origin main'
+
 # --- fail-open 系 ----------------------------------------------------------
 rm -f "$MARKER"
 printf 'not-json' | GH_GUARD_CHECK_SCRIPT="$STUB_NG" bash "$GUARD" >/dev/null 2>&1

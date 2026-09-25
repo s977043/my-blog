@@ -30,6 +30,8 @@
 | **外部公開** | `npm run publish:qiita -- <slug>` の実行 |
 | **release/zenn 反映** | main → release/zenn の sync PR マージ（Zenn 本番 deploy 発火） |
 | **note 手動作業** | note.com 側での目次・タグ設定／公開判断／WXR インポート実行 |
+| **izanami の保存・公開** | 公開／非公開（下書き）の切り替え、保存ボタン、記事の削除 |
+| **ブラウザでの公開操作** | 下記「ブラウザ経由の投稿・更新」で、公開・更新・保存ボタンを押す操作 |
 | **既存公開記事の本文書き換え** | Zenn / Qiita / note で `published:true` 相当の記事の本文修正（誤字訂正レベル除く） |
 | **大規模削除** | 複数記事の同時削除・ディレクトリ削除 |
 
@@ -48,6 +50,28 @@
 | rate-limit hit 時 | リポジトリ側に追加 commit を作らず、[Zenn お問い合わせ](https://zenn.dev/inquiry) で緩和申請 |
 
 根拠: `AGENT_LEARNINGS.md` 2026-05-22「Zenn rate-limit は実効 24h/2本でも hit する」。release/zenn 運用フロー（ブランチ単方向・sync 手順）は [`AGENTS.md`](../AGENTS.md) §「Zenn 公開フロー」を参照。
+
+## ブラウザ経由の投稿・更新（Playwright）
+
+izanami の新規投稿と note の公開済み記事の更新は、Playwright MCP のブラウザで行える（2026-09-24 に izanami 1本、note 2本で実施）。**agent は入力までを行い、公開・更新・保存のボタンは著者が押す**。
+
+- **ログイン**: Playwright MCP は永続プロファイルを使うため、一度ログインすればブラウザを閉じて開き直しても残る（2026-09-24 にブラウザを再起動した後も izanami・note がログイン済みであることを確認）。Claude Code の再起動後も残る見込みだが未確認。プロファイルは起動ディレクトリごとに分かれるため、my-blog 以外から起動するとログインし直しになる。未ログインのときだけ著者に手動ログインを頼む。Google ログインも手動で行う
+- **タブを分ける**: 媒体ごとに別タブで開く。入力中のタブで別ページへ移動すると、未保存の入力が消える（2026-09-24 に izanami の入力を一度失った）
+- **本文は原稿ファイルから入れる**: `articles_izanami/<slug>.md` など、リポジトリの正本から Front Matter を除いた本文を入れ、入力後の文字数が原稿と一致することを確認する
+
+### izanami の注意点
+
+- 新規作成画面の公開スイッチは、**初期状態が「公開」**。保存前に「非公開」へ切り替えないと、そのまま一般公開される（2026-09-24 に公開状態で保存された）
+- タグ入力は既存タグの自動補完が Enter で選ばれる。「OSS」と打つと「CrossValidation」が入った。登録後にタグ一覧を目視で確認する
+- エディタは CodeMirror。本文は Markdown のまま入る
+
+### note（公開済み記事の更新）の注意点
+
+- 編集画面は `https://editor.note.com/notes/<note_id>/edit/`。保存（更新）するまで読者には反映されない
+- 見出しは、段落の先頭で `## ` と入力すると大見出しになる。HTML の貼り付けでは見出しが段落に変わる
+- Enter は段落内の改行になる。段落を分けるには Enter をもう一度押す
+- HTML の貼り付けではインラインコードの書式が消え、普通の文字になる
+- 更新後は `https://note.com/api/v3/notes/<note_id>` の本文で反映を確認し、リポジトリの `articles_note/published/<note_id>.md` と構成が一致するか見る
 
 ## 自律実行時のチェックリスト
 
@@ -70,7 +94,9 @@ agent が公開関連作業を進める際は、以下を満たすことを明�
 
 ## メトリクス再計測サイクル
 
-- **頻度**: 月次または publish-queue の主要締切消化後
+> **現在凍結中**: 定期（月次）の再計測は行わない。凍結の範囲と解除条件は [`content-channel-strategy.md`](./content-channel-strategy.md) の Rolling 運用の注記と [`archive/README.md`](./archive/README.md) を正とする。以下は凍結解除後、または単発で計測するときの手順。
+
+- **頻度**: 凍結解除後は月次または publish-queue の主要締切消化後
 - **記録先**: `docs/channel-metrics/YYYY-MM-DD.md` を新規作成（既存ファイルは上書きしない＝履歴保持）
 - **更新箇所**: `docs/content-channel-strategy.md` の「Data-driven channel weighting」セクションから最新スナップショットへ参照リンク差し替え
 - **判断観点**:
@@ -84,6 +110,6 @@ agent が公開関連作業を進める際は、以下を満たすことを明�
 - [`content-channel-strategy.md`](./content-channel-strategy.md) — 媒体役割の正本
 - [`publish-queue.md`](./publish-queue.md) — 締切付き公開キュー
 - [`ultracode-quality-check-flow.md`](./ultracode-quality-check-flow.md) — 公開前の最終ゲートに使う網羅マルチエージェント品質チェックの標準フロー（実体は `.claude/workflows/ultracode-quality-check.js`）
-- [`channel-metrics/2026-05-21.md`](./channel-metrics/2026-05-21.md) — 直近の実測スナップショット
+- [`channel-metrics/2026-09-14.md`](./channel-metrics/2026-09-14.md) — 直近の実測スナップショット（前回分は [`channel-metrics/2026-05-21.md`](./channel-metrics/2026-05-21.md)）
 - [`../AGENTS.md`](../AGENTS.md) — Zenn 公開フロー（release/zenn 経由）と Git 運用規約
 - [`../CLAUDE.md`](../CLAUDE.md) — Claude Code 固有のツールガイド

@@ -71,13 +71,13 @@ PLANGATE_HOOK_TASK=TASK-0002 <操作>
 
 Hook は plan やスキーマのパスを基準に検査します。monorepo でパッケージごとに運用する場合、`docs/working/` の位置と plan のスコープ宣言（Files）を、そのパッケージのパスに合わせて記述してください。ルートと各パッケージで二重に Hook を配線すると競合するため、**配線は 1 箇所に集約**するのが原則です。
 
-## python3 / git が見つからない・複数ある
+## python3 / git / jq が見つからない・複数ある
 
-PlanGate の CLI と Hook は `git` / POSIX `sh` / `python3` に依存します。`bin/plangate doctor` が不足や版の問題を診断します。
+PlanGate の CLI と Hook は `git` / POSIX `sh` / `python3` / `jq` に依存します。v8.19.0 以降、`jq` が無いと EH-13 が fail-closed になり、Edit / Write / MultiEdit / Bash がすべて止まります（`brew install jq` や `apt install jq` で導入）。`bin/plangate doctor` が不足や版の問題を診断します。
 
 ```bash
 bin/plangate doctor          # 依存の有無・版を診断
-which python3 git            # 複数インストール時はパスを確認
+which python3 git jq            # 複数インストール時はパスを確認
 ```
 
 `python3` が複数あって意図しない版が使われる場合は、`PATH` の順序を調整するか、リポジトリの実行環境（WSL / venv など）を固定してください。

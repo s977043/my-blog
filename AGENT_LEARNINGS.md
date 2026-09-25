@@ -78,6 +78,8 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-05-15 — note 用 SVG は Chrome headless + font-family 注入 / WXR round-trip はテーブル平坦化
 - 2026-05-04 — note公式由来の小容量PNGは false positive として許容
 - 2026-05-16 — note `new/` と `drafts/` の重複は用途で正を分ける
+- 2026-09-23 — note WXR はCI構造preflightと公式export完全比較を二段階に分ける。検査側の誤判定も疑う
+- 2026-09-14 — エクスポート取り込みで出る画像の `M` はメタデータ数バイトの churn。検体1点を測ってから一括 revert（新規は `??` で出る）
 
 ### D. 並列セッション / ブランチ干渉 / commit
 **現行正本**: `CLAUDE.md` §並列セッション耐性 / `scripts/hooks/pre-commit`
@@ -94,6 +96,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-08-27 — ゲートは実行直前に最新の状態で測る（古い checkout の readiness は OK に化ける）
 
 - 2026-09-07 — PR 番号の飛びは並行セッションの作業衝突のサイン。`check:pr-conflict` で同一ファイルを触る open PR を検知する
+- 2026-09-24 — squash マージ済みブランチは `--is-ancestor` でも3点 diff でも未マージに見える。PR の状態で判定する（`npm run clean:merged-branches`）
 ### E. GitHub account / gh CLI / PR 運用
 **現行正本**: `CLAUDE.md` §作業開始時のチェックリスト / `scripts/hooks/pre-push`
 - 2026-05-21 — gh active account の自動切替を毎回 pre-push で検知する
@@ -107,6 +110,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-08-10 — Dependabot alerts API の 403 はスコープ不足とは限らない。まず `gh auth refresh`
 - 2026-08-12 — squash 自動削除設定下では `push origin --delete` が空振り。掃除は `git fetch --prune`
 - 2026-08-27 — Dependabot alerts API の 403 はスコープが揃っていても発生。まず `gh auth refresh`
+- 2026-09-24 — my-blog の gh hook が操作先を見ずに s977043 へ戻していた。#689 で操作先 owner を判定するよう修正
 
 ### F. review / 記事品質 / convention
 **現行正本**: `.claude/agents/*` / `AGENTS.md` §表現規約
@@ -130,6 +134,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-09-04 — Codex CLI は長文プロンプトで exit 0 のまま無言終了する。疎通は成功していても落ちる
 - 2026-09-06 — WARN-only の新 lint を集約 check に直結すると既存資産に大量 WARN が出て signal/noise を壊す。対象限定で入口を分ける
 - 2026-09-07 — 自分が書いた引用の帰属は、外部一次情報と同じ厳しさで検証する（読んだ直後でも要約段階で誤帰属する）
+- 2026-09-17 — 規律を定めたドキュメントは、その規律を自分自身に適用して検算する（出典と未検証の明示が落ちやすい）
 ### G. CI / tooling / マルチAI
 - 2026-08-27 — `catch` が ReferenceError を握りつぶすと実装の誤りが「検証したが不一致」に化ける（純関数テストは依存欠落を検出しない）
 - 2026-05-21 — 媒体実測の取得は `scripts/fetch-channel-metrics.mjs` に集約
@@ -156,6 +161,23 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 ---
 
 ## 🧭 学びエントリ
+
+### 2026-09-23 — note WXR は「構造preflight」と「公式export比較」を二段階に分ける [Workflow][Tooling][Gotcha]
+
+**観察**: `content-closed-loop-note` のCanary公開準備で、リポジトリ自身の `md_to_wxr.py` をGitHub Actions上で実行した。WXR生成自体は成功したが、最初の一回限りpreflightは「タイトルにだけ存在する文字列が本文HTMLにもある」と誤ってassertしFAILした。WXR不具合ではなく**検査側の誤判定**だった。assertを実在する本文マーカーへ直すと、XML parse・必須 `wp:*`・著者・画像参照・Artifact uploadがすべて成功した。
+
+同時に、既存 `verify_wxr.py` は公式note export ZIPが無い環境では実行不能だったため、CIで再利用できないことが分かった。そこで `--structure-only` とfixture self-testを追加し、その後note公式ヘルプの現行インポート条件（UTF-8 / 20MB以下 / 1000記事以下 / `<rss>` / `excerpt, content, wfw, dc, wp` 名前空間）まで早期検証へ取り込んだ。最終self-testは **11/11 PASS**、既存Content checks / Dependency reviewもPASSした。
+
+**対策/学び**:
+
+- **WXR検証を二段階に分ける**。CI・一時環境では `verify_wxr.py --structure-only`、公開前Human Gateでは通常 `verify_wxr.py` で公式exportと比較する。structure-onlyのPASSを「公式形式への完全準拠」とは扱わない
+- 構造preflightでは、XML well-formedだけでなく **UTF-8 / 20MB / 1000件 / rss root / 必須namespace prefix+URI / channel,item / minimum wp:* / author / image URL** を見る
+- 検査がFAILしたら生成物だけでなく**検査条件そのものも疑う**。特に「タイトルは本文から分離される」など変換器の仕様を無視したassertはfalse negativeを作る
+- 新しいcheckはfixtureベースのself-testを同梱しCIへwireする。今回の `verify_wxr.py --self-test` は valid / namespace欠落・URI違い / non UTF-8 / >1000 / >20MB / wp欠落 / creator警告 / local image / non-rss / invalid XML の11ケース
+- WXR検証コマンドでは `import-*.xml` のglobを使わず、**対象1ファイルを明示**する。過去世代が複数残るとshell展開で別引数になりうる
+- Human Gateを短縮するため、WXR本体・SHA-256・目視チェックリストを1つのPublish Packetとして渡す
+
+**根拠**: Issue #670、PR #672、PR #673。Canary WXR SHA-256 `9135972be3ccce13040264e48786fff59cb0060524b10a57fb02a252db2601c4`。PR #673 CIで `verify_wxr` self-test 11/11 PASS。
 
 ### 2026-09-07 — 自分が書いた引用の帰属は、外部一次情報と同じ厳しさで検証する [Workflow][Gotcha]
 
@@ -1619,6 +1641,59 @@ note公式ヘルプには「`https://` URLの JPEG/PNG/GIF なら `<img>` で取
 - 兆候頼みにしない仕組みとして `npm run check:pr-conflict`（`scripts/check-pr-file-conflict.js`）を追加した。現ブランチの変更ファイル（または引数指定のファイル）が他の open PR のファイル集合と重なるかを 1 回の `gh pr list --json files` で判定する。既定は WARN、`--strict` で exit 1。gh 未認証 / オフライン / レート制限では SKIP して誤検知しない。作業着手前とレビュー前に叩く。
 
 **根拠**: Issue #622 / PR #624（マージ commit `d8a620c`、`.claude/workflows/note-finalize.js` の `VISUAL_SCHEMA.scan` と `reconcileVisual`）。PR #623 は `gh pr view 623 --json createdAt,mergedAt,additions,deletions,files` で確認（1 ファイル / +175 / -128）。
+
+---
+
+### 2026-09-14 — note エクスポート取り込みで大量に出る画像の `M` は、実体差分ゼロの churn [Tooling][Gotcha]
+
+**観察**: `wxr_to_md.py` で公式エクスポート ZIP を取り込んだところ、`articles_note/assets/` の PNG 100 点が `M` になった。新規記事は 1 本（`n062a695d5af9`）なのに、画像だけが全面的に変更扱いになる。実体を確認すると、ファイルサイズ・寸法・カラーモードはすべて同一で、`cmp -l` で差分は 6 バイトだけだった（PNG のメタデータ chunk と思われる）。note 側が同じ画像をエクスポートのたびに再生成しているため、内容が変わらなくても毎回バイト差分が出る。
+
+**対策/学び**:
+
+- 取り込み後に `git status` が画像多数の `M` を出したら、**まず 1 点を検体として実体差分を測る**。`git show HEAD:<path> > /tmp/old.png` してから `ls -l` / `file`（サイズ・寸法）と `cmp -l`（差分バイト数）を比べる
+- サイズ・寸法が同一で差分が数バイトなら churn。`git checkout -- articles_note/assets/` でまとめて捨てる。commit するとエクスポートのたびに 100 点規模の無意味な diff がリポジトリへ積もる
+- **新規追加された画像は `??` として出る**ので、`M` を全部捨てても取りこぼさない。この非対称性が安全に一括 revert できる根拠になる
+- 逆に、サイズか寸法が変わっていたら note 側で画像が差し替わっているので、その分は取り込む
+
+**根拠**: PR #660（`n062a695d5af9` の取り込み。画像 100 点を revert し、2 点の新規のみ commit）。検体は `n38127f1a545f_860b42c08800b229c1439cf3f8df4b67.png`（1,789,472 バイト / 3840x2010 が前後で一致、`cmp -l` の差分 6 バイト）
+
+### 2026-09-17 — 規律を定めたドキュメントは、その規律を自分自身に適用して検算する [Convention][Workflow]
+
+**観察**: 「他者の OSS を解説する記事の書き方」ガイド（`docs/article-guides/oss-explainer-writing.md`）を書いた。必須要件として「推測には該当ファイルパスを添えよ」「観測していない効果を書くな」を挙げながら、**ガイド本体が両方を破っていた**。冒頭は「外部読解型の実例分析をもとに整理した」と書くだけでその実例の URL を示さず、運用実績ゼロの内容を「必須要件」と断言していた。セルフレビューで気づいて公開前に修正した。
+
+**対策/学び**:
+
+- 規約・ガイド・チェックリストを書いたら、**成果物自身を最初の適用対象にする**。書いたチェックリストを自分に対して 1 周回す
+- 特に落ちやすいのは「出典の明示」と「未検証であることの明示」。**書き手は自分の根拠を知っているので、示す必要を感じない**。読者は知らない
+- 既存ガイドと並べる場合、根拠の強さが揃っているかを見る。`zenn-structure-best-practices.md` は公開実績を根拠に持つが、新規ガイドは外部事例の分析にすぎない。同じ棚に置くなら、その差を本文に書く
+
+**根拠**: PR #661（初回 commit `aa45a0f` → セルフレビュー反映 `7165d9d`。出典明示・未運用の明記・参考節の体裁統一の 3 点）
+
+---
+
+### 2026-09-24 — my-blog の gh アカウント hook は操作先を見ずに s977043 へ戻す。別リポジトリへの push はコマンド内で切り替える [Gotcha][Tooling]
+
+**観察**: my-blog で起動したセッションから、会社リポジトリ（`unilabo/site-management-system`）へ PR を出そうとした。直前のコマンドで `gh auth switch --user kominem-unilabo` しておいたのに、`git push` と `gh pr create` を含むコマンドが「Repository not found」「Could not resolve to a Repository」で失敗した。my-blog の PreToolUse hook（`.claude/settings.json` → `scripts/hooks/claude-gh-account-guard.sh` → `check-gh-account.sh --fix`）が、**push 系コマンドの直前に、操作先に関係なく active を s977043 へ戻していた**。これまでの記録（kominem-unilabo へ反転して my-blog の操作が 403 になる）とは逆向きの事象。
+
+**対策/学び**:
+
+- my-blog のセッションから別アカウントのリポジトリを操作するときは、**アカウントの切り替えを push / PR と同じ Bash コマンドの中で行い、最後に s977043 へ戻す**。hook はコマンド実行前に1回だけ走るので、コマンド内の切り替えは上書きされない
+- 失敗時は何も push されていないことを確認してから再実行する（今回は push 前に失敗した）
+- 根本対策: PR #689 で hook が操作先の owner（`gh -R` / `git -C` / `cd` 先の origin）を判定し、s977043 以外なら補正しないよう修正済み。owner を判定できないコマンド（変数を含むパス等）では従来どおり s977043 へ戻すので、コマンド内切り替えは引き続き有効な回避策
+
+**根拠**: unilabo/site-management-system PR #1549 の作成時（2026-09-24）。1回目は失敗、コマンド内切り替えで成功
+
+### 2026-09-24 — squash マージ済みのブランチは `--is-ancestor` でも3点 diff でも「未マージ」に見える。判定は PR の状態で行う [Gotcha][Workflow]
+
+**観察**: ローカル環境の整理で stale ブランチを消そうとし、まず `git merge-base --is-ancestor <branch> origin/main` で判定したら、PR がマージ済みの5本が「未マージ」と出た。次に `git diff origin/main...<branch>` を見ると差分が残っていたため、「main に無い作業がある」と一度誤って報告した。どちらも、**squash マージでは元のコミットが main の祖先にならず、merge-base も古いまま**なので、マージ済みでも差分が出る。`git branch -d` も同じ理由で拒否する。
+
+**対策/学び**:
+
+- このリポジトリは squash マージのみなので、ローカルブランチがマージ済みかは **`gh pr list --state all --head <branch>` で PR の状態を見る**。MERGED なら `git branch -D` で消してよい。まとめて洗い出すには `npm run clean:merged-branches`（既定 dry-run、`-- --apply` で削除。#689）
+- PR が無いブランチは、対象ファイルが main に存在するかと、ブランチ固有のコミット内容で判断する。祖先関係や3点 diff の結果だけで「未マージ」と結論しない
+- 消す前に `git rev-parse <branch>` で SHA を控えておけば、`git branch <name> <sha>` で戻せる
+
+**根拠**: 2026-09-23 のローカル整理（9 ブランチ削除。うち 5 本は PR #625 / #638 / #639 / #653 / #654 のマージ済み squash ブランチ）
 
 ---
 
