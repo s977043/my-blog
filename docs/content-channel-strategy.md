@@ -308,9 +308,9 @@ this document keeps the shared positioning, short bio copy, and link order align
 
 Unify profiles so that readers immediately understand the theme.
 
-最終更新: 2026-09-23（issue #231 の 2026-06-01 版コメントを起点に、2026-09 時点の公開記事・Book と実測値へ合わせて更新）。
+最終更新: 2026-09-25（各媒体の文字数上限に合わせて短縮し、3 媒体のプロフィールへ反映。公開 API で保存内容を確認済み）。
 
-- 文字数上限: Zenn / Qiita / note いずれのプロフィール欄も**上限未確認**。貼り付け時に入り切らない場合は、各文案の最終行（媒体リンク行）から削る
+- 文字数上限（2026-09-25 に各設定画面で確認）: **Zenn 160 字 / Qiita 200 字 / note 140 字**。下の文案は上限内に収めた、実際に保存した版
 - 表記: OSS 名は現行の記事タイトルに合わせて **River Review** に統一する（2026-06-01 版コメントの「River Reviewer」は旧称）
 - note 文案はダッシュを使わない（`AGENTS.md`「note 固有（JTFスタイル準拠）」）。Book 名は全角括弧で区切って表記する
 
@@ -318,11 +318,8 @@ Unify profiles so that readers immediately understand the theme.
 
 ```text
 AIコーディングをチーム開発に乗せる運用設計を検証しています。
-PlanGate / River Review / Agent Skills / AI-readable repository を中心に、
-Claude Code・Codex・GitHub Actions での実践ログを発信中。
-
-📕 Book「AI にコードを書かせる前にやること — PlanGate 実践ガイド」公開中
-検証ログ: Growth Lab ／ 思想・背景: note ／ OSS: GitHub
+PlanGate / River Review / Agent Skills を中心に、Claude Code・Codex での実践ログを発信中。
+📕 Book「PlanGate 実践ガイド」公開中
 ```
 
 ### Qiita profile draft
@@ -332,7 +329,6 @@ AIコーディングエージェントをチーム開発で安全に使うため
 PlanGate / River Review / Agent Skills / AI-readable repository などを書いています。
 
 Zenn Book「PlanGate 実践ガイド」で、計画・実装・検証の型を体系化しました。
-note: 背景・思想 ／ Zenn: 技術深掘り＋Book ／ Growth Lab: 検証ログ ／ GitHub: OSS
 ```
 
 ### note profile direction
@@ -349,11 +345,8 @@ Use note as the narrative hub.
 ### note profile draft
 
 ```text
-AIコーディングをチーム開発に乗せる運用設計について書いています。
-PlanGate / River Review / Agent Skills を中心に、AIエージェントを個人の便利ツールで終わらせず、チームの開発フローにどう組み込むかを考えています。
-
-体系ガイド（Zenn Book「AIにコードを書かせる前にやること」PlanGate実践ガイド）: https://zenn.dev/minewo/books/plangate-guide
-技術深掘り: Zenn ／ 実践メモ: Qiita ／ 検証ログ: Growth Lab ／ OSS: GitHub
+AIコーディングをチーム開発に乗せる運用設計を書いています。PlanGate / River Review / Agent Skills が中心。
+体系ガイド（Zenn Book）: https://zenn.dev/minewo/books/plangate-guide
 ```
 
 ### Current entry-point candidates
@@ -382,9 +375,9 @@ Use these as the visible first-step articles when updating pinned articles, pick
 
 リポジトリ側の文面準備は完了済み。残りは各サービス設定画面での手作業のみ。この順で実施する。
 
-- [ ] Zenn プロフィールを「Zenn profile draft」で更新する（https://zenn.dev/minewo の設定画面）
-- [ ] Qiita プロフィールを「Qiita profile draft」で更新する（https://qiita.com/s977043 の設定画面）
-- [ ] note プロフィールを「note profile draft」で更新し、リンク欄に Zenn（https://zenn.dev/minewo）、Qiita（https://qiita.com/s977043）、Growth Lab（https://the3396.com/articles）、GitHub（https://github.com/s977043）を設定する
+- [x] Zenn プロフィールを「Zenn profile draft」で更新する（2026-09-25。GitHub・サイト欄は専用フィールドに設定済み）
+- [x] Qiita プロフィールを「Qiita profile draft」で更新する（2026-09-25）
+- [x] note プロフィールを「note profile draft」で更新する（2026-09-25）。note の設定画面には SNS 用の欄（Facebook・Instagram 等）しかなく、Zenn / Qiita / Growth Lab / GitHub のリンク欄はないため、Book の URL を本文に入れた
 - [ ] Qiita の Pickup Articles を上表の Qiita 行から選んで設定する（設定可能な件数は未確認）
 - [ ] note の固定記事を上表の note 1行目（PlanGate 入口）に設定するか判断し、設定する
 - [ ] 貼り付け後、各プロフィールページを開いて改行・リンクの表示崩れがないか確認する
