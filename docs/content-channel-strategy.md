@@ -40,7 +40,7 @@ izanami also has a separately scoped discovery track for the user's named indivi
 | Zenn | 体系化された技術知識（ストック資産・逆引きリファレンス） | アーキテクチャ、実装詳細、スキーマ、設計判断。将来の自分と読者の資産 | 深掘りだけでなく逆引きリファレンス用途で SEO が強い |
 | Qiita | 検索入口＋議論の火種（鮮度・コミュニティ評価） | 短い実務 Tips、トラブルシュート、最初の一歩。最新トレンドへの即応 | 単なる Tips 置き場ではなく鮮度・正確性のアルゴリズム評価が厳格化。AI 生成コンテンツガイドライン遵守が必須 |
 | Growth Lab | Canonical long-form hub | Complete guides, validation logs, evergreen documentation | 体系ガイドの最終到達点 |
-| izanami | 個人開発・OSSの発見チャネル | 個人OSSやアプリの課題起点の記事、設計・実装から得た実践知 | 役立つ記事を主役にし、関連プロダクトへの導線と読者の反応を検証する。SEOスコアや被リンク数は成果の保証・品質判定に使わない |
+| izanami | 個人開発・OSSの発見チャネル | 個人OSSやアプリの課題起点の記事、設計・実装から得た実践知 | 役立つ記事を主役にし、関連プロダクトへの導線と読者の反応を検証する。SEOスコアや被リンク数は成果の保証・品質判定に使わない。**当面は River Review と AI レビュー運用の題材に集中する**（2026-09-24 著者判断。初回記事は公開済み、詳細は `articles_izanami/README.md`） |
 | GitHub | Source of truth for OSS | README, releases, issues, implementation docs | OSS の実装真実 |
 
 ## Data-driven channel weighting（2026-09 実測で更新。2026-05 スナップショットは履歴として併記）
@@ -266,6 +266,9 @@ Channel mapping:
 | Zenn | River Review architecture and review phases |
 | Qiita | GitHub ActionsでAIレビューを開発フロー全体に広げる |
 | Growth Lab | River Review operation guide and validation log |
+| izanami | AIレビュー結果をどう信頼し、どう読むか（指摘0件の扱い、指摘が多すぎるときの絞り方）。River Review は設計例として扱う |
+
+Zenn は River Review の設計と実装、izanami はレビュー結果を受け取る側の運用判断を扱う。同じ一次情報を使ってもよいが、読者課題と結論を分ける（`izanami channel policy` の Editorial scope）。
 
 ### Agent Skills
 
@@ -517,7 +520,8 @@ Track the following signals.
 3. Add cross-links to PlanGate, River Review, Agent Skills, and AI-readable repository articles.
 4. Confirm note fixed entry article choice for the current growth goal.
 5. ~~Publish two Qiita search-entry articles.~~ 完了（2本とも公開済み。上記「Week 2」参照）
-6. Publish one note hub article.
+6. Publish one note hub article.（構成案は `article_seeds/note-hub-plangate-river-skills/`。【著者確認】の空欄を埋めてから本文化）
+7. izanami: 2本目（指摘が多すぎるときの絞り方）の構成案 PR #698 を確定して本文化する。初回記事の観測は 2026-10-24 頃に行う
 
 ## Editorial guardrails
 
