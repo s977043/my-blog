@@ -165,6 +165,31 @@
       "legacy": true
     },
     {
+      "id": "seed-20260926-agent-team-topology-audit",
+      "path": "article_seeds/ai-driven-development/2026-09-26-agent-team-topology-audit.md",
+      "title": "AIにどこまで任せるか、ではなく「どの境界で自律させるか」を考えたい",
+      "date": "2026-09-26",
+      "status": "draft",
+      "topics": [
+        "ai-driven-development",
+        "agent-teams",
+        "team-topologies",
+        "bounded-agency",
+        "governance"
+      ],
+      "source": "experience",
+      "source_url": "https://teamtopologies.com/ai-success",
+      "source_ref": "https://eirwin.github.io/agent-team-topologies/",
+      "evidence_status": "observed",
+      "promoted_to": [],
+      "article_type_candidates": [
+        "experience",
+        "insight",
+        "analysis"
+      ],
+      "legacy": false
+    },
+    {
       "id": "seed-20260911-media-operating-system-boundaries",
       "path": "article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md",
       "title": "Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった",
