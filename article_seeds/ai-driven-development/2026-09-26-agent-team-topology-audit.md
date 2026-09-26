@@ -41,6 +41,10 @@ article_type_candidates:
 
 これは効果を証明したものではありません。今のところ、自分のAI駆動開発環境で繰り返し観測している傾向です。
 
+ここから今、次の仮説を置いています。
+
+**「AIにどこまで任せるか」ではなく、「どの責任境界の中で自律性を最大化するか」を設計した方がよいのではないか。**
+
 ## 自分の解釈
 
 ここから、人間の役割も少し変わってきているのではないかと考えています。
@@ -157,9 +161,9 @@ Eric Irwin氏のcommunity projectでは、Claude CodeのAgent Teamsを対象に�
 
 その上で、自分が実務で必要だと感じているのは、**Team Shapeの次のレイヤー**です。
 
-仮に、これを **Agent Execution Topology** と呼んでみます。
+ここでは便宜上「実行Topology」と呼びます。新しい概念名を増やすことが目的ではありません。
 
-Agent Execution Topologyは、
+実行Topologyは、
 
 ```text
 Topology Pattern
@@ -269,6 +273,18 @@ governance
 
 常に最大構成にするのではなく、意思決定境界や高リスク領域へ集中させる。
 
+### Flow
+
+Topologyを描いて終わりにせず、実際に価値がどう流れたかを見る。
+
+- どこで仕事が待っているか
+- どこで手戻りが起きているか
+- 人間の判断待ちが増えていないか
+- Agent間の受け渡しがボトルネックになっていないか
+- End-to-Endで完了するまでの流れが改善したか
+
+Topologyが整って見えても、Flowが悪ければ設計は成功していない。
+
 こうして見ると、
 
 agents / effort / advisor / CLAUDE.md / skills / hooks / permissions
@@ -353,6 +369,7 @@ Team Topologiesの4 Team Types × 3 Interaction Modesを、そのままAI向け�
 - Review Architecture
 - Governance
 - Cost
+- Flow
 
 の観点で可視化してみます。
 
@@ -387,6 +404,7 @@ AIに仕事を任せる方法ではなく、**AIが働くチームそのもの�
 
 - AI駆動開発の実践から、Agentを個別設定ではなく実行Topologyとして見る仮説を記録
 - 既存のAgent Team Topologiesと競合しないよう、Team ShapeとExecution / Review / Governanceを分離
-- 「Agent Execution Topology」を設計対象、「Agent Team Topology Audit」を監査手法として暫定定義
+- Team Shapeの次に見る「実行Topology」を設計対象とし、「Agent Team Topology Audit」を監査手法として暫定定義
 - X記事として反応を確認し、その後に長文記事・正式なフレーム定義へ進める方針
 - Grokレビューを反映し、観測事実を具体化。Feature Podの既存定義と実行config例の境界を明示
+- 多視点レビューを反映し、主張を冒頭へ前倒し。固有名詞はAgent Team Topology Auditへ寄せ、監査軸にFlowを追加
