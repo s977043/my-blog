@@ -13,7 +13,7 @@ source: experience
 source_url: https://teamtopologies.com/ai-success
 source_ref: https://eirwin.github.io/agent-team-topologies/
 evidence_status: observed
-promoted_to: []
+promoted_to:
 article_type_candidates:
   - experience
   - insight
