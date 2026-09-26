@@ -10,8 +10,8 @@ topics:
   - bounded-agency
   - governance
 source: experience
-source_url: https://teamtopologies.com/ai-success
-source_ref: https://eirwin.github.io/agent-team-topologies/
+source_url:
+source_ref: "https://teamtopologies.com/ai-success ; https://eirwin.github.io/agent-team-topologies/"
 evidence_status: observed
 promoted_to:
 article_type_candidates:
@@ -24,22 +24,22 @@ article_type_candidates:
 
 ## 観測事実
 
-AI駆動開発を進める中で、最近かなり強く感じていることがあります。
+最近、Claude CodeでAI駆動開発を進める中で、agents、CLAUDE.md、skills、hooks、model、effort、advisor、permissionsを個別に見直す機会が増えていました。
 
-AIに全部任せればうまくいく、というより、これまでソフトウェア開発やアジャイル開発で学んできた知識やフレームワークをAIにも持ち込んだ方が、仕事全体が安定して進みます。
+一つひとつの設定は改善できても、「このAgent Team全体は、今どういう構造で動いているのか」を説明しようとすると難しい。
 
-例えば、
+一方で、自分の環境では、個別のプロンプトや設定を先に詰めるよりも、
 
-- 責務を曖昧にしない
-- 一度に抱える認知負荷を増やしすぎない
-- 仕事の流れを止める箇所を探す
-- 誰と誰が、どの目的で相互作用するのかを明確にする
-- レビューと意思決定の境界を分ける
-- 自律性を与える範囲と、人間が判断する範囲を明示する
+- 誰が考えるのか
+- 誰が実行するのか
+- 誰がレビューするのか
+- どのContextを誰に渡すのか
+- どこで別のAgentやModelにchallengeさせるのか
+- 最後に誰が判断するのか
 
-といった考え方です。
+という責務と相互作用の境界を先に置いた方が、仕事が安定して進みやすいと感じています。
 
-AI Agentごとのプロンプトを細かく調整することよりも、Agentたちが仕事をする「システム」そのものを設計したときの方が、うまくいく場面が増えてきました。
+これは効果を証明したものではありません。今のところ、自分のAI駆動開発環境で繰り返し観測している傾向です。
 
 ## 自分の解釈
 
@@ -127,6 +127,8 @@ Eric Irwin氏のcommunity projectでは、Claude CodeのAgent Teamsを対象に�
 
 という8つのTopology Patternが整理されています。
 
+このうちQuality-Gatedは、単独のTeam Shapeというより、他のTopologyへ重ねるoverlayとして使う位置付けです。
+
 さらに重要なのは、これらを固定テンプレートではなくprimitiveとして扱い、nesting / pipeline / overlayで合成できるようにしていることです。
 
 例えばFeature PodのReviewerがReview Boardを起動する、といった構成も取れます。
@@ -171,7 +173,9 @@ Governance
 
 を、一つの実行システムとして捉える考え方です。
 
-例えばFeature Podを使っているとしても、
+例えばFeature Podを使っているとしても、以下は既存のFeature Pod定義そのものではありません。
+
+**同じTeam Shapeでも、model / context / routing / review / permissionを変えると別の実行システムになる**、という自分の仮説を示すための構成例です。
 
 ```text
 frontend agent
@@ -385,3 +389,4 @@ AIに仕事を任せる方法ではなく、**AIが働くチームそのもの�
 - 既存のAgent Team Topologiesと競合しないよう、Team ShapeとExecution / Review / Governanceを分離
 - 「Agent Execution Topology」を設計対象、「Agent Team Topology Audit」を監査手法として暫定定義
 - X記事として反応を確認し、その後に長文記事・正式なフレーム定義へ進める方針
+- Grokレビューを反映し、観測事実を具体化。Feature Podの既存定義と実行config例の境界を明示
