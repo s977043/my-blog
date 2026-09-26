@@ -6,8 +6,8 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 
 ## Summary
 
-- Seeds: 13
-- Explicit provenance contract: 5
+- Seeds: 14
+- Explicit provenance contract: 6
 - Legacy seeds: 8
 - Promotion edges: 3
 
@@ -23,6 +23,7 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 | `legacy:article_seeds/ai-driven-development/2026-09-10-north-star-intervention-depth` | 2026-09-10 | seed | experience | legacy |  | 速さではなく「任せ方の変化」を測ることにした | `article_seeds/ai-driven-development/2026-09-10-north-star-intervention-depth.md` | 0 |
 | `legacy:article_seeds/ai-driven-development/2026-09-10-retire-pr-count-kpi` | 2026-09-10 | seed | experience | legacy |  | 「1人あたりPR数」をKPIから外した | `article_seeds/ai-driven-development/2026-09-10-retire-pr-count-kpi.md` | 0 |
 | `legacy:article_seeds/ai-driven-development/2026-09-10-small-team-cant-measure-speed` | 2026-09-10 | seed | experience | legacy |  | 5人チームでは「改善速度」を安定して測れなかった | `article_seeds/ai-driven-development/2026-09-10-small-team-cant-measure-speed.md` | 0 |
+| `seed-20260926-agent-team-topology-audit` | 2026-09-26 | draft | experience | observed | experience, insight, analysis | AIにどこまで任せるか、ではなく「どの境界で自律させるか」を考えたい | `article_seeds/ai-driven-development/2026-09-26-agent-team-topology-audit.md` | 0 |
 | `seed-20260911-media-operating-system-boundaries` | 2026-09-11 | seed | experience | observed | experience, analysis | Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった | `article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md` | 1 |
 | `seed-20260923-agent-role-boundaries` | 2026-09-23 | seed | external | verified | analysis, insight | AIエージェントを増やす前に、役割と委譲境界を分ける | `article_seeds/media-operating-system/2026-09-23-agent-role-boundaries.md` | 0 |
 | `seed-20260923-content-closed-loop` | 2026-09-23 | seed | external | verified | analysis, insight, experience | 記事作成を自動化するより、Signal→Seed→公開後学習を閉じたい | `article_seeds/media-operating-system/2026-09-23-content-closed-loop.md` | 1 |

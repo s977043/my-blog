@@ -44,6 +44,7 @@ AI駆動開発の実践で得た小さな原体験・違和感・仮説を、長
 
 | Date | Title | Status | Topics |
 | --- | --- | --- | --- |
+| 2026-09-26 | [AIにどこまで任せるか、ではなく「どの境界で自律させるか」を考えたい](./2026-09-26-agent-team-topology-audit.md) | `draft` | AI駆動開発 / Agent Teams / Team Topologies / Bounded Agency / Governance |
 | 2026-09-10 | [AIを使い切ろうとしたら、人間の判断待ちが積み上がった](./2026-09-10-flow-efficiency.md) | `published` | AI駆動開発 / Agile / Flow Efficiency / WIP |
 | 2026-09-10 | [「1人あたりPR数」をKPIから外した](./2026-09-10-retire-pr-count-kpi.md) | `seed` | AI駆動開発 / Metrics / DORA |
 | 2026-09-10 | [速さではなく「任せ方の変化」を測ることにした](./2026-09-10-north-star-intervention-depth.md) | `seed` | AI駆動開発 / Metrics / North Star / Harness Engineering |
