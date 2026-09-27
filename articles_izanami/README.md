@@ -23,7 +23,7 @@ izanami 向けに新規執筆する記事の唯一のローカル原稿を管理
 | プロダクト | 既存記事の候補 | 一次情報の候補 | izanami 向けの切り口候補 | 状態 | 次の確認 |
 | --- | --- | --- | --- | --- | --- |
 | PlanGate | [`articles/plangate-ai-coding-workflow.md`](../articles/plangate-ai-coding-workflow.md)、[`articles/plangate-v86-hook-enforcement.md`](../articles/plangate-v86-hook-enforcement.md) | [`s977043/PlanGate`](https://github.com/s977043/PlanGate) の現行README・実装 | AI に実装を任せる前に、何を人が承認すべきか。実装前ゲートの導入判断と最小構成 | `idea` | 読者課題と現行READMEの対応 |
-| River Review | [`articles/river-reviewer-v033-improvement-loop.md`](../articles/river-reviewer-v033-improvement-loop.md)、[`articles/river-review-judgment-placement.md`](../articles/river-review-judgment-placement.md) | [`s977043/river-review`](https://github.com/s977043/river-review) の現行README・実装 | AI レビューで指摘が0件のとき、レビューが完了したのかを区別する設計（Review Coverage） | `published` | 初回記事 [`ai-review-coverage.md`](./ai-review-coverage.md) を公開済み（2026-09-24）。2本目の構成案は PR #698 でレビュー中 |
+| River Review | [`articles/river-reviewer-v033-improvement-loop.md`](../articles/river-reviewer-v033-improvement-loop.md)、[`articles/river-review-judgment-placement.md`](../articles/river-review-judgment-placement.md) | [`s977043/river-review`](https://github.com/s977043/river-review) の現行README・実装 | AI レビューで指摘が0件のとき、レビューが完了したのかを区別する設計（Review Coverage） | `published` | Review Coverage と責務分担ガイドを公開済み。次の題材は読者課題から選定 |
 | Growth Lab | [`articles/penpot-react-design-system-contract.md`](../articles/penpot-react-design-system-contract.md)、[`articles/design-md-guide-and-adoption-log.md`](../articles/design-md-guide-and-adoption-log.md) | [公開サイト](https://the3396.com/)（リポジトリは非公開） | Growth Lab の公開サイトで確認できる、プロダクト理解・根拠・実行・結果をつなぐ設計 | `idea` | 公開サイトで確認できる範囲に主張を限定できるか |
 | クラゲ水槽（interactive-ocean） | [`articles_note/published/n27a5594f65a4.md`](../articles_note/published/n27a5594f65a4.md) | [公開アプリ](https://ocean.the3396.com/jellyfish)（リポジトリは非公開） | 眺める体験をブラウザ上で作るとき、見た目と動きをどう実装へ落としたか | `idea` | 公開アプリで確認できる範囲に主張を限定できるか。3396-cc 所有のため非公開情報は使わない |
 | 英単語帳アプリ（PocketEitan） | 未特定 | 公開された一次情報なし（リポジトリは非公開） | 学習上の具体的な課題と、それに対するアプリの設計・実装 | `idea` | 既存記事と公開された一次情報の特定（見つかるまで `idea` のまま） |
@@ -40,3 +40,9 @@ izanami 向けに新規執筆する記事の唯一のローカル原稿を管理
 - 観測: policy の [Search, links, and measurement](../docs/content-channel-strategy.md#search-links-and-measurement) に従う
 
 公開後約30日（2026-10-24 頃）に上記の観測項目を確認する。
+
+## 2本目: AIレビューの責務分担
+
+**AIレビューを開発フローに置くときの責務分担**を2026-09-28に公開した（[izanami](https://izanami.dev/post/a168c992-159d-4b2c-9e7c-32ea98080174)）。原稿は [`ai-review-responsibility.md`](./ai-review-responsibility.md)。AIに決めた観点の指摘と根拠を返してもらい、採否・再実行・停止・リスク受容を担当者やワークフローへ割り当てる運用契約を扱う。Review Coverageの記事とは別の読者課題を扱い、判断配置の既存記事を再掲しない。
+
+- 観測: 公開後約30日（2026-10-28 頃）に取得可能な閲覧・反応・プロジェクト遷移を記録する。公開記事のRiver Review GitHubリンクと関連Zenn記事リンクには `rel="noopener noreferrer nofollow"` が付くことを実ページで確認済み。紹介流入と検索評価への寄与を分け、未取得の指標は未計測として扱う。
