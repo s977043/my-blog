@@ -277,31 +277,15 @@ Research結果は少なくとも次の3種類へ分ける。
 
 #### A-4. Draft Article Planを作る
 
-`READY` の記事案は、本文を書く前に次を1つの `Draft Article Plan` へ記録する。
+`READY` の記事案は、本文を書く前に次を決め、A-5 の書式で1つの `Draft Article Plan` に記録する（`npm run check:article-plan` は A-5 の書式を読む）。
 
-```markdown
-## Reader Problem
-誰の、どの問題を扱うか
-
-## Central Claim
-この記事で最も伝える1文
-
-## Evidence
-Observed / Verified / Hypothesis を区別した根拠
-
-## Channel / Article Type
-媒体と主タイプ
-
-## Outline
-必要最小限の見出し
-
-## Out of Scope
-今回は書かない論点
-
-## Lifecycle
-現在: PLANNED
-次: DRAFTED
-```
+- Reader Problem（`reader_problem`）: 誰の、どの問題を扱うか
+- Central Claim（`central_claim`）: この記事で最も伝える1文
+- Evidence（`### Evidence Boundary`）: Observed / Verified / Hypothesis を区別した根拠
+- Channel / Article Type（`channel`・`article_type`）: 媒体と主タイプ
+- Outline（`### Outline`）: 必要最小限の見出し
+- Out of Scope（`out_of_scope`）: 今回は書かない論点
+- Lifecycle: 現在は PLANNED、次は DRAFTED
 
 初稿前は仮説や未確認事項を明記してよい。PR作成前の通過条件は `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」を正とする。
 
