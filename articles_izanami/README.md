@@ -12,7 +12,7 @@ izanami 向けに新規執筆する記事の唯一のローカル原稿を管理
 - Front Matter に `title`、`summary`、`tags`、`status`（`idea` / `draft` / `published`）、`source_articles`、`project_sources`、`izanami_url`、`published_at` を記録する。URLや公開日が未確定なら空欄にする。
 - Front Matter はリポジトリ内の管理情報であり、izanami の本文には含めない。投稿時は記事本文だけを使う。
 - ファイルは原稿を書き始める時点（`draft`）で作る。`idea` の題材は下の候補表だけで管理する。
-- 新規原稿は本文生成前に `article_seeds/` の媒体別 `Draft Article Plan: izanami/<slug>` を用意する。PRを作る場合は、[`docs/article-lifecycle-contract.md`](../docs/article-lifecycle-contract.md#4-article-planの記録pr作成ゲート) の作成ゲートを確認する。PRには該当Seedを含めるか、ベースブランチにあることを確認し、PR本文にPlanのパスを書く。
+- 新規原稿は本文生成前に `article_seeds/` の媒体別 `Draft Article Plan: izanami/<slug>` を用意する。PRを作る場合は、[`docs/article-lifecycle-contract.md`](../docs/article-lifecycle-contract.md#4-article-planの記録pr作成ゲート) の作成ゲートを確認する。PRには該当Seedを含めるか、ベースブランチにあることを確認する。PR本文のPlan行は同節の書式に従う。
 - izanami への投稿は著者確認後に著者が行う。自動投稿は行わない。ブラウザで agent が入力を代行する場合も、保存・公開の操作は著者が行う（手順と注意点は [`docs/publish-operating-policy.md` のブラウザ経由の投稿・更新](../docs/publish-operating-policy.md#ブラウザ経由の投稿更新playwright)）。投稿後に `izanami_url`・`published_at` を記入し、同じ変更で `status` を `published` にする。
 
 ## 初期企画候補

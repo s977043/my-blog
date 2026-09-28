@@ -7,6 +7,8 @@ argument-hint: <article-slug> (articles/ 配下のファイル名 .md 抜き)
 
 指定した記事を3ペルソナ視点でレビューし、`reviews/zenn/<slug>.md` を生成してPRを作成する。
 
+初稿は未追跡のまま、またはベースブランチにマージ済みの状態で実行する。記事本文のPRはこのレビューPRとは別に作る。
+
 ## 引数
 - `$1` = 記事の slug (例: `plangate-ai-coding-workflow`)
 
@@ -20,8 +22,9 @@ argument-hint: <article-slug> (articles/ 配下のファイル名 .md 抜き)
    ```
    既存 PR があれば作成せず報告して終了。
 
-   新規記事（範囲は `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」の適用範囲）では、レビュー時点で該当 Plan が存在することを確認する。ブランチ作成はPlanの完成前でも行ってよい。既存記事の改訂レビューでは省略する。
+   新規記事か対象外（ゲート導入前の原稿／改訂）かを `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」の適用範囲で判定する。以降のPlan手順は新規記事だけに適用する。新規記事では、レビュー時点で該当 Plan が存在することを確認する。ブランチ作成はPlanの完成前でも行ってよい。
    ```bash
+   # 新規記事のときだけ実行
    SEED_PATH=$(git grep --untracked -lE "^## (Draft|Approved) Article Plan: zenn/$1$" -- article_seeds)
    echo "$SEED_PATH"
    ```
@@ -50,23 +53,32 @@ argument-hint: <article-slug> (articles/ 配下のファイル名 .md 抜き)
    - 構成ガイドは固定テンプレートとして強制せず、記事タイプ・検索意図・読者を優先する
 
 4. PR作成ゲートの確認 & コミット
-   新規記事では、コミット前に `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」を確認する。不足があればコミットもPR作成もせず、不足項目と `SEED_PATH` を報告する。既存記事の改訂レビューには遡及適用しない。
+   新規記事では、コミット前に同節の作成ゲートを確認する。不足があればコミットもPR作成もせず、不足項目と `SEED_PATH` を報告する。
 
-   対象Planがベースブランチにない場合は、このコミットへ該当Seedも含める（`git add "$SEED_PATH"`）。Planが未追跡・未コミットのままならPRゲートを通過したとみなさない。
+   Bash の呼び出し間でシェル変数は残らないため、`SEED_PATH` はこのブロックで再計算する。対象Planがベースブランチにない場合は、このコミットへ該当Seedも含める。Planが未追跡・未コミットのままならPRゲートを通過したとみなさない。対象外のときは `# 新規記事のみ` の3行を実行しない。
    ```bash
+   # 新規記事のみ
+   SEED_PATH=$(git grep --untracked -lE "^## (Draft|Approved) Article Plan: zenn/$1$" -- article_seeds)
+   : "${SEED_PATH:?Plan未検出: zenn/$1}"
+   git cat-file -e origin/main:"$SEED_PATH" 2>/dev/null || git add "$SEED_PATH"
+
    git add reviews/zenn/$1.md
    git commit -m "docs(reviews): add 3-persona review for $1"
    ```
 
 5. push & PR作成
 
-   PR本文には `Plan: <SEED_PATH> (zenn/<slug>)` の1行を入れる（改訂レビューでPlanが無い場合は `Plan: 対象外（既存記事の改訂） (zenn/<slug>)`）。
+   PR本文のPlan行は同節の書式に従う。`PLAN_LINE` は、新規記事なら再計算した `SEED_PATH` から作り、対象外のときだけ対象外の行を明示的に代入する。
    ```bash
    # push/PR 直前に実際の active login を確認（s977043 でなければ switch）
    test "$(gh api user --jq .login)" = "s977043" || gh auth switch --hostname github.com --user s977043
    test "$(gh api user --jq .login)" = "s977043" || { echo "GitHub active account を s977043 に切り替えられませんでした"; exit 1; }
    git push -u origin docs/review-$1
-   PLAN_LINE="Plan: ${SEED_PATH:-対象外（既存記事の改訂）} (zenn/$1)"
+   # 新規記事: Plan を再計算する（見つからなければ止まる）
+   SEED_PATH=$(git grep --untracked -lE "^## (Draft|Approved) Article Plan: zenn/$1$" -- article_seeds)
+   PLAN_LINE="Plan: ${SEED_PATH:?Plan未検出: zenn/$1} (zenn/$1)"
+   # 対象外（ゲート導入前の原稿／改訂）のときだけ、上の2行の代わりに次を使う
+   # PLAN_LINE="Plan: 対象外（ゲート導入前の原稿／改訂） (zenn/$1)"
    gh pr create --title "docs(reviews): add review for $1" --body "$(printf '3ペルソナでZenn記事レビューを生成しました。\n\nTarget: articles/%s.md\nOutput: reviews/zenn/%s.md\n%s\n\n構成ガイド・再現性・技術的正確性・一次情報の検証を重点観点としてレビューしています。' "$1" "$1" "$PLAN_LINE")"
    ```
 

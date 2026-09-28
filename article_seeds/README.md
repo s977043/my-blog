@@ -28,7 +28,7 @@
 
 初稿作成前に、`Draft Article Plan`（仮のArticle Plan）を本文末尾へ `## Draft Article Plan: <channel>/<slug>` として追記する。追記先は、テーマ別サブディレクトリ（`article_seeds/<theme>/`）に対応するSeedがあればそこ、なければ `article_seeds/` 直下のSeedとする。対応するSeedが無い場合は `TEMPLATE.md` から作る。Plan Approval後は同じPlanの見出しを `## Approved Article Plan: <channel>/<slug>` に変更する。複数媒体へ派生する場合はPlanを分け、上書きしない。初期Seedには空のPlanを置かない。
 
-新規記事またはレビュー成果物のPR作成前に、Planの `reader_problem`・`central_claim`・`Evidence Boundary`（一次情報と出所）・`out_of_scope` が揃っていることを確認する。通過条件と「新規記事」の範囲は [`docs/article-lifecycle-contract.md`](../docs/article-lifecycle-contract.md#4-article-planの記録pr作成ゲート) の「4. Article Planの記録・PR作成ゲート」を正とする。
+PR作成前の確認項目と「新規記事」の範囲は [`docs/article-lifecycle-contract.md`](../docs/article-lifecycle-contract.md#4-article-planの記録pr作成ゲート) の「4. Article Planの記録・PR作成ゲート」を正とする。
 
 ## 既存 Seed
 

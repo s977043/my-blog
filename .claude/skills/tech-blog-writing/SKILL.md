@@ -309,7 +309,7 @@ Observed / Verified / Hypothesis を区別した根拠
 
 #### A-5. Draft Article PlanをSeedへ残し、Draftへ引き渡す
 
-本文生成前に、別台帳は作らず、元Seed本文へ `## Draft Article Plan: <channel>/<slug>` を追記する。追記先のSeedの探し方は `article_seeds/README.md` に従う。Seedの新規作成と `Draft Article Plan` の追記は書き込み可能なセッションで行い、`/check-tech-blog` のような review-only 実行では行わない（Planが見つからない場合の報告書式は `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」を正とする）。Plan Approval は独立した必須工程ではない。中心主張や書かない範囲の変更を採用する前に著者の判断を得る（この判断を Plan Approval としてよい）。承認後は同じPlanの見出しを `Approved Article Plan` に変更する。frontmatterへ複雑な計画構造を追加しない。1つのSeedから複数媒体・複数記事へ派生する場合は、派生記事ごとに別Planとして追記し、既存Planを上書きしない。
+本文生成前に、別台帳は作らず、元Seed本文へ `## Draft Article Plan: <channel>/<slug>` を追記する。追記先のSeedの探し方は `article_seeds/README.md` に従う。Seedの新規作成と `Draft Article Plan` の追記は書き込み可能なセッションで行い、`/check-tech-blog` のような review-only 実行では行わない（Planが見つからない場合の報告書式は `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」を正とする）。Plan Approval の扱いは `docs/article-lifecycle-contract.md` の「3. Human Gate」を正とする。frontmatterへ複雑な計画構造を追加しない。1つのSeedから複数媒体・複数記事へ派生する場合は、派生記事ごとに別Planとして追記し、既存Planを上書きしない。
 
 最低限、次を残す。
 
