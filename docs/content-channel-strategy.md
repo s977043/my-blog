@@ -30,6 +30,22 @@ This positioning connects the existing topics into a single recognizable categor
 
 izanami also has a separately scoped discovery track for the user's named individual apps and OSS projects. This track can cover app-building problems outside the shared positioning above; it does not change the positioning of the existing channels.
 
+## 記事の編集原則
+
+記事は、読者に残したい主張が正しく伝わることを優先する。事実の正確さは守るが、調べて確認した情報をすべて本文に載せる必要はない。仕様書や実装ドキュメントの網羅性を、記事に求めない。
+
+- 執筆前に「誰に、何を一つ伝えるか」を決める。各章・例・図は、その主張の理解に役立つものだけ残す。
+- 主張を支える体験や事実は一次情報で確認する。確認できないことを事実として書かず、確認した範囲を超えて一般化しない。
+- 例外・仕様の細部・検証経緯は、欠くと読者が主張を誤解したり、手順を誤ったりする場合に本文へ書く。それ以外は省くか、必要に応じて参照先を示す。
+- レビューでは事実誤認を修正する。一方、正しい情報でも中心主張を薄める追記は求めず、削除や言い換えで解決できないか先に考える。
+
+### レビュー中の主張の扱い
+
+レビュー開始時に、記事の「中心の問い・伝えたい主張・想定読者」を一文ずつ確認する。Article Planがある記事は、仮のPlanも含め、その `central_claim` を主張の比較基準とする。レビューと修正の各回でこの三つと本文を照合し、指摘を積み重ねた結果、別の主張へ移っていないか確かめる。
+
+- 通常のレビューでは、元の主張を保ったまま、根拠・構成・表現を直す。指摘は「誤り」「主張が伝わらない箇所」「任意の補足」を区別し、任意の補足を採用するために主張を変えない。
+- 元の主張が一次情報で支えられない、または別の主張の方が読者に有益だと判断した場合は、主張の変更案として理由と新旧の主張を示す。通常のレビュー修正に紛れ込ませず、著者が変更を決めてからタイトル・導入・本文・結論を揃え直す。
+
 ## Channel roles
 
 2025-2026 の各媒体動向（Codex 方針検討 + Gemini 検証で更新）を反映した役割定義。

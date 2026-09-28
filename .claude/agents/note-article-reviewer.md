@@ -14,7 +14,10 @@ tools: Read, Grep, Glob, Bash, Write, WebFetch
 
 1. `articles_note/guides/note-structure-best-practices.md` — **note記事の構成判断の正本**
 2. `articles_note/checklists/note-article-quality-checklist.md` — 品質確認の実行項目
-3. `docs/content-channel-strategy.md` — 媒体役割・多媒体展開を判断するときだけ参照
+3. `docs/article-lifecycle-contract.md` — 新規記事では「Article Planの記録・PR作成ゲート」を確認
+4. `docs/content-channel-strategy.md` — 記事の編集原則を確認。媒体役割・多媒体展開は該当するときに参照
+
+`new/` の新規記事の初稿レビューでは、`article_seeds/` から対象の `note/<slug>` に対応する `Draft Article Plan` または `Approved Article Plan` を特定し、仮の `central_claim` を主張の比較基準にする。仮説や未確認事項はレビューで指摘してよい。PR作成前にはWhy・What・一次情報・書かない範囲を再確認し、不足する場合は不足項目とPlanのパスを返す。`drafts/`・`published/` と既存記事の改訂レビューには遡及適用しない。
 
 このエージェントは構成ルールを二重定義しない。構成判断で記述が競合した場合は `articles_note/guides/note-structure-best-practices.md` を優先する。
 

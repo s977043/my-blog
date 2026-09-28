@@ -43,8 +43,8 @@ Signal / Experience
 | `CAPTURED` | Signal / Experience を保存した | Seed候補 |
 | `TRIAGED` | 記事化する価値・根拠を確認した | 判断メモ |
 | `PROMOTED` | Article Seed として採用した | `article_seeds/**/*.md` |
-| `PLANNED` | 読者課題・中心主張・媒体を決めた | 記事設計。Plan Approval後は元Seedの媒体/slug別 `Approved Article Plan` が承認記録 |
-| `DRAFTED` | 承認済みArticle Planを入力契約として記事本文がある | note / Zenn / Qiita 原稿 |
+| `PLANNED` | 読者課題・中心主張・媒体を仮決めした | 元Seedの媒体/slug別 `Draft Article Plan`。Plan Approval後は `Approved Article Plan` が承認記録 |
+| `DRAFTED` | Article Planを入力として記事本文がある | note / Zenn / Qiita / izanami 原稿 |
 | `REVIEWED` | 既存レビューを通した | review artifact |
 | `READY` | 既存 Final Gate が公開準備完了と判定した | READY verdict |
 | `APPROVED` | 著者が公開を承認した | Human Gate |
@@ -56,7 +56,18 @@ Signal / Experience
 
 ## 3. Human Gate
 
-`PLANNED → DRAFTED` の間に置く **Plan Approval（Human）** は局所ゲートであり、Lifecycle stateではない。承認内容は元Seed本文の `## Approved Article Plan: <channel>/<slug>` に記録し、別の承認台帳を作らない。1つのSeedから複数記事へ派生する場合はPlanを上書きせず追加する。Lifecycleの `APPROVED` は公開承認だけを意味する。
+**Plan Approval（Human）** は局所ゲートであり、Lifecycle stateではない。初稿前に元Seedへ `## Draft Article Plan: <channel>/<slug>` を記録し、著者がPlanを承認したら同じPlanの見出しを `## Approved Article Plan: <channel>/<slug>` に変更する。承認前でも初稿とレビューを進めてよい。1つのSeedから複数記事へ派生する場合はPlanを上書きせず追加する。Lifecycleの `APPROVED` は公開承認だけを意味する。
+
+### Article Planの記録・PR作成ゲート
+
+新規記事は初稿の生成前に、対象記事に対応するSeed内へ仮の `Draft Article Plan` を用意する。ブランチ作成の前提にはしない。初稿やレビューで得た情報を反映し、記事またはレビュー成果物のPRを作る直前に次の記録を確認する。記事本文やレビュー成果物を、この記録の代わりにしない。既存記事には一括で遡及せず、改訂時に必要なものから整える。
+
+- **Why**: 誰の、どの問題に答える記事か（`reader_problem`）
+- **What**: 読後に残したい中心主張を一文で（`central_claim`）
+- **一次情報**: 主張を支える観測・確認事項と、その出所（`Evidence Boundary` の `Observed` / `Verified`）。実体験は誰が何を観測したか、外部事実は再確認できる参照先を残す。解釈・仮説は分ける
+- **書かない範囲**: 今回の主張に含めない論点（`out_of_scope`）
+
+初稿前は仮の内容や「未確認」を明記してよい。PR作成時には四つの記録が揃い、中心主張を支える観測・確認事項の出所が特定できていることを確認する。確認予定や仮説だけでは一次情報の項目を満たさない。PlanはPRの差分またはベースブランチから読める状態にする。不足があればPR作成を止め、追加調査または主張の縮小を行う。レビューではこのPlanを基準に主張のずれを確認する。主張を変える場合は同じPlanに変更理由を残し、著者のPlan Approval時に判断する。
 
 次は自律実行してよい。
 

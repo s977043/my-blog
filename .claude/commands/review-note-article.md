@@ -26,6 +26,8 @@ gh pr list --state open --head "docs/review-note-$SLUG" --json number,title,head
 
 同じレビュー用ブランチをheadに持つopen PRがあれば作成せず報告して終了。
 
+ブランチ作成はArticle Planの完成前でも行ってよい。`new/` の新規記事の初稿には、作成前から `Draft Article Plan: note/$SLUG` または `Approved Article Plan: note/$SLUG` がSeedにあることを確認する。
+
 ### 2. main同期 & ブランチ作成
 
 ```bash
@@ -53,6 +55,7 @@ mkdir -p reviews/note/$STATE
 - 内容・事実レビューのあと、新しい論点を追加せず「重複 / 用語密度 / 見出し / Loop / 終盤」を削るPassを行う
 - 3ペルソナ（noteディレクター / note編集者 / 想定読者）でレビューする
 - `reviews/note/$1.md` を生成する
+- 初稿レビューでは仮のPlanを基準に主張のずれと不足情報を確認する
 - JTFスタイル違反は同種を統合する
 - 固定テンプレートとして構成を強制しない
 - 問題がなければ指摘0件を許容する
@@ -65,12 +68,16 @@ mkdir -p reviews/note/$STATE
 
 ### 5. コミット
 
+対象Planがベースブランチにない場合は、このコミットへ該当Seedも含める。Planが未追跡・未コミットのままならPRゲートを通過したとみなさない。
+
 ```bash
 git add reviews/note/$1.md
 git commit -m "docs(reviews): add 3-persona note review for $1"
 ```
 
 ### 6. push & PR作成
+
+`new/` の新規記事の初稿レビューでは、`docs/article-lifecycle-contract.md` の「Article Planの記録・PR作成ゲート」を再確認する。不足があればPRを作らず、不足項目とPlanのパスを報告する。`drafts/`・`published/` と既存記事の改訂レビューには遡及適用しない。
 
 ```bash
 test "$(gh api user --jq .login)" = "s977043" || gh auth switch --hostname github.com --user s977043

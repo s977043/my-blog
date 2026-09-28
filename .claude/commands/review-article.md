@@ -20,6 +20,8 @@ argument-hint: <article-slug> (articles/ 配下のファイル名 .md 抜き)
    ```
    既存 PR があれば作成せず報告して終了。
 
+   ブランチ作成はArticle Planの完成前でも行ってよい。新規記事の初稿には、作成前から `Draft Article Plan: zenn/$1` または `Approved Article Plan: zenn/$1` がSeedにあることを確認する。
+
 2. main 同期 & ブランチ作成
    ```bash
    git checkout main && git pull origin main
@@ -38,16 +40,20 @@ argument-hint: <article-slug> (articles/ 配下のファイル名 .md 抜き)
    - 3ペルソナでレビュー
    - `reviews/zenn/$1.md` を生成（既存があれば上書き）
    - フォーマットは `.claude/agents/article-reviewer.md` 準拠
+   - 初稿レビューでは仮のPlanを基準に主張のずれと不足情報を確認する
    - `:::message` / `:::details` / table は読みやすさと再現性に効く場合だけ提案し、装飾目的で機械適用しない
    - 構成ガイドは固定テンプレートとして強制せず、記事タイプ・検索意図・読者を優先する
 
 4. コミット
+   対象Planがベースブランチにない場合は、このコミットへ該当Seedも含める。Planが未追跡・未コミットのままならPRゲートを通過したとみなさない。
    ```bash
    git add reviews/zenn/$1.md
    git commit -m "docs(reviews): add 3-persona review for $1"
    ```
 
 5. push & PR作成
+
+   新規記事の初稿レビューでは、`docs/article-lifecycle-contract.md` の「Article Planの記録・PR作成ゲート」を再確認する。不足があればPRを作らず、不足項目とPlanのパスを報告する。既存記事の改訂レビューには遡及適用しない。
    ```bash
    # push/PR 直前に実際の active login を確認（s977043 でなければ switch）
    test "$(gh api user --jq .login)" = "s977043" || gh auth switch --hostname github.com --user s977043
