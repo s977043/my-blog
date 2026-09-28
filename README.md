@@ -25,6 +25,7 @@ my-blog/
 
 各プラットフォームの詳細な運用は、それぞれの配下READMEを参照する。
 
+- [`docs/gpt6-model-migration-plan.md`](./docs/gpt6-model-migration-plan.md) — 記事作成・レビュー業務におけるGPT-6モデルの段階的評価計画
 - [`articles/README.md`](./articles/README.md) — Zenn記事の構成・slug規約・Front Matter
 - [`Qiita/README.md`](./Qiita/README.md) — Qiita記事の構成・`public/.remote/`の役割
 - [`articles_note/README.md`](./articles_note/README.md) — noteエクスポートとインポートの運用フロー
