@@ -4,8 +4,8 @@ summary: "AIコードレビューの指摘が増えすぎると、チームは�
 tags:
   - AI
   - コードレビュー
-  - OSS
-status: draft
+  - オープンソース
+status: published
 source_articles:
   - articles/river-review-judgment-placement.md
   - articles/river-reviewer-v033-improvement-loop.md
@@ -21,8 +21,8 @@ project_sources:
   - https://github.com/s977043/river-review/issues/2418
   - https://github.com/s977043/river-review/issues/2425
   - https://github.com/s977043/river-review/issues/2430
-izanami_url:
-published_at:
+izanami_url: https://izanami.dev/post/dc72ca9e-b731-4b39-8aa2-ba8e7bcfc0d4
+published_at: 2026-09-29
 ---
 
 自分で作っているAIレビューのRiver Reviewを個人の開発で使っていて、困ったことがあります。指摘が細かく、対応するかしないかを1件ずつ判断すること自体が負担になりました。AIが実装し、AIがレビューし、自分はその間で判断を中継しているだけのように感じたのです。
