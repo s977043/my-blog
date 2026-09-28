@@ -26,7 +26,14 @@ gh pr list --state open --head "docs/review-note-$SLUG" --json number,title,head
 
 同じレビュー用ブランチをheadに持つopen PRがあれば作成せず報告して終了。
 
-ブランチ作成はArticle Planの完成前でも行ってよい。`new/` の新規記事の初稿には、作成前から `Draft Article Plan: note/$SLUG` または `Approved Article Plan: note/$SLUG` がSeedにあることを確認する。
+`new/` の新規記事（範囲は `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」の適用範囲）では、レビュー時点で該当 Plan が存在することを確認する。ブランチ作成はPlanの完成前でも行ってよい。`drafts/`・`published/` と既存記事の改訂レビューでは省略する。
+
+```bash
+SEED_PATH=$(git grep --untracked -lE "^## (Draft|Approved) Article Plan: note/$SLUG$" -- article_seeds)
+echo "$SEED_PATH"
+```
+
+0件なら停止し、`Plan未検出: note/$SLUG（検索コマンドと結果）` を報告する。2件以上なら候補のパスを報告して停止する。
 
 ### 2. main同期 & ブランチ作成
 
@@ -55,7 +62,7 @@ mkdir -p reviews/note/$STATE
 - 内容・事実レビューのあと、新しい論点を追加せず「重複 / 用語密度 / 見出し / Loop / 終盤」を削るPassを行う
 - 3ペルソナ（noteディレクター / note編集者 / 想定読者）でレビューする
 - `reviews/note/$1.md` を生成する
-- 初稿レビューでは仮のPlanを基準に主張のずれと不足情報を確認する
+- 初稿レビューでは `Draft Article Plan` を基準に主張のずれと不足情報を確認する
 - JTFスタイル違反は同種を統合する
 - 固定テンプレートとして構成を強制しない
 - 問題がなければ指摘0件を許容する
@@ -66,9 +73,11 @@ mkdir -p reviews/note/$STATE
 - `drafts`: 読み取り専用ミラー。レビューのみで、後続の本文反映は禁止
 - `published`: 公開済み。後続の本文修正はnote管理画面への手動反映が必要
 
-### 5. コミット
+### 5. PR作成ゲートの確認 & コミット
 
-対象Planがベースブランチにない場合は、このコミットへ該当Seedも含める。特定したSeedのパスを `SEED_PATH` とし、`git add "$SEED_PATH"` を実行してからコミットする。Planが未追跡・未コミットのままならPRゲートを通過したとみなさない。
+`new/` の新規記事では、コミット前に `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」を確認する。不足があればコミットもPR作成もせず、不足項目と `SEED_PATH` を報告する。`drafts/`・`published/` と既存記事の改訂レビューには遡及適用しない。
+
+対象Planがベースブランチにない場合は、このコミットへ該当Seedも含める（`git add "$SEED_PATH"`）。Planが未追跡・未コミットのままならPRゲートを通過したとみなさない。
 
 ```bash
 git add reviews/note/$1.md
@@ -77,7 +86,7 @@ git commit -m "docs(reviews): add 3-persona note review for $1"
 
 ### 6. push & PR作成
 
-`new/` の新規記事の初稿レビューでは、`docs/article-lifecycle-contract.md` の「Article Planの記録・PR作成ゲート」を再確認する。不足があればPRを作らず、不足項目とPlanのパスを報告する。`drafts/`・`published/` と既存記事の改訂レビューには遡及適用しない。
+PR本文には `Plan: <SEED_PATH> (note/<slug>)` の1行を入れる（対象外の場合は `Plan: 対象外（既存記事の改訂） (note/<slug>)`）。
 
 ```bash
 test "$(gh api user --jq .login)" = "s977043" || gh auth switch --hostname github.com --user s977043
@@ -92,9 +101,11 @@ elif [ "$STATE" = "drafts" ]; then
   STATE_NOTICE=$'\n\n> ℹ️ **drafts は読み取り専用ミラー**\n> レビューは可能ですが、`articles_note/drafts/` の本文には反映しません。対応する `new/` 正本またはnote管理画面で修正します。'
 fi
 
+PLAN_LINE="Plan: ${SEED_PATH:-対象外（既存記事の改訂）} (note/$SLUG)"
+
 gh pr create \
   --title "docs(reviews): add note review for $1" \
-  --body "$(printf 'note.com記事の3ペルソナレビューを生成しました。\n\nTarget: articles_note/%s.md\nOutput: reviews/note/%s.md\nState: %s\n\nnote構成ガイド・記事タイプ・JTFスタイル・note内発見性・スマホ可読性を重点観点としてレビューしています。%s' "$1" "$1" "$STATE" "$STATE_NOTICE")"
+  --body "$(printf 'note.com記事の3ペルソナレビューを生成しました。\n\nTarget: articles_note/%s.md\nOutput: reviews/note/%s.md\nState: %s\n%s\n\nnote構成ガイド・記事タイプ・JTFスタイル・note内発見性・スマホ可読性を重点観点としてレビューしています。%s' "$1" "$1" "$STATE" "$PLAN_LINE" "$STATE_NOTICE")"
 ```
 
 ### 7. 結果報告

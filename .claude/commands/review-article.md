@@ -20,7 +20,12 @@ argument-hint: <article-slug> (articles/ 配下のファイル名 .md 抜き)
    ```
    既存 PR があれば作成せず報告して終了。
 
-   ブランチ作成はArticle Planの完成前でも行ってよい。新規記事の初稿には、作成前から `Draft Article Plan: zenn/$1` または `Approved Article Plan: zenn/$1` がSeedにあることを確認する。
+   新規記事（範囲は `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」の適用範囲）では、レビュー時点で該当 Plan が存在することを確認する。ブランチ作成はPlanの完成前でも行ってよい。既存記事の改訂レビューでは省略する。
+   ```bash
+   SEED_PATH=$(git grep --untracked -lE "^## (Draft|Approved) Article Plan: zenn/$1$" -- article_seeds)
+   echo "$SEED_PATH"
+   ```
+   0件なら停止し、`Plan未検出: zenn/$1（検索コマンドと結果）` を報告する。2件以上なら候補のパスを報告して停止する。
 
 2. main 同期 & ブランチ作成
    ```bash
@@ -40,12 +45,14 @@ argument-hint: <article-slug> (articles/ 配下のファイル名 .md 抜き)
    - 3ペルソナでレビュー
    - `reviews/zenn/$1.md` を生成（既存があれば上書き）
    - フォーマットは `.claude/agents/article-reviewer.md` 準拠
-   - 初稿レビューでは仮のPlanを基準に主張のずれと不足情報を確認する
+   - 初稿レビューでは `Draft Article Plan` を基準に主張のずれと不足情報を確認する
    - `:::message` / `:::details` / table は読みやすさと再現性に効く場合だけ提案し、装飾目的で機械適用しない
    - 構成ガイドは固定テンプレートとして強制せず、記事タイプ・検索意図・読者を優先する
 
-4. コミット
-   対象Planがベースブランチにない場合は、このコミットへ該当Seedも含める。特定したSeedのパスを `SEED_PATH` とし、`git add "$SEED_PATH"` を実行してからコミットする。Planが未追跡・未コミットのままならPRゲートを通過したとみなさない。
+4. PR作成ゲートの確認 & コミット
+   新規記事では、コミット前に `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」を確認する。不足があればコミットもPR作成もせず、不足項目と `SEED_PATH` を報告する。既存記事の改訂レビューには遡及適用しない。
+
+   対象Planがベースブランチにない場合は、このコミットへ該当Seedも含める（`git add "$SEED_PATH"`）。Planが未追跡・未コミットのままならPRゲートを通過したとみなさない。
    ```bash
    git add reviews/zenn/$1.md
    git commit -m "docs(reviews): add 3-persona review for $1"
@@ -53,13 +60,14 @@ argument-hint: <article-slug> (articles/ 配下のファイル名 .md 抜き)
 
 5. push & PR作成
 
-   新規記事の初稿レビューでは、`docs/article-lifecycle-contract.md` の「Article Planの記録・PR作成ゲート」を再確認する。不足があればPRを作らず、不足項目とPlanのパスを報告する。既存記事の改訂レビューには遡及適用しない。
+   PR本文には `Plan: <SEED_PATH> (zenn/<slug>)` の1行を入れる（改訂レビューでPlanが無い場合は `Plan: 対象外（既存記事の改訂） (zenn/<slug>)`）。
    ```bash
    # push/PR 直前に実際の active login を確認（s977043 でなければ switch）
    test "$(gh api user --jq .login)" = "s977043" || gh auth switch --hostname github.com --user s977043
    test "$(gh api user --jq .login)" = "s977043" || { echo "GitHub active account を s977043 に切り替えられませんでした"; exit 1; }
    git push -u origin docs/review-$1
-   gh pr create --title "docs(reviews): add review for $1" --body "$(printf '3ペルソナでZenn記事レビューを生成しました。\n\nTarget: articles/%s.md\nOutput: reviews/zenn/%s.md\n\n構成ガイド・再現性・技術的正確性・一次情報の検証を重点観点としてレビューしています。' "$1" "$1")"
+   PLAN_LINE="Plan: ${SEED_PATH:-対象外（既存記事の改訂）} (zenn/$1)"
+   gh pr create --title "docs(reviews): add review for $1" --body "$(printf '3ペルソナでZenn記事レビューを生成しました。\n\nTarget: articles/%s.md\nOutput: reviews/zenn/%s.md\n%s\n\n構成ガイド・再現性・技術的正確性・一次情報の検証を重点観点としてレビューしています。' "$1" "$1" "$PLAN_LINE")"
    ```
 
 6. 結果報告（PR URL、Zennカテゴリー、構成タイプ判定、指摘件数）

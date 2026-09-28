@@ -102,7 +102,7 @@ Zenn 記事の URL はクロスポスト時のリンク方針（AGENTS.md §記�
 - Insight：「止める・見る・渡す」で分けると、導入を1つずつ選べる
 - Evidence：各 README と公式ドキュメントの記述のみ。効果の数値は出さない
 
-### 構成案（Plan Approval 前のドラフト）
+### 構成案（Draft Article Plan 前の構成メモ）
 
 想定読者：AI コーディングをチームに入れたいが、個別記事の量に迷っている EM / テックリード。
 想定分量：3,000〜4,000字。note 個人名義。
@@ -141,7 +141,7 @@ Zenn 記事の URL はクロスポスト時のリンク方針（AGENTS.md §記�
 ## 次に試すこと
 
 - [ ] 【著者確認】プレースホルダを埋める
-- [ ] Plan Approval（Human）を経て `## Approved Article Plan: note/<slug>` を追記する
+- [ ] 初稿前に `## Draft Article Plan: note/<slug>` を追記する（承認後に見出しを Approved へ変更）
 - [ ] 本文化の直前に各 README を再取得し、Level 構成や役割分担の記述が変わっていないか確認する
 
 ## 追記ログ
