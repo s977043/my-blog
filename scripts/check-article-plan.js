@@ -13,11 +13,13 @@
  * ■ 誤検知を出さないための通過条件
  *   - 導入日が取れない（origin/main が無い、ゲート未マージ）なら対象 0 件で通す
  *   - shallow clone は追加日が当てにならないので対象 0 件で通す
+ *   - ただし CI（GITHUB_ACTIONS=true）ではどちらも fail にする（lint が黙って無効化されるのを防ぐ）
  *
  * ■ 判定
  *   article_seeds/ 配下に `## (Draft|Approved) Article Plan: <channel>/<slug>` がちょうど1件あり、
  *   その節に reader_problem / central_claim / out_of_scope と、Evidence Boundary の
- *   Observed か Verified の記録があること。空欄や「未確認」だけの値は記録に数えない。
+ *   Observed か Verified の記録があること。空欄・「未確認」「確認予定」などで始まる値・
+ *   SKILL.md の見本文言、コードブロックと HTML コメントの中身は記録に数えない。
  */
 
 const fs = require("fs");
@@ -35,11 +37,25 @@ const CHANNEL_DIRS = [
   { dir: "articles_note/new", channel: "note" },
   { dir: "articles_izanami", channel: "izanami" },
 ];
-const PLACEHOLDER = /^(未確認|未定|tbd|todo|-|（[^）]*記入[^）]*）)?$/i;
+/**
+ * 記録に数えない値。「確認予定や仮説だけでは一次情報の項目を満たさない」（contract §4）ので、
+ * 未確認・確認予定などで始まる値は後ろに補足が付いていても弾く。「未定義」のような語は通すため、
+ * 直後が文末・空白・区切り記号のときだけ一致させる。
+ */
+const PLACEHOLDER =
+  /^(?:(?:未確認|未定|確認予定|tbd|todo)(?=$|[\s（(、。,.:：/])|-$|\.{3}$|$|（[^）]*記入[^）]*）)/i;
+/** tech-blog-writing SKILL.md A-5 の見本文言。書き換えずに残したものは記録に数えない */
+const TEMPLATE_TEXTS = [
+  "実体験なら誰が何を観測したか",
+  "外部事実なら確認した内容と参照先",
+  "未確認の見立て。Observed / Verified の代わりにしない",
+];
+const FORMAT_HINT =
+  "期待する書式: `- reader_problem: …` / `- central_claim: …` / `- out_of_scope: …` と、`### Evidence Boundary` 配下の `- Observed: …` または `- Verified: …`";
 
 function git(root, args) {
   try {
-    return execFileSync("git", ["-C", root, ...args], {
+    return execFileSync("git", ["-C", root, "-c", "core.quotePath=false", ...args], {
       encoding: "utf8",
       stdio: ["ignore", "pipe", "ignore"],
     });
@@ -114,31 +130,41 @@ function listSeedFiles(root) {
   return walk(base).map((p) => path.relative(root, p).split(path.sep).join("/"));
 }
 
-/** Seed 本文から Plan 節を抜き出す。節は次の `#`/`##` 見出しまで。コードブロック内は無視する */
+/**
+ * Seed 本文から Plan 節を抜き出す。節は次の `#`/`##` 見出しまで。
+ * コードブロックと HTML コメントの中は見本なので、見出しとしても記録としても数えない。
+ * コメントは行番号を保つため改行だけ残して消す。
+ */
 function extractPlans(text) {
   const plans = [];
   let current = null;
   let inFence = false;
-  text.split("\n").forEach((line, i) => {
-    if (/^\s*(```|~~~)/.test(line)) inFence = !inFence;
-    if (!inFence) {
-      const h = line.match(/^##\s+(Draft|Approved)\s+Article Plan:\s*(\S+)\s*$/);
-      if (h) {
-        current = { kind: h[1], key: h[2], line: i + 1, body: [] };
-        plans.push(current);
-        return;
-      }
-      if (/^#{1,2}\s/.test(line)) {
-        current = null;
-        return;
-      }
+  const visible = text.replace(/<!--[\s\S]*?(?:-->|$)/g, (m) => m.replace(/[^\n]/g, ""));
+  visible.split(/\r?\n/).forEach((line, i) => {
+    if (/^\s*(```|~~~)/.test(line)) {
+      inFence = !inFence;
+      return;
+    }
+    if (inFence) return;
+    const h = line.match(/^##\s+(Draft|Approved)\s+Article Plan:\s*(\S+)\s*$/);
+    if (h) {
+      current = { kind: h[1], key: h[2], line: i + 1, body: [] };
+      plans.push(current);
+      return;
+    }
+    if (/^#{1,2}\s/.test(line)) {
+      current = null;
+      return;
     }
     if (current) current.body.push(line);
   });
   return plans;
 }
 
-const isFilled = (v) => !PLACEHOLDER.test(v.trim());
+const isFilled = (v) => {
+  const s = v.trim();
+  return !PLACEHOLDER.test(s) && !TEMPLATE_TEXTS.some((t) => s.startsWith(t));
+};
 
 /** `- key: 値` または値が空で直後に字下げした続き行がある形を記録ありとみなす */
 function hasField(lines, key) {
@@ -199,11 +225,20 @@ function evaluate(root) {
     } else {
       const missing = missingFields(found[0].body);
       if (missing.length) {
-        errors.push(`${a.rel}: ${found[0].file}:${found[0].line} の Plan に記録が無い: ${missing.join(", ")}`);
+        errors.push(`${a.rel}: ${found[0].file}:${found[0].line} の Plan に記録が無い: ${missing.join(", ")}\n    ${FORMAT_HINT}`);
       }
     }
   });
   return { gate, targets, reason, errors };
+}
+
+/**
+ * 終了コードを決める。ローカルでは導入日が取れなくても通すが、CI では fail にする。
+ * contract の見出しの改名などで lint が黙って無効化されるのを防ぐため。
+ */
+function exitCode({ reason, errors }, env) {
+  if (reason) return env.GITHUB_ACTIONS === "true" ? 1 : 0;
+  return errors.length ? 1 : 0;
 }
 
 // ---------- self-test ----------
@@ -238,7 +273,9 @@ function selfTest() {
 
   try {
     run(["init", "-q"]);
+    run(["config", "core.quotePath", "true"]);
     write("articles/old.md", "old\n");
+    write("articles/日本語-old.md", "old\n");
     write("articles_izanami/README.md", "readme\n");
     write(CONTRACT, "# contract\n");
     write("articles_note/new/renamed.md", "x\n");
@@ -248,7 +285,10 @@ function selfTest() {
 
     // 導入日が取れない間は既存記事も未追跡記事も対象にしない
     write("articles/untracked-before-gate.md", "x\n");
-    eq("導入日が取れなければ対象0件", evaluate(tmp).targets.length, 0);
+    const noGate = evaluate(tmp);
+    eq("導入日が取れなければ対象0件", noGate.targets.length, 0);
+    eq("導入日が取れないときローカルでは通す", exitCode(noGate, {}), 0);
+    eq("導入日が取れないとき CI では fail", exitCode(noGate, { GITHUB_ACTIONS: "true" }), 1);
     fs.unlinkSync(path.join(tmp, "articles/untracked-before-gate.md"));
 
     write(CONTRACT, `# contract\n\n## 4. ${GATE_MARKER}\n`);
@@ -257,6 +297,7 @@ function selfTest() {
 
     eq("導入日を origin/main から取る", evaluate(tmp).gate, "2026-09-29");
     eq("導入日前の既存記事・導入日前のリネーム・README は対象外", evaluate(tmp).targets.length, 0);
+    eq("非 ASCII のファイル名を未追跡と誤判定しない", keys(evaluate(tmp)).includes("zenn/日本語-old"), false);
     eq("既存記事だけなら合格", evaluate(tmp).errors.length, 0);
 
     // 合格: 各チャネルに Plan が揃っている（Approved・続き行の値も受け付ける）
@@ -303,11 +344,44 @@ function selfTest() {
       "article_seeds/partial.md",
       "# P\n\n## Draft Article Plan: zenn/partial\n\n- reader_problem: 課題\n- central_claim: 未確認\n\n### Evidence Boundary\n\n- Observed:\n- Hypothesis: 仮説だけ\n\n## 次の節\n\n- out_of_scope: 節の外なので数えない\n",
     );
-    const partial = evaluate(tmp).errors.join();
-    eq("未確認だけの central_claim は不合格", /central_claim/.test(partial), true);
-    eq("節の外の out_of_scope は数えない", /out_of_scope/.test(partial), true);
-    eq("Hypothesis だけの Evidence は不合格", /Evidence Boundary/.test(partial), true);
-    eq("記録済みの reader_problem は指摘しない", /reader_problem/.test(partial), false);
+    const partial = evaluate(tmp).errors.join("\n");
+    const lacks = (name, text = evaluate(tmp).errors.join("\n")) =>
+      new RegExp(`記録が無い: [^\\n]*${name}`).test(text);
+    eq("未確認だけの central_claim は不合格", lacks("central_claim", partial), true);
+    eq("節の外の out_of_scope は数えない", lacks("out_of_scope", partial), true);
+    eq("Hypothesis だけの Evidence は不合格", lacks("Evidence Boundary", partial), true);
+    eq("記録済みの reader_problem は指摘しない", lacks("reader_problem", partial), false);
+    eq("欠落の報告に期待する書式を示す", /期待する書式: `- reader_problem:/.test(partial), true);
+
+    // 合格: CRLF の Seed
+    write("article_seeds/partial.md", "# P\n" + plan("zenn/partial").replace(/\n/g, "\r\n"));
+    eq("CRLF の Seed でも記録を読む", evaluate(tmp).errors, []);
+
+    // 見逃し防止: Plan 本文内のコードブロック・HTML コメントの見本は記録に数えない
+    const withEvidence = (evidence) =>
+      write("article_seeds/partial.md", "# P\n" + plan("zenn/partial", { evidence }));
+    const evidenceMissing = () => lacks("Evidence Boundary");
+    withEvidence("```markdown\n- Observed: 見本の観測\n```");
+    eq("Plan 内コードブロックの見本は数えない", evidenceMissing(), true);
+    withEvidence("<!--\n- Observed: 見本の観測\n-->");
+    eq("Plan 内 HTML コメントの見本は数えない", evidenceMissing(), true);
+    write(
+      "article_seeds/partial.md",
+      "# P\n<!--\n## Draft Article Plan: zenn/partial\n-->\n" + plan("zenn/partial"),
+    );
+    eq("HTML コメント内の Plan 見出しは Plan に数えない", evaluate(tmp).errors, []);
+
+    // 見逃し防止: 確認予定・未確認（補足付き）・子要素の確認予定・A-5 見本文言は一次情報に数えない
+    withEvidence("- Observed: 確認予定");
+    eq("「確認予定」は Observed に数えない", evidenceMissing(), true);
+    withEvidence("- Verified: 未確認（後日確認する）");
+    eq("補足付きの「未確認」は Verified に数えない", evidenceMissing(), true);
+    withEvidence("- Observed:\n  - 確認予定");
+    eq("子要素の「確認予定」は数えない", evidenceMissing(), true);
+    withEvidence("- Observed: 実体験なら誰が何を観測したか\n- Verified: 外部事実なら確認した内容と参照先");
+    eq("A-5 の見本文言のままは数えない", evidenceMissing(), true);
+    withEvidence("- Observed: 未定義の挙動を筆者が再現した");
+    eq("「未定義」で始まる実記録は通す", evidenceMissing(), false);
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }
@@ -322,8 +396,13 @@ function main() {
   if (process.argv.includes("--self-test")) return selfTest();
 
   const root = path.resolve(__dirname, "..");
-  const { gate, targets, reason, errors } = evaluate(root);
+  const result = evaluate(root);
+  const { gate, targets, reason, errors } = result;
   if (reason) {
+    if (exitCode(result, process.env)) {
+      console.error(`${LABEL} FAILED: ${reason}。CI では lint が無効化されたまま通さない（${CONTRACT} §4 の見出しと ${BASE_REF} の取得を確認）`);
+      process.exit(1);
+    }
     console.log(`${LABEL} ${reason}。対象 0 件として通す`);
     return;
   }
