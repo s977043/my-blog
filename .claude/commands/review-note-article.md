@@ -7,6 +7,8 @@ argument-hint: <state>/<slug> （例: published/n3aae6b5467b9、drafts/n17c899de
 
 指定した note.com 記事を3ペルソナ視点でレビューし、`reviews/note/<state>/<slug>.md` を生成してPRを作成する。レビュー生成では記事本文を変更しない。
 
+初稿は未追跡のまま、またはベースブランチにマージ済みの状態で実行する。記事本文のPRはこのレビューPRとは別に作る。
+
 ## 引数
 
 - `$1` = `<state>/<slug>` 形式（`new` / `drafts` / `published`）
@@ -25,6 +27,22 @@ gh pr list --state open --head "docs/review-note-$SLUG" --json number,title,head
 ```
 
 同じレビュー用ブランチをheadに持つopen PRがあれば作成せず報告して終了。
+
+新規記事か対象外（ゲート導入前の原稿／改訂）かを `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」の適用範囲で判定する。`drafts/`・`published/` は対象外とする。以降のPlan手順は新規記事だけに適用する。新規記事では、レビュー時点で該当 Plan が存在することを確認する。ブランチ作成はPlanの完成前でも行ってよい。
+
+```bash
+# new/ の新規記事の判定: 1行目が空（未追跡）か、2行目の導入日以降なら新規記事
+git log --diff-filter=A --format=%cs -- articles_note/$1.md | tail -1
+git log -S "Article Planの記録・PR作成ゲート" --format=%cs origin/main -- docs/article-lifecycle-contract.md | tail -1
+```
+
+```bash
+# 新規記事のときだけ実行
+SEED_PATH=$(git grep --untracked -lE "^## (Draft|Approved) Article Plan: note/$SLUG$" -- article_seeds)
+echo "$SEED_PATH"
+```
+
+0件なら停止し、`Plan未検出: note/$SLUG（検索コマンドと結果）` を報告する。2件以上なら候補のパスを報告して停止する。
 
 ### 2. main同期 & ブランチ作成
 
@@ -53,6 +71,7 @@ mkdir -p reviews/note/$STATE
 - 内容・事実レビューのあと、新しい論点を追加せず「重複 / 用語密度 / 見出し / Loop / 終盤」を削るPassを行う
 - 3ペルソナ（noteディレクター / note編集者 / 想定読者）でレビューする
 - `reviews/note/$1.md` を生成する
+- 初稿レビューでは `Draft Article Plan` を基準に主張のずれと不足情報を確認する
 - JTFスタイル違反は同種を統合する
 - 固定テンプレートとして構成を強制しない
 - 問題がなければ指摘0件を許容する
@@ -63,16 +82,39 @@ mkdir -p reviews/note/$STATE
 - `drafts`: 読み取り専用ミラー。レビューのみで、後続の本文反映は禁止
 - `published`: 公開済み。後続の本文修正はnote管理画面への手動反映が必要
 
-### 5. コミット
+### 5. PR作成ゲートの確認 & コミット
+
+新規記事では、コミット前に同節の作成ゲートを確認する。不足があればコミットもPR作成もせず、不足項目と `SEED_PATH` を報告する。
+
+Bash の呼び出し間でシェル変数は残らないため、`SLUG`・`SEED_PATH` はこのブロックで再計算する。対象Planがベースブランチにない場合は、このコミットへ該当Seedも含める。Planが未追跡・未コミットのままならPRゲートを通過したとみなさない。対象外のときは `# 新規記事のみ` の4行を実行しない。
 
 ```bash
+SLUG=$(basename $1)
+# 新規記事のみ
+SEED_PATH=$(git grep --untracked -lE "^## (Draft|Approved) Article Plan: note/$SLUG$" -- article_seeds)
+: "${SEED_PATH:?Plan未検出: note/$SLUG}"
+[ "$(printf '%s\n' "$SEED_PATH" | wc -l)" -eq 1 ] || { echo "Plan候補が複数: $SEED_PATH"; exit 1; }
+git grep -qE "^## (Draft|Approved) Article Plan: note/$SLUG$" origin/main -- "$SEED_PATH" || git add "$SEED_PATH"
+
 git add reviews/note/$1.md
 git commit -m "docs(reviews): add 3-persona note review for $1"
 ```
 
 ### 6. push & PR作成
 
+PR本文のPlan行は同節の書式に従う。`PLAN_LINE` は、新規記事なら再計算した `SEED_PATH` から作り、対象外のときだけ対象外の行を明示的に代入する。
+
 ```bash
+STATE=$(dirname $1)
+SLUG=$(basename $1)
+
+# 新規記事: Plan を再計算する（見つからなければ止まる）
+SEED_PATH=$(git grep --untracked -lE "^## (Draft|Approved) Article Plan: note/$SLUG$" -- article_seeds)
+[ "$(printf '%s\n' "$SEED_PATH" | wc -l)" -eq 1 ] || { echo "Plan候補が複数: $SEED_PATH"; exit 1; }
+PLAN_LINE="Plan: ${SEED_PATH:?Plan未検出: note/$SLUG} (note/$SLUG)"
+# 対象外（ゲート導入前の原稿／改訂、drafts/・published/）のときだけ、上の3行の代わりに次を使う
+# PLAN_LINE="Plan: 対象外（ゲート導入前の原稿／改訂） (note/$SLUG)"
+
 test "$(gh api user --jq .login)" = "s977043" || gh auth switch --hostname github.com --user s977043
 test "$(gh api user --jq .login)" = "s977043" || { echo "GitHub active account を s977043 に切り替えられませんでした"; exit 1; }
 
@@ -87,7 +129,7 @@ fi
 
 gh pr create \
   --title "docs(reviews): add note review for $1" \
-  --body "$(printf 'note.com記事の3ペルソナレビューを生成しました。\n\nTarget: articles_note/%s.md\nOutput: reviews/note/%s.md\nState: %s\n\nnote構成ガイド・記事タイプ・JTFスタイル・note内発見性・スマホ可読性を重点観点としてレビューしています。%s' "$1" "$1" "$STATE" "$STATE_NOTICE")"
+  --body "$(printf 'note.com記事の3ペルソナレビューを生成しました。\n\nTarget: articles_note/%s.md\nOutput: reviews/note/%s.md\nState: %s\n%s\n\nnote構成ガイド・記事タイプ・JTFスタイル・note内発見性・スマホ可読性を重点観点としてレビューしています。%s' "$1" "$1" "$STATE" "$PLAN_LINE" "$STATE_NOTICE")"
 ```
 
 ### 7. 結果報告

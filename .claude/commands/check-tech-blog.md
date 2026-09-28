@@ -16,6 +16,7 @@ argument-hint: <article-path-or-idea>
 - Zenn: `articles/<slug>.md`
 - Qiita: `Qiita/public/<slug>.md`
 - note: `articles_note/<state>/<slug>.md`
+- izanami: `articles_izanami/<slug>.md`
 
 ### 記事案
 
@@ -32,7 +33,7 @@ idea: AIに実装させる前にPlanレビューを入れたら手戻りが減�
 3. `docs/content-channel-strategy.md` を読む
 4. `.claude/skills/tech-blog-writing/SKILL.md` を読む
 5. `$ARGUMENTS` が実在する許可パスなら既存記事モード、そうでなければ記事ネタモードで実行する
-6. 記事ネタモードでは、中心主張、一次経験、根拠、読者課題、推奨媒体、記事タイプを確認し、Lifecycle上の現在地と次のPlan Approval（Human）を明示する
+6. 記事ネタモードでは、中心主張、一次経験、根拠、読者課題、推奨媒体、記事タイプを確認し、Lifecycle上の現在地と初稿前に残す `Draft Article Plan`（仮のArticle Plan）を明示する
 7. `READY` の記事案では Article Plan（Reader Problem / Central Claim / Evidence / Channel / Outline / Out of Scope）までを提案し、長文本文は生成しない
 8. 既存記事モードでは、Reader / Experience / Evidence / Scope / Subtraction / Channel の6ゲートを確認し、次に委譲する既存Review / Final Gateを明示する
 9. Skillの出力形式に従って結果を返す
@@ -46,7 +47,7 @@ idea: AIに実装させる前にPlanレビューを入れたら手戻りが減�
 - 指摘ゼロを許容し、問題を捏造しない
 - 外部仕様や最新情報を断定する場合は、一次情報を確認できたものだけを採用する
 - Researchでは Observed / Verified / Hypothesis を分離し、検索上位記事の多数派を根拠にしない
-- Plan Approval前に長文本文を生成しない
+- `Draft Article Plan` をSeedに残す前に長文本文を生成しない
 - `articles_note/drafts/` は読み取り専用、`articles_note/published/` は公開済みであることを結果に明記する
 - 公開、マージ、front matterの公開状態変更は行わない
 
@@ -55,7 +56,7 @@ idea: AIに実装させる前にPlanレビューを入れたら手戻りが減�
 ### 記事ネタの場合
 
 - `READY` / `NEEDS_INPUT` / `PARK`（記事ネタ用ローカル判定。Lifecycle state `READY` とは別）
-- Lifecycle上の現在地 / 次状態 / Plan Approval対象
+- Lifecycle上の現在地 / 次状態 / Draft Article Planで確認する項目（PR作成前に不足しうるもの）
 - 中心主張候補
 - 一次経験・独自性
 - 推奨媒体と記事タイプ

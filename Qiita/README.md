@@ -42,6 +42,8 @@ npm run check:qiita                        # CLIバージョン確認
 
 初回のみ`npx qiita login`でアクセストークン認証が必要（認証情報は`~/.config/qiita-cli/`に保存、リポジトリには含めない）。
 
+- 新規記事は本文生成前に `article_seeds/` の媒体別 `Draft Article Plan: qiita/<slug>` を用意する。PRを作る場合は、[`docs/article-lifecycle-contract.md`](../docs/article-lifecycle-contract.md#4-article-planの記録pr作成ゲート) の作成ゲートを確認し、PR本文のPlan行は同節の書式に従う。
+
 ## 書き分け方針
 
 媒体役割の**正本は [`docs/content-channel-strategy.md`](../docs/content-channel-strategy.md)**。ここでは二重定義しない。
