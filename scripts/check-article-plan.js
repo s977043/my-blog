@@ -82,70 +82,112 @@ function listArticles(root) {
   });
 }
 
+/**
+ * リネームとみなす類似度。既定の 50% だと、短い原稿を消して無関係な原稿を足しただけでも
+ * front matter が共通なためリネームと判定される。書き換えを伴うリネームが新規扱いになるのは
+ * Plan を足せば通るので、安全側に倒す。
+ */
+const RENAME_SIMILARITY = "-M80%";
+
+/** 記事ディレクトリ直下の原稿なら媒体名、それ以外は null */
+function channelOf(rel) {
+  const hit = CHANNEL_DIRS.find(({ dir }) => path.posix.dirname(rel) === dir);
+  return hit ? hit.channel : null;
+}
+
+/** 同じ媒体の中での移動だけをリネームとして扱う。媒体をまたぐ移動は新規記事 */
+const sameChannel = (from, to) => channelOf(from) !== null && channelOf(from) === channelOf(to);
+
 /** `git ... --name-status` の出力を [status, ...paths] の配列にする。`@` で始まる行は日付行 */
 function nameStatusLines(out) {
-  return (out || "").split("\n").filter((l) => l.trim()).map((l) => l.split("\t"));
+  return out.split("\n").filter((l) => l.trim()).map((l) => l.split("\t"));
 }
 
 /**
- * ベースブランチ上の path → 最初に追加された日。履歴を古い順に -M 付きで1回だけ読み、
- * リネーム（R）は移動元の追加日を引き継ぐ。`git log --follow --diff-filter=A` をファイルごとに
- * 流すのと同じ結果を、記事数に関係なく git 1回で得るため。
+ * ref 上の path → 最初に追加された日。履歴を古い順に1回だけ読む。
+ * 同じ媒体内のリネーム（R）は移動元の追加日を引き継ぎ、削除（D）で記録を消す（再追加はその日付になる）。
+ * git が失敗したら null（「追加日なし」と区別する）。
  */
-function baseAddedDates(root) {
-  const out = git(root, ["log", BASE_REF, "--reverse", "-M", "--diff-filter=AR", "--name-status", "--format=@%cs"]);
+function addedDates(root, ref) {
+  const out = git(root, ["log", ref, "--reverse", RENAME_SIMILARITY, "--diff-filter=ADR", "--name-status", "--format=@%cs"]);
+  if (out === null) return null;
   const map = new Map();
   let date = null;
   nameStatusLines(out).forEach(([status, from, to]) => {
     if (status.startsWith("@")) date = status.slice(1);
     else if (status === "A" && !map.has(from)) map.set(from, date);
-    else if (status.startsWith("R") && to) map.set(to, map.get(from) || date);
+    else if (status === "D") map.delete(from);
+    else if (status.startsWith("R") && to) {
+      map.set(to, sameChannel(from, to) && map.has(from) ? map.get(from) : date);
+      map.delete(from);
+    }
   });
   return map;
 }
 
+function treePaths(root, ref) {
+  const out = git(root, ["ls-tree", "-r", "--name-only", ref, "--", ...CHANNEL_DIRS.map((c) => c.dir)]);
+  return out === null ? null : new Set(out.split("\n").filter(Boolean));
+}
+
 /**
- * ベースブランチに無いパス → PR 内（コミット済み・ステージ済み・作業ツリー）でのリネーム元。
+ * PR 内（コミット済み・ステージ済み・作業ツリー）の同じ媒体内のリネーム: 移動先 → 移動元。
  * merge-base と作業ツリーを比べるので、CI の detached HEAD（PR の merge commit）でも同じに動く。
  */
-function renamesSinceBase(root) {
-  const mb = (git(root, ["merge-base", BASE_REF, "HEAD"]) || "").trim();
+function renamesSince(root, mb) {
+  const out = git(root, ["diff", RENAME_SIMILARITY, "--name-status", mb]);
+  if (out === null) return null;
   const map = new Map();
-  if (!mb) return map;
-  nameStatusLines(git(root, ["diff", "-M", "--name-status", mb])).forEach(([status, from, to]) => {
-    if (status.startsWith("R") && to) map.set(to, from);
+  nameStatusLines(out).forEach(([status, from, to]) => {
+    if (status.startsWith("R") && to && sameChannel(from, to)) map.set(to, from);
   });
   return map;
 }
 
 /**
  * 新規記事の判定（contract §4 の適用範囲）
- *   - ベースブランチにある原稿: ベースブランチで最初に追加された日（リネームは移動元を引き継ぐ）が導入日以降
- *   - ベースブランチに無い原稿: 新規記事。ただしベースブランチにある原稿をリネームしただけなら移動元で判定する
+ *   - ベースブランチにある原稿: ベースブランチで最初に追加された日が導入日以降なら新規
+ *   - ベースブランチに無い原稿: 新規。ただし同じ媒体内のリネームは移動元で判定する。
+ *     作業ブランチが古く、merge-base 時点からある原稿（その後 main でリネーム・削除された）は、
+ *     merge-base の履歴の追加日で判定する
+ *   - ベースブランチにあるのに追加日が取れない原稿は undetermined に入れ、新規として扱う
  */
 function collectTargets(root) {
+  const none = (reason, gate = null) => ({ gate, targets: [], undetermined: [], reason });
   const gate = gateDate(root);
-  if (!gate) return { gate: null, targets: [], reason: `${BASE_REF} からゲート導入日が取れない` };
+  if (!gate) return none(`${BASE_REF} からゲート導入日が取れない`);
   if ((git(root, ["rev-parse", "--is-shallow-repository"]) || "").trim() === "true") {
-    return { gate, targets: [], reason: "shallow clone のため追加日を判定できない" };
+    return none("shallow clone のため追加日を判定できない", gate);
   }
-  const baseTree = new Set(
-    (git(root, ["ls-tree", "-r", "--name-only", BASE_REF, "--", ...CHANNEL_DIRS.map((c) => c.dir)]) || "")
-      .split("\n")
-      .filter(Boolean),
-  );
-  const added = baseAddedDates(root);
-  const renames = renamesSinceBase(root);
-  const isNew = (rel) => {
-    if (baseTree.has(rel)) {
-      const d = added.get(rel);
-      return Boolean(d) && d >= gate;
+  const mb = (git(root, ["merge-base", BASE_REF, "HEAD"]) || "").trim();
+  const baseTree = treePaths(root, BASE_REF);
+  const baseDates = addedDates(root, BASE_REF);
+  const mbTree = mb ? treePaths(root, mb) : null;
+  const renames = mb ? renamesSince(root, mb) : null;
+  if (!baseTree || !baseDates || !mbTree || !renames) {
+    return none(`${BASE_REF} の履歴を読めない（merge-base: ${mb || "なし"}）`, gate);
+  }
+  let mbDates = null;
+  const undetermined = [];
+  const byDate = (rel, d) => {
+    if (!d) {
+      undetermined.push(rel);
+      return true;
     }
+    return d >= gate;
+  };
+  const isNew = (rel) => {
+    if (baseTree.has(rel)) return byDate(rel, baseDates.get(rel));
     const from = renames.get(rel);
-    return from && baseTree.has(from) ? isNew(from) : true;
+    if (from && (baseTree.has(from) || mbTree.has(from))) return isNew(from);
+    if (mbTree.has(rel)) {
+      mbDates = mbDates || addedDates(root, mb) || new Map();
+      return byDate(rel, mbDates.get(rel));
+    }
+    return true;
   };
   const targets = listArticles(root).filter((a) => isNew(a.rel));
-  return { gate, targets, reason: null };
+  return { gate, targets, undetermined, reason: null };
 }
 
 // ---------- Plan の解析 ----------
@@ -244,7 +286,7 @@ function indexPlans(root) {
 }
 
 function evaluate(root) {
-  const { gate, targets, reason } = collectTargets(root);
+  const { gate, targets, undetermined, reason } = collectTargets(root);
   const index = targets.length ? indexPlans(root) : new Map();
   const errors = [];
   targets.forEach((a) => {
@@ -261,15 +303,18 @@ function evaluate(root) {
       }
     }
   });
-  return { gate, targets, reason, errors };
+  return { gate, targets, undetermined, reason, errors };
 }
 
 /**
- * 終了コードを決める。ローカルでは導入日が取れなくても通すが、CI では fail にする。
- * contract の見出しの改名などで lint が黙って無効化されるのを防ぐため。
+ * 終了コードを決める。導入日や追加日を判定できないとき、ローカルでは通す（追加日が取れない原稿は
+ * 新規として扱う）が、CI では fail にする。contract の見出しの改名や履歴の欠落で lint が
+ * 黙って無効化されるのを防ぐため。
  */
-function exitCode({ reason, errors }, env) {
-  if (reason) return env.GITHUB_ACTIONS === "true" ? 1 : 0;
+function exitCode({ reason, errors, undetermined = [] }, env) {
+  const ci = env.GITHUB_ACTIONS === "true";
+  if (reason) return ci ? 1 : 0;
+  if (ci && undetermined.length) return 1;
   return errors.length ? 1 : 0;
 }
 
@@ -439,8 +484,111 @@ function selfTest() {
     fs.rmSync(tmp, { recursive: true, force: true });
   }
 
+  renameScenarios(eq, env);
+
   console.log(`\n${LABEL} self-test ${fail === 0 ? "OK" : "FAILED"}: ${pass}/${pass + fail}`);
   process.exit(fail === 0 ? 0 : 1);
+}
+
+/**
+ * リネーム・削除まわりの判定を、シナリオごとに作り直した一時 repo で確かめる。
+ * 各 repo は「導入日前の既存原稿 → 導入日のコミット（origin/main）」から始まり、ブランチ pr の上で動く。
+ */
+function renameScenarios(eq, env) {
+  const FM = "---\ntitle: \"t\"\nemoji: \"📝\"\ntype: \"tech\"\ntopics: [\"ai\", \"review\"]\npublished: false\n---\n\n";
+  const scenario = (name, legacy, fn) => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "check-article-plan-rn-"));
+    const write = (rel, body) => {
+      fs.mkdirSync(path.dirname(path.join(dir, rel)), { recursive: true });
+      fs.writeFileSync(path.join(dir, rel), body);
+    };
+    const run = (args, date) =>
+      execFileSync("git", ["-C", dir, ...args], {
+        stdio: "ignore",
+        env: date ? { ...env, GIT_AUTHOR_DATE: `${date}T12:00:00`, GIT_COMMITTER_DATE: `${date}T12:00:00` } : env,
+      });
+    const commit = (msg, date) => {
+      run(["add", "-A"]);
+      run(["commit", "-q", "--no-verify", "-m", msg], date);
+    };
+    const toMain = () => run(["update-ref", `refs/remotes/${BASE_REF}`, "HEAD"]);
+    const keys = () => evaluate(dir).targets.map((t) => `${t.channel}/${t.slug}`);
+    try {
+      run(["init", "-q"]);
+      run(["checkout", "-q", "-b", "pr"]);
+      Object.entries(legacy).forEach(([rel, body]) => write(rel, body));
+      commit("legacy", "2026-09-01");
+      write(CONTRACT, `# contract\n\n## 4. ${GATE_MARKER}\n`);
+      commit("gate", "2026-09-29");
+      toMain();
+      fn({ dir, write, run, commit, toMain, keys });
+    } catch (e) {
+      eq(`${name}: 例外なく実行できる`, String(e), "");
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  };
+
+  // 1. 媒体をまたぐ移動は新規記事（PR 内・main 上の両方）
+  scenario("媒体またぎ", { "articles_note/new/idea.md": FM + "note の原稿\n" }, ({ dir, run, commit, toMain, keys }) => {
+    fs.mkdirSync(path.join(dir, "articles"));
+    run(["mv", "articles_note/new/idea.md", "articles/idea-zenn.md"]);
+    commit("move to zenn in PR", "2026-10-01");
+    eq("PR 内で媒体をまたいで移動した原稿は新規", keys().includes("zenn/idea-zenn"), true);
+    toMain();
+    eq("main 上で媒体をまたいで移動した原稿も新規", keys().includes("zenn/idea-zenn"), true);
+  });
+
+  // 2. front matter が共通なだけの削除＋追加をリネームとみなさない
+  scenario(
+    "類似度",
+    { "articles/short.md": FM + "短い既存原稿の本文です。\n" },
+    ({ dir, run, write, commit, keys }) => {
+      run(["rm", "-q", "articles/short.md"]);
+      write("articles/unrelated.md", FM + "まったく別の新しい記事です。\n");
+      commit("replace in PR", "2026-10-01");
+      const similar = execFileSync("git", ["-C", dir, "diff", "-M50%", "--name-status", `${BASE_REF}`, "HEAD"], { encoding: "utf8" });
+      eq("（前提）既定の類似度ではリネームと判定される組み合わせ", /^R/m.test(similar), true);
+      eq("類似度 80% 未満の削除＋追加は新規", keys().includes("zenn/unrelated"), true);
+    },
+  );
+
+  // 3. main にあるのに追加日が取れない原稿（merge commit の中で足された原稿）は CI で fail
+  scenario("追加日なし", { "articles/base.md": FM + "base\n" }, ({ dir, run, write, commit, toMain }) => {
+    run(["checkout", "-q", "-b", "side"]);
+    write("articles/side.md", FM + "side\n");
+    commit("side", "2026-09-10");
+    run(["checkout", "-q", "pr"]);
+    run(["merge", "-q", "--no-ff", "--no-commit", "side"], "2026-09-11");
+    write("articles/evil.md", FM + "merge の中で足した原稿\n");
+    commit("merge side", "2026-09-11");
+    toMain();
+    const r = evaluate(dir);
+    eq("追加日を判定できない原稿を undetermined に入れる", r.undetermined, ["articles/evil.md"]);
+    eq("追加日を判定できない原稿はローカルでは新規として扱う", r.targets.some((t) => t.rel === "articles/evil.md"), true);
+    eq("追加日を判定できない原稿は CI では fail", exitCode({ ...r, errors: [] }, { GITHUB_ACTIONS: "true" }), 1);
+    eq("追加日を判定できない原稿でもローカルは Plan 以外で落とさない", exitCode({ ...r, errors: [] }, {}), 0);
+  });
+
+  // 4. 作業ブランチが古く、その後 main で既存原稿がリネームされても誤検知しない
+  scenario("古いブランチ", { "articles/x.md": FM + "既存の原稿 x\n" }, ({ run, commit, toMain, keys }) => {
+    run(["checkout", "-q", "-b", "main-ahead"]);
+    run(["mv", "articles/x.md", "articles/y.md"]);
+    commit("rename on main", "2026-10-01");
+    toMain();
+    run(["checkout", "-q", "pr"]);
+    eq("main で後からリネームされた既存原稿を古いブランチで新規扱いしない", keys().includes("zenn/x"), false);
+  });
+
+  // 5. main で削除した原稿を導入日以降に同名で再追加したら新規
+  scenario("再追加", { "articles/readd.md": FM + "最初の版\n" }, ({ run, write, commit, toMain, keys }) => {
+    run(["rm", "-q", "articles/readd.md"]);
+    commit("delete", "2026-10-01");
+    write("articles/readd.md", FM + "再追加した版\n");
+    commit("re-add", "2026-10-02");
+    toMain();
+    eq("削除後に導入日以降で再追加した原稿は新規", keys().includes("zenn/readd"), true);
+  });
 }
 
 // ---------- main ----------
@@ -450,7 +598,7 @@ function main() {
 
   const root = path.resolve(__dirname, "..");
   const result = evaluate(root);
-  const { gate, targets, reason, errors } = result;
+  const { gate, targets, undetermined, reason, errors } = result;
   if (reason) {
     if (exitCode(result, process.env)) {
       console.error(`${LABEL} FAILED: ${reason}。CI では lint が無効化されたまま通さない（${CONTRACT} §4 の見出しと ${BASE_REF} の取得を確認）`);
@@ -461,9 +609,16 @@ function main() {
   }
   console.log(`${LABEL} ゲート導入日 ${gate} / 対象 ${targets.length} 件`);
   targets.forEach((t) => console.log(`  - ${t.rel}`));
-  if (errors.length) {
+  if (targets.length) {
+    console.log("  （ステージしていない移動は新規扱いになる。既存原稿の移動なら git mv するかステージしてから再実行する）");
+  }
+  undetermined.forEach((rel) =>
+    console.error(`  WARN ${rel}: ${BASE_REF} にあるが追加日を判定できないため新規として扱う（CI では fail）`),
+  );
+  const code = exitCode(result, process.env);
+  if (code) {
     errors.forEach((e) => console.error(`  ERROR ${e}`));
-    console.error(`${LABEL} FAILED: ${errors.length} 件（${CONTRACT} §4 を参照）`);
+    console.error(`${LABEL} FAILED: エラー ${errors.length} 件 / 追加日を判定できない原稿 ${undetermined.length} 件（${CONTRACT} §4 を参照）`);
     process.exit(1);
   }
   console.log(`${LABEL} OK`);
