@@ -8,7 +8,8 @@
  *   articles/*.md（zenn）、Qiita/public/*.md（qiita）、articles_note/new/*.md（note）、
  *   articles_izanami/*.md（izanami）のうち README を除き、次のどちらかに当たるもの。
  *   - ベースブランチ（origin/main）に無い（PR で追加・未追跡）。ベースブランチの原稿をリネームしただけのものは除く
- *   - ベースブランチで最初に追加された日（リネームは移動元を引き継ぐ）がゲート導入日以降
+ *   - ベースブランチで最初に追加された日（同じ媒体の中のリネームは移動元を引き継ぐ）がゲート導入日以降
+ *   CI ではベースが main の変更だけを見る（release/zenn 向けの PR などは対象外）。
  *
  * ■ 誤検知を出さないための通過条件
  *   - 導入日が取れない（origin/main が無い、ゲート未マージ）なら対象 0 件で通す
@@ -31,6 +32,7 @@ const LABEL = "[check:article-plan]";
 const GATE_MARKER = "Article Planの記録・PR作成ゲート";
 const CONTRACT = "docs/article-lifecycle-contract.md";
 const BASE_REF = "origin/main";
+const BASE_BRANCH = "main";
 const CHANNEL_DIRS = [
   { dir: "articles", channel: "zenn" },
   { dir: "Qiita/public", channel: "qiita" },
@@ -109,7 +111,7 @@ function nameStatusLines(out) {
  * git が失敗したら null（「追加日なし」と区別する）。
  */
 function addedDates(root, ref) {
-  const out = git(root, ["log", ref, "--reverse", RENAME_SIMILARITY, "--diff-filter=ADR", "--name-status", "--format=@%cs"]);
+  const out = git(root, ["log", ref, "--topo-order", "--reverse", RENAME_SIMILARITY, "--diff-filter=ADR", "--name-status", "--format=@%cs"]);
   if (out === null) return null;
   const map = new Map();
   let date = null;
@@ -147,13 +149,14 @@ function renamesSince(root, mb) {
 /**
  * 新規記事の判定（contract §4 の適用範囲）
  *   - ベースブランチにある原稿: ベースブランチで最初に追加された日が導入日以降なら新規
- *   - ベースブランチに無い原稿: 新規。ただし同じ媒体内のリネームは移動元で判定する。
- *     作業ブランチが古く、merge-base 時点からある原稿（その後 main でリネーム・削除された）は、
- *     merge-base の履歴の追加日で判定する
- *   - ベースブランチにあるのに追加日が取れない原稿は undetermined に入れ、新規として扱う
+ *   - ベースブランチに無い原稿: 新規。ただし同じ媒体内のリネームは移動元で判定する
+ *   - ベースブランチに無く merge-base 時点にだけある原稿（作業ブランチが古く、その後 main で
+ *     リネーム・削除された。PR 内リネームの移動元も含む）は、merge-base の履歴の追加日で判定する。
+ *     追加日が取れなければ新規として扱い、理由を notes に残す（ベースブランチの情報ではないので CI を落とさない）
+ *   - ベースブランチにあるのに追加日が取れない原稿は undetermined に入れ、新規として扱う（CI では fail）
  */
 function collectTargets(root) {
-  const none = (reason, gate = null) => ({ gate, targets: [], undetermined: [], reason });
+  const none = (reason, gate = null) => ({ gate, targets: [], undetermined: [], notes: [], reason });
   const gate = gateDate(root);
   if (!gate) return none(`${BASE_REF} からゲート導入日が取れない`);
   if ((git(root, ["rev-parse", "--is-shallow-repository"]) || "").trim() === "true") {
@@ -169,25 +172,25 @@ function collectTargets(root) {
   }
   let mbDates = null;
   const undetermined = [];
-  const byDate = (rel, d) => {
-    if (!d) {
-      undetermined.push(rel);
-      return true;
-    }
-    return d >= gate;
-  };
+  const notes = [];
   const isNew = (rel) => {
-    if (baseTree.has(rel)) return byDate(rel, baseDates.get(rel));
+    if (baseTree.has(rel)) {
+      const d = baseDates.get(rel);
+      if (!d) undetermined.push(rel);
+      return !d || d >= gate;
+    }
     const from = renames.get(rel);
     if (from && (baseTree.has(from) || mbTree.has(from))) return isNew(from);
     if (mbTree.has(rel)) {
       mbDates = mbDates || addedDates(root, mb) || new Map();
-      return byDate(rel, mbDates.get(rel));
+      const d = mbDates.get(rel);
+      if (!d) notes.push(`${rel}: ${BASE_REF} に無く、merge-base の履歴でも追加日が取れないため新規として扱う`);
+      return !d || d >= gate;
     }
     return true;
   };
   const targets = listArticles(root).filter((a) => isNew(a.rel));
-  return { gate, targets, undetermined, reason: null };
+  return { gate, targets, undetermined, notes, reason: null };
 }
 
 // ---------- Plan の解析 ----------
@@ -285,8 +288,21 @@ function indexPlans(root) {
   return index;
 }
 
-function evaluate(root) {
-  const { gate, targets, undetermined, reason } = collectTargets(root);
+/**
+ * CI でベースが main でない変更か。.github/workflows/ci.yml は pull_request（全ベース）と
+ * main への push で走る。release/zenn 向けの PR は main の旧名原稿を持つので、main 基準で見ると
+ * 必ず落ちる。pull_request は GITHUB_BASE_REF、それ以外は GITHUB_REF_NAME で判断する。ローカルでは見ない。
+ */
+function outOfScope(env) {
+  if (env.GITHUB_ACTIONS !== "true") return null;
+  const base = env.GITHUB_BASE_REF || env.GITHUB_REF_NAME;
+  return base && base !== BASE_BRANCH ? `対象外（ベースが ${BASE_BRANCH} でない: ${base}）` : null;
+}
+
+function evaluate(root, env = {}) {
+  const skipped = outOfScope(env);
+  if (skipped) return { gate: null, targets: [], undetermined: [], notes: [], reason: null, skipped, errors: [] };
+  const { gate, targets, undetermined, notes, reason } = collectTargets(root);
   const index = targets.length ? indexPlans(root) : new Map();
   const errors = [];
   targets.forEach((a) => {
@@ -303,7 +319,7 @@ function evaluate(root) {
       }
     }
   });
-  return { gate, targets, undetermined, reason, errors };
+  return { gate, targets, undetermined, notes, reason, skipped: null, errors };
 }
 
 /**
@@ -311,8 +327,9 @@ function evaluate(root) {
  * 新規として扱う）が、CI では fail にする。contract の見出しの改名や履歴の欠落で lint が
  * 黙って無効化されるのを防ぐため。
  */
-function exitCode({ reason, errors, undetermined = [] }, env) {
+function exitCode({ reason, errors, undetermined = [], skipped = null }, env) {
   const ci = env.GITHUB_ACTIONS === "true";
+  if (skipped) return 0;
   if (reason) return ci ? 1 : 0;
   if (ci && undetermined.length) return 1;
   return errors.length ? 1 : 0;
@@ -589,6 +606,55 @@ function renameScenarios(eq, env) {
     toMain();
     eq("削除後に導入日以降で再追加した原稿は新規", keys().includes("zenn/readd"), true);
   });
+
+  // CI ではベースが main の変更だけを見る（release/zenn 向けの PR・push は対象外）
+  scenario("ベースブランチ", { "articles/old.md": FM + "既存\n" }, ({ dir, write, commit }) => {
+    write("articles/no-plan.md", FM + "Plan の無い新規原稿\n");
+    commit("new article", "2026-10-01");
+    const ci = (extra) => {
+      const env = { GITHUB_ACTIONS: "true", ...extra };
+      return exitCode(evaluate(dir, env), env);
+    };
+    eq("CI で PR のベースが release/zenn なら対象外として通す", ci({ GITHUB_BASE_REF: "release/zenn", GITHUB_REF_NAME: "720/merge" }), 0);
+    eq("CI で release/zenn への push も対象外として通す", ci({ GITHUB_REF_NAME: "release/zenn" }), 0);
+    eq("CI で PR のベースが main なら判定する", ci({ GITHUB_BASE_REF: "main", GITHUB_REF_NAME: "720/merge" }), 1);
+    eq("CI で main への push なら判定する", ci({ GITHUB_REF_NAME: "main" }), 1);
+    eq("ローカルではベースの環境変数を見ずに判定する", exitCode(evaluate(dir, { GITHUB_BASE_REF: "release/zenn" }), {}), 1);
+  });
+
+  // PR 内リネームの移動元が origin/main に無く merge-base にだけある（古いブランチの後で main が移動元を削除）
+  scenario("移動元が merge-base だけ", { "articles/a.md": FM + "既存の原稿 a\n" }, ({ run, commit, toMain, keys, dir }) => {
+    run(["checkout", "-q", "-b", "main-ahead"]);
+    run(["rm", "-q", "articles/a.md"]);
+    commit("delete on main", "2026-10-01");
+    toMain();
+    run(["checkout", "-q", "pr"]);
+    run(["mv", "articles/a.md", "articles/b.md"]);
+    commit("rename in PR", "2026-10-02");
+    const r = evaluate(dir);
+    eq("移動元の追加日を merge-base の履歴から取れれば、その日付で判定する", keys().includes("zenn/b"), false);
+    eq("merge-base 由来の判定では undetermined に入れない", r.undetermined, []);
+  });
+
+  scenario("移動元の追加日なし", { "articles/base.md": FM + "base\n" }, ({ dir, run, write, commit, toMain }) => {
+    run(["checkout", "-q", "-b", "side"]);
+    write("articles/side.md", FM + "side\n");
+    commit("side", "2026-10-01");
+    run(["checkout", "-q", "pr"]);
+    run(["merge", "-q", "--no-ff", "--no-commit", "side"], "2026-10-01");
+    write("articles/evil.md", FM + "merge の中で足した原稿\n");
+    commit("merge side", "2026-10-01");
+    run(["checkout", "-q", "-b", "main-ahead"]);
+    run(["rm", "-q", "articles/evil.md"]);
+    commit("delete on main", "2026-10-02");
+    toMain();
+    run(["checkout", "-q", "pr"]);
+    run(["mv", "articles/evil.md", "articles/evil2.md"]);
+    commit("rename in PR", "2026-10-03");
+    const r = evaluate(dir);
+    eq("merge-base でも追加日が取れない移動元は新規として扱う", r.targets.some((t) => t.rel === "articles/evil2.md"), true);
+    eq("その理由を notes に残し、undetermined（CI fail）にはしない", [r.notes.length, r.undetermined.length], [1, 0]);
+  });
 }
 
 // ---------- main ----------
@@ -597,8 +663,12 @@ function main() {
   if (process.argv.includes("--self-test")) return selfTest();
 
   const root = path.resolve(__dirname, "..");
-  const result = evaluate(root);
-  const { gate, targets, undetermined, reason, errors } = result;
+  const result = evaluate(root, process.env);
+  const { gate, targets, undetermined, notes, reason, skipped, errors } = result;
+  if (skipped) {
+    console.log(`${LABEL} ${skipped}。対象 0 件として通す`);
+    return;
+  }
   if (reason) {
     if (exitCode(result, process.env)) {
       console.error(`${LABEL} FAILED: ${reason}。CI では lint が無効化されたまま通さない（${CONTRACT} §4 の見出しと ${BASE_REF} の取得を確認）`);
@@ -612,6 +682,7 @@ function main() {
   if (targets.length) {
     console.log("  （ステージしていない移動は新規扱いになる。既存原稿の移動なら git mv するかステージしてから再実行する）");
   }
+  notes.forEach((n) => console.log(`  NOTE ${n}`));
   undetermined.forEach((rel) =>
     console.error(`  WARN ${rel}: ${BASE_REF} にあるが追加日を判定できないため新規として扱う（CI では fail）`),
   );
