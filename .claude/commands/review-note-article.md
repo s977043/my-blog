@@ -31,9 +31,11 @@ gh pr list --state open --head "docs/review-note-$SLUG" --json number,title,head
 新規記事か対象外（ゲート導入前の原稿／改訂）かを `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」の適用範囲で判定する。`drafts/`・`published/` は対象外とする。以降のPlan手順は新規記事だけに適用する。新規記事では、レビュー時点で該当 Plan が存在することを確認する。ブランチ作成はPlanの完成前でも行ってよい。
 
 ```bash
-# new/ の新規記事の判定: 1行目が空（未追跡）か、2行目の導入日以降なら新規記事
-git log --diff-filter=A --format=%cs -- articles_note/$1.md | tail -1
+# new/ の新規記事の判定: 1行目が空（origin/main に無い）か、2行目の導入日以降なら新規記事。
+# 1行目が空でも、3行目で origin/main の原稿からのリネームと分かれば移動元で判定する
+git log origin/main --follow --diff-filter=A --format=%cs -- articles_note/$1.md | tail -1
 git log -S "Article Planの記録・PR作成ゲート" --format=%cs origin/main -- docs/article-lifecycle-contract.md | tail -1
+git diff -M --name-status origin/main...HEAD | grep "articles_note/$1.md"
 ```
 
 ```bash

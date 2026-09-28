@@ -6,9 +6,9 @@
  *
  * ■ 対象（新規記事のみ）
  *   articles/*.md（zenn）、Qiita/public/*.md（qiita）、articles_note/new/*.md（note）、
- *   articles_izanami/*.md（izanami）のうち README を除き、最初の追加 commit の日付が
- *   ゲート導入日以降のもの。未コミット（未追跡・ステージのみ）の原稿も新規記事とする。
- *   導入日・追加日の取り方は contract 記載のコマンドに合わせる（%cs、--follow なし）。
+ *   articles_izanami/*.md（izanami）のうち README を除き、次のどちらかに当たるもの。
+ *   - ベースブランチ（origin/main）に無い（PR で追加・未追跡）。ベースブランチの原稿をリネームしただけのものは除く
+ *   - ベースブランチで最初に追加された日（リネームは移動元を引き継ぐ）がゲート導入日以降
  *
  * ■ 誤検知を出さないための通過条件
  *   - 導入日が取れない（origin/main が無い、ゲート未マージ）なら対象 0 件で通す
@@ -82,37 +82,69 @@ function listArticles(root) {
   });
 }
 
+/** `git ... --name-status` の出力を [status, ...paths] の配列にする。`@` で始まる行は日付行 */
+function nameStatusLines(out) {
+  return (out || "").split("\n").filter((l) => l.trim()).map((l) => l.split("\t"));
+}
+
 /**
- * path → 最初の追加 commit の日付。1回の git log でまとめて取る（新しい順なので上書きで最古が残る）。
- * --no-renames が無いと、ディレクトリ内の git mv が A ではなく R になり、既存記事を未追跡扱いにしてしまう。
- * contract のファイル単位コマンドは移動元がパス指定に入らないので A になる。それに合わせる。
+ * ベースブランチ上の path → 最初に追加された日。履歴を古い順に -M 付きで1回だけ読み、
+ * リネーム（R）は移動元の追加日を引き継ぐ。`git log --follow --diff-filter=A` をファイルごとに
+ * 流すのと同じ結果を、記事数に関係なく git 1回で得るため。
  */
-function firstAddedDates(root) {
-  const out = git(root, [
-    "log", "--no-renames", "--diff-filter=A", "--name-only", "--format=@%cs", "HEAD", "--",
-    ...CHANNEL_DIRS.map((c) => c.dir),
-  ]);
+function baseAddedDates(root) {
+  const out = git(root, ["log", BASE_REF, "--reverse", "-M", "--diff-filter=AR", "--name-status", "--format=@%cs"]);
   const map = new Map();
-  if (!out) return map;
   let date = null;
-  out.split("\n").forEach((line) => {
-    if (line.startsWith("@")) date = line.slice(1);
-    else if (line.trim() && date) map.set(line.trim(), date);
+  nameStatusLines(out).forEach(([status, from, to]) => {
+    if (status.startsWith("@")) date = status.slice(1);
+    else if (status === "A" && !map.has(from)) map.set(from, date);
+    else if (status.startsWith("R") && to) map.set(to, map.get(from) || date);
   });
   return map;
 }
 
+/**
+ * ベースブランチに無いパス → PR 内（コミット済み・ステージ済み・作業ツリー）でのリネーム元。
+ * merge-base と作業ツリーを比べるので、CI の detached HEAD（PR の merge commit）でも同じに動く。
+ */
+function renamesSinceBase(root) {
+  const mb = (git(root, ["merge-base", BASE_REF, "HEAD"]) || "").trim();
+  const map = new Map();
+  if (!mb) return map;
+  nameStatusLines(git(root, ["diff", "-M", "--name-status", mb])).forEach(([status, from, to]) => {
+    if (status.startsWith("R") && to) map.set(to, from);
+  });
+  return map;
+}
+
+/**
+ * 新規記事の判定（contract §4 の適用範囲）
+ *   - ベースブランチにある原稿: ベースブランチで最初に追加された日（リネームは移動元を引き継ぐ）が導入日以降
+ *   - ベースブランチに無い原稿: 新規記事。ただしベースブランチにある原稿をリネームしただけなら移動元で判定する
+ */
 function collectTargets(root) {
   const gate = gateDate(root);
   if (!gate) return { gate: null, targets: [], reason: `${BASE_REF} からゲート導入日が取れない` };
   if ((git(root, ["rev-parse", "--is-shallow-repository"]) || "").trim() === "true") {
     return { gate, targets: [], reason: "shallow clone のため追加日を判定できない" };
   }
-  const added = firstAddedDates(root);
-  const targets = listArticles(root).filter((a) => {
-    const d = added.get(a.rel);
-    return !d || d >= gate;
-  });
+  const baseTree = new Set(
+    (git(root, ["ls-tree", "-r", "--name-only", BASE_REF, "--", ...CHANNEL_DIRS.map((c) => c.dir)]) || "")
+      .split("\n")
+      .filter(Boolean),
+  );
+  const added = baseAddedDates(root);
+  const renames = renamesSinceBase(root);
+  const isNew = (rel) => {
+    if (baseTree.has(rel)) {
+      const d = added.get(rel);
+      return Boolean(d) && d >= gate;
+    }
+    const from = renames.get(rel);
+    return from && baseTree.has(from) ? isNew(from) : true;
+  };
+  const targets = listArticles(root).filter((a) => isNew(a.rel));
   return { gate, targets, reason: null };
 }
 
@@ -382,6 +414,27 @@ function selfTest() {
     eq("A-5 の見本文言のままは数えない", evidenceMissing(), true);
     withEvidence("- Observed: 未定義の挙動を筆者が再現した");
     eq("「未定義」で始まる実記録は通す", evidenceMissing(), false);
+
+    // 新規記事の定義: ベースブランチに無い原稿は新規。リネームは移動元の追加日を引き継ぐ
+    write("articles/backdated.md", "backdated\n");
+    commit("backdated in PR", "2026-09-20");
+    eq("PR で導入日より前の日付でコミットした原稿も対象（main に無い）", keys(evaluate(tmp)).includes("zenn/backdated"), true);
+
+    run(["mv", "articles/old.md", "articles/old-renamed.md"]);
+    commit("rename on main", "2026-10-01");
+    run(["update-ref", `refs/remotes/${BASE_REF}`, "HEAD"]);
+    const onMain = keys(evaluate(tmp));
+    eq("main 上で導入日後にリネームした既存原稿は対象外", onMain.includes("zenn/old-renamed"), false);
+    eq("main で導入日以降に追加された原稿は対象", onMain.includes("zenn/zenn-ok"), true);
+
+    run(["mv", "articles_note/new/PRONI-renamed.md", "articles_note/new/PRONI-renamed2.md"]);
+    commit("rename in PR", "2026-10-02");
+    run(["mv", "articles/日本語-old.md", "articles/日本語-renamed.md"]);
+    const inPr = keys(evaluate(tmp));
+    eq("PR 内でリネームした既存原稿は対象外", inPr.includes("note/PRONI-renamed2"), false);
+    eq("ステージしただけのリネームも移動元で判定する", inPr.includes("zenn/日本語-renamed"), false);
+    run(["checkout", "-q", "--detach"]);
+    eq("detached HEAD（CI）でも同じ判定になる", keys(evaluate(tmp)), inPr);
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }
