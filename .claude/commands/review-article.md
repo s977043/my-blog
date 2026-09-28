@@ -45,7 +45,7 @@ argument-hint: <article-slug> (articles/ 配下のファイル名 .md 抜き)
    - 構成ガイドは固定テンプレートとして強制せず、記事タイプ・検索意図・読者を優先する
 
 4. コミット
-   対象Planがベースブランチにない場合は、このコミットへ該当Seedも含める。Planが未追跡・未コミットのままならPRゲートを通過したとみなさない。
+   対象Planがベースブランチにない場合は、このコミットへ該当Seedも含める。特定したSeedのパスを `SEED_PATH` とし、`git add "$SEED_PATH"` を実行してからコミットする。Planが未追跡・未コミットのままならPRゲートを通過したとみなさない。
    ```bash
    git add reviews/zenn/$1.md
    git commit -m "docs(reviews): add 3-persona review for $1"

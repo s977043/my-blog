@@ -68,7 +68,7 @@ mkdir -p reviews/note/$STATE
 
 ### 5. コミット
 
-対象Planがベースブランチにない場合は、このコミットへ該当Seedも含める。Planが未追跡・未コミットのままならPRゲートを通過したとみなさない。
+対象Planがベースブランチにない場合は、このコミットへ該当Seedも含める。特定したSeedのパスを `SEED_PATH` とし、`git add "$SEED_PATH"` を実行してからコミットする。Planが未追跡・未コミットのままならPRゲートを通過したとみなさない。
 
 ```bash
 git add reviews/note/$1.md
