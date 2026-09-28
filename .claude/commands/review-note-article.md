@@ -31,6 +31,12 @@ gh pr list --state open --head "docs/review-note-$SLUG" --json number,title,head
 新規記事か対象外（ゲート導入前の原稿／改訂）かを `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」の適用範囲で判定する。`drafts/`・`published/` は対象外とする。以降のPlan手順は新規記事だけに適用する。新規記事では、レビュー時点で該当 Plan が存在することを確認する。ブランチ作成はPlanの完成前でも行ってよい。
 
 ```bash
+# new/ の新規記事の判定: 1行目が空（未追跡）か、2行目の導入日以降なら新規記事
+git log --diff-filter=A --format=%cs -- articles_note/$1.md | tail -1
+git log -S "Article Planの記録・PR作成ゲート" --format=%cs origin/main -- docs/article-lifecycle-contract.md | tail -1
+```
+
+```bash
 # 新規記事のときだけ実行
 SEED_PATH=$(git grep --untracked -lE "^## (Draft|Approved) Article Plan: note/$SLUG$" -- article_seeds)
 echo "$SEED_PATH"
@@ -87,7 +93,7 @@ SLUG=$(basename $1)
 # 新規記事のみ
 SEED_PATH=$(git grep --untracked -lE "^## (Draft|Approved) Article Plan: note/$SLUG$" -- article_seeds)
 : "${SEED_PATH:?Plan未検出: note/$SLUG}"
-git cat-file -e origin/main:"$SEED_PATH" 2>/dev/null || git add "$SEED_PATH"
+git grep -qE "^## (Draft|Approved) Article Plan: note/$SLUG$" origin/main -- "$SEED_PATH" || git add "$SEED_PATH"
 
 git add reviews/note/$1.md
 git commit -m "docs(reviews): add 3-persona note review for $1"
@@ -101,6 +107,12 @@ PR本文のPlan行は同節の書式に従う。`PLAN_LINE` は、新規記事�
 STATE=$(dirname $1)
 SLUG=$(basename $1)
 
+# 新規記事: Plan を再計算する（見つからなければ止まる）
+SEED_PATH=$(git grep --untracked -lE "^## (Draft|Approved) Article Plan: note/$SLUG$" -- article_seeds)
+PLAN_LINE="Plan: ${SEED_PATH:?Plan未検出: note/$SLUG} (note/$SLUG)"
+# 対象外（ゲート導入前の原稿／改訂、drafts/・published/）のときだけ、上の2行の代わりに次を使う
+# PLAN_LINE="Plan: 対象外（ゲート導入前の原稿／改訂） (note/$SLUG)"
+
 test "$(gh api user --jq .login)" = "s977043" || gh auth switch --hostname github.com --user s977043
 test "$(gh api user --jq .login)" = "s977043" || { echo "GitHub active account を s977043 に切り替えられませんでした"; exit 1; }
 
@@ -112,12 +124,6 @@ if [ "$STATE" = "published" ]; then
 elif [ "$STATE" = "drafts" ]; then
   STATE_NOTICE=$'\n\n> ℹ️ **drafts は読み取り専用ミラー**\n> レビューは可能ですが、`articles_note/drafts/` の本文には反映しません。対応する `new/` 正本またはnote管理画面で修正します。'
 fi
-
-# 新規記事: Plan を再計算する（見つからなければ止まる）
-SEED_PATH=$(git grep --untracked -lE "^## (Draft|Approved) Article Plan: note/$SLUG$" -- article_seeds)
-PLAN_LINE="Plan: ${SEED_PATH:?Plan未検出: note/$SLUG} (note/$SLUG)"
-# 対象外（ゲート導入前の原稿／改訂、drafts/・published/）のときだけ、上の2行の代わりに次を使う
-# PLAN_LINE="Plan: 対象外（ゲート導入前の原稿／改訂） (note/$SLUG)"
 
 gh pr create \
   --title "docs(reviews): add note review for $1" \

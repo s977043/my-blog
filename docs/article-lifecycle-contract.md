@@ -79,7 +79,7 @@ Signal / Experience
 
 ### 適用範囲
 
-本ゲートの導入日（本ゲートを追加したPRのマージ日）以降に新しく追加された原稿を「新規記事」とする。原稿の最初の追加 commit の日付（`git log --diff-filter=A --format=%cs -- <path> | tail -1`）が本ゲート導入日以降、または未追跡なら新規記事とする。それ以前からある原稿（`articles_note/new/` の既存原稿を含む）と既存記事の改訂には遡及しない。各コマンド・エージェントはこの定義を参照し、個別に再定義しない。
+本ゲートの導入日（本ゲートを追加したPRのマージ日）以降に新しく追加された原稿を「新規記事」とする。原稿の最初の追加 commit の日付（`git log --diff-filter=A --format=%cs -- <path> | tail -1`）が本ゲート導入日以降、または未追跡なら新規記事とする。導入日は `git log -S "Article Planの記録・PR作成ゲート" --format=%cs origin/main -- docs/article-lifecycle-contract.md | tail -1` で確認する。それ以前からある原稿（`articles_note/new/` の既存原稿を含む）と既存記事の改訂には遡及しない。各コマンド・エージェントはこの定義を参照し、個別に再定義しない。
 
 ### Planの記録
 
