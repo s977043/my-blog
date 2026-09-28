@@ -60,11 +60,12 @@ argument-hint: <article-slug> (articles/ 配下のファイル名 .md 抜き)
 4. PR作成ゲートの確認 & コミット
    新規記事では、コミット前に同節の作成ゲートを確認する。不足があればコミットもPR作成もせず、不足項目と `SEED_PATH` を報告する。
 
-   Bash の呼び出し間でシェル変数は残らないため、`SEED_PATH` はこのブロックで再計算する。対象Planがベースブランチにない場合は、このコミットへ該当Seedも含める。Planが未追跡・未コミットのままならPRゲートを通過したとみなさない。対象外のときは `# 新規記事のみ` の3行を実行しない。
+   Bash の呼び出し間でシェル変数は残らないため、`SEED_PATH` はこのブロックで再計算する。対象Planがベースブランチにない場合は、このコミットへ該当Seedも含める。Planが未追跡・未コミットのままならPRゲートを通過したとみなさない。対象外のときは `# 新規記事のみ` の4行を実行しない。
    ```bash
    # 新規記事のみ
    SEED_PATH=$(git grep --untracked -lE "^## (Draft|Approved) Article Plan: zenn/$1$" -- article_seeds)
    : "${SEED_PATH:?Plan未検出: zenn/$1}"
+   [ "$(printf '%s\n' "$SEED_PATH" | wc -l)" -eq 1 ] || { echo "Plan候補が複数: $SEED_PATH"; exit 1; }
    git grep -qE "^## (Draft|Approved) Article Plan: zenn/$1$" origin/main -- "$SEED_PATH" || git add "$SEED_PATH"
 
    git add reviews/zenn/$1.md
@@ -77,8 +78,9 @@ argument-hint: <article-slug> (articles/ 配下のファイル名 .md 抜き)
    ```bash
    # 新規記事: Plan を再計算する（見つからなければ止まる）
    SEED_PATH=$(git grep --untracked -lE "^## (Draft|Approved) Article Plan: zenn/$1$" -- article_seeds)
+   [ "$(printf '%s\n' "$SEED_PATH" | wc -l)" -eq 1 ] || { echo "Plan候補が複数: $SEED_PATH"; exit 1; }
    PLAN_LINE="Plan: ${SEED_PATH:?Plan未検出: zenn/$1} (zenn/$1)"
-   # 対象外（ゲート導入前の原稿／改訂）のときだけ、上の2行の代わりに次を使う
+   # 対象外（ゲート導入前の原稿／改訂）のときだけ、上の3行の代わりに次を使う
    # PLAN_LINE="Plan: 対象外（ゲート導入前の原稿／改訂） (zenn/$1)"
    # push/PR 直前に実際の active login を確認（s977043 でなければ switch）
    test "$(gh api user --jq .login)" = "s977043" || gh auth switch --hostname github.com --user s977043
