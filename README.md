@@ -25,21 +25,11 @@ my-blog/
 
 各プラットフォームの詳細な運用は、それぞれの配下READMEを参照する。
 
+- [`docs/gpt6-model-migration-plan.md`](./docs/gpt6-model-migration-plan.md) — 記事作成・レビュー業務におけるGPT-6モデルの段階的評価計画
 - [`articles/README.md`](./articles/README.md) — Zenn記事の構成・slug規約・Front Matter
 - [`Qiita/README.md`](./Qiita/README.md) — Qiita記事の構成・`public/.remote/`の役割
 - [`articles_note/README.md`](./articles_note/README.md) — noteエクスポートとインポートの運用フロー
 - [`articles_izanami/README.md`](./articles_izanami/README.md) — izanami向け新規原稿と企画候補
-
-## 共通ポジショニング
-
-このリポジトリでは、Zenn / Qiita / note / Growth Lab / GitHub を1つの技術コンテンツ群として扱う。
-外部プロフィールや固定導線を更新するときは、[`docs/content-channel-strategy.md`](./docs/content-channel-strategy.md) を正本にする。
-
-共有テーマ:
-
-> AIコーディングをチーム開発に乗せる運用設計
-
-現在の入口に使う記事の目安については、正本である [`docs/content-channel-strategy.md`](./docs/content-channel-strategy.md#current-entry-point-candidates) を参照する。
 
 ## 共通ポジショニング
 
