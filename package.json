@@ -31,6 +31,7 @@
     "test:cleanup-pr": "bash scripts/test-cleanup-pr-worktree.sh",
     "clean:merged-branches": "bash scripts/clean-merged-branches.sh",
     "test:clean-merged-branches": "bash scripts/test-clean-merged-branches.sh",
+    "test:sync-release-zenn": "bash scripts/test-sync-release-zenn.sh",
     "test:gh-guard": "bash scripts/hooks/claude-gh-account-guard.test.sh",
     "check:publish-readiness": "node scripts/check-publish-readiness.js",
     "test:publish-readiness": "node scripts/check-publish-readiness.js --self-test",

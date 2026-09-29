@@ -80,6 +80,8 @@ jobs:
         run: npm run test:cleanup-pr
       - name: Merged branch sweep self-test
         run: npm run test:clean-merged-branches
+      - name: release/zenn sync self-test
+        run: npm run test:sync-release-zenn
       - name: gh account guard hook self-test
         run: npm run test:gh-guard
 
