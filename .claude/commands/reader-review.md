@@ -1,6 +1,6 @@
 ---
 description: 公開中の記事を媒体ごとの想定読者として実際の公開本文で読み、読みやすさを review-only で点検して reviews/reader/<日付>.md の PR を作る（週次・クラウド実行前提）
-argument-hint: "[本数（既定 4）]"
+argument-hint: "[本数（既定 5）]"
 ---
 
 # /reader-review
@@ -17,7 +17,7 @@ argument-hint: "[本数（既定 4）]"
 
 ## 引数
 
-- `$1` = レビューする本数（省略時 4）。媒体（zenn / qiita / note / izanami）が偏らないよう、媒体ごとに 1 本ずつ取るラウンドを繰り返して選ぶ
+- `$1` = レビューする本数（省略時 5。公開記事約 100 本なら約 5 か月で一巡）。全媒体を通して「未レビュー → 最終レビュー日が古い順」に選ぶ。同じ順位（未レビュー同士・同日同士）の中では媒体（zenn / qiita / note / izanami）を交互に並べ、1 回の中で媒体が混ざるようにする
 
 ## 手順
 
@@ -26,7 +26,7 @@ argument-hint: "[本数（既定 4）]"
 ```bash
 npm ci
 DATE=$(TZ=Asia/Tokyo date +%F)
-N=${1:-4}
+N=${1:-5}
 test -e "reviews/reader/$DATE.md" && { echo "reviews/reader/$DATE.md は既にあります。今日の実行は済んでいるので停止します"; exit 1; }
 gh pr list --state open --search "head:docs/reader-review-" --json number,title,headRefName
 ```

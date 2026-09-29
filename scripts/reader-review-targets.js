@@ -9,8 +9,9 @@
 //      - note: `articles_note/published/*.md`（`公開状態: publish`）→ https://note.com/mine_unilabo/n/<key>
 //      - izanami: `articles_izanami/*.md` のうち `izanami_url` があるもの
 //   2. 巡回状態 `docs/reader-review/rotation.json`（URL ごとの最終レビュー日）を読み、
-//      未レビュー → 最終レビュー日が古い順に N 本選ぶ。媒体（zenn / qiita / note / izanami）が
-//      偏らないよう、媒体ごとの先頭を 1 本ずつ取るラウンドを繰り返す
+//      全媒体を通して「未レビュー → 最終レビュー日が古い順」に N 本選ぶ。同じ順位（未レビュー同士・
+//      同日同士）の中では媒体（zenn / qiita / note / izanami）を交互に並べ、1 回の中で媒体が混ざるように
+//      する。媒体ごとの本数に比例して回るので、全記事がほぼ均等な間隔で一巡する
 //   3. `--fetch` で選んだ記事の公開本文を取得する（ブラウザ不要。下記「本文の取得方法」）
 //   4. `--record` でレビューした URL の最終レビュー日を rotation.json に書く
 //
@@ -26,7 +27,7 @@
 //   `origin: "repo"` と理由を manifest に残す。レポートにはその旨を書く（公開版と差がありうるため）。
 //
 // ■ 使い方
-//   node scripts/reader-review-targets.js                  # 既定 4 本を選んで表示
+//   node scripts/reader-review-targets.js                  # 既定 5 本を選んで表示
 //   node scripts/reader-review-targets.js --count 6 --json
 //   node scripts/reader-review-targets.js --list           # 公開記事の件数（媒体別）と一覧
 //   node scripts/reader-review-targets.js --fetch --out <dir> [--url <url> ...]
@@ -40,7 +41,7 @@ const path = require("path");
 
 const LABEL = "[reader-review]";
 const ROTATION_PATH = "docs/reader-review/rotation.json";
-const DEFAULT_COUNT = 4;
+const DEFAULT_COUNT = 5;
 const MIN_LIVE_CHARS = 200;
 const MEDIA = ["zenn", "qiita", "note", "izanami"];
 const USER_AGENT = "Mozilla/5.0 (compatible; my-blog-reader-review)";
@@ -198,38 +199,35 @@ function emptyRotation() {
   return { version: 1, reviewed: {} };
 }
 
-// 未レビュー（""）を最優先、次に最終レビュー日が古い順。同順位は URL 順で決定的にする。
-function sortKey(t, rotation) {
+function lastReviewed(t, rotation) {
   const r = rotation.reviewed[t.url];
-  return `${r ? r.last_reviewed : ""}\u0000${t.url}`;
+  return r ? r.last_reviewed : "";
 }
 
+// 全媒体を通して、未レビュー（""）→ 最終レビュー日が古い順に並べる。
+// 同じ最終レビュー日のグループ内では媒体を交互に並べる（媒体内は URL 順で決定的にする）。
 function selectTargets(targets, rotation, count) {
-  const queues = new Map();
-  for (const m of MEDIA) queues.set(m, []);
+  const groups = new Map();
   for (const t of targets) {
-    if (!queues.has(t.medium)) queues.set(t.medium, []);
-    queues.get(t.medium).push(t);
+    const d = lastReviewed(t, rotation);
+    if (!groups.has(d)) groups.set(d, []);
+    groups.get(d).push(t);
   }
-  for (const q of queues.values())
-    q.sort((a, b) => (sortKey(a, rotation) < sortKey(b, rotation) ? -1 : 1));
-
-  const picked = [];
-  while (picked.length < count) {
-    const heads = [...queues.values()].filter((q) => q.length).map((q) => q[0]);
-    if (!heads.length) break;
-    heads.sort((a, b) => (sortKey(a, rotation) < sortKey(b, rotation) ? -1 : 1));
-    for (const h of heads) {
-      if (picked.length >= count) break;
-      picked.push(h);
-      queues.get(h.medium).shift();
+  const ordered = [];
+  for (const d of [...groups.keys()].sort()) {
+    const queues = new Map(MEDIA.map((m) => [m, []]));
+    for (const t of groups.get(d)) {
+      if (!queues.has(t.medium)) queues.set(t.medium, []);
+      queues.get(t.medium).push(t);
+    }
+    for (const q of queues.values()) q.sort((a, b) => (a.url < b.url ? -1 : 1));
+    while ([...queues.values()].some((q) => q.length)) {
+      for (const q of queues.values()) if (q.length) ordered.push(q.shift());
     }
   }
-  return picked.map((t) => ({
+  return ordered.slice(0, count).map((t) => ({
     ...t,
-    last_reviewed: rotation.reviewed[t.url]
-      ? rotation.reviewed[t.url].last_reviewed
-      : null,
+    last_reviewed: lastReviewed(t, rotation) || null,
   }));
 }
 
@@ -580,12 +578,24 @@ async function selfTest() {
   eq("note のタイトルは本文の H1 から取る", targets.find((x) => x.kind === "note").title, "note の記事タイトル");
   eq("クオート付き title を外す", targets.find((x) => x.key === "alpha").title, "Alpha: コロン入り");
 
-  // 2) 選定: 媒体を偏らせず、未レビュー → 古い順
+  // 2) 選定: 全媒体を通して未レビュー → 古い順。同順位では媒体を交互に並べる
   const empty = emptyRotation();
   eq(
-    "未レビューのみなら 4 本で 4 媒体から 1 本ずつ",
-    selectTargets(targets, empty, 4).map((x) => x.medium).sort(),
-    ["izanami", "note", "qiita", "zenn"],
+    "未レビューのみなら媒体を交互に並べる（zenn → qiita → note → izanami → zenn …）",
+    selectTargets(targets, empty, 6).map((x) => `${x.medium}:${x.key}`),
+    [
+      "zenn:alpha",
+      "qiita:0123456789abcdef0123",
+      "note:n0000000000aa",
+      "izanami:post-one",
+      "zenn:gamma",
+      "zenn:guide",
+    ],
+  );
+  eq(
+    "未レビュー多数でも 4 本なら 4 媒体が混ざる",
+    selectTargets(targets, empty, 4).map((x) => x.medium),
+    ["zenn", "qiita", "note", "izanami"],
   );
   const rot = {
     version: 1,
@@ -598,32 +608,41 @@ async function selfTest() {
     },
   };
   eq(
-    "Zenn 内は未レビュー（book）を先に選ぶ",
-    selectTargets(targets, rot, 4).find((x) => x.medium === "zenn").key,
-    "guide",
+    "未レビューが残っていれば媒体に関係なく先に選び、続けて古い順",
+    selectTargets(targets, rot, 4).map((x) => x.key),
+    ["guide", "0123456789abcdef0123", "gamma", "alpha"],
   );
   eq(
-    "1 本だけなら全媒体の先頭のうち最優先（未レビュー）を選ぶ",
-    selectTargets(targets, rot, 1).map((x) => x.key),
-    ["guide"],
+    "媒体の割り当てはしない（古い 2 本が同じ Zenn でも両方選ぶ）",
+    selectTargets(
+      targets,
+      recordReviews(recordReviews(rot, ["https://zenn.dev/minewo/books/guide"], "2026-06-01"), [
+        "https://qiita.com/s977043/items/0123456789abcdef0123",
+      ], "2026-09-25"),
+      2,
+    ).map((x) => x.key),
+    ["guide", "gamma"],
   );
-  const allReviewed = recordReviews(rot, ["https://zenn.dev/minewo/books/guide"], "2026-09-25");
+  const sameDay = recordReviews(empty, targets.map((x) => x.url), "2026-09-01");
   eq(
-    "全件レビュー済みなら最終レビュー日が古い順",
-    selectTargets(targets, allReviewed, 2).map((x) => x.key),
-    ["0123456789abcdef0123", "gamma"],
+    "全件が同日レビュー済みなら、その中でも媒体を交互に並べる",
+    selectTargets(targets, sameDay, 4).map((x) => x.medium),
+    ["zenn", "qiita", "note", "izanami"],
   );
   eq(
-    "count が媒体数を超えたら 2 巡目に入り、他媒体が尽きたら残る媒体から選ぶ",
-    selectTargets(targets, empty, 6).map((x) => x.medium),
-    ["izanami", "note", "qiita", "zenn", "zenn", "zenn"],
+    "新しくレビューした記事は後ろに回る",
+    selectTargets(targets, recordReviews(sameDay, ["https://zenn.dev/minewo/articles/alpha"], "2026-09-29"), 99)
+      .map((x) => x.key)
+      .pop(),
+    "alpha",
   );
   eq("count が総数を超えたら全件", selectTargets(targets, empty, 99).length, targets.length);
   eq(
-    "選定結果に last_reviewed を載せる",
-    selectTargets(targets, rot, 4).find((x) => x.medium === "qiita").last_reviewed,
-    "2026-07-01",
+    "選定結果に last_reviewed を載せる（未レビューは null）",
+    selectTargets(targets, rot, 2).map((x) => x.last_reviewed),
+    [null, "2026-07-01"],
   );
+  eq("既定の本数は 5", parseArgs([]).count, 5);
 
   // 3) rotation の検証と記録
   throws("version 違いは拒否", () => validateRotation({ version: 2, reviewed: {} }), /version/);
