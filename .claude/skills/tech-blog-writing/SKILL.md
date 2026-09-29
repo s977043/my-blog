@@ -1,6 +1,6 @@
 ---
 name: tech-blog-writing
-description: テックブログのネタ発見、一次経験の整理、媒体・記事タイプ選定、構成設計、公開前の根拠確認を一貫して支援する。Zenn・Qiita・noteの記事案または既存原稿を、経験・判断・検証の来歴が読者へ伝わる状態にする。
+description: テックブログのネタ発見、一次経験の整理、媒体・記事タイプ選定、構成設計、公開前の根拠確認を一貫して支援する。Zenn・Qiita・note・izanamiの記事案または既存原稿を、経験・判断・検証の来歴が読者へ伝わる状態にする。
 ---
 
 # tech-blog-writing
@@ -21,7 +21,7 @@ description: テックブログのネタ発見、一次経験の整理、媒体�
 - 作業ログ、Issue、PR、障害対応、技術選定から記事候補を抽出する
 - 記事の構成や書き方を決める
 - `/check-tech-blog <記事パスまたは記事案>` で確認する
-- Zenn・Qiita・note向けの記事が、一次経験と根拠を備えているかレビューする
+- Zenn・Qiita・note・izanami向けの記事が、一次経験と根拠を備えているかレビューする
 
 ## 正本と関連ルール
 
@@ -34,6 +34,7 @@ description: テックブログのネタ発見、一次経験の整理、媒体�
    - **Zenn**: `docs/article-guides/zenn-structure-best-practices.md` と `articles/README.md`
    - **note**: `articles_note/guides/note-structure-best-practices.md`、`articles_note/checklists/note-article-quality-checklist.md`、`articles_note/README.md`
    - **Qiita**: `Qiita/README.md` など既存の媒体固有ルール
+   - **izanami**: `articles_izanami/README.md`
 
 媒体選定後に構成案を作る場合は、**対象媒体の構成ガイドを先に読み、その判断基準を構成案へ反映する**。ガイドは固定テンプレートとして機械適用せず、記事の目的・読者・検索意図・一次経験を優先する。
 
@@ -159,15 +160,16 @@ PROMOTED
   ↓
 PLANNED
   ↓
-Plan Approval (Human)
+Draft Article Planを記録
   ↓
 DRAFTED以降は既存Writer / Review / Final Gateへ委譲
 ```
 
 - Seedのprovenanceと状態定義は `docs/article-lifecycle-contract.md` を正とする
 - `PROMOTED` へ進める場合は、外部Signalの出典と `evidence_status` を明示する
-- `PLANNED` は「読者課題・中心主張・根拠・媒体・構成・書かない範囲」が揃った状態とする
-- 本文生成へ進む前に、中心主張と構成について **Plan Approval（Human）** を置く
+- `PLANNED` は「読者課題・中心主張・根拠・媒体・構成・書かない範囲」の仮案が揃った状態とする
+- 本文生成へ進む前に `Draft Article Plan`（仮のArticle Plan）をSeedへ記録する
+- Plan Approval（Human）は独立した必須工程ではない。中心主張や書かない範囲の変更を採用する前に著者の判断を得る（この判断を Plan Approval としてよい）
 - Plan ApprovalはLifecycle stateを追加しない。Lifecycleの `APPROVED` は既存契約どおり **公開承認** を意味する
 - `DRAFTED` 以降は既存の媒体別レビュー、Final Gate、公開ポリシーへ委譲する
 - 公開後のMetrics / Learningは本スキルで自動更新せず、Lifecycle契約に従って次のSignalへ戻す
@@ -273,49 +275,33 @@ Research結果は少なくとも次の3種類へ分ける。
 
 媒体を決めた後に構成案を出す場合は、「正本と関連ルール」で指定した**媒体別構成ガイドを必ず読み直す**。
 
-#### A-4. Article Planを作り、Plan Approvalへ渡す
+#### A-4. Draft Article Planを作る
 
-`READY` の記事案は、本文を書く前に次を1つのArticle Planへ固定する。
+`READY` の記事案は、本文を書く前に次を決め、A-5 の書式で1つの `Draft Article Plan` に記録する（`npm run check:article-plan` は A-5 の書式を読む）。
 
-```markdown
-## Reader Problem
-誰の、どの問題を扱うか
+- Reader Problem（`reader_problem`）: 誰の、どの問題を扱うか
+- Central Claim（`central_claim`）: この記事で最も伝える1文
+- Evidence（`### Evidence Boundary`）: Observed / Verified / Hypothesis を区別した根拠
+- Channel / Article Type（`channel`・`article_type`）: 媒体と主タイプ
+- Outline（`### Outline`）: 必要最小限の見出し
+- Out of Scope（`out_of_scope`）: 今回は書かない論点
+- Lifecycle: 現在は PLANNED、次は DRAFTED
 
-## Central Claim
-この記事で最も伝える1文
+初稿前は仮説や未確認事項を明記してよい。PR作成前の通過条件は `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」を正とする。
 
-## Evidence
-Observed / Verified / Hypothesis を区別した根拠
+`/check-tech-blog` の review-only 実行では、Article Planを提案してよいが、記事本文やSeed metadataを変更しない。`Draft Article Plan` がSeedに記録されていれば、後続の既存執筆フローへ引き渡せる。
 
-## Channel / Article Type
-媒体と主タイプ
+#### A-5. Draft Article PlanをSeedへ残し、Draftへ引き渡す
 
-## Outline
-必要最小限の見出し
-
-## Out of Scope
-今回は書かない論点
-
-## Lifecycle
-現在: PLANNED
-次: Plan Approval (Human)
-```
-
-Plan Approvalでは、少なくとも **Reader Problem / Central Claim / Outline / Out of Scope** の4点を確認する。これは公開承認を表すLifecycleの `APPROVED` とは別の局所ゲートであり、新しいLifecycle stateは追加しない。承認前に長文本文を生成しない。
-
-`/check-tech-blog` の review-only 実行では、Article Planを提案してよいが、記事本文やSeed metadataを変更しない。承認済みの計画が明示されている場合のみ、後続の既存執筆フローへ引き渡す。
-
-#### A-5. 承認済みArticle PlanをSeedへ残し、Draftへ引き渡す
-
-Plan Approvalを得たら、別台帳は作らず、元Seed本文へ `## Approved Article Plan: <channel>/<slug>` として承認済み内容を追記する。frontmatterへ複雑な計画構造を追加しない。1つのSeedから複数媒体・複数記事へ派生する場合は、派生記事ごとに別Planとして追記し、既存Planを上書きしない。
+本文生成前に、別台帳は作らず、元Seed本文へ `## Draft Article Plan: <channel>/<slug>` を追記する。追記先のSeedの探し方は `article_seeds/README.md` に従う。Seedの新規作成と `Draft Article Plan` の追記は書き込み可能なセッションで行い、`/check-tech-blog` のような review-only 実行では行わない（Planが見つからない場合の報告書式は `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」を正とする）。Plan Approval の扱いは `docs/article-lifecycle-contract.md` の「3. Human Gate」を正とする。frontmatterへ複雑な計画構造を追加しない。1つのSeedから複数媒体・複数記事へ派生する場合は、派生記事ごとに別Planとして追記し、既存Planを上書きしない。
 
 最低限、次を残す。
 
 ```markdown
-## Approved Article Plan: note/example-slug
+## Draft Article Plan: note/example-slug
 
-- approved_at: YYYY-MM-DD
-- channel: note | zenn | qiita
+- approved_at: （Plan Approval後に記入）
+- channel: note | zenn | qiita | izanami
 - slug: example-slug
 - article_type:
 - reader_problem:
@@ -323,30 +309,32 @@ Plan Approvalを得たら、別台帳は作らず、元Seed本文へ `## Approve
 - out_of_scope:
 
 ### Evidence Boundary
-- Observed:
-- Verified:
-- Hypothesis:
+- Observed: 実体験なら誰が何を観測したか
+- Verified: 外部事実なら確認した内容と参照先
+- Hypothesis: 未確認の見立て。Observed / Verified の代わりにしない
 
 ### Outline
 1. ...
 2. ...
 ```
 
-ここで記録するのは「承認された執筆契約」であり、公開承認ではない。多媒体展開では同一本文を使い回さず、媒体ごとのReader Problem / Central Claim / Outlineを個別に承認する。承認後に中心主張やOut of Scopeを変更する場合は、対象Planの下へ変更理由を追記してからDraftへ反映する。
+ここで記録するのは媒体ごとの執筆契約であり、公開承認ではない。多媒体展開では同一本文を使い回さず、媒体ごとのReader Problem / Central Claim / Outlineを個別に記録する。レビューで中心主張やOut of Scopeを変える提案が出たら、対象Planの下へ変更理由を追記し、採用前に著者の判断（Plan Approval）を得てからDraftへ反映する。
 
 Draftの配置は既存媒体規約を再利用する。
 
 - Zenn: `articles/<slug>.md` を `published: false` で作る
 - note: `articles_note/new/<slug>.md` を編集正本として作る
 - Qiita: `npm run new:qiita -- <slug>` または既存雛形を使い、公開準備までは `ignorePublish: true` を維持する
+- izanami: `articles_izanami/<slug>.md` を `status: draft` で作る
 
-Draftには承認済みArticle Planの **Reader Problem / Central Claim / Evidence Boundary / Outline / Out of Scope** を入力契約として渡す。外部記事や検索結果から新しい中心主張を追加しない。
+Draftには `Draft Article Plan` の **Reader Problem / Central Claim / Evidence Boundary / Outline / Out of Scope** を入力契約として渡す。外部記事や検索結果から新しい中心主張を無断で追加しない。
 
 Draft作成後は、新しいレビュー系を作らず既存フローへ渡す。
 
 - Zenn: `/review-article <slug>` または `/article-pipeline <slug>`
 - note: `/review-note-article new/<slug>` または `/article-pipeline-note new/<slug>`
 - Qiita: 現行のQiitaレビュー運用へ委譲し、正式コマンドがないことを理由にZenn用コマンドを流用しない
+- izanami: 専用レビューコマンドなし。`/check-tech-blog articles_izanami/<slug>.md` で確認し、PR 前に `docs/article-lifecycle-contract.md` の作成ゲートを確認する
 
 ### Mode B: 既存記事を確認する
 
@@ -357,6 +345,7 @@ Draft作成後は、新しいレビュー系を作らず既存フローへ渡す
 - `articles_note/new/<slug>.md`
 - `articles_note/drafts/<slug>.md`（読み取り専用であることを明記）
 - `articles_note/published/<slug>.md`（公開済みであることを明記）
+- `articles_izanami/<slug>.md`
 
 #### B-1. 中心主張を抽出する
 
@@ -422,7 +411,7 @@ READY | NEEDS_INPUT | PARK
 ## Lifecycle
 - 現在:
 - 次:
-- Plan Approvalが必要な判断:
+- Draft Article Planで確認する項目（PR作成前に不足しうるもの）:
 
 ## 中心主張候補
 1文
@@ -489,7 +478,7 @@ PASS | NEEDS_REVISION | BLOCKED
 - 出典を確認できない外部主張を断定しない
 - 一般論を無理に一次経験へ見せかけない
 - 記事の中心主張を、著者確認なく別の主張へ変えない
-- Plan Approval前に長文本文を自動生成しない
+- `Draft Article Plan` をSeedに残す前に長文本文を自動生成しない
 - 検索上位記事の多数派を、それだけで正しい主張・構成とみなさない
 - `docs/article-lifecycle-contract.md` の状態・provenance・Metrics / Learning規約を本スキル内へ複製しない
 - 公開、マージ、`published` / `ignorePublish` の切替を行わない
