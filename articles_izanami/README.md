@@ -24,7 +24,7 @@ izanami 向けに新規執筆する記事の唯一のローカル原稿を管理
 | プロダクト | 既存記事の候補 | 一次情報の候補 | izanami 向けの切り口候補 | 状態 | 次の確認 |
 | --- | --- | --- | --- | --- | --- |
 | PlanGate | [`articles/plangate-ai-coding-workflow.md`](../articles/plangate-ai-coding-workflow.md)、[`articles/plangate-v86-hook-enforcement.md`](../articles/plangate-v86-hook-enforcement.md) | [`s977043/PlanGate`](https://github.com/s977043/PlanGate) の現行README・実装 | AI に実装を任せる前に、何を人が承認すべきか。実装前ゲートの導入判断と最小構成 | `idea` | 読者課題と現行READMEの対応 |
-| River Review | [`articles/river-reviewer-v033-improvement-loop.md`](../articles/river-reviewer-v033-improvement-loop.md)、[`articles/river-review-judgment-placement.md`](../articles/river-review-judgment-placement.md) | [`s977043/river-review`](https://github.com/s977043/river-review) の現行README・実装 | AI レビューで指摘が0件のとき、レビューが完了したのかを区別する設計（Review Coverage） | `published` | Review Coverage と責務分担ガイドを公開済み。3本目（指摘が多すぎるときの絞り方）は `draft` |
+| River Review | [`articles/river-reviewer-v033-improvement-loop.md`](../articles/river-reviewer-v033-improvement-loop.md)、[`articles/river-review-judgment-placement.md`](../articles/river-review-judgment-placement.md) | [`s977043/river-review`](https://github.com/s977043/river-review) の現行README・実装 | AI レビュー結果の扱い方（指摘0件の区別＝Review Coverage、採否と停止の責務分担、指摘が多すぎるときの絞り方） | `published` | Review Coverage・責務分担ガイド・指摘が多すぎるときの絞り方の3本を公開済み |
 | Growth Lab | [`articles/penpot-react-design-system-contract.md`](../articles/penpot-react-design-system-contract.md)、[`articles/design-md-guide-and-adoption-log.md`](../articles/design-md-guide-and-adoption-log.md) | [公開サイト](https://the3396.com/)（リポジトリは非公開） | Growth Lab の公開サイトで確認できる、プロダクト理解・根拠・実行・結果をつなぐ設計 | `idea` | 公開サイトで確認できる範囲に主張を限定できるか |
 | クラゲ水槽（interactive-ocean） | [`articles_note/published/n27a5594f65a4.md`](../articles_note/published/n27a5594f65a4.md) | [公開アプリ](https://ocean.the3396.com/jellyfish)（リポジトリは非公開） | 眺める体験をブラウザ上で作るとき、見た目と動きをどう実装へ落としたか | `idea` | 公開アプリで確認できる範囲に主張を限定できるか。3396-cc 所有のため非公開情報は使わない |
 | 英単語帳アプリ（PocketEitan） | 未特定 | 公開された一次情報なし（リポジトリは非公開） | 学習上の具体的な課題と、それに対するアプリの設計・実装 | `idea` | 既存記事と公開された一次情報の特定（見つかるまで `idea` のまま） |
@@ -50,7 +50,8 @@ izanami 向けに新規執筆する記事の唯一のローカル原稿を管理
 
 ## 3本目: 指摘が多すぎるときの絞り方
 
-**AIレビューの指摘が多すぎて読まれないときの絞り方**を3本目として準備している（`draft`）。原稿は [`ai-review-too-many-findings.md`](./ai-review-too-many-findings.md)。出す前に機械で落とす条件、先頭に置く情報と読む順番、後で見る指摘の分け方、黙らせた指摘（抑制）の見直しを扱う。
+**AIレビューの指摘が多すぎて読まれないときの絞り方**を3本目として2026-09-29に公開した（[izanami](https://izanami.dev/post/dc72ca9e-b731-4b39-8aa2-ba8e7bcfc0d4)）。原稿は [`ai-review-too-many-findings.md`](./ai-review-too-many-findings.md)。出す前に機械で落とす条件、先頭に置く情報と読む順番、後で見る指摘の分け方、黙らせた指摘（抑制）の見直しを扱う。
 
 - 読者課題: 指摘が多すぎてチームが読まなくなったとき、どこで絞り、どこから読むかを決めたい
 - 既存記事との分担: 指摘0件の扱いは初回、採否・停止・再実行の担当は2本目が扱う。本稿は判定の出口を「後で見る指摘を分ける」観点に限って短く扱い、責任者の決め方は説明しない。関連する2本は本文で要約せず、末尾の参考・関連リンクから案内する
+- 観測: 公開後約30日（2026-10-29 頃）に取得可能な閲覧・反応・プロジェクト遷移を記録する。本文中の River Review GitHub リンク（8本）と関連 Zenn 記事リンク（2本）には `rel="noopener noreferrer nofollow"` が付くことを実ページで確認済み。未取得の指標は未計測として扱う

@@ -530,7 +530,7 @@ Track the following signals.
 4. Confirm note fixed entry article choice for the current growth goal.
 5. ~~Publish two Qiita search-entry articles.~~ 完了（2本とも公開済み。上記「Week 2」参照）
 6. Publish one note hub article.（構成案は `article_seeds/note-hub-plangate-river-skills/`。【著者確認】の空欄を埋めてから本文化）
-7. izanami: 2本目（指摘が多すぎるときの絞り方）の構成案 PR #698 を確定して本文化する。初回記事の観測は 2026-10-24 頃に行う
+7. ~~izanami: 指摘が多すぎるときの絞り方の構成案 PR #698 を確定して本文化する~~ 完了（River Review の3本を公開済み: 2026-09-24 / 09-28 / 09-29）。観測は各記事の公開後約30日（2026-10-24 / 10-28 / 10-29 頃）に行う
 
 ## Editorial guardrails
 
