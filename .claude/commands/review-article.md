@@ -24,9 +24,12 @@ argument-hint: <article-slug> (articles/ 配下のファイル名 .md 抜き)
 
    新規記事か対象外（ゲート導入前の原稿／改訂）かを `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」の適用範囲で判定する。以降のPlan手順は新規記事だけに適用する。新規記事では、レビュー時点で該当 Plan が存在することを確認する。ブランチ作成はPlanの完成前でも行ってよい。
    ```bash
-   # 新規記事の判定: 1行目が空（未追跡）か、2行目の導入日以降なら新規記事
-   git log --diff-filter=A --format=%cs -- articles/$1.md | tail -1
+   # 新規記事の判定: 1行目が空（origin/main に無い）か、2行目の導入日以降なら新規記事。
+   # 3行目に R 行が出たら、その移動元パスで1行目を再実行し、移動元の追加日が導入日以降なら新規記事（媒体をまたぐ移動は新規記事）
+   # 未コミットのリネームは npm run check:article-plan で確認する
+   git log origin/main --follow --diff-filter=A --format=%cs -- articles/$1.md | tail -1
    git log -S "Article Planの記録・PR作成ゲート" --format=%cs origin/main -- docs/article-lifecycle-contract.md | tail -1
+   git diff -M80% --name-status origin/main...HEAD | grep -F "articles/$1.md"
    ```
    ```bash
    # 新規記事のときだけ実行

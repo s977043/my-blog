@@ -79,7 +79,13 @@ Signal / Experience
 
 ### 適用範囲
 
-本ゲートの導入日（本ゲートを追加したPRのマージ日）以降に新しく追加された原稿を「新規記事」とする。原稿の最初の追加 commit の日付（`git log --diff-filter=A --format=%cs -- <path> | tail -1`）が本ゲート導入日以降、または未追跡なら新規記事とする。導入日は `git log -S "Article Planの記録・PR作成ゲート" --format=%cs origin/main -- docs/article-lifecycle-contract.md | tail -1` で確認する。それ以前からある原稿（`articles_note/new/` の既存原稿を含む）と既存記事の改訂には遡及しない。各コマンド・エージェントはこの定義を参照し、個別に再定義しない。
+本ゲートの導入日（本ゲートを追加したPRのマージ日）以降に追加された原稿を「新規記事」とし、ベースブランチ（`origin/main`）を基準に判定する。導入日より前からある原稿（`articles_note/new/` の既存原稿を含む）と既存記事の改訂は対象外とする。CIでは、ベースブランチが `main` でないPR・push（`release/zenn` 向けや、`main` 以外で起動した手動実行など）も対象外とする。ローカル実行ではベースブランチを見ない。
+
+- ベースブランチに無い原稿（PRで追加した原稿、未追跡の原稿）は新規記事とする（リネームは3つ目の項目で判定する）
+- ベースブランチにある原稿は、ベースブランチで最初に追加された日が導入日以降なら新規記事とする
+- 同じ媒体の中のリネームは移動元の追加日を引き継ぐ。媒体をまたぐ移動は新規記事とする。類似度 80% 未満のリネームは新規記事として扱う
+
+導入日は `git log -S "Article Planの記録・PR作成ゲート" --format=%cs origin/main -- docs/article-lifecycle-contract.md | tail -1` で確認する。原稿の追加日は `git log origin/main --follow --diff-filter=A --format=%cs -- <path> | tail -1` で確認し、空ならベースブランチに無い。PR内のリネームは `git diff -M80% --name-status origin/main...HEAD` の `R` 行で移動元を確かめる。`--follow` の追跡は lint と一致しないことがあるため、判定が割れたら `npm run check:article-plan` を正とする。各コマンド・エージェントはこの定義を参照し、個別に再定義しない。
 
 ### Planの記録
 
