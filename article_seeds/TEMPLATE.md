@@ -56,4 +56,4 @@ Graph 上の空きを埋めるためだけに記事化しない。
 
 - 実験結果、反証、仮説の変更を追記
 
-<!-- Plan Approval後のみ、`## Approved Article Plan: <channel>/<slug>` を追記する。初期Seedでは空欄テンプレートを置かない。 -->
+<!-- 初稿作成前に `## Draft Article Plan: <channel>/<slug>` を追記する。Plan Approval後は見出しを `Approved Article Plan` に変更する。初期Seedには空欄テンプレートを置かない。 -->

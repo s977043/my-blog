@@ -96,6 +96,8 @@ test "$(gh api user --jq .login)" = "s977043" || gh auth switch --hostname githu
 test "$(gh api user --jq .login)" = "s977043" || { echo "GitHub active account を s977043 に切り替えられませんでした"; exit 1; }
 ```
 
+新規記事（範囲は `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」の適用範囲）では、PR作成の直前に同節の作成ゲートを確認し、不足があればPRを作らず報告する。PR本文のPlan行も同節の書式に従う。主張・書かない範囲を変える指摘は反映を保留して著者へ報告する。本コマンドではSeedを編集せず、Planの更新は著者の判断後に別コミットで行う。
+
 その後、`chore/apply-review-note-$SLUG` をpushしPRを作る。**マージはしない**。
 
 `published` の場合、PR本文冒頭に必ず次を含める。
