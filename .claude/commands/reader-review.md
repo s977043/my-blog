@@ -1,0 +1,153 @@
+---
+description: 公開中の記事を媒体ごとの想定読者として実際の公開本文で読み、読みやすさを review-only で点検して reviews/reader/<日付>.md の PR を作る（週次・クラウド実行前提）
+argument-hint: "[本数（既定 4）]"
+---
+
+# /reader-review
+
+公開中の記事を、媒体ごとの想定読者（ペルソナ）になりきって公開本文で読み、「どこで読むのをやめるか」「どの用語で止まるか」「次に何を読めばよいか分かるか」を点検する。全公開記事を、未レビュー → 最終レビューが古い順に、少しずつ巡回する。
+
+**前提**: 週 1 回、クラウドのエージェントが実行する。ブラウザはなく、ネットワークはあり、このリポジトリを clone した環境で動く。ブラウザ操作（Playwright / Chrome 拡張）やローカル専用ツールには依存しない。ローカルでも同じ手順で動く。
+
+**大原則**:
+
+- **記事は編集しない（review-only）**。公開済み記事の修正は著者判断なので、改善案は提案に留める
+- 自動マージ禁止。PR 作成までで止める
+- 巡回状態 `docs/reader-review/rotation.json` は手で編集せず、手順 (e) のスクリプトで更新する
+
+## 引数
+
+- `$1` = レビューする本数（省略時 4）。媒体（zenn / qiita / note / izanami）が偏らないよう、媒体ごとに 1 本ずつ取るラウンドを繰り返して選ぶ
+
+## 手順
+
+### 0. 準備
+
+```bash
+npm ci
+DATE=$(TZ=Asia/Tokyo date +%F)
+N=${1:-4}
+test -e "reviews/reader/$DATE.md" && { echo "reviews/reader/$DATE.md は既にあります。今日の実行は済んでいるので停止します"; exit 1; }
+gh pr list --state open --search "head:docs/reader-review-" --json number,title,headRefName
+```
+
+同じ日付のレポートがある、または未マージの `docs/reader-review-*` PR がある場合は、作らずに報告して終了する（前回分がマージされていないと rotation.json が衝突する）。`gh` が無い環境では PR 確認を飛ばし、その旨を最後の報告に書く。
+
+### (a) 対象の選定
+
+```bash
+node scripts/reader-review-targets.js --count "$N"
+```
+
+公開中の記事（Zenn 記事・Zenn Book・Qiita・note・izanami）をリポジトリから列挙し、rotation.json を見て N 本を選ぶ。件数の内訳は `node scripts/reader-review-targets.js --list | head -1` で見られる。
+
+### (b) 本文の取得
+
+```bash
+OUT=$(mktemp -d)
+node scripts/reader-review-targets.js --fetch --count "$N" --out "$OUT"
+cat "$OUT/manifest.json"
+```
+
+(a) と同じ規則で同じ N 本を選び、公開本文を `$OUT/<番号>-<媒体>-<キー>.md` に書く。取得方法はスクリプト冒頭のコメントが正本（Zenn は API の body_html、Book は章ごとの API、Qiita は API v2、note は API v3、izanami は公開ページの本文要素）。
+
+- manifest の `origin` が `live` なら公開本文、`repo` ならリポジトリの原稿で代用している。`repo` の記事は `reason`（取得失敗の理由）をレポートに書き、「公開版と差がありうる」と明記する
+- Qiita API は無認証で 60 req/h。1 回の実行で使うのは Qiita の本数分だけなので通常は問題ない
+- 取得した本文は一時ディレクトリに置き、**コミットしない**
+- 画像は alt テキストしか見えない。図の中身は評価せず、alt が無い・図の意味が本文から分からない、までを指摘する
+
+### (c) ペルソナでのレビュー（review-only）
+
+`docs/reader-review/personas.md` を読み、記事ごとに媒体のペルソナを 1 人選ぶ（媒体に 2 人いる場合は記事の主題に近い方。選んだ理由を 1 行書く）。そのペルソナとして `$OUT` の本文を頭から読み、次を書く。記事が複数あるときはサブエージェントに 1 本ずつ並列で任せてよい。その場合も本手順と personas.md を渡し、記事を編集しないことを明示する。
+
+1. **読むのをやめそうな箇所**: 見出し名と段落の書き出しで位置を示し、なぜそこでやめるかをペルソナの「どこで読むのをやめるか」に結びつけて書く。無ければ「なし」
+2. **分かりにくい用語**: 説明なしで出てくる専門用語・略語・固有名と、初出の位置
+3. **導線**: 冒頭 3 段落で何の記事か分かるか、読後に次に読むもの・試すものが示されているか
+4. **改善案（優先度つき）**: P1 = 離脱や誤解に直結 / P2 = 読みやすさの改善 / P3 = あれば良い。1 記事あたり P1〜P2 を中心に 3〜6 件まで。書き換え例は短く添える
+
+書き方の規律:
+
+- 本文からの引用は逐語で短く。本文に無いことを指摘の根拠にしない
+- 記事の主張の正誤判定・書かれていない話題の追加提案はしない（ペルソナは「読むのをやめる地点」を探す道具。`docs/content-channel-strategy.md` §記事の編集原則）
+- スマホでの長さは、段落の文字数・表の列数・コードの行幅から推定したものだと明記する（実画面では見ていない）
+- note 記事への書き換え例は note の表記規約に合わせる（`AGENTS.md` §note 固有。ダッシュを使わない、三点リーダーは `……`）
+
+### (d) レポートの作成
+
+`reviews/reader/$DATE.md` に次の形式で書く。
+
+```markdown
+# 読者 e2e レビュー YYYY-MM-DD
+
+- 対象: N 本（`node scripts/reader-review-targets.js --count N` で選定）
+- ペルソナ定義: `docs/reader-review/personas.md`
+- 記事は編集していない。改善案は著者が判断するための提案
+
+## サマリー
+
+| # | 媒体 | 記事 | ペルソナ | 本文 | 最優先の改善案 |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Zenn | [タイトル](URL) | Z1 | live | P1: ... |
+
+## 1. <記事タイトル>
+
+- URL: <公開 URL>
+- 原稿: `<リポジトリのパス>`
+- 本文: live（<取得方法>）/ <文字数> 文字 ※repo の場合は理由と「公開版と差がありうる」
+- ペルソナ: Z1 実装担当のエンジニア（選んだ理由）
+
+### 読むのをやめそうな箇所
+### 分かりにくい用語
+### 導線
+### 改善案
+
+| 優先度 | 箇所 | 提案 | 理由 |
+| --- | --- | --- | --- |
+
+### 確認できなかったこと
+```
+
+### (e) 巡回状態の更新
+
+レビューを書き終えた記事の URL だけを記録する（取得やレビューが途中で止まった記事は記録しない。次回また選ばれる）。
+
+```bash
+node scripts/reader-review-targets.js --record --date "$DATE" --report "reviews/reader/$DATE.md" <URL1> <URL2> ...
+node scripts/reader-review-targets.js --list | head -1   # reviewed の件数が増えたか
+```
+
+### (f) ブランチ・コミット・PR
+
+```bash
+git switch -c "docs/reader-review-$DATE"
+git branch --show-current          # docs/reader-review-$DATE と一致しなければ commit せず停止
+npm run check                      # exit 0 を確認
+git status --short                 # 変更がレポートと rotation.json だけか
+git add "reviews/reader/$DATE.md" docs/reader-review/rotation.json
+git commit -m "docs(reviews): add reader e2e review for $DATE"
+git diff origin/main...HEAD --stat # 2 ファイルだけか
+```
+
+push と PR 作成の直前に `npm run gh:ensure` を実行し、active account を s977043 にする。PR 本文は一時ファイルに書いて `--body-file` で渡す（本文に `git` を含む heredoc は worktree の隔離ガードに拒否されることがある）。
+
+```bash
+npm run gh:ensure
+git push -u origin "docs/reader-review-$DATE"
+gh pr create --base main --head "docs/reader-review-$DATE" --title "docs(reviews): reader e2e review $DATE" --body-file <本文ファイル>
+```
+
+PR 本文には、サマリー表（レポートと同じもの）、`repo` で代用した記事とその理由、`npm run check` の結果を書く。記事 PR ではないので Article Plan の Plan 行は不要。`gh` が無い環境では、その環境の PR 作成手段を使う。どちらも無ければ push までで止めて報告する。
+
+**マージはしない**（`AGENTS.md` §禁止事項）。
+
+### 報告
+
+PR URL、レビューした記事（媒体・ペルソナ・本文の取得元）、P1 の件数、`repo` で代用した記事とその理由、`npm run check` の exit code を返す。
+
+## ガードレール
+
+- 記事ファイル（`articles/` `books/` `Qiita/public/` `articles_note/` `articles_izanami/`）は変更しない。差分に入っていたら commit しない
+- コミットするのは `reviews/reader/$DATE.md` と `docs/reader-review/rotation.json` の 2 つだけ
+- 取得した本文（`$OUT`）はコミットしない
+- ブラウザ・Playwright・ローカルにしかないツールを使わない
+- 自動マージ禁止

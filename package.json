@@ -71,7 +71,9 @@
     "check:article-graph": "node scripts/build-article-graph.js --check",
     "test:article-graph": "node scripts/build-article-graph.js --self-test",
     "test:channel-metrics-link": "node scripts/fetch-channel-metrics.mjs --self-test",
-    "test:note-wxr": "python3 .claude/skills/note-export-import/scripts/verify_wxr.py --self-test"
+    "test:note-wxr": "python3 .claude/skills/note-export-import/scripts/verify_wxr.py --self-test",
+    "reader-review:targets": "node scripts/reader-review-targets.js",
+    "test:reader-review-targets": "node scripts/reader-review-targets.js --self-test"
   },
   "dependencies": {
     "zenn-cli": "^0.5.4"
