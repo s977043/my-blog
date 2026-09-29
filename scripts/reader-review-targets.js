@@ -56,7 +56,9 @@ function parseFrontmatter(md) {
     const kv = line.match(/^([A-Za-z_][\w-]*):\s*(.*)$/);
     if (!kv) continue;
     let v = kv[2].trim();
-    if (/^(['"]).*\1$/.test(v)) v = v.slice(1, -1);
+    const quoted = v.match(/^(['"])(.*?)\1\s*(#.*)?$/);
+    if (quoted) v = quoted[2];
+    else v = v.replace(/\s+#.*$/, "");
     fm[kv[1]] = v;
   }
   return fm;
@@ -345,7 +347,7 @@ async function fetchWith(fetchImpl, url, kind) {
     headers: { "User-Agent": USER_AGENT, Accept: kind === "json" ? "application/json" : "text/html" },
     signal: AbortSignal.timeout(30000),
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status} ${url}`);
+  if (!res.ok) throw Object.assign(new Error(`HTTP ${res.status} ${url}`), { status: res.status });
   return kind === "json" ? res.json() : res.text();
 }
 
@@ -407,10 +409,23 @@ async function fetchBody(t, { root, fetchImpl }) {
     if (chars >= MIN_LIVE_CHARS) return { origin: "live", method: live.method, chars, text: live.text };
     reason = `live 本文が短すぎる（${chars} 文字 < ${MIN_LIVE_CHARS}）`;
   } catch (e) {
+    // Zenn の 404 は「main で published: true にしたが release/zenn へ未反映」の可能性が高い。
+    // 原稿で代用すると未公開の記事を公開記事としてレビューしてしまうので対象から外す
+    if (e.status === 404 && t.medium === "zenn")
+      return skip(`Zenn API 404（公開ページが無い。release/zenn へ未反映の可能性）: ${e.message}`);
     reason = `live 取得失敗: ${e.message}`;
   }
-  const text = repoText(t, root);
+  let text;
+  try {
+    text = repoText(t, root);
+  } catch (e) {
+    return skip(`${reason} / 原稿も読めない: ${e.message}`);
+  }
   return { origin: "repo", method: `リポジトリ原稿 ${t.source}`, reason, chars: charCount(text), text };
+}
+
+function skip(reason) {
+  return { origin: "skip", method: "対象外", reason, chars: 0, text: "" };
 }
 
 // ---- CLI ----
@@ -514,7 +529,7 @@ async function main(argv) {
   const manifest = [];
   for (const [i, t] of picked.entries()) {
     const b = await fetchBody(t, { root, fetchImpl: fetch });
-    const file = `${String(i + 1).padStart(2, "0")}-${t.medium}-${t.key}.md`;
+    const file = b.origin === "skip" ? null : `${String(i + 1).padStart(2, "0")}-${t.medium}-${t.key}.md`;
     const header = [
       `<!-- reader-review body: ${t.url} -->`,
       `title: ${t.title}`,
@@ -524,12 +539,14 @@ async function main(argv) {
       "",
       "",
     ].join("\n");
-    fs.writeFileSync(path.join(outDir, file), header + b.text + "\n");
+    if (file) fs.writeFileSync(path.join(outDir, file), header + b.text + "\n");
     manifest.push(manifestEntry(t, b, file));
     console.log(`${LABEL} ${t.medium.padEnd(8)} ${b.origin.padEnd(4)} ${String(b.chars).padStart(6)} chars  ${t.url}${b.reason ? `  (${b.reason})` : ""}`);
   }
   fs.writeFileSync(path.join(outDir, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
-  console.log(`${LABEL} wrote ${manifest.length} body file(s) + manifest.json to ${outDir}`);
+  const by = (o) => manifest.filter((m) => m.origin === o).length;
+  console.log(`${LABEL} origin: live=${by("live")} repo=${by("repo")} skip=${by("skip")}（repo はレポートに理由を書く。skip はレビューも記録もしない）`);
+  console.log(`${LABEL} wrote ${manifest.length - by("skip")} body file(s) + manifest.json to ${outDir}`);
   return 0;
 }
 
@@ -577,6 +594,16 @@ async function selfTest() {
   );
   eq("note のタイトルは本文の H1 から取る", targets.find((x) => x.kind === "note").title, "note の記事タイトル");
   eq("クオート付き title を外す", targets.find((x) => x.key === "alpha").title, "Alpha: コロン入り");
+  eq(
+    "値の末尾のインラインコメントを除く（クオートなし・クオートあり）",
+    parseFrontmatter('---\npublished: true  # 2026-09-29 公開\ntitle: "A # B" # メモ\nurl: https://x.dev/#frag\n---\n'),
+    { published: "true", title: "A # B", url: "https://x.dev/#frag" },
+  );
+  eq(
+    "published: true にインラインコメントが付いた Zenn 記事も列挙する",
+    targets.some((x) => x.key === "gamma"),
+    true,
+  );
 
   // 2) 選定: 全媒体を通して未レビュー → 古い順。同順位では媒体を交互に並べる
   const empty = emptyRotation();
@@ -727,7 +754,23 @@ async function selfTest() {
   const short = await fetchBody(zennAlpha, { root: FX, fetchImpl: shortFetch });
   eq("短すぎる live 本文は repo に倒す", [short.origin, /短すぎる/.test(short.reason)], ["repo", true]);
   const notFound = async () => ({ ok: false, status: 404 });
-  eq("HTTP エラーは repo に倒す", (await fetchBody(zennAlpha, { root: FX, fetchImpl: notFound })).origin, "repo");
+  eq(
+    "Zenn の 404 は原稿で代用せず skip（未反映の記事をレビューしない）",
+    [(await fetchBody(zennAlpha, { root: FX, fetchImpl: notFound })).origin],
+    ["skip"],
+  );
+  const serverError = async () => ({ ok: false, status: 500 });
+  eq("Zenn でも 404 以外の HTTP エラーは repo に倒す", (await fetchBody(zennAlpha, { root: FX, fetchImpl: serverError })).origin, "repo");
+  const qiitaT = targets.find((x) => x.medium === "qiita");
+  eq("Zenn 以外の 404 は repo に倒す", (await fetchBody(qiitaT, { root: FX, fetchImpl: notFound })).origin, "repo");
+  eq(
+    "Zenn Book の 404 も skip",
+    (await fetchBody(targets.find((x) => x.kind === "zenn-book"), { root: FX, fetchImpl: notFound })).origin,
+    "skip",
+  );
+  const ghost = { ...zennAlpha, kind: "qiita", medium: "qiita", source: "Qiita/public/missing.md" };
+  const g = await fetchBody(ghost, { root: FX, fetchImpl: failing });
+  eq("取得も原稿も読めなければ skip し、両方の理由を残す", [g.origin, /network down/.test(g.reason) && /原稿も読めない/.test(g.reason)], ["skip", true]);
   const book = targets.find((x) => x.kind === "zenn-book");
   eq(
     "Book の repo 代用は config の章順で連結する",
