@@ -53,7 +53,7 @@ Claude Code や Codex で長い作業を続けると、どこでセッション�
 
 ## 次に試すこと
 
-- [ ] 著者の実体験（切り忘れ・切りすぎの事例）を確認する
+- [x] 著者の個人リポジトリの記録から事例を集める（Plan の Observed）
 - [ ] PlanGate の次リリースに Context Lifecycle が含まれたかを確認する
 
 ## 追記ログ
@@ -61,6 +61,7 @@ Claude Code や Codex で長い作業を続けると、どこでセッション�
 ### 2026-09-29
 
 - Seed 作成。一次情報は PlanGate #1410 / PR #1411 と Claude Code 公式ドキュメント
+- 著者判断と事例調査を Plan に反映（central_claim に「正本をフェーズごとに更新する」を追加、公開条件、Observed の事例、他者の実践と Codex 公式の反論）
 
 ## Draft Article Plan: zenn/plangate-fresh-context-restart
 
@@ -68,40 +69,60 @@ Claude Code や Codex で長い作業を続けると、どこでセッション�
 - channel: zenn
 - slug: plangate-fresh-context-restart
 - article_type: analysis
-- reader_problem: Claude Code や Codex で長い作業をしている開発者が、どの時点で会話を捨てて新しいセッションに切り替えるべきか、切るときに何を残せば続きを失わないかを判断できずにいる
-- central_claim: セッションはトークン量ではなく作業の境界（担い手の交代・独立レビュー・外部待ち）で切り、会話ではなく Plan と現在地メモ（`INDEX.md` / `current-state.md`）と evidence から再開すれば、切ることを怖がらなくてよい
-- out_of_scope: PlanGate の CLI の使い方、トークン数による機械的な閾値、ベクトル DB や長期記憶サービスの設計、記憶の集約（`ai-second-brain-multi-agent-memory` で扱った）、自走と確認の境界（`ai-agent-autonomy-boundary-with-memory` で扱った）、status.md の書き方そのもの（`plangate-ai-coding-workflow` で扱った）、my-blog の運用、会社で観測した事例
+- 公開条件: PlanGate の次リリース（Context Lifecycle を含む版）の後
+- reader_problem: Claude Code や Codex で長い作業をしている開発者は、どの時点で会話を捨てて新しいセッションに切り替えるべきか、切るときに何を残せば続きを失わないかを判断できずにいる。よく紹介される「使用率で切って要約で引き継ぐ」やり方では、作業の途中で切れたり、引き継いだ要約が古かったりして、次のセッションが誤った地点から始まる
+- central_claim: セッションは量ではなく作業の区切り（担当の交代・独立レビュー・外部待ち）で切り、会話の要約ではなく正本から再開し、その正本はフェーズが変わるたびに更新する。古い正本は古い要約と同じく、次のセッションを誤った地点から始めさせるからだ
+- 用語: 「正本」は初出で「正本（source of truth。作業中から更新し続ける計画・状態・証跡のファイル）」と定義し、会話を要約した引き継ぎ書（handoff）とは違うと対比する
+- out_of_scope: PlanGate の CLI の使い方、トークン数や使用率による機械的な閾値の設計、ベクトル DB や長期記憶サービスの設計、記憶の集約（`ai-second-brain-multi-agent-memory` で扱った）、自走と確認の境界（`ai-agent-autonomy-boundary-with-memory` で扱った）、status.md の書き方そのもの（`plangate-ai-coding-workflow` で扱った）、current-state.md 導入の経緯（会社リポジトリ由来の改善の取り込みのため）、my-blog の運用、会社で観測した事例
 
 ### Evidence Boundary
 
-- Observed: PlanGate PR #1411 のレビュー記録で、独立レビューが「必須の trigger が簡易タスクにも儀式を課す」矛盾を指摘し、スキル側で必須を standard 以上に限定する是正が入った（https://github.com/s977043/plangate/pull/1411 のコメント、2026-09-24〜25）。一方、マージ後の追加レビューでは `docs/ai/context-lifecycle.md` §3 が同じ限定を持たず、文書とスキルが食い違っていると記録されている（同 PR の R1 コメント）
+- Observed:
+  - 範囲: 著者の個人リポジトリの記録。事実のみを書き、解釈は Hypothesis に置く
+  - plangate #945（2026-07-31 起票、2026-08-25 close）: L0 の `INDEX.md` が同一セッション中に3回古くなった（C-3 承認後・plan 再編集後・exec 完了後）。issue は「次セッションが誤った地点から再開する」と記録し、更新規定を追加して close した（https://github.com/s977043/plangate/issues/945）
+  - ai-second-brain `09 Projects/plangate/session-retrospective-2026-04-24.md` と `09 Projects/plangate/sessions/2026-04-26.md` §D: 2026-04-24 は handoff.md の発行が後続セッションで一括対応になり、2026-04-26 は handoff.md が完了状態に更新されておらず（AC の一部が「実装中」のまま）PR #68 で後から直した。記録は「前回セッションでも同じ問題が観察されており、改善が定着していない」としている
+  - ai-second-brain `08 Agent Context/memory/plangate/feedback_handoff_constraints_need_reverification.md`（2026-09-23）: carry-over に書いた前提3つがすべて外れていた（「13件が判断待ち」→12件は13日前に CLOSED 済み、制約の向きが逆、紐付けは API 上は無くテキスト参照のみ）
+  - plangate #1061（2026-08-12 起票、OPEN）: 委託時に、直前に自分で書いた事実（timeout 扱い）を委託プロンプトから落とし、ワーカーが600秒無進捗で止まった。同セッションの AI 往復は約29回と記録されている（https://github.com/s977043/plangate/issues/1061）
+  - plangate #742 → PR #744（2026-07-07 マージ）: /compact 前に作業コンテキストの鮮度を検査する PreCompact ガードを追加。きっかけは外部の実行プロトコルの取り込み調査で、事故の記録ではない。有効化は導入先の Human 側配線に依存する
+  - PR #1411 の独立レビュー（2026-09-24）: 実装側の会話ではなく head `0761a64e` と成果物から開始し、critical / major は0件、minor 2件（https://github.com/s977043/plangate/pull/1411）
+  - 仕組みの変化の年表: 2026-04 handoff の発行漏れ・完了状態の更新漏れ → 07-07 PreCompact の鮮度検査（PR #744）→ 08-25 INDEX の更新規定（#945 close）→ 08-26 seeds の読み出し経路（#1157 close）→ 09-29 Context Lifecycle のマージ（PR #1411）
 - Verified:
-  - PlanGate の trigger 一覧（必須 4 件・推奨 4 件）、checkpoint 手順 5 段、再開手順（L0 → L1 → L2/L3）、持ち越さないもの: https://github.com/s977043/plangate/blob/main/docs/ai/context-lifecycle.md （§3〜§6、main `4995ad6` 時点）
-  - 必須は standard 以上に限り、ultra-light / light では任意: https://github.com/s977043/plangate/blob/main/.agents/skills/working-context/SKILL.md 「Context Lifecycle / fresh-context transition (#1410)」節
-  - 新しい SSoT・checkpoint.json・RunState を作らず既存の仕組みを再利用する設計判断: https://github.com/s977043/plangate/issues/1410
-  - PR #1411 のマージは 2026-09-29。最新リリース v8.22.0 は 2026-09-23 で、プラグインの配布物にはまだ入っていない（`gh release list -R s977043/plangate`）
-  - Claude Code: コンテキストが埋まるほど性能が落ちる。無関係なタスクの間で `/clear`、同じ問題で2回を超えて修正したら `/clear` して学びを入れたプロンプトで始め直す。新しいコンテキストは直前に書いたコードへの偏りがなくレビューに向く（Writer / Reviewer）: https://code.claude.com/docs/en/best-practices
-  - Claude Code: `/clear` は空のコンテキストで始め、以前の会話は保存され `/resume` で戻れる。`/compact` は履歴を要約に置き換える。`--continue` / `--resume` は会話履歴全体を復元する: https://code.claude.com/docs/ja/sessions
-  - Claude Code: 圧縮後、CLAUDE.md・自動メモリ・plan mode のプランはディスクから再注入され、会話は要約に置き換わる。読んだ・編集したファイルは最大5つまで再読込: https://code.claude.com/docs/ja/context-window#what-survives-compaction
+  - PlanGate Context Lifecycle: 必須の区切り（worker / agent / model / runtime の変更、独立レビューの開始、worker 間の引き継ぎ、外部待ち・使用量上限による中断）と推奨の区切り（圧縮前、フェーズ遷移、修理・レビューループの蓄積、不要な探索の蓄積）、checkpoint 手順、L0 → L1 → L2/L3 の再開、持ち越さないもの（https://github.com/s977043/plangate/blob/main/docs/ai/context-lifecycle.md §3〜§6）。必須は standard 以上で、ultra-light / light では任意（https://github.com/s977043/plangate/blob/main/.agents/skills/working-context/SKILL.md）。PR #1411 は 2026-09-29 マージ、最新リリース v8.22.0（2026-09-23）には未収録
+  - Claude Code Best practices（https://code.claude.com/docs/en/best-practices）: コンテキストが埋まるほど性能が落ちる。無関係なタスクの間で `/clear`。同じ問題で2回を超えて修正したら `/clear` して学びを入れたプロンプトで始め直す。仕様を書き終えたら新しいセッションで実装する。「A fresh context improves code review」（Writer / Reviewer）。一方で、複雑な1つの問題に深く取り組んでいて履歴に価値があるときは文脈を積み上げるべき時もある、とも書いている
+  - Claude Code sessions / context window（https://code.claude.com/docs/ja/sessions 、https://code.claude.com/docs/ja/context-window#what-survives-compaction）: `/clear`・`/compact`・再開の挙動。圧縮後は CLAUDE.md・自動メモリ・plan mode のプランが再注入され、会話は要約に置き換わる
+  - Anthropic「Effective harnesses for long-running agents」（https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents）: 「compaction isn't sufficient」。新しいコンテキストで始めるエージェントは進捗ファイル（claude-progress.txt）・feature list・git log から状態を把握する
+  - Anthropic「Effective context engineering for AI agents」（https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents）: context rot（トークンが増えるほど想起精度が落ちる）。長いタスクには compaction・構造化メモ・サブエージェントを使い分ける
+  - Anthropic「How we built our multi-agent research system」（https://www.anthropic.com/engineering/multi-agent-research-system）: 200,000 トークンを超えると切り詰められるため計画を Memory に保存する。clean context のサブエージェントを careful handoff で起動する
+  - OpenAI Codex Best practices（https://learn.chatgpt.com/guides/best-practices）: 同じ問題なら同じスレッドのほうが推論の流れを保てて良いことが多い。分岐したときだけ新しいスレッドにする。本記事では反論として扱う
+  - OpenAI「Run long horizon tasks with Codex」（https://developers.openai.com/blog/run-long-horizon-tasks-with-codex）: Plan の markdown を source of truth とし、繰り返し読み直す（切らずに正本を読む例）
+  - Chroma「Context Rot」（https://www.trychroma.com/research/context-rot）: 入力長で性能が大きく変わる。Liu et al.「Lost in the Middle」（https://arxiv.org/abs/2307.03172）: 関連情報が長い文脈の中ほどにあると性能が落ちる
+  - 他者の実践（対照例）: classmethod（https://dev.classmethod.jp/articles/claude-code-session-handover/）はタスクの区切りでリセットし、要約した handover ファイルで引き継ぐ。sora_biz（https://zenn.dev/sora_biz/articles/claude-code-session-continuity）はコンテキスト約80%で警告し、会話から HANDOFF.md を生成して次セッションに注入する。aitutorcode（https://aitutorcode.com/blog/claude-code-handoff-file）は約70%で止め、Claude に handoff ファイルを書かせる
 - Hypothesis:
-  - 著者自身が、切らずに続けて古い判断を引きずった／切った後に文脈を失った経験があるか（未確認（著者確認待ち））
-  - 著者が PlanGate の Context Lifecycle を実作業で使い、再開が速くなったか（未確認（著者確認待ち））
-  - 「境界で切る」ほうが「量で切る」より迷いが減る、という主張は現時点では見立て
+  - #1061 の脱落の原因が長いセッションだった、というのは著者の解釈（記録には原因として書かれていない）
+  - 量ではなく区切りで切るほうが迷いが減り、途中で切れる事故が減る、という主張は見立て
+  - 要約で引き継ぐやり方の弱点（要約が古くなる・会話にない判断が落ちる）が、正本の更新で減るという主張は、上の Observed からの推論で、比較の計測はしていない
 
 ### Outline
 
-1. 切るのが怖い、切らないと重い：長い作業で起きる迷いを置く
-2. Claude Code が用意している道具：`/clear`・`/compact`・再開の違いと、圧縮後に残るもの（公式ドキュメント）
-3. 量ではなく境界で切る：必須（担い手の交代・独立レビュー・外部待ち）と推奨（圧縮前・修理ループの繰り返し）
-4. 切る前に書き残すもの：判断は Plan へ、現在地は `INDEX.md` / `current-state.md` へ、結果は evidence へ
-5. 新しいセッションの読み方：現在地 → いまのフェーズに要る Plan → 問いがあるときだけ evidence
-6. 簡単なタスクには儀式を課さない：必須を standard 以上に限った理由
-7. まとめ：会話を記憶の置き場にしなければ、切る判断は軽くなる
+1. 長い会話は劣化し、圧縮だけでは足りない：Claude Code 公式・Anthropic・Context Rot / Lost in the Middle
+2. よくある対処は「量で切って要約で引き継ぐ」：使用率で止める・handoff ファイルを書かせる実践
+3. その弱点：作業の途中で切れる、要約も正本も古くなる（#945 の INDEX 3回、handoff の完了状態の更新漏れ、carry-over の前提3つ）
+4. 区切りで切る：必須（担当の交代・独立レビュー・外部待ち）と推奨（圧縮前・フェーズ遷移・修理ループの蓄積）。独立レビューを新しいコンテキストで始めた例（PR #1411）
+5. 切る前に正本を更新し、正本から再開する：正本の定義と handoff との対比、L0 → L1 → 必要なときだけ L2/L3、フェーズが変わるたびに更新する理由
+6. 同じ問題の途中では切らない：Codex 公式の「同じスレッドが良い」への回答（切らずに正本を読み直す Codex の長時間タスクの例と両立する）、簡単なタスクには課さない
+7. まとめ：PlanGate のプラグインは、この考え方を仕組みにした例として置く（CLI は書かない）
 
 ### 著者確認が必要な点
 
-- 実体験の有無と内容（Hypothesis の2件）。書けない場合は公式ドキュメントと PlanGate の設計だけで主張を立てる
-- 公開時期：Context Lifecycle を含む PlanGate のリリース後にするか（未リリースのまま出すと、プラグイン利用者の手元に無い機能を紹介することになる）
-- `docs/ai/context-lifecycle.md` §3 とスキルの食い違い（R1-1411-01）が直るのを待つか。記事はスキル側の記述（必須は standard 以上）に合わせる想定
-- タイトル案「いつ会話を捨てて、新しいセッションで始めるか：履歴ではなく正本から再開する」の採否と、「正本」という語を読者向けにどう言い換えるか
-- slug `plangate-fresh-context-restart` の採否（`plangate-` 接頭辞で既存の PlanGate 記事と並べる）
+- タイトル案「いつ会話を捨てて、新しいセッションで始めるか：履歴ではなく正本から再開する」の採否
+- slug `plangate-fresh-context-restart` の採否
+- Hypothesis に置いた #1061 の解釈（長いセッションが一因）を本文で著者の見立てとして書くか、書かないか
+- 対照例の3記事を本文で名指しするか、「よくある実践」として一般化するか（classmethod はタスクの区切りでリセットしており、量で切る例ではない）
+
+### PlanGate 側の是正待ち
+
+- `docs/ai/context-lifecycle.md` §3 は必須の区切りを mode で限定しておらず、スキル側（standard 以上で必須）と食い違っている（PR #1411 の R1 指摘 R1-1411-01）。PlanGate 側で直してから、記事は揃った内容に合わせる
+
+### 変更履歴
+
+- 2026-09-29: 著者判断で central_claim に3つ目の柱（正本はフェーズが変わるたびに更新する）を追加。公開条件を PlanGate の次リリース後と決定。文書とスキルの食い違いは PlanGate 側で先に直す方針とし、著者確認の項目から外した
