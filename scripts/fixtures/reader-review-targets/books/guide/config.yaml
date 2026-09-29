@@ -1,0 +1,7 @@
+title: "Guide Book"
+summary: "fixture"
+topics: ["test"]
+published: true
+chapters:
+  - 01_intro
+  - 02_end
