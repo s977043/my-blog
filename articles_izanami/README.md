@@ -9,7 +9,23 @@ izanami 向けに新規執筆する記事の唯一のローカル原稿を管理
 - 既存記事は題材と一次情報を再確認する入口として使う。izanami 原稿は新規に書き、元記事の本文を複製して微修正する運用はしない。
 - プロジェクトの実装・仕様に関する事実は、それぞれの公開リポジトリ、公開ドキュメント、または公開アプリで確認する。既存記事だけを現在の仕様の根拠にしない。
 - Markdown ファイル1つを izanami 記事1本の正本とし、公開後も同じファイルを更新する。公開済み原稿のミラーは作らない。
-- Front Matter に `title`、`summary`、`tags`、`status`（`idea` / `draft` / `published`）、`source_articles`、`project_sources`、`izanami_url`、`published_at` を記録する。URLや公開日が未確定なら空欄にする。
+- Front Matter に `title`、`summary`、`tags`、`status`（`idea` / `draft` / `published`）、`source_articles`、`project_sources`、`izanami_url`、`published_at` を記録する。URLや公開日が未確定なら空欄にする。雛形:
+
+  ```yaml
+  ---
+  title: ""
+  summary: ""
+  tags:
+    - AI
+  status: draft
+  source_articles:
+    - articles/<既存記事>.md
+  project_sources:
+    - https://github.com/s977043/<repo>/blob/main/<path>
+  izanami_url:
+  published_at:
+  ---
+  ```
 - Front Matter はリポジトリ内の管理情報であり、izanami の本文には含めない。投稿時は記事本文だけを使う。
 - ファイルは原稿を書き始める時点（`draft`）で作る。`idea` の題材は下の候補表だけで管理する。
 - 新規原稿は本文生成前に `article_seeds/` の媒体別 `Draft Article Plan: izanami/<slug>` を用意する。PRを作る場合は、[`docs/article-lifecycle-contract.md`](../docs/article-lifecycle-contract.md#4-article-planの記録pr作成ゲート) の作成ゲートを確認する。PRには該当Seedを含めるか、ベースブランチにあることを確認する。PR本文のPlan行は同節の書式に従う。
