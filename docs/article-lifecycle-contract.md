@@ -2,7 +2,7 @@
 
 `article_seeds/` から記事へ昇格し、公開後の結果を次の学習へ戻すまでの境界を定義する。
 
-このドキュメントは **状態遷移・Seed provenance・Article Graph の契約**だけを扱う。媒体役割は `docs/content-channel-strategy.md`、公開操作の境界は `docs/publish-operating-policy.md`、note の公開前判定は既存 `note-finalize` を正とし、ここで二重定義しない。
+このドキュメントは **状態遷移・Seed provenance・Article Plan の記録と PR 作成ゲート・Article Graph の契約**だけを扱う。媒体役割は `docs/content-channel-strategy.md`、公開操作の境界は `docs/publish-operating-policy.md`、note の公開前判定は既存 `note-finalize` を正とし、ここで二重定義しない。
 
 ## 1. 目的
 
@@ -43,8 +43,8 @@ Signal / Experience
 | `CAPTURED` | Signal / Experience を保存した | Seed候補 |
 | `TRIAGED` | 記事化する価値・根拠を確認した | 判断メモ |
 | `PROMOTED` | Article Seed として採用した | `article_seeds/**/*.md` |
-| `PLANNED` | 読者課題・中心主張・媒体を決めた | 記事設計。Plan Approval後は元Seedの媒体/slug別 `Approved Article Plan` が承認記録 |
-| `DRAFTED` | 承認済みArticle Planを入力契約として記事本文がある | note / Zenn / Qiita 原稿 |
+| `PLANNED` | 読者課題・中心主張・媒体を仮決めした | 元Seedの媒体/slug別 `Draft Article Plan`（仮のArticle Plan）。Plan Approval後は `Approved Article Plan` が承認記録 |
+| `DRAFTED` | Article Planを入力として記事本文がある | note / Zenn / Qiita / izanami 原稿 |
 | `REVIEWED` | 既存レビューを通した | review artifact |
 | `READY` | 既存 Final Gate が公開準備完了と判定した | READY verdict |
 | `APPROVED` | 著者が公開を承認した | Human Gate |
@@ -56,7 +56,7 @@ Signal / Experience
 
 ## 3. Human Gate
 
-`PLANNED → DRAFTED` の間に置く **Plan Approval（Human）** は局所ゲートであり、Lifecycle stateではない。承認内容は元Seed本文の `## Approved Article Plan: <channel>/<slug>` に記録し、別の承認台帳を作らない。1つのSeedから複数記事へ派生する場合はPlanを上書きせず追加する。Lifecycleの `APPROVED` は公開承認だけを意味する。
+**Plan Approval（Human）** は局所ゲートであり、Lifecycle stateではない。独立した必須工程でもない。中心主張や書かない範囲の変更を採用する前に著者の判断を得る（この判断を Plan Approval としてよい）。承認されたPlanは見出しを `## Approved Article Plan: <channel>/<slug>` に変更する。Planの記録とPR作成時の確認は「4. Article Planの記録・PR作成ゲート」を正とする。Lifecycleの `APPROVED` は公開承認だけを意味する。
 
 次は自律実行してよい。
 
@@ -75,7 +75,44 @@ Signal / Experience
 
 自動公開は本契約の対象外。
 
-## 4. Seed provenance contract
+## 4. Article Planの記録・PR作成ゲート
+
+### 適用範囲
+
+本ゲートの導入日（本ゲートを追加したPRのマージ日）以降に追加された原稿を「新規記事」とし、ベースブランチ（`origin/main`）を基準に判定する。導入日より前からある原稿（`articles_note/new/` の既存原稿を含む）と既存記事の改訂は対象外とする。CIでは、ベースブランチが `main` でないPR・push（`release/zenn` 向けや、`main` 以外で起動した手動実行など）も対象外とする。ローカル実行ではベースブランチを見ない。
+
+- ベースブランチに無い原稿（PRで追加した原稿、未追跡の原稿）は新規記事とする（リネームは3つ目の項目で判定する）
+- ベースブランチにある原稿は、ベースブランチで最初に追加された日が導入日以降なら新規記事とする
+- 同じ媒体の中のリネームは移動元の追加日を引き継ぐ。媒体をまたぐ移動は新規記事とする。類似度 80% 未満のリネームは新規記事として扱う
+
+導入日は `git log -S "Article Planの記録・PR作成ゲート" --format=%cs origin/main -- docs/article-lifecycle-contract.md | tail -1` で確認する。原稿の追加日は `git log origin/main --follow --diff-filter=A --format=%cs -- <path> | tail -1` で確認し、空ならベースブランチに無い。PR内のリネームは `git diff -M80% --name-status origin/main...HEAD` の `R` 行で移動元を確かめる。`--follow` の追跡は lint と一致しないことがあるため、判定が割れたら `npm run check:article-plan` を正とする。各コマンド・エージェントはこの定義を参照し、個別に再定義しない。
+
+### Planの記録
+
+新規記事は初稿の生成前に、対象記事に対応するSeedの本文へ `## Draft Article Plan: <channel>/<slug>` を記録する。ブランチ作成の前提にはしない。別の台帳は作らない。1つのSeedから複数記事へ派生する場合は `Draft Article Plan` を上書きせず追加する。初稿やレビューで得た情報は同じ `Draft Article Plan` に反映する。
+
+### PR作成ゲート
+
+記事またはレビュー成果物のPRを作る直前に、`Draft Article Plan`（承認済みなら `Approved Article Plan`）で次の記録を確認する。記事本文やレビュー成果物を、この記録の代わりにしない。
+
+- **Why**: 誰の、どの問題に答える記事か（`reader_problem`）
+- **What**: 読後に残したい中心主張を一文で（`central_claim`）
+- **一次情報**: 主張を支える観測・確認事項と、その出所（`Evidence Boundary` の `Observed` / `Verified`）。実体験は誰が何を観測したか、外部事実は再確認できる参照先を残す。解釈・仮説は分ける
+- **書かない範囲**: 今回の主張に含めない論点（`out_of_scope`）
+
+初稿前は仮の内容や「未確認」を明記してよい。PR作成時には四つの記録が揃い、中心主張を支える観測・確認事項の出所が特定できていることを確認する。確認予定や仮説だけでは一次情報の項目を満たさない。PlanはPRの差分またはベースブランチから読める状態にする。レビュー反映（`/apply-review` 系）のPRで、Planが未マージのレビューPRにしかない場合は、そのレビューPRを先にマージする。不足があればPR作成を止め、追加調査または主張の縮小を行う。レビューではこのPlanを基準に主張のずれを確認する。主張や書かない範囲を変える場合は、採用前に著者の判断（Plan Approval）を得て、変更理由を同じPlanに残す。レビュー反映（`/apply-review` 系）ではPlanを編集せず、該当する指摘を保留して著者へ報告する。Planの更新は著者の判断後に別コミットで行う。
+
+記事・レビュー成果物のPR本文には `Plan: <SEED_PATH> (<channel>/<slug>)` の1行を書く。対象外なら `Plan: 対象外（ゲート導入前の原稿／改訂） (<channel>/<slug>)` と書く。
+
+### Planが見つからない場合
+
+対象の `<channel>/<slug>` に対応するPlanが `article_seeds/` に無い場合は、次の書式で報告し、PR作成へ進まない。
+
+```text
+Plan未検出: <channel>/<slug>（検索コマンドと結果）
+```
+
+## 5. Seed provenance contract
 
 2026-09-23 以降に新規作成・明示移行する Seed は、既存 frontmatter に加えて以下を持つ。
 
@@ -150,7 +187,7 @@ Article Graph はこの値から `promoted_to` edge を作る。
 
 これは候補であり、媒体・記事タイプの最終決定ではない。Graph 上の空きを埋める目的で自動採用しない。
 
-## 5. Legacy compatibility
+## 6. Legacy compatibility
 
 既存 Seed は一括書き換えしない。
 
@@ -158,7 +195,7 @@ Article Graph はこの値から `promoted_to` edge を作る。
 
 既存 Seed に手を入れる機会があり、追跡価値がある場合だけ明示的な `seed_id` / provenance metadata へ移行する。移行だけを目的に大量変更しない。
 
-## 6. Article Graph
+## 7. Article Graph
 
 `docs/article-graph.json` と `docs/article-graph.md` は **read-only derived view**。
 
@@ -186,7 +223,7 @@ v1 の Graph が扱うのは意図的に狭い。
 
 Graph DB、Embedding DB、記事自動生成、記事ランキングは導入しない。
 
-## 7. Article Graph を記事化判断に使うときの制約
+## 8. Article Graph を記事化判断に使うときの制約
 
 「Graph 上で空いている」という理由だけで記事を作らない。
 
@@ -198,7 +235,7 @@ Graph DB、Embedding DB、記事自動生成、記事ランキングは導入し
 
 Article Graph は候補発見の補助であり、記事本数を最大化する装置ではない。
 
-## 8. Metrics / Learning への接続
+## 9. Metrics / Learning への接続
 
 Metrics取得そのものは既存の `scripts/fetch-channel-metrics.mjs`、`docs/channel-metrics/`、`docs/content-channel-strategy.md` を再利用する。
 
