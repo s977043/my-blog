@@ -67,9 +67,6 @@ jobs:
       # ジョブ時間（timeout-minutes: 10）に対しては十分軽いので常時実行する。
       # 分離しているのは、失敗時に「git fixture 起因か content 起因か」を
       # ステップ名だけで切り分けられるようにするため。
-      - name: Check article graph projection
-        run: npm run check:article-graph
-
       - name: PR staleness harness self-test
         run: npm run test:pr-staleness
 
@@ -85,7 +82,7 @@ jobs:
       - name: gh account guard hook self-test
         run: npm run test:gh-guard
 
-      # npm run check は 20 個の検査を「全件実行してから失敗をまとめて報告」する
+      # npm run check は複数の検査を「全件実行してから失敗をまとめて報告」する
       # 集約ランナー。以前は && チェーンだったため、前方の 1 件が落ちると後続が
       # 一度も実行されず、1 回の CI で分かることが最初の失敗だけに縮んでいた
       # （PR #605 で check:learnings-index が初めてブロッキングになり、後続 6 件が

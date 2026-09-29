@@ -14,6 +14,10 @@
 
 [`TEMPLATE.md`](./TEMPLATE.md) を起点にする。
 
+置き場所とファイル名は `article_seeds/<theme>/YYYY-MM-DD-<short-slug>.md`（既存 Seed の慣例。日付は front matter の `date` と揃える）。テーマに合うサブディレクトリが無ければ新しく作る。
+
+新しい Seed を作ったら `npm run build:article-graph` で投影（`docs/article-graph.*`）を更新し、同じ PR に含める。
+
 新規 Seed は最低限、次を持つ。
 
 - `seed_id`
