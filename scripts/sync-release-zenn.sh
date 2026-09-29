@@ -3,8 +3,9 @@
 # main → release/zenn sync を 1 コマンドで実行する。
 # 既知の競合パターン（articles_note/drafts/ の rename/rename, modify/delete, add/add）を main 採用で自動解決する。
 # merge 後、ツリーを「main ＋ published トグル」に揃える（main に無いファイルは削除）。
-# 止まるときは何も commit せず sync ブランチを捨てる:
-#   exit 1: merge が競合以外で失敗 / exit 3: main に無い articles/ books/ images/ がある
+# exit 2: 作業ツリーに未コミットの変更がある（何もしない）
+# 止まるときは何も commit せず sync ブランチを捨て、元の位置へ戻る:
+#   exit 1: merge が競合以外で失敗・想定外のエラー / exit 3: main に無い articles/ books/ images/ がある
 #   exit 4: sync 前より published: true の記事・Book が減る
 #
 # 使い方:
@@ -29,6 +30,14 @@ BRANCH_NAME="release/zenn-sync-$(date +%Y-%m-%d-%H%M%S)"
 
 cd "$(git rev-parse --show-toplevel)"
 ORIG_BRANCH=$(git branch --show-current)
+ORIG_HEAD=$(git rev-parse HEAD)
+
+# 止まるときの bail は reset --hard を使うため、持ち込んだ変更を消さないよう先に検査する
+if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
+  echo "[sync] FAIL: 作業ツリーに未コミットの変更があります。commit か退避をしてから実行してください" >&2
+  git status --short --untracked-files=no >&2
+  exit 2
+fi
 
 git fetch origin release/zenn main
 
@@ -37,12 +46,15 @@ git switch -c "$BRANCH_NAME" origin/release/zenn
 MAIN_REF=origin/main
 RELEASE_BASE=$(git rev-parse origin/release/zenn)
 
-bail() { # $1=exit code: 何も commit せずに sync ブランチを捨てて元のブランチへ戻る
+bail() { # $1=exit code: 何も commit せずに sync ブランチを捨てて元の位置へ戻る
+  trap - ERR
   git merge --abort 2>/dev/null || git reset -q --hard "$RELEASE_BASE"
   if [ -n "$ORIG_BRANCH" ]; then
     git switch -q "$ORIG_BRANCH"
-    git branch -q -D "$BRANCH_NAME"
+  else
+    git switch -q --detach "$ORIG_HEAD"
   fi
+  git branch -q -D "$BRANCH_NAME"
   exit "$1"
 }
 
@@ -53,29 +65,34 @@ git merge --no-ff --no-commit -X theirs "$MAIN_REF"
 MERGE_RC=$?
 set -e
 
-# Unmerged paths を一括処理: main にあれば main 版採用、無ければ削除
-UNMERGED=$(git diff --name-only --diff-filter=U)
-if [ "$MERGE_RC" -ne 0 ] && [ -z "$UNMERGED" ]; then
+# ここから commit までに想定外の失敗があれば、merge 途中の状態を残さず元へ戻す
+trap 'echo "[sync] FAIL: 想定外のエラーで止まりました（何も commit していません）" >&2; bail 1' ERR
+
+# Unmerged paths を一括処理: main にあれば main 版採用、無ければ削除。
+# 非 ASCII のファイル名が引用符付きで出ないよう -z で読む
+UNMERGED=()
+while IFS= read -r -d '' f; do UNMERGED+=("$f"); done < <(git diff --name-only -z --diff-filter=U)
+if [ "$MERGE_RC" -ne 0 ] && [ "${#UNMERGED[@]}" -eq 0 ]; then
   echo "[sync] FAIL: merge が競合以外の理由で失敗しました（上のメッセージを確認してください）" >&2
   bail 1
 fi
-if [ -n "$UNMERGED" ]; then
-  echo "[sync] resolving $(echo "$UNMERGED" | wc -l) unmerged files (main side wins)"
-  while IFS= read -r f; do
-    if git ls-tree "$MAIN_REF" "$f" 2>/dev/null | grep -q .; then
+if [ "${#UNMERGED[@]}" -gt 0 ]; then
+  echo "[sync] resolving ${#UNMERGED[@]} unmerged files (main side wins)"
+  for f in "${UNMERGED[@]}"; do
+    if git cat-file -e "$MAIN_REF:$f" 2>/dev/null; then
       git checkout --theirs -- "$f"
-      git add "$f"
+      git add -- "$f"
     else
-      git rm -f "$f" >/dev/null
+      git rm -q -f -- "$f"
     fi
-  done <<< "$UNMERGED"
+  done
 fi
 
 # 最終確認
 if [ -n "$(git diff --name-only --diff-filter=U)" ]; then
   echo "[sync] FAIL: 解決できなかった conflict が残っています。手動で解決してください" >&2
   git status --short >&2
-  exit 1
+  bail 1
 fi
 
 # ── main 単方向の復元 ──
@@ -93,6 +110,7 @@ is_toggleable() { # published トグルを持てるのは Zenn 記事と Book �
 
 # published の判定と書き換えは front matter（Book の config.yaml はファイル全体）だけを対象にする。
 # 本文のコードブロックにある published: 行は拾わない。値の引用符・行末コメント・大文字小文字の揺れも受け付ける。
+# 判定は行末の CR と 1 行目の BOM を除いて行い、書き換え時は元の行（改行コード・BOM）をそのまま出す。
 FM_AWK='
 BEGIN {
   infm = yaml; state = "none"
@@ -100,20 +118,23 @@ BEGIN {
   line_re = "^published:[ \t]*" val "[ \t]*(#.*)?$"
   true_re = "^published:[ \t]*[\"" q "]?[Tt][Rr][Uu][Ee]"
 }
-NR == 1 && !yaml && /^---[ \t]*$/ { infm = 1; if (mode == "set") print; next }
+{ orig = $0; cr = sub(/\r$/, "") }
+NR == 1 && index($0, bom) == 1 { $0 = substr($0, length(bom) + 1) }
+NR == 1 && !yaml && /^---[ \t]*$/ { infm = 1; if (mode == "set") print orig; next }
 !yaml && infm && /^---[ \t]*$/ { infm = 0 }
 infm && state == "none" && $0 ~ line_re {
   state = ($0 ~ true_re) ? "true" : "false"
-  if (mode == "set" && state == "false") { print "published: true"; next }
+  if (mode == "set" && state == "false") { print "published: true" (cr ? "\r" : ""); next }
 }
-mode == "set" { print }
+mode == "set" { print orig }
 END { if (mode == "get") print state }
 '
+BOM=$(printf '\357\273\277')
 
 fm_awk() { # $1=get|set $2=path（stdin に内容）
   local yaml=0
   case "$2" in *.yaml) yaml=1 ;; esac
-  awk -v mode="$1" -v yaml="$yaml" -v q="'" "$FM_AWK"
+  awk -v mode="$1" -v yaml="$yaml" -v q="'" -v bom="$BOM" "$FM_AWK"
 }
 
 pub_state() { # $1=rev（空なら index） $2=path → true / false / none
@@ -140,8 +161,8 @@ main_was_published() { # $1=path: main の過去のどこかで published: true 
 
 published_list() { # $1=rev（空なら index）: published: true の記事・Book を 1 行ずつ
   local f
-  if [ -n "$1" ]; then git ls-tree -r --name-only "$1" -- articles books; else git ls-files -- articles books; fi |
-    while IFS= read -r f; do
+  if [ -n "$1" ]; then git ls-tree -r -z --name-only "$1" -- articles books; else git ls-files -z -- articles books; fi |
+    while IFS= read -r -d '' f; do
       is_toggleable "$f" || continue
       [ "$(pub_state "$1" "$f")" = "true" ] && echo "$f"
     done
@@ -228,6 +249,7 @@ if git rev-parse -q --verify MERGE_HEAD >/dev/null || [ -n "$(git diff --cached 
 else
   echo "[sync] release/zenn は main ＋ published トグルと一致しています（commit なし）"
 fi
+trap - ERR
 
 # 不変条件の検査: main との差分が published トグルだけか
 VIOLATIONS=()

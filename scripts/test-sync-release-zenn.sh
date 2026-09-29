@@ -275,6 +275,103 @@ check "case9: 競合以外の失敗を報告する" out_has "競合以外の理�
 check "case9: sync ブランチを残さない" no_sync_branch
 check "case9: 元のブランチへ戻る" on_branch side
 
+# ---------------------------------------------------------------------------
+# Case 10: BOM 付き・CRLF 改行の記事でも release の true を維持し、改行コードと BOM を保つ
+# ---------------------------------------------------------------------------
+crlf_article() { # $1=published 値 $2=本文 → BOM + CRLF の記事を $3 に書く
+  mkdir -p "$(dirname "$WORK/$3")"
+  printf '\357\273\277---\r\ntitle: "sample"\r\npublished: %s\r\n---\r\n\r\n%s\r\n' "$1" "$2" > "$WORK/$3"
+}
+setup "$TMPDIR_ROOT/case10"
+build_history
+crlf_article false 'crlf v1' articles/w.md
+commit_all "main: w（下書き・BOM + CRLF）を追加"
+squash_sync
+crlf_article true 'crlf v1' articles/w.md
+commit_all "release: w を公開"
+on_main
+crlf_article false 'crlf v2' articles/w.md
+commit_all "main: w の本文を更新"
+run_sync
+
+check "case10: exit 0" rc_is 0
+check "case10: main 版の published 行だけ true にした内容（BOM・CRLF を保つ）" eval '[ "$(git -C "$WORK" show HEAD:articles/w.md | od -An -c)" = "$(git -C "$WORK" show origin/main:articles/w.md | sed "s/published: false/published: true/" | od -An -c)" ]'
+check "case10: 公開数が前後で一致" out_has "sync 前 1 件 → sync 後 1 件"
+
+# ---------------------------------------------------------------------------
+# Case 11: 非 ASCII のファイル名で競合（modify/delete）しても解決できる
+# ---------------------------------------------------------------------------
+setup "$TMPDIR_ROOT/case11"
+write "articles_note/new/日本語.md" "v1"
+build_history
+on_release
+write "articles_note/new/日本語.md" "release で編集"
+commit_all "release: 日本語.md を編集"
+on_main
+git -C "$WORK" rm -q "articles_note/new/日本語.md"
+commit_all "main: 日本語.md を削除"
+run_sync
+
+check "case11: exit 0" rc_is 0
+check "case11: main で削除した非 ASCII 名のファイルが消える" absent "articles_note/new/日本語.md"
+check "case11: main との差分は published 行だけ" only_published_lines_differ
+
+# ---------------------------------------------------------------------------
+# Case 12: 作業ツリーに未コミットの変更があれば何もせずに止まる
+# ---------------------------------------------------------------------------
+setup "$TMPDIR_ROOT/case12"
+build_history
+git -C "$WORK" push -q -f origin main release/zenn
+write README.md "未コミットの変更"
+set +e
+SYNC_OUT=$(cd "$WORK" && bash "$SCRIPT" "chore(release/zenn): test sync" 2>&1)
+SYNC_RC=$?
+set -e
+
+check "case12: exit 2 で止まる" rc_is 2
+check "case12: 未コミットの変更を残す" eval '[ "$(cat "$WORK/README.md")" = "未コミットの変更" ]'
+check "case12: sync ブランチを作らない" no_sync_branch
+
+# ---------------------------------------------------------------------------
+# Case 13: detached HEAD から実行して止まったら、元のコミットへ戻り sync ブランチを消す
+# ---------------------------------------------------------------------------
+setup "$TMPDIR_ROOT/case13"
+build_history
+on_release
+write images/r/a.png "png"
+commit_all "release: main に無い画像"
+on_main
+git -C "$WORK" push -q -f origin main release/zenn
+DETACHED_AT=$(git -C "$WORK" rev-parse main)
+git -C "$WORK" switch -q --detach main
+set +e
+SYNC_OUT=$(cd "$WORK" && bash "$SCRIPT" "chore(release/zenn): test sync" 2>&1)
+SYNC_RC=$?
+set -e
+
+check "case13: exit 3 で止まる" rc_is 3
+check "case13: sync ブランチを残さない" no_sync_branch
+check "case13: 元のコミットに detached で戻る" eval '[ -z "$(git -C "$WORK" branch --show-current)" ] && [ "$(git -C "$WORK" rev-parse HEAD)" = "$DETACHED_AT" ]'
+
+# ---------------------------------------------------------------------------
+# Case 14: 想定外のエラー（commit の失敗）でも merge 途中で残らず元のブランチへ戻る
+# ---------------------------------------------------------------------------
+setup "$TMPDIR_ROOT/case14"
+build_history
+write README.md "base v2"
+commit_all "main: 更新"
+mkdir -p "$TMPDIR_ROOT/case14/hooks"
+printf '#!/bin/sh\nexit 1\n' > "$TMPDIR_ROOT/case14/hooks/pre-commit"
+chmod +x "$TMPDIR_ROOT/case14/hooks/pre-commit"
+git -C "$WORK" config core.hooksPath "$TMPDIR_ROOT/case14/hooks"
+run_sync
+
+check "case14: exit 1 で止まる" rc_is 1
+check "case14: 想定外のエラーを報告する" out_has "想定外のエラー"
+check "case14: merge 途中の状態を残さない" eval '! git -C "$WORK" rev-parse -q --verify MERGE_HEAD >/dev/null'
+check "case14: sync ブランチを残さない" no_sync_branch
+check "case14: 元のブランチへ戻る" on_branch main
+
 echo ""
 if [ "$FAILURES" -eq 0 ]; then
   echo "ALL PASS"
