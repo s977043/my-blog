@@ -671,3 +671,7 @@ AGENTS.md:
 > 悪いテンプレート = ただのお願い文
 
 ここを設計できるかどうかで、AI は「便利ツール」から **安定した開発パートナー** になります。
+
+## 関連記事
+
+- Claude Code の `CLAUDE.md` や Skills を Codex App へ移す手順: [Claude CodeからCodex Appへ移行する実践ガイド](/articles/claude-code-to-codex-app-migration)

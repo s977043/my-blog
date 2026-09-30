@@ -1,4 +1,4 @@
-<!-- publish-readiness: blocked=false mustHigh=1 verified=true articleHash=9364a6276f35148514613d9c2ee6f5891aefb664 loops=1 reviewedAt=2026-09-09T00:48:21Z -->
+<!-- publish-readiness: blocked=false mustHigh=1 verified=true articleHash=2a6a66764deb0d429b7de0adb9785cb99923f188 loops=1 reviewedAt=2026-09-30T15:49:14Z -->
 
 # レビュー成果物: agent-utilization-vs-flow-efficiency
 
