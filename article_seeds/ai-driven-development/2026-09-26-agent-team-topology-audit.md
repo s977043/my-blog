@@ -14,6 +14,7 @@ source_url:
 source_ref: "https://teamtopologies.com/ai-success ; https://eirwin.github.io/agent-team-topologies/"
 evidence_status: observed
 promoted_to:
+  - articles/ai-agent-team-topology-judgment-escalation.md
 article_type_candidates:
   - experience
   - insight
@@ -408,3 +409,34 @@ AIに仕事を任せる方法ではなく、**AIが働くチームそのもの�
 - X記事として反応を確認し、その後に長文記事・正式なフレーム定義へ進める方針
 - Grokレビューを反映し、観測事実を具体化。Feature Podの既存定義と実行config例の境界を明示
 - 多視点レビューを反映し、主張を冒頭へ前倒し。固有名詞はAgent Team Topology Auditへ寄せ、監査軸にFlowを追加
+
+
+## Approved Article Plan: zenn/ai-agent-team-topology-judgment-escalation
+
+- approved_at: 2026-10-01
+- channel: zenn
+- slug: ai-agent-team-topology-judgment-escalation
+- article_type: 設計 / アーキテクチャ
+- reader_problem: 複数のAIエージェントや複数モデルを使うとき、モデル名やAgent数を中心に役割分担を設計すると、モデル更新のたびに構成が揺れ、Verification・Review・Judgment・Human責任の境界も曖昧になりやすい。
+- central_claim: AIエージェントのチーム設計の本体はモデル配置ではなく、仕事・Evidence・Judgmentの責務境界とEscalationを設計し、必要な判断だけを上位能力とHumanへ上げることにある。
+- out_of_scope: Agent Team Topologies既存パターンの網羅解説、特定Providerの恒久的な最適モデルランキング、ベンチマークだけによるモデル優劣、River Reviewの機能紹介、実運用での定量的な生産性改善の証明。
+
+### Evidence Boundary
+- Observed: Claude Code / Codexを含むAI駆動開発環境で、agents・model・effort・context・permissions・reviewを個別最適化するだけではチーム全体の責務構造を説明しにくく、River ReviewのEvidence / Judgment / Human Judgment分離をAgent Team全体へ広げると設計しやすいという実践上の観測。
+- Verified: OpenAI公式でGPT-6.1 Solのreasoning effort、Multi-agent、Codexのsubagent model/effort設定を確認。Anthropic公式でSonnet 5.5をwell-scoped everyday tasks向け、Opus 5.5をcomplex/open-ended work requiring sustained judgment向けとする位置づけを確認。River Review公開リポジトリでDeterministic / Heuristic / Agentic Review / Human JudgmentのJudgment PlacementとEvidenceの分離を確認。
+- Hypothesis: Role / Model / Effort / Context / Permission / Autonomy / Evidence / EscalationをTopology Contractとして管理し、Provider固有値をProfileへ分離すると、モデル世代更新に耐えるAI開発チーム設計になる。
+
+### Outline
+1. モデルごとに役割を決めると設計がすぐ古くなる
+2. RoleとModelを分ける
+3. VerificationとReviewを分ける
+4. ReviewerとJudgeを分ける
+5. 高性能モデルは難しい仕事全体ではなくJudgmentへEscalateする
+6. Context / Permission / Evidence / EscalationまでTopology Contractにする
+7. Codex / Claude CodeをProvider ProfileとしてBindingする
+8. 論理Role数とRuntime Agent数を分離する
+9. River ReviewのEvidence / Judgment分離との接続
+10. Work flows downward. Evidence flows upward. Judgment escalates upward.
+
+### Approval note
+- 2026-10-01: 編集部エージェントレビュー3ループ後、著者が構成方針を承認。初見読者にモデル比較記事と誤認されないよう、中心主張を「判断を必要な場所だけ上位へ上げる」へ前倒しした。
