@@ -181,10 +181,18 @@ function parseMachineConstraints(design, errors) {
     }
   }
 
-  for (const key of ['maxColumns', 'maxBullets', 'maxCodeLines', 'minFigureFontPt']) {
-    if (typeof constraints[key] === 'number' && constraints[key] <= 0) {
-      errors.push('design.md: Machine Constraints.' + key + ' must be positive');
+  for (const key of ['maxColumns', 'maxBullets', 'maxCodeLines']) {
+    if (typeof constraints[key] === 'number' && (!Number.isInteger(constraints[key]) || constraints[key] <= 0)) {
+      errors.push('design.md: Machine Constraints.' + key + ' must be a positive integer');
     }
+  }
+
+  if (typeof constraints.minFigureFontPt === 'number' && (!Number.isFinite(constraints.minFigureFontPt) || constraints.minFigureFontPt <= 0)) {
+    errors.push('design.md: Machine Constraints.minFigureFontPt must be positive');
+  }
+
+  if (typeof constraints.aspectRatio === 'string' && !/^\d+(?:\.\d+)?:\d+(?:\.\d+)?$/.test(constraints.aspectRatio)) {
+    errors.push('design.md: Machine Constraints.aspectRatio must use width:height numeric format');
   }
 
   return constraints;
@@ -221,6 +229,13 @@ function normalize(value) {
   return String(value || '').trim().replace(/\s+/g, ' ');
 }
 
+function parseStrictPositiveNumber(raw) {
+  const value = String(raw || '').trim();
+  if (!/^\d+(?:\.\d+)?$/.test(value)) return null;
+  const number = Number(value);
+  return Number.isFinite(number) && number > 0 ? number : null;
+}
+
 function compareSnapshot(file, content, contract, errors) {
   const audience = extractBulletField(content, 'audience');
   const durationRaw = extractBulletField(content, 'duration_minutes');
@@ -234,8 +249,8 @@ function compareSnapshot(file, content, contract, errors) {
   if (!durationRaw) {
     errors.push(file + ': contract snapshot duration_minutes is empty');
   } else {
-    const duration = Number.parseFloat(durationRaw);
-    if (!Number.isFinite(duration) || duration !== contract.duration) {
+    const duration = parseStrictPositiveNumber(durationRaw);
+    if (duration == null || duration !== contract.duration) {
       errors.push(file + ': duration_minutes drift from brief.md');
     }
   }
@@ -307,13 +322,13 @@ function validateTalk(dir) {
 
   const audience = extractBulletField(brief, 'audience');
   const durationRaw = extractBulletField(brief, 'duration_minutes');
-  const duration = Number.parseFloat(durationRaw);
+  const duration = parseStrictPositiveNumber(durationRaw);
   const thesis = extractCoreThesis(brief);
   const contract = { audience, duration, thesis };
 
   if (!audience) errors.push('brief.md: audience is empty');
-  if (!Number.isFinite(duration) || duration <= 0) {
-    errors.push('brief.md: duration_minutes must be a positive number');
+  if (duration == null) {
+    errors.push('brief.md: duration_minutes must be a positive number with no unit suffix');
   }
   if (!thesis) errors.push('brief.md: Core Thesis is empty');
 
@@ -345,8 +360,12 @@ function validateTalk(dir) {
   const constraints = parseMachineConstraints(design, errors);
 
   const frontMatter = extractFrontMatter(deck);
-  const deckSize = extractBulletField(frontMatter.replace(/^/gm, '- '), 'size') ||
-    ((frontMatter.match(/^size:\s*(.*?)\s*$/mi) || [])[1] || '').trim();
+  const marpSetting = ((frontMatter.match(/^marp:\s*(.*?)\s*$/mi) || [])[1] || '').trim().toLowerCase();
+  const deckSize = ((frontMatter.match(/^size:\s*(.*?)\s*$/mi) || [])[1] || '').trim();
+
+  if (marpSetting !== 'true') {
+    errors.push('deck.md: front matter must contain marp: true');
+  }
 
   if (constraints && constraints.aspectRatio && deckSize !== constraints.aspectRatio) {
     errors.push('deck.md: size ' + (deckSize || '<missing>') + ' does not match design aspectRatio ' + constraints.aspectRatio);
@@ -494,7 +513,7 @@ function validateTalk(dir) {
 
   const rehearsalSectionStatus = extractSectionBulletField(review, 'Rehearsal Verification', 'status');
   const rehearsalRuns = Number.parseInt(extractSectionBulletField(review, 'Rehearsal Verification', 'run_count'), 10);
-  const measuredMinutes = Number.parseFloat(extractSectionBulletField(review, 'Rehearsal Verification', 'measured_minutes'));
+  const measuredMinutes = parseStrictPositiveNumber(extractSectionBulletField(review, 'Rehearsal Verification', 'measured_minutes'));
 
   if (rehearsalSectionStatus && rehearsalVerification && rehearsalSectionStatus !== rehearsalVerification) {
     errors.push('review.md: Rehearsal Verification status disagrees with Verdict.rehearsal_verification');
@@ -504,23 +523,23 @@ function validateTalk(dir) {
     if (!Number.isFinite(rehearsalRuns) || rehearsalRuns < 1) {
       errors.push('review.md: rehearsal_verification PASS requires run_count >= 1');
     }
-    if (!Number.isFinite(measuredMinutes) || measuredMinutes <= 0) {
+    if (measuredMinutes == null) {
       errors.push('review.md: rehearsal_verification PASS requires measured_minutes');
     }
-    if (Number.isFinite(duration) && measuredMinutes > duration) {
+    if (duration != null && measuredMinutes > duration) {
       errors.push('review.md: measured rehearsal time exceeds talk duration');
     }
 
     const notesRehearsalStatus = extractSectionBulletField(notes, 'Rehearsal', 'status');
     const notesRehearsalRuns = Number.parseInt(extractSectionBulletField(notes, 'Rehearsal', 'run_count'), 10);
-    const notesMeasuredMinutes = Number.parseFloat(extractSectionBulletField(notes, 'Rehearsal', 'measured_minutes'));
+    const notesMeasuredMinutes = parseStrictPositiveNumber(extractSectionBulletField(notes, 'Rehearsal', 'measured_minutes'));
     if (notesRehearsalStatus !== 'PASS') {
       errors.push('speaker-notes.md: Rehearsal status must be PASS when review rehearsal_verification is PASS');
     }
     if (notesRehearsalRuns !== rehearsalRuns) {
       errors.push('speaker-notes.md: Rehearsal run_count must match review.md');
     }
-    if (!Number.isFinite(notesMeasuredMinutes) || notesMeasuredMinutes !== measuredMinutes) {
+    if (notesMeasuredMinutes == null || notesMeasuredMinutes !== measuredMinutes) {
       errors.push('speaker-notes.md: Rehearsal measured_minutes must match review.md');
     }
   }
@@ -590,6 +609,21 @@ function writeFixture(dir, valid) {
     '# Talk Review\n\n## Contract\n\n- audience: AIをチーム導入するエンジニア\n- duration_minutes: 10\n- core_thesis: 品質保証を生成後に閉じる\n\n## Verdict\n\n- status: READY\n- source_verification: PASS\n- render_verification: PASS\n- rehearsal_verification: PASS\n\n## Persona Findings\n\n| id | persona | priority | location | finding | suggestion |\n|---|---|---|---|---|---|\n\n## Quality Axes\n\n| axis | status | notes |\n|---|---|---|\n| Focus | PASS | |\n| Flow | PASS | |\n| Hierarchy | PASS | |\n| Legibility | PASS | |\n| Truthfulness | PASS | |\n| Speakability | PASS | |\n\n## Contract Drift\n\n- core_thesis_changed: false\n- audience_changed: false\n- duration_changed: false\n- takeaways_changed: false\n\n## Render Verification\n\n- status: PASS\n- artifact: deck.pdf\n- checked_at: 2026-09-30T12:00:00Z\n- method: full-page PDF inspection\n- tool_results: generic checks PASS\n- visual_review_scope: all pages at readable size\n- issues: none\n\n## Rehearsal Verification\n\n- status: PASS\n- run_count: 1\n- measured_minutes: 2\n\n## Unverified Claims\n\n- \n');
 }
 
+function expectMutationFailure(root, name, file, from, to, expectedError) {
+  const dir = path.join(root, name);
+  writeFixture(dir, true);
+  const filePath = path.join(dir, file);
+  const original = fs.readFileSync(filePath, 'utf8');
+  if (!original.includes(from)) {
+    throw new Error('self-test mutation source not found for ' + name);
+  }
+  fs.writeFileSync(filePath, original.replace(from, to));
+  const result = validateTalk(dir);
+  if (!result.errors.some((error) => error.includes(expectedError))) {
+    throw new Error(name + ' should fail with "' + expectedError + '": ' + result.errors.join('; '));
+  }
+}
+
 function selfTest() {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'check-talk-'));
   const validDir = path.join(root, 'valid');
@@ -607,6 +641,39 @@ function selfTest() {
   if (!invalid.errors.length) {
     throw new Error('invalid fixture should fail');
   }
+
+  expectMutationFailure(
+    root,
+    'invalid-marp',
+    'deck.md',
+    'marp: true',
+    'marp: false',
+    'front matter must contain marp: true',
+  );
+  expectMutationFailure(
+    root,
+    'invalid-duration',
+    'brief.md',
+    '- duration_minutes: 10',
+    '- duration_minutes: 10min',
+    'duration_minutes must be a positive number with no unit suffix',
+  );
+  expectMutationFailure(
+    root,
+    'missing-render-method',
+    'review.md',
+    '- method: full-page PDF inspection',
+    '- method:',
+    'Render Verification.method',
+  );
+  expectMutationFailure(
+    root,
+    'rehearsal-mismatch',
+    'speaker-notes.md',
+    '- measured_minutes: 2',
+    '- measured_minutes: 3',
+    'Rehearsal measured_minutes must match review.md',
+  );
 
   console.log('[test:talk] PASS');
 }
