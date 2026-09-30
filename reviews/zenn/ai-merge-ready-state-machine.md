@@ -1,4 +1,4 @@
-<!-- publish-readiness: blocked=false mustHigh=0 verified=true articleHash=b377f51222f63d90400bb56a6c64d4d1e77d1b0f loops=2 reviewedAt=2026-08-02T03:00:03Z -->
+<!-- publish-readiness: blocked=false mustHigh=0 verified=true articleHash=eed19630831e1914ca0563a2ec61531b28a172d1 loops=2 reviewedAt=2026-09-30T15:19:12Z -->
 
 # レビュー成果物: ai-merge-ready-state-machine
 
