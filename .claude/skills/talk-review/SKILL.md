@@ -196,6 +196,8 @@ Render artifactが無ければ `UNVERIFIED`。
 
 `design.md` とDeckを比較する。
 
+`review.md` では、違反が無い項目を空欄にせず `none` と記録する。Talk-specific Exceptionsを確認済みなら `exceptions_reviewed: yes`、例外が無ければ `not-applicable` とする。
+
 - attention strategy
 - selected slide families
 - key figures
@@ -258,7 +260,7 @@ Source PASSだけでRender PASSにしない。
 - Visual Contract違反なし
 - Timing Plan成立
 - important facts verified
-- 6 Quality AxesにFAILなし
+- 6 Quality AxesがすべてPASS
 - required Render Verification = PASS
 - required Rehearsal Verification = PASS
 
