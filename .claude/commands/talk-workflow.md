@@ -234,6 +234,8 @@ npm run check:talk -- $1
 
 ## Phase 10: Render Verification
 
+`.claude/skills/talk-render-qa/SKILL.md` に従う。
+
 レンダリング可能ならPDFまたは画像へ出力し、実物を確認する。
 
 - 文字切れ
