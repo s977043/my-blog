@@ -323,3 +323,4 @@ A. プロンプトの冒頭で「まず `AGENTS.md` を読み、関連する局�
 - [DESIGN.md 導入ガイド: AI実装のための入口・契約・検証をどう整えるか](https://zenn.dev/minewo/articles/design-md-guide-and-adoption-log)
 - [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow)
 - [AI駆動開発の2層ガード設計：PlanGateとRiver Reviewで実装前後を守る](https://zenn.dev/minewo/articles/ai-dev-guardrail-plangate-river-reviewer)
+- [Claude CodeからCodex Appへ移行する実践ガイド](/articles/claude-code-to-codex-app-migration)
