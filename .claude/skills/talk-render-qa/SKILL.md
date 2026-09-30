@@ -3,6 +3,8 @@ name: talk-render-qa
 description: Marpで書き出したPDF/SVGを対象に、余白・要素間隔・図中文字・SVG fit・再利用差分を実測し、機械検査と人間の原寸確認を分離してRender Verificationを判定する。
 allowed-tools:
   - Read
+  - Write
+  - Edit
   - Bash
   - Glob
   - Grep
@@ -126,6 +128,8 @@ Story上の役割が同じなら同じ表現でもよい。
 「似たスライドをAIで再生成」より、権利・文脈に問題がなければ実物の再利用を優先する。
 
 ## 7. review.mdへの記録
+
+このSkillが変更してよい成果物は原則 `talks/<slug>/review.md` の `## Render Verification` だけとする。Deck / Story / Design / Speaker Notesは変更しない。
 
 `## Render Verification` に最低限記録する。
 
