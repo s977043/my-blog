@@ -54,7 +54,7 @@ PlanGate
   Judgment
 ~~~
 
-私の今の結論は、**PlanGateへOpenSpec一式を追加する必要はない**です。
+私の今の結論は、**少なくとも現在のPlanGateへOpenSpec一式をそのまま追加する必要性は低い**です。
 
 取り込みたいのは、OpenSpecそのものというより、
 
@@ -444,7 +444,7 @@ AIが長時間・複数フェーズで変更を進めるなら、
 
 を別責務として持った方がよさそうです。
 
-## だからOpenSpecを全部入れるのではなく、Gapだけを埋めたい
+## だから現在のPlanGateでは、Gapだけを埋めたい
 
 比較前は「OpenSpecをPlanGateへ導入する」という発想でした。
 
@@ -509,6 +509,23 @@ Evidence      → Proof
 ~~~
 
 と責務を分けます。
+
+## この比較を自分のAI開発フローへ当てはめるなら
+
+OpenSpecとPlanGateのどちらが優れているかを決める比較ではありません。
+
+自分の開発フローに当てはめるなら、まず次の2つを分けて見るのがよさそうです。
+
+| 問い | 不足している責務 |
+| --- | --- |
+| 変更を重ねたあと「現在どう振る舞うべきか」をすぐ答えられるか | System State / Current What |
+| 「なぜこの変更を実行してよいと判断したか」を追跡できるか | Change Execution / Judgment / Proof |
+
+前者が弱いなら、main specとdelta specのような仕組みが候補になります。
+
+後者が弱いなら、plan、review、approval、evidenceの境界を先に整えた方がよいかもしれません。
+
+両方必要なら、ツールを丸ごと重ねるより、**責務の境界を決めてからartifactを接続する**方がSSoTを増やしにくいと考えています。
 
 ## Living Specをいつ更新するか
 
@@ -627,11 +644,11 @@ OpenSpecは、変更をmain specへ畳み込みながら、現在のシステム
 
 PlanGateは、Plan、Review、Approval、Evidenceを束縛しながら、今回の変更をどう実行・判断したかを残します。
 
-だから、PlanGateへOpenSpec一式を追加するのではなく、
+だから現在のPlanGateでは、OpenSpec一式を重ねるのではなく、
 
-**PlanGateに欠けているCurrent What / Changed Whatだけを小さく取り込む。**
+**直接対応が薄いCurrent What / Changed Whatだけを小さく試す。**
 
-まずはそれを試してみます。
+まずは1 capabilityで検証し、ACやtest-casesとの二重正本が増えないかを確かめます。
 
 ## 参考
 
