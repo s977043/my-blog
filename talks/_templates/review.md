@@ -62,6 +62,9 @@
 - status: UNVERIFIED
 - artifact:
 - checked_at:
+- method:
+- tool_results:
+- visual_review_scope:
 - issues:
 
 ## Rehearsal Verification
