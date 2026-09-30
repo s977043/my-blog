@@ -108,7 +108,7 @@ handoff.md
 
 ここで重要なのは「OpenSpecにレビューや検証がない」という話ではありません。
 
-OpenSpecのQuickstartには人間がplanを確認するReview stepがあり、現在の公式workflowには /opsx:verify もあります。
+OpenSpecのQuickstartには人間がplanを確認するReview stepがあります。また、`verify` は optional workflow として用意されており、default の core profile には含まれません。
 
 この記事は「OpenSpecにはReviewやVerifyがなく、PlanGateにはある」という比較ではありません。違うのは、PlanGateが **review / approval / evidenceを明示的なartifactと機械検証可能なprovenanceとして強く束縛している** 点です。
 
@@ -276,7 +276,7 @@ C-4
 
 という **変更実行のprovenance** です。
 
-OpenSpecにもReviewやVerifyはありますが、今回確認した標準artifactの中心は、PlanGateのようなapproval tokenやPlan Package hashではありません。
+OpenSpecにもReviewがあり、optional workflowとしてVerifyも用意されています。ただし、今回確認した標準artifactの中心は、PlanGateのようなapproval tokenやPlan Package hashではありません。
 
 同じ「AIに変更をさせる仕組み」でも、守ろうとしている対象が違います。
 
@@ -448,13 +448,11 @@ OpenSpecとPlanGateのどちらが優れているかを決める比較ではあ�
 
 両方必要なら、ツールを丸ごと重ねるより、**責務の境界を決めてからartifactを接続する**方がSSoTを増やしにくいと考えています。
 
-## Current Specをいつ更新するか
+## Current Specはいつ正本になるのか
 
-ここはまだ仮説ですが、PlanGateへ入れるなら更新タイミングも重要です。
+ここはまだ仮説ですが、PlanGateへ入れるなら「いつ書き換えるか」より、**いつCurrent Specとして有効になるか**を分けて考える必要があります。
 
-C-3でplanが承認された時点では、まだシステムは変わっていません。
-
-そこでmain specを更新すると、
+C-3でplanが承認された時点では、まだシステムは変わっていません。そこでCurrent Specを先に正本化すると、
 
 ~~~text
 Spec上では存在する
@@ -464,7 +462,17 @@ Spec上では存在する
 
 という状態になります。
 
-そのため、候補としては、
+逆に、merge後に別処理としてCurrent Specを書き換えると、
+
+~~~text
+実装は変わった
+        ↓
+しかしCurrent Specは古い
+~~~
+
+という逆方向のdriftが生まれます。
+
+そのため、PlanGateへ統合するなら次の形をまず試したいです。
 
 ~~~text
 Delta Spec
@@ -477,16 +485,18 @@ Implementation
    ↓
 Verification / Evidence
    ↓
-C-4 / Merge
+Current Spec candidateを同じ変更に含める
    ↓
-Current Specへ反映
+Human C-4 / Merge
+   ↓
+Current Specとして有効化
 ~~~
 
-が自然だと考えています。
+つまり、**Current Specの更新内容は実装と同じchange / PRに含める。ただしmerge前はcandidateとして扱い、mergeを境界に正本として有効化する**、という考え方です。
 
-OpenSpecも、実装後のarchiveでdeltaをmain specへ反映します。ただしOpenSpecのQuickstartではGitは別の関心事とされており、archiveをGitのmerge境界と同一視するものではありません。
+OpenSpecではarchive時にdelta requirementsがmain specsへ反映され、`specs/` がsystem as builtのsource of truthになります。またOpenSpecには、archive前にdeltaをmain specsへ同期する `sync` workflowもあります。一方でGitは別の関心事として扱われています。
 
-ここで C-4 / Merge 後を候補にしているのは、OpenSpecのルールではなくPlanGateへ統合する場合の私の仮説です。実際に導入するなら、C-4とspec反映の順序、失敗時のrollback、並行変更時の競合まで検証が必要です。
+したがって、ここでmergeを有効化境界に置くのはOpenSpecのルールではなく、PlanGateへ統合する場合の私の設計仮説です。実際に試すなら、並行changeの競合、rollback、candidate生成の失敗をどう扱うかまで検証が必要です。
 
 まだ「この構造で完成」と言える段階ではありません。
 
