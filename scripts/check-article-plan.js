@@ -193,6 +193,20 @@ function collectTargets(root) {
   return { gate, targets, undetermined, notes, reason: null };
 }
 
+/**
+ * 未追跡の対象原稿のうち、同じ媒体で作業ツリーから消えた原稿があるもの。ステージしていない移動は
+ * git がリネームと認識できず新規扱いになるので、移動でありうるこの組み合わせにだけ注意を出す。
+ */
+function possibleUnstagedMoves(root, targets) {
+  const dirs = CHANNEL_DIRS.map((c) => c.dir);
+  const untracked = git(root, ["ls-files", "--others", "--exclude-standard", "--", ...dirs]);
+  const deleted = git(root, ["diff", "--name-only", "--diff-filter=D", "HEAD", "--", ...dirs]);
+  if (untracked === null || deleted === null) return [];
+  const untrackedSet = new Set(untracked.split("\n").filter(Boolean));
+  const goneChannels = new Set(deleted.split("\n").filter(Boolean).map(channelOf).filter(Boolean));
+  return targets.filter((t) => untrackedSet.has(t.rel) && goneChannels.has(t.channel)).map((t) => t.rel);
+}
+
 // ---------- Plan の解析 ----------
 
 function listSeedFiles(root) {
@@ -301,8 +315,9 @@ function outOfScope(env) {
 
 function evaluate(root, env = {}) {
   const skipped = outOfScope(env);
-  if (skipped) return { gate: null, targets: [], undetermined: [], notes: [], reason: null, skipped, errors: [] };
+  if (skipped) return { gate: null, targets: [], undetermined: [], notes: [], moves: [], reason: null, skipped, errors: [] };
   const { gate, targets, undetermined, notes, reason } = collectTargets(root);
+  const moves = targets.length ? possibleUnstagedMoves(root, targets) : [];
   const index = targets.length ? indexPlans(root) : new Map();
   const errors = [];
   targets.forEach((a) => {
@@ -319,7 +334,7 @@ function evaluate(root, env = {}) {
       }
     }
   });
-  return { gate, targets, undetermined, notes, reason, skipped: null, errors };
+  return { gate, targets, undetermined, notes, moves, reason, skipped: null, errors };
 }
 
 /**
@@ -417,6 +432,7 @@ function selfTest() {
     write("articles/no-plan.md", "x\n");
     const noPlan = evaluate(tmp);
     eq("未追跡の原稿も対象にする", keys(noPlan).includes("zenn/no-plan"), true);
+    eq("純粋な新規原稿には移動の注意を出さない", noPlan.moves, []);
     eq("Plan 無しは不合格", noPlan.errors.length === 1 && /Plan未検出: zenn\/no-plan/.test(noPlan.errors[0]), true);
     fs.unlinkSync(path.join(tmp, "articles/no-plan.md"));
 
@@ -491,6 +507,9 @@ function selfTest() {
 
     run(["mv", "articles_note/new/PRONI-renamed.md", "articles_note/new/PRONI-renamed2.md"]);
     commit("rename in PR", "2026-10-02");
+    fs.renameSync(path.join(tmp, "articles/日本語-old.md"), path.join(tmp, "articles/日本語-unstaged.md"));
+    eq("ステージしていない移動には注意を出す", evaluate(tmp).moves, ["articles/日本語-unstaged.md"]);
+    fs.renameSync(path.join(tmp, "articles/日本語-unstaged.md"), path.join(tmp, "articles/日本語-old.md"));
     run(["mv", "articles/日本語-old.md", "articles/日本語-renamed.md"]);
     const inPr = keys(evaluate(tmp));
     eq("PR 内でリネームした既存原稿は対象外", inPr.includes("note/PRONI-renamed2"), false);
@@ -664,7 +683,7 @@ function main() {
 
   const root = path.resolve(__dirname, "..");
   const result = evaluate(root, process.env);
-  const { gate, targets, undetermined, notes, reason, skipped, errors } = result;
+  const { gate, targets, undetermined, notes, moves, reason, skipped, errors } = result;
   if (skipped) {
     console.log(`${LABEL} ${skipped}。対象 0 件として通す`);
     return;
@@ -679,8 +698,8 @@ function main() {
   }
   console.log(`${LABEL} ゲート導入日 ${gate} / 対象 ${targets.length} 件`);
   targets.forEach((t) => console.log(`  - ${t.rel}`));
-  if (targets.length) {
-    console.log("  （ステージしていない移動は新規扱いになる。既存原稿の移動なら git mv するかステージしてから再実行する）");
+  if (moves.length) {
+    console.log(`  （${moves.join(", ")}: ステージしていない移動は新規扱いになる。既存原稿の移動なら git mv するかステージしてから再実行する）`);
   }
   notes.forEach((n) => console.log(`  NOTE ${n}`));
   undetermined.forEach((rel) =>
