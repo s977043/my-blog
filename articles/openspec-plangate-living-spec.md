@@ -1,5 +1,5 @@
 ---
-title: "OpenSpecとPlanGateを比較して見えた、PlanGateに足りなかった「現在仕様」"
+title: "AI駆動開発で「今の仕様」をどう残すか。OpenSpecのDelta Specから考えた"
 emoji: "🧩"
 type: "idea"
 topics: ["ai駆動開発", "openspec", "plangate", "sdd", "aiエージェント"]
@@ -7,63 +7,39 @@ published: false
 ---
 
 :::message
-この記事では、OpenSpecと、私が開発しているPlanGateのartifactとライフサイクルを比較します。
+この記事は、AI駆動開発で変更を積み重ねたときに、**「今のシステムはどう振る舞うべきか」をどこへ残すか**を考えた記録です。
+
+きっかけはOpenSpecでした。私が開発しているPlanGateとartifactを比較すると、proposal / design / tasksのような変更単位の情報はかなり重なります。一方で、OpenSpecには変更差分を現在仕様へ畳み込むmain spec / delta specの考え方があります。
+
+この記事では、OpenSpecを導入する手順ではなく、そこから見えた **Current What（現在どうあるべきか）と Changed What（今回何を変えるか）を分ける設計**を整理します。
 
 検証対象は **2026-09-30時点**です。PlanGateは main の commit 4995ad626825492914c6152c92f65849584dff60、OpenSpecは同日に確認した公式ドキュメントを参照しています。
-
-この記事では、変更後も更新され続ける「現在のシステムの期待動作」を **Current Spec（現在仕様）** と呼びます。OpenSpec公式が「Living Spec」を固有用語として定義している、という意味ではありません。
 :::
 
 ## TL;DR
 
-OpenSpecを見たとき、最初は「PlanGateとかなり似ている。取り込めるのでは」と考えました。
+AIで変更を速く積み重ねられるようになるほど、変更単位のPlanやEvidenceだけではなく、**「現在のシステムはどう振る舞うべきか」を直接読める正本**が重要になると考えるようになりました。
 
-実際、artifactを並べるとかなり重なります。
+OpenSpecを調べると、変更中はdelta specにChanged Whatを書き、変更後はmain specへ反映してCurrent Whatを更新する構造があります。
 
-- proposal.md と pbi-input.md
-- design.md と design.md / plan.md
-- tasks.md と todo.md
+一方、私が開発しているPlanGateは、PBI / Plan / Review / Approval / Evidenceのような **Change Execution** を強く残す仕組みです。
 
-しかし比較していくと、一番大きな違いはファイル名ではありませんでした。
-
-**何を正本として残そうとしているかが違います。**
+比較して見えてきたのは、優劣ではなく責務の違いでした。
 
 ~~~text
-OpenSpec
-  System State
-  「現在のシステムは何をするものか」
-        ↓
-  Change
-        ↓
-  New System State
-
-PlanGate
-  Change Execution
-  Intent
-    ↓
-  Plan
-    ↓
-  Review
-    ↓
-  Approval
-    ↓
-  Execute
-    ↓
-  Evidence
-    ↓
-  Judgment
+Current Spec       → Current What
+Delta Spec         → Changed What
+PBI                → Why
+Plan / Design      → How
+Review / Approval  → Judgment
+Test / Evidence    → Proof
 ~~~
 
-私の今の結論は、**少なくとも現在のPlanGateへOpenSpec一式をそのまま追加する必要性は低い**です。
+この記事で一番伝えたいのは、**AI駆動開発では「現在仕様」と「変更仕様」を同じものとして扱わない方がよいのではないか**、という仮説です。
 
-取り込みたいのは、OpenSpecそのものというより、
+OpenSpecのmain spec / delta specを手がかりに、自分の開発フローへどう取り込めるかを考えます。
 
-- 現在の期待動作を残すmain spec
-- 今回変える部分だけを書くdelta spec
-
-という考え方です。
-
-## なぜOpenSpecをPlanGateと比較したのか
+## 変更の記録はある。でも「今の仕様」はどこにある？
 
 OpenSpecの標準構造を見ると、PlanGateを作ってきた自分には見覚えのあるartifactが並んでいました。
 
