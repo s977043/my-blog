@@ -55,7 +55,7 @@ OpenSpecをPlanGateへ取り込みたいと考えたとき、artifact名が似�
 PlanGateに追加する価値が高いのはOpenSpec一式ではなく、次の2つの考え方である。
 
 1. 現在のシステムの期待動作をcapability単位で保持するmain spec
-2. 1変更で変える部分だけを記述し、変更確定後にmain specへ反映するdelta spec
+2. 1変更で変える部分だけを記述し、同じchange / PR内でCurrent Spec candidateへ畳み込み、mergeを境界に正本化するdelta spec
 
 これをPlanGateの既存のPBI / Plan / Review / Approval / Evidenceと重ねず別責務として接続できれば、Current What / Changed What / Why / How / Judgment / Proof を分離できる。
 
@@ -148,3 +148,5 @@ PlanGateに追加する価値が高いのはOpenSpec一式ではなく、次の2
 - 2026-10-01: 編集部ループ1。OpenSpec verifyをoptional workflowと明記し、Current Specはmerge後に別更新するのではなく同一change / PRのcandidateをmergeで正本化する仮説へ修正
 
 - 2026-10-01: 編集部ループ2。PlanGateのC-3'内部詳細を本文の主線から外し、Change Executionの証拠として必要な要点だけを残して詳細を折りたたんだ
+
+- 2026-10-01: 編集部ループ3。現在仕様 / 変更差分の用語を統一し、PoC手順をCurrent Spec candidate同一PR方式へ揃え、まとめを読者が自分の開発フローへ持ち帰れる6責務へ再構成
