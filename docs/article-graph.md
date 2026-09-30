@@ -9,7 +9,7 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 - Seeds: 16
 - Explicit provenance contract: 8
 - Legacy seeds: 8
-- Promotion edges: 4
+- Promotion edges: 5
 
 ## Seeds
 
@@ -23,7 +23,7 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 | `legacy:article_seeds/ai-driven-development/2026-09-10-north-star-intervention-depth` | 2026-09-10 | seed | experience | legacy |  | 速さではなく「任せ方の変化」を測ることにした | `article_seeds/ai-driven-development/2026-09-10-north-star-intervention-depth.md` | 0 |
 | `legacy:article_seeds/ai-driven-development/2026-09-10-retire-pr-count-kpi` | 2026-09-10 | seed | experience | legacy |  | 「1人あたりPR数」をKPIから外した | `article_seeds/ai-driven-development/2026-09-10-retire-pr-count-kpi.md` | 0 |
 | `legacy:article_seeds/ai-driven-development/2026-09-10-small-team-cant-measure-speed` | 2026-09-10 | seed | experience | legacy |  | 5人チームでは「改善速度」を安定して測れなかった | `article_seeds/ai-driven-development/2026-09-10-small-team-cant-measure-speed.md` | 0 |
-| `seed-20260926-agent-team-topology-audit` | 2026-09-26 | draft | experience | observed | experience, insight, analysis | AIにどこまで任せるか、ではなく「どの境界で自律させるか」を考えたい | `article_seeds/ai-driven-development/2026-09-26-agent-team-topology-audit.md` | 0 |
+| `seed-20260926-agent-team-topology-audit` | 2026-09-26 | draft | experience | observed | experience, insight, analysis | AIにどこまで任せるか、ではなく「どの境界で自律させるか」を考えたい | `article_seeds/ai-driven-development/2026-09-26-agent-team-topology-audit.md` | 1 |
 | `seed-20260929-fresh-context-restart` | 2026-09-29 | seed | external | verified | analysis, insight | いつ会話を捨てて、新しいセッションで始めるか | `article_seeds/ai-driven-development/2026-09-29-fresh-context-restart.md` | 0 |
 | `seed-20260930-openspec-plangate-living-spec` | 2026-09-30 | draft | mixed | verified | analysis, insight | AI駆動開発で「今の仕様」をどう残すか。OpenSpecのDelta Specから考えた | `article_seeds/ai-driven-development/2026-09-30-openspec-plangate-living-spec.md` | 1 |
 | `seed-20260911-media-operating-system-boundaries` | 2026-09-11 | seed | experience | observed | experience, analysis | Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった | `article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md` | 1 |
@@ -37,6 +37,7 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 - `legacy:article_seeds/ai-driven-development/2026-09-10-flow-efficiency` → https://x.com/mine_take/status/2097800316070855017
 - `seed-20260911-media-operating-system-boundaries` → articles_note/new/media-operating-system-boundary-by-change.md
 - `seed-20260923-content-closed-loop` → articles_note/new/content-closed-loop-note.md
+- `seed-20260926-agent-team-topology-audit` → articles/ai-agent-team-topology-judgment-escalation.md
 - `seed-20260930-openspec-plangate-living-spec` → articles/openspec-plangate-living-spec.md
 
 ## Warnings
