@@ -215,7 +215,7 @@
     {
       "id": "seed-20260930-openspec-plangate-living-spec",
       "path": "article_seeds/ai-driven-development/2026-09-30-openspec-plangate-living-spec.md",
-      "title": "OpenSpecとPlanGateを比較して見えた、PlanGateに足りなかった「現在仕様」",
+      "title": "AI駆動開発で「今の仕様」をどう残すか。OpenSpecのDelta Specから考えた",
       "date": "2026-09-30",
       "status": "draft",
       "topics": [
