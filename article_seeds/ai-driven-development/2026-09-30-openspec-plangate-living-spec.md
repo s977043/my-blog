@@ -1,6 +1,6 @@
 ---
 seed_id: seed-20260930-openspec-plangate-living-spec
-title: "OpenSpecとPlanGateを比較して見えた、PlanGateに足りなかった「現在仕様」"
+title: "AI駆動開発で「今の仕様」をどう残すか。OpenSpecのDelta Specから考えた"
 date: 2026-09-30
 status: draft
 topics:
@@ -19,7 +19,7 @@ article_type_candidates:
   - insight
 ---
 
-# OpenSpecとPlanGateを比較して見えた、PlanGateに足りなかった「現在仕様」
+# AI駆動開発で「今の仕様」をどう残すか。OpenSpecのDelta Specから考えた
 
 ## 観測事実
 
@@ -95,8 +95,8 @@ PlanGateに追加する価値が高いのはOpenSpec一式ではなく、次の2
 - channel: zenn
 - slug: openspec-plangate-living-spec
 - article_type: analysis / architecture
-- reader_problem: OpenSpecのようなSpec-driven workflowとPlanGateのようなAI開発ワークフローの違いが分からず、両方を導入すべきか判断しづらい
-- central_claim: OpenSpecとPlanGateはartifactが似ていても責務が異なる。OpenSpecはSystem State、PlanGateはChange Executionを主に扱う。PlanGateへ取り込むならOpenSpec一式ではなく、main spec / delta specを独立した責務として小さく導入する価値が高い
+- reader_problem: Claude Code / CodexなどでAI駆動開発を進めるほど変更単位のPlanやEvidenceは増えるが、「現在のシステムはどう振る舞うべきか」を直接読める正本をどこに持つか判断しづらい
+- central_claim: AI駆動開発ではCurrent WhatとChanged Whatを別責務として持つ価値がある。OpenSpecのmain spec / delta specはその分離を考える手がかりになり、PlanGateはChange Execution側の実践例として比較できる
 - out_of_scope: OpenSpecの導入チュートリアル、OpenSpecとPlanGateの優劣評価、Living Spec統合の完成実装、OpenSpec互換実装
 
 ### Evidence Boundary
@@ -117,21 +117,20 @@ PlanGateに追加する価値が高いのはOpenSpec一式ではなく、次の2
 
 ### Outline
 
-1. TL;DR: 似ているが残しているものが違う
-2. なぜOpenSpecをPlanGateと比較したのか
-3. artifact対応表
-4. proposal / design / tasksはかなり重なる
-5. 最大のGapはmain spec / delta spec
-6. PlanGate側の差分はReview / Approval / Evidence
-7. System StateとChange Executionで整理する
-8. Current What / Changed What / Why / How / Judgment / Proofへ分ける
-9. OpenSpec一式ではなくmain spec / delta specだけをPoCする
-10. 次に検証すること
+1. TL;DR: AI駆動開発では「今の仕様」をどこに残すかが別問題になる
+2. 変更の記録はある。でも「今の仕様」はどこにある？
+3. OpenSpecのartifactと、自分のChange Execution側のartifactを比較する
+4. 重複するproposal / design / tasksは増やさない
+5. 最大のGapはmain spec / delta specだった
+6. Current What / Changed What / Why / How / Judgment / Proofへ分ける
+7. 読者自身のAI開発フローへ当てはめる判断軸
+8. 自分の実践例としてPlanGateで1 capabilityだけPoCする
+9. 次に検証すること
 
 ### 著者の判断（2026-09-30）
 
-- Zenn向けに技術設計・比較・検証を主役にする
-- OpenSpecとPlanGateの優劣記事にはしない
+- Zenn向けに「AI駆動開発で現在仕様をどう残すか」というReader Problemを主役にし、比較・検証はその根拠として使う
+- OpenSpecとPlanGateの優劣記事にはしない。PlanGateを知らない読者でも持ち帰れる構成にする
 - Living Specを記事の中心用語にはせず、OpenSpecのmain specsが担う責務を Current Spec（現在仕様）として説明する
 - OpenSpecにReview / Verifyが無いとは書かず、PlanGateとの違いは明示的なgovernance artifactとprovenanceの厚さとして表現する
 - 現行PlanGateではPlan Package 6要素を正とし、以前の4要素整理は記事へ持ち込まない
@@ -144,3 +143,4 @@ PlanGateに追加する価値が高いのはOpenSpec一式ではなく、次の2
 - 2026-09-30: 初稿レビュー・ループ3。OpenSpec一式が不要という一般化を避け、「現在のPlanGateでは重複が大きい」に限定。System State / Change Executionの2軸で読者自身が判断できる表を追加
 - 2026-09-30: 追加レビュー・ループ2。Living SpecがOpenSpec公式用語に見える曖昧さを避け、タイトルと本文の中心語を Current Spec（現在仕様）へ変更
 - 2026-09-30: 追加レビュー・ループ3。proposal / design / tasks の個別説明を統合して重複を削り、main spec / delta spec のGapへ早く到達する構成へ圧縮
+- 2026-09-30: 編集部ペルソナレビューを反映。メイン読者をAI駆動開発を実践する中級〜上級エンジニアへ置き、PlanGate比較ではなく「今の仕様をどこに残すか」をタイトル・冒頭・Article Planの主語へ変更
