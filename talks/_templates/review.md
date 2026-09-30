@@ -65,7 +65,7 @@
 - method:
 - tool_results:
 - visual_review_scope:
-- issues:
+- issues: none / <remaining render issues>
 
 ## Rehearsal Verification
 
