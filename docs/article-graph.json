@@ -181,7 +181,9 @@
       "source_url": "",
       "source_ref": "https://teamtopologies.com/ai-success ; https://eirwin.github.io/agent-team-topologies/",
       "evidence_status": "observed",
-      "promoted_to": [],
+      "promoted_to": [
+        "articles/ai-agent-team-topology-judgment-escalation.md"
+      ],
       "article_type_candidates": [
         "experience",
         "insight",
@@ -379,6 +381,11 @@
       "from": "seed-20260923-content-closed-loop",
       "relation": "promoted_to",
       "to": "articles_note/new/content-closed-loop-note.md"
+    },
+    {
+      "from": "seed-20260926-agent-team-topology-audit",
+      "relation": "promoted_to",
+      "to": "articles/ai-agent-team-topology-judgment-escalation.md"
     },
     {
       "from": "seed-20260930-openspec-plangate-living-spec",
