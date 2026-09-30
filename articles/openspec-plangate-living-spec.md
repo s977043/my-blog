@@ -220,7 +220,9 @@ openspec/changes/add-passkey/
 
 のようなdelta specを書きます。
 
-これはシステム全体の仕様を書き直すものではなく、**今回何が追加・変更・削除されるのか**を記述するものです。
+これはシステム全体の仕様を書き直すものではなく、**今回何が追加・変更・削除されるのか**を記述するものです。標準schemaのdelta specでは、要求を ADDED / MODIFIED / REMOVED などの差分として表します。
+
+つまり、完成後の全体像を変更フォルダへ複製するのではなく、Changed Whatだけを持てます。
 
 そして変更完了後にarchiveすると、そのdeltaがmain側のspecへ反映されます。
 
@@ -283,7 +285,9 @@ This Change Should Satisfy
 
 PlanGateには変更単位の情報はかなり残ります。
 
-しかし、変更が100回積み上がったあと、
+私が比較していて引っかかったのは、変更履歴の豊富さとCurrent Systemの読みやすさは別問題だという点でした。
+
+変更が100回積み上がったあと、
 
 > 今のauth capabilityは結局どう振る舞うのか？
 
@@ -461,7 +465,7 @@ tasks.md
 
 するので、これらを二重化したくありません。
 
-一方、PlanGateには、
+一方、現在のPlanGateには、OpenSpecの
 
 ~~~text
 specs/
@@ -469,7 +473,9 @@ specs/
     └── spec.md
 ~~~
 
-のような「現在仕様の正本」がありません。
+のように、**capability単位でCurrent Systemの期待動作を継続更新する正本へ直接対応するartifact**がありません。
+
+PlanGateにも各種contractや設計仕様はあります。ここで指しているGapは「仕様書が存在しない」ことではなく、変更完了後の振る舞いをcapability単位で畳み込んでいく正本が、Change Executionの標準artifactとしては置かれていないことです。
 
 そこでPoCするなら、例えば次の程度から始めたいです。
 
