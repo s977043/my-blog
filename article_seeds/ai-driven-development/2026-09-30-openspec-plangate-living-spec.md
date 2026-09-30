@@ -143,3 +143,4 @@ PlanGateに追加する価値が高いのはOpenSpec一式ではなく、次の2
 - 2026-09-30: 初稿レビュー・ループ2。PlanGateのGapを「仕様書がない」ではなく「capability単位のCurrent System Specへ直接対応する標準artifactがない」へ限定。Delta SpecのADDED / MODIFIED / REMOVEDを追加
 - 2026-09-30: 初稿レビュー・ループ3。OpenSpec一式が不要という一般化を避け、「現在のPlanGateでは重複が大きい」に限定。System State / Change Executionの2軸で読者自身が判断できる表を追加
 - 2026-09-30: 追加レビュー・ループ2。Living SpecがOpenSpec公式用語に見える曖昧さを避け、タイトルと本文の中心語を Current Spec（現在仕様）へ変更
+- 2026-09-30: 追加レビュー・ループ3。proposal / design / tasks の個別説明を統合して重複を削り、main spec / delta spec のGapへ早く到達する構成へ圧縮
