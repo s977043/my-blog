@@ -103,7 +103,7 @@ handoff.md
 | 実装タスク | tasks.md | todo.md | かなり近い |
 | 計画の確認・レビュー | QuickstartにReview stepがある | review-self.md / review-external.md | 仕組みが異なる |
 | 承認のprovenance | workflow上のReview | approvals/c3.json + hash | PlanGateの責務が厚い |
-| 受入検証 | /opsx:verify 等 | test-cases.md + verification evidence | 仕組みが異なる |
+| 受入検証 | optional workflow の /opsx:verify | test-cases.md + verification evidence | 仕組みが異なる |
 | 現在仕様の正本 | openspec/specs/ | 明確な直接対応がない | 大きなGap |
 
 ここで重要なのは「OpenSpecにレビューや検証がない」という話ではありません。
@@ -216,21 +216,26 @@ PlanGateには変更単位の情報はかなり残ります。
 
 ここにGapがあると感じました。
 
-## PlanGate側の強みはChange Executionのprovenance
+## 逆に、変更実行の証跡は厚く持っている
 
-逆方向の差もあります。
+一方で、私が開発しているPlanGateは **Change Executionのprovenance** を厚く残す設計です。
 
-現在のPlanGateではplan phaseが、PBI INPUTから次の3ファイルを生成します。
+plan phaseでは、PBI INPUTから `plan.md` / `todo.md` / `test-cases.md` を生成します。その後もReview、Approval、Execution、Verification、Evidenceという境界を持ち、
 
-~~~text
-pbi-input.md
-     ↓
-plan.md
-todo.md
-test-cases.md
-~~~
+- 何を意図したか
+- どのplanをレビュー・承認したか
+- 承認後にplanが変わっていないか
+- 何を検証したか
+- 何を根拠に完了と判断したか
 
-さらにC-3'の契約では、
+を追跡できるようにしています。
+
+OpenSpecにもReviewがあり、optional workflowとしてVerifyも用意されています。ただし今回比較したかったのは機能の有無ではありません。
+
+**現在仕様を育てること**と、**変更をどう判断・実行したかを証明すること**は、別の責務ではないか。ここが今回の整理の出発点になりました。
+
+:::details PlanGate側の具体例：C-3'で何を束縛しているか
+現在のC-3'では、次の6 artifactをPlan Packageとして扱います。
 
 ~~~text
 pbi-input.md
@@ -241,44 +246,10 @@ review-self.md
 review-external.md
 ~~~
 
-の6要素をPlan Packageとして束縛します。
+各artifactのhash、Plan Package全体のhash、reviewer snapshotを照合し、承認後のdriftを検出します。
 
-artifactごとのhashを取り、plan_package_hash とreviewer snapshotまで照合します。
-
-その後も、
-
-~~~text
-Review
-  ↓
-C-3 / C-3'
-  ↓
-Approval
-  ↓
-Execution
-  ↓
-Verification
-  ↓
-Evidence
-  ↓
-C-4
-~~~
-
-という変更実行の境界があります。
-
-ここでPlanGateが残しているものは、現在仕様というより、
-
-- 何を意図したか
-- どのplanをレビューしたか
-- どのplanを承認したか
-- その後planが変わっていないか
-- 何を検証したか
-- 何を根拠に完了と判断したか
-
-という **変更実行のprovenance** です。
-
-OpenSpecにもReviewがあり、optional workflowとしてVerifyも用意されています。ただし、今回確認した標準artifactの中心は、PlanGateのようなapproval tokenやPlan Package hashではありません。
-
-同じ「AIに変更をさせる仕組み」でも、守ろうとしている対象が違います。
+この記事で重要なのは仕組みの詳細ではなく、これらが **Current WhatではなくChange Executionを守るための情報**だという点です。
+:::
 
 ## System StateとChange Executionで分けると理解しやすかった
 
