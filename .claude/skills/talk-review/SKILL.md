@@ -132,6 +132,41 @@ Render未確認なら clipping / actual font / real margin は `UNVERIFIED`。
 
 記事向け段落ルールを機械的に流用しない。
 
+## AI-uniformity Review
+
+見出しとレイアウトを通しで確認する。
+
+- 同じ見出し構文が連続しすぎていないか
+- 同じカード/比較/3列構成を内容に関係なく反復していないか
+- すべてのページが均一な「説明資料」へ寄っていないか
+- 変化がStoryの役割に由来しているか
+
+単なる多様性スコアは作らない。
+Story上の反復に意味がある場合は保持する。
+
+## Reuse Review
+
+既存スライドを流用している場合:
+
+- 見出しと図の対応が崩れていないか
+- 元の前後文脈を失って意味が変わっていないか
+- 古いversion / number / screenshotが残っていないか
+- 再生成より原本再利用が適切だった箇所を勝手に作り直していないか
+
+## Render QA Handoff
+
+Render Verificationは `.claude/skills/talk-render-qa/SKILL.md` を使う。
+
+Source Reviewで次を見つけても、実寸値を推測しない。
+
+- actual margin
+- actual font size
+- SVG box fit
+- clipping / overlap
+- font fallback
+
+Render artifactが無ければ `UNVERIFIED`。
+
 ## Timing Review
 
 `deck.md` の各slide `time` を予定時間の正本とする。
