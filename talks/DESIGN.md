@@ -206,6 +206,36 @@ Speaker Notes:
 - Speaker Notesの文章をそのまま表示
 - 収まらないためのfont縮小
 
+## Render QA Principles
+
+Source上の見た目と、書き出された成果物を分けて扱う。
+
+Renderでは感覚だけでなく、可能な限り実測する。
+
+- page edgeとの余白
+- visualと本文の間隔
+- figure内の最小文字
+- SVG text-to-box fit
+- clipping / overlap
+- font fallback
+- missing image / SVG
+- 不自然な折り返し
+
+特定テーマ向けの数値を全Talkへ固定しない。
+会場・テーマ・aspect ratioに依存する閾値は `talks/<slug>/design.md` に置く。
+
+一覧画像はリズム・欠落確認には使えるが、原寸可読性の証拠にはしない。
+機械検査PASSと人間のVisual Reviewは別々に記録する。
+
+## Upstream Inspiration
+
+Render QAと図の実測は `minorun365/minorun-marp-skill` を参考にしている。
+
+- https://github.com/minorun365/minorun-marp-skill
+- Apache-2.0
+
+作者固有の黒地テーマ・配色・演出は、このDesign Systemの必須ルールではない。
+
 ## Machine-checkable Constraints
 
 各登壇の `design.md` にJSONとして実値を置く。
