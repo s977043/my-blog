@@ -470,11 +470,26 @@ function validateTalk(dir) {
 
   const renderSectionStatus = extractSectionBulletField(review, 'Render Verification', 'status');
   const renderArtifact = extractSectionBulletField(review, 'Render Verification', 'artifact');
+  const renderCheckedAt = extractSectionBulletField(review, 'Render Verification', 'checked_at');
+  const renderMethod = extractSectionBulletField(review, 'Render Verification', 'method');
+  const renderToolResults = extractSectionBulletField(review, 'Render Verification', 'tool_results');
+  const renderVisualScope = extractSectionBulletField(review, 'Render Verification', 'visual_review_scope');
+  const renderIssues = extractSectionBulletField(review, 'Render Verification', 'issues');
   if (renderSectionStatus && renderVerification && renderSectionStatus !== renderVerification) {
     errors.push('review.md: Render Verification status disagrees with Verdict.render_verification');
   }
-  if (renderVerification === 'PASS' && !renderArtifact) {
-    errors.push('review.md: render_verification PASS requires a rendered artifact reference');
+  if (renderVerification === 'PASS') {
+    const requiredRenderEvidence = {
+      artifact: renderArtifact,
+      checked_at: renderCheckedAt,
+      method: renderMethod,
+      tool_results: renderToolResults,
+      visual_review_scope: renderVisualScope,
+      issues: renderIssues,
+    };
+    for (const [field, value] of Object.entries(requiredRenderEvidence)) {
+      if (!value) errors.push('review.md: render_verification PASS requires Render Verification.' + field);
+    }
   }
 
   const rehearsalSectionStatus = extractSectionBulletField(review, 'Rehearsal Verification', 'status');
@@ -497,8 +512,16 @@ function validateTalk(dir) {
     }
 
     const notesRehearsalStatus = extractSectionBulletField(notes, 'Rehearsal', 'status');
+    const notesRehearsalRuns = Number.parseInt(extractSectionBulletField(notes, 'Rehearsal', 'run_count'), 10);
+    const notesMeasuredMinutes = Number.parseFloat(extractSectionBulletField(notes, 'Rehearsal', 'measured_minutes'));
     if (notesRehearsalStatus !== 'PASS') {
       errors.push('speaker-notes.md: Rehearsal status must be PASS when review rehearsal_verification is PASS');
+    }
+    if (notesRehearsalRuns !== rehearsalRuns) {
+      errors.push('speaker-notes.md: Rehearsal run_count must match review.md');
+    }
+    if (!Number.isFinite(notesMeasuredMinutes) || notesMeasuredMinutes !== measuredMinutes) {
+      errors.push('speaker-notes.md: Rehearsal measured_minutes must match review.md');
     }
   }
 
@@ -564,7 +587,7 @@ function writeFixture(dir, valid) {
     : '# Speaker Notes\n\n## Talk Contract\n\n- audience: AIをチーム導入するエンジニア\n- duration_minutes: 10\n- core_thesis: 品質保証を生成後に閉じる\n\n## Notes\n\n### Slide 1\n\n- target_time: 1:00\n- say:\n');
 
   fs.writeFileSync(path.join(dir, 'review.md'),
-    '# Talk Review\n\n## Contract\n\n- audience: AIをチーム導入するエンジニア\n- duration_minutes: 10\n- core_thesis: 品質保証を生成後に閉じる\n\n## Verdict\n\n- status: READY\n- source_verification: PASS\n- render_verification: PASS\n- rehearsal_verification: PASS\n\n## Persona Findings\n\n| id | persona | priority | location | finding | suggestion |\n|---|---|---|---|---|---|\n\n## Quality Axes\n\n| axis | status | notes |\n|---|---|---|\n| Focus | PASS | |\n| Flow | PASS | |\n| Hierarchy | PASS | |\n| Legibility | PASS | |\n| Truthfulness | PASS | |\n| Speakability | PASS | |\n\n## Contract Drift\n\n- core_thesis_changed: false\n- audience_changed: false\n- duration_changed: false\n- takeaways_changed: false\n\n## Render Verification\n\n- status: PASS\n- artifact: deck.pdf\n\n## Rehearsal Verification\n\n- status: PASS\n- run_count: 1\n- measured_minutes: 2\n\n## Unverified Claims\n\n- \n');
+    '# Talk Review\n\n## Contract\n\n- audience: AIをチーム導入するエンジニア\n- duration_minutes: 10\n- core_thesis: 品質保証を生成後に閉じる\n\n## Verdict\n\n- status: READY\n- source_verification: PASS\n- render_verification: PASS\n- rehearsal_verification: PASS\n\n## Persona Findings\n\n| id | persona | priority | location | finding | suggestion |\n|---|---|---|---|---|---|\n\n## Quality Axes\n\n| axis | status | notes |\n|---|---|---|\n| Focus | PASS | |\n| Flow | PASS | |\n| Hierarchy | PASS | |\n| Legibility | PASS | |\n| Truthfulness | PASS | |\n| Speakability | PASS | |\n\n## Contract Drift\n\n- core_thesis_changed: false\n- audience_changed: false\n- duration_changed: false\n- takeaways_changed: false\n\n## Render Verification\n\n- status: PASS\n- artifact: deck.pdf\n- checked_at: 2026-09-30T12:00:00Z\n- method: full-page PDF inspection\n- tool_results: generic checks PASS\n- visual_review_scope: all pages at readable size\n- issues: none\n\n## Rehearsal Verification\n\n- status: PASS\n- run_count: 1\n- measured_minutes: 2\n\n## Unverified Claims\n\n- \n');
 }
 
 function selfTest() {
