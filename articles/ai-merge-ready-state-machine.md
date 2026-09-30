@@ -1,5 +1,5 @@
 ---
-title: "AIエージェントにPRを任せてもマージはさせない。MERGE_READYで止める設計"
+title: "AIエージェントのPR自動化はどこで止めるか。マージを人間に残すGitHub運用"
 emoji: "🔀"
 type: "tech"
 topics: ["ai駆動開発", "aiagent", "github", "生成ai", "codereview"]
