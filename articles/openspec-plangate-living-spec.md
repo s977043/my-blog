@@ -67,7 +67,7 @@ PlanGate
 
 OpenSpecの標準構造を見ると、PlanGateを作ってきた自分には見覚えのあるartifactが並んでいました。
 
-OpenSpecの標準 spec-driven schemaは、主に次の4 artifactを扱います。
+OpenSpecの標準 spec-driven schemaは、主に次の4 artifactを扱います。なお公式仕様では design は条件に応じて省略可能で、specs も change 設定によって省略できます。ここでは標準的な構成を比較対象にします。
 
 ~~~text
 proposal.md
@@ -125,7 +125,7 @@ handoff.md
 | 変更する期待動作 | delta spec.md | AC + test-cases.md | 部分的に重なる |
 | 技術設計 | design.md | design.md + plan.md | かなり近い |
 | 実装タスク | tasks.md | todo.md | かなり近い |
-| 設計品質レビュー | Review stepはある | review-self.md / review-external.md | 仕組みが異なる |
+| 計画の確認・レビュー | QuickstartにReview stepがある | review-self.md / review-external.md | 仕組みが異なる |
 | 承認のprovenance | workflow上のReview | approvals/c3.json + hash | PlanGateの責務が厚い |
 | 受入検証 | /opsx:verify 等 | test-cases.md + verification evidence | 仕組みが異なる |
 | 現在仕様の正本 | openspec/specs/ | 明確な直接対応がない | 大きなGap |
@@ -134,7 +134,7 @@ handoff.md
 
 OpenSpecのQuickstartには人間がplanを確認するReview stepがあり、現在の公式workflowには /opsx:verify もあります。
 
-違うのは、PlanGateが **review / approval / evidenceを明示的なartifactと機械検証可能なprovenanceとして強く束縛している** 点です。
+この記事は「OpenSpecにはReviewやVerifyがなく、PlanGateにはある」という比較ではありません。違うのは、PlanGateが **review / approval / evidenceを明示的なartifactと機械検証可能なprovenanceとして強く束縛している** 点です。
 
 ## proposal.mdはpbi-input.mdとかなり近い
 
@@ -540,9 +540,9 @@ Living Specへ反映
 
 が自然だと考えています。
 
-OpenSpecも、実装後のarchiveでdeltaをmain specへ反映します。
+OpenSpecも、実装後のarchiveでdeltaをmain specへ反映します。ただしOpenSpecのQuickstartではGitは別の関心事とされており、archiveをGitのmerge境界と同一視するものではありません。
 
-ただし、PlanGateへ実際に導入する場合は、C-4とspec反映の順序、失敗時のrollback、並行変更時の競合まで検証が必要です。
+ここで C-4 / Merge 後を候補にしているのは、OpenSpecのルールではなくPlanGateへ統合する場合の私の仮説です。実際に導入するなら、C-4とspec反映の順序、失敗時のrollback、並行変更時の競合まで検証が必要です。
 
 まだ「この構造で完成」と言える段階ではありません。
 
