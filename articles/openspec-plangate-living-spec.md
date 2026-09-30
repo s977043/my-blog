@@ -1,5 +1,5 @@
 ---
-title: "OpenSpecとPlanGateを比較して見えた、AI駆動開発に足りなかったLiving Spec"
+title: "OpenSpecとPlanGateを比較して見えた、PlanGateに足りなかった「現在仕様」"
 emoji: "🧩"
 type: "idea"
 topics: ["ai駆動開発", "openspec", "plangate", "sdd", "aiエージェント"]
@@ -11,7 +11,7 @@ published: false
 
 検証対象は **2026-09-30時点**です。PlanGateは main の commit 4995ad626825492914c6152c92f65849584dff60、OpenSpecは同日に確認した公式ドキュメントを参照しています。
 
-ここで使う **Living Spec** は、OpenSpecの公式固有用語としてではなく、「変更後も更新され続け、現在のシステムの期待動作を表すmain spec」という意味でこの記事内の説明語として使います。
+この記事では、変更後も更新され続ける「現在のシステムの期待動作」を **Current Spec（現在仕様）** と呼びます。OpenSpec公式が「Living Spec」を固有用語として定義している、という意味ではありません。
 :::
 
 ## TL;DR
@@ -404,7 +404,7 @@ Judgment
 この比較から、AI駆動開発のartifactを6種類に分けて考えるようになりました。
 
 ~~~text
-Living Spec
+Current Spec
     =
 Current What
 
@@ -500,7 +500,7 @@ docs/working/TASK-1234/
 重要なのは、spec-deltaを新しいplanにしないことです。
 
 ~~~text
-Living Spec   → Current What
+Current Spec    → Current What
 Delta Spec    → Changed What
 PBI           → Why
 Plan          → How
@@ -527,7 +527,7 @@ OpenSpecとPlanGateのどちらが優れているかを決める比較ではあ�
 
 両方必要なら、ツールを丸ごと重ねるより、**責務の境界を決めてからartifactを接続する**方がSSoTを増やしにくいと考えています。
 
-## Living Specをいつ更新するか
+## Current Specをいつ更新するか
 
 ここはまだ仮説ですが、PlanGateへ入れるなら更新タイミングも重要です。
 
@@ -558,7 +558,7 @@ Verification / Evidence
    ↓
 C-4 / Merge
    ↓
-Living Specへ反映
+Current Specへ反映
 ~~~
 
 が自然だと考えています。
