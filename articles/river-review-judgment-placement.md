@@ -562,6 +562,10 @@ River Reviewで取り組んでいるJudgment Placementは、その問いをも�
 
 それが、現在のRiver ReviewでJudgment Placementを設計・実装している理由です。
 
+## 関連記事
+
+- [River Reviewのコア設計：AIレビューではなく「判断のインフラ」を作る](/articles/river-review-judgment-infrastructure) - Judgment Placementを含む、現行River Review全体の責務境界を整理した記事です。
+
 ## 参考
 
 - [Stop burning tokens on code review - Swizec Teller](https://swizec.com/blog/stop-burning-tokens-on-code-review)
