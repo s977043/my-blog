@@ -35,7 +35,7 @@ Review / Approval  → Judgment
 Test / Evidence    → Proof
 ~~~
 
-この記事で一番伝えたいのは、**AI駆動開発では「現在仕様」と「変更仕様」を同じものとして扱わない方がよいのではないか**、という仮説です。
+この記事で一番伝えたいのは、**AI駆動開発では「現在仕様」と「変更差分」を同じものとして扱わない方がよいのではないか**、という仮説です。
 
 OpenSpecのmain spec / delta specを手がかりに、自分の開発フローへどう取り込めるかを考えます。
 
@@ -336,7 +336,7 @@ AIが長時間・複数フェーズで変更を進めるなら、
 
 を別責務として持った方がよさそうです。
 
-## だから現在のPlanGateでは、Gapだけを埋めたい
+## 自分のフローでは、足りない責務だけを追加したい
 
 比較前は「OpenSpecをPlanGateへ導入する」という発想でした。
 
@@ -402,7 +402,7 @@ Evidence      → Proof
 
 と責務を分けます。
 
-## この比較を自分のAI開発フローへ当てはめるなら
+## 自分のAI開発フローに当てはめるための2つの問い
 
 OpenSpecとPlanGateのどちらが優れているかを決める比較ではありません。
 
@@ -491,28 +491,20 @@ docs/working/TASK-XXXX/spec-delta/auth.md
 
 を書きます。
 
-そのままPlanGateの既存フローで、
+そのままPlanGateの既存フローへ接続します。ただしCurrent Specはmerge後の別作業にはせず、同じchange / PRの中でcandidateまで作ります。
 
 ~~~text
-Plan
-→ Review
-→ Approval
+Delta Spec
+→ Plan
+→ Review / Approval
 → Implementation
-→ Verification
-→ Evidence
+→ Current Spec candidate
+→ Verification / Evidence
+→ Human C-4 / Merge
+→ Current Specとして有効化
 ~~~
 
-まで進めます。
-
-変更が確定してから、
-
-~~~text
-spec-delta/auth.md
-        ↓
-specs/auth/spec.md
-~~~
-
-へ反映します。
+この形なら、実装だけが先に正本になったり、specだけが先に正本になったりする時間を減らせます。
 
 ここで見たいのは「きれいな構造が作れるか」ではありません。
 
@@ -536,21 +528,24 @@ Change Execution History
 
 ## まとめ
 
-OpenSpecとPlanGateを比較してみて、一番大きかった発見は、
+今回一番大きかった発見は、OpenSpecとPlanGateのどちらを選ぶかではありませんでした。
 
-**どちらを使うべきかではなく、何を正本として残しているかが違う**
+**AI駆動開発で何を正本として残すのかを、責務ごとに分けて考える必要がある**ということです。
 
-ということでした。
+~~~text
+Current What   今のシステムはどう振る舞うべきか
+Changed What   今回どこを変えるのか
+Why            なぜ変えるのか
+How            どう変えるのか
+Judgment       その変更を受け入れてよいのか
+Proof          本当に満たしたのか
+~~~
 
-OpenSpecは、変更をmain specへ畳み込みながら、現在のシステム仕様を育てていきます。
+OpenSpecから持ち帰りたいのは、Current WhatとChanged Whatをmain spec / delta specで分ける考え方です。
 
-PlanGateは、Plan、Review、Approval、Evidenceを束縛しながら、今回の変更をどう実行・判断したかを残します。
+一方、自分の開発フローではWhy / How / Judgment / Proofはすでにかなり厚く持っています。だからツール一式を重ねるのではなく、**足りない責務だけを追加する**方が自然だと考えています。
 
-だから現在のPlanGateでは、OpenSpec一式を重ねるのではなく、
-
-**直接対応が薄いCurrent What / Changed Whatだけを小さく試します。**
-
-まずは1 capabilityで検証し、ACやtest-casesとの二重正本が増えないかを確かめます。
+次は1 capabilityだけでCurrent Spec / Delta Specを試し、ACやtest-casesとの二重正本、並行change、spec driftが本当に減るのかを確かめます。
 
 ## 参考
 
