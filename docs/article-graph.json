@@ -213,6 +213,31 @@
       "legacy": false
     },
     {
+      "id": "seed-20260930-openspec-plangate-living-spec",
+      "path": "article_seeds/ai-driven-development/2026-09-30-openspec-plangate-living-spec.md",
+      "title": "OpenSpecとPlanGateを比較して見えた、AI駆動開発に足りなかったLiving Spec",
+      "date": "2026-09-30",
+      "status": "draft",
+      "topics": [
+        "ai駆動開発",
+        "openspec",
+        "plangate",
+        "sdd"
+      ],
+      "source": "mixed",
+      "source_url": "https://openspec.dev/docs/schemas/spec-driven",
+      "source_ref": "https://github.com/s977043/PlanGate/tree/4995ad626825492914c6152c92f65849584dff60",
+      "evidence_status": "verified",
+      "promoted_to": [
+        "articles/openspec-plangate-living-spec.md"
+      ],
+      "article_type_candidates": [
+        "analysis",
+        "insight"
+      ],
+      "legacy": false
+    },
+    {
       "id": "seed-20260911-media-operating-system-boundaries",
       "path": "article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md",
       "title": "Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった",
@@ -354,6 +379,11 @@
       "from": "seed-20260923-content-closed-loop",
       "relation": "promoted_to",
       "to": "articles_note/new/content-closed-loop-note.md"
+    },
+    {
+      "from": "seed-20260930-openspec-plangate-living-spec",
+      "relation": "promoted_to",
+      "to": "articles/openspec-plangate-living-spec.md"
     }
   ],
   "warnings": [
