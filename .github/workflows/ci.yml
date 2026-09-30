@@ -62,6 +62,7 @@ jobs:
           npm run test:channel-metrics-link
           npm run test:note-wxr
           npm run test:reader-review-targets
+          npm run test:talk
 
       # check:pr-staleness の self-test。bash + 一時 git リポジトリを作るため
       # 他の self-test より重い（ローカル実測 6.0 秒 / exit 0）が、CI 全体の
