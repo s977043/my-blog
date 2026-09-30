@@ -1,6 +1,6 @@
 ---
 seed_id: seed-20260930-openspec-plangate-living-spec
-title: "OpenSpecとPlanGateを比較して見えた、AI駆動開発に足りなかったLiving Spec"
+title: "OpenSpecとPlanGateを比較して見えた、PlanGateに足りなかった「現在仕様」"
 date: 2026-09-30
 status: draft
 topics:
@@ -19,7 +19,7 @@ article_type_candidates:
   - insight
 ---
 
-# OpenSpecとPlanGateを比較して見えた、AI駆動開発に足りなかったLiving Spec
+# OpenSpecとPlanGateを比較して見えた、PlanGateに足りなかった「現在仕様」
 
 ## 観測事実
 
@@ -40,7 +40,7 @@ article_type_candidates:
 
 この記事では前者を System State、後者を Change Execution と呼ぶ。
 
-また、OpenSpec公式が Living Spec という固有用語を中心概念として定義しているとは扱わない。この記事では、archive後も更新され続けるmain specsを便宜上 Living Spec と呼ぶ。
+OpenSpec公式が Living Spec という固有用語を中心概念として定義しているとは扱わない。記事本文では、archive後も更新され続けるmain specsの責務を Current Spec（現在仕様）と呼ぶ。
 
 ## 違和感 / Reader Problem
 
@@ -132,7 +132,7 @@ PlanGateに追加する価値が高いのはOpenSpec一式ではなく、次の2
 
 - Zenn向けに技術設計・比較・検証を主役にする
 - OpenSpecとPlanGateの優劣記事にはしない
-- Living SpecはOpenSpec公式用語として断定せず、本記事の説明語として定義する
+- Living Specを記事の中心用語にはせず、OpenSpecのmain specsが担う責務を Current Spec（現在仕様）として説明する
 - OpenSpecにReview / Verifyが無いとは書かず、PlanGateとの違いは明示的なgovernance artifactとprovenanceの厚さとして表現する
 - 現行PlanGateではPlan Package 6要素を正とし、以前の4要素整理は記事へ持ち込まない
 
@@ -142,3 +142,4 @@ PlanGateに追加する価値が高いのはOpenSpec一式ではなく、次の2
 - 2026-09-30: 初稿レビュー・ループ1。OpenSpecのReviewを設計品質レビューと誤読させる表現を修正し、design/specsの省略条件、OpenSpec archiveとGit mergeが別関心事であることを追記
 - 2026-09-30: 初稿レビュー・ループ2。PlanGateのGapを「仕様書がない」ではなく「capability単位のCurrent System Specへ直接対応する標準artifactがない」へ限定。Delta SpecのADDED / MODIFIED / REMOVEDを追加
 - 2026-09-30: 初稿レビュー・ループ3。OpenSpec一式が不要という一般化を避け、「現在のPlanGateでは重複が大きい」に限定。System State / Change Executionの2軸で読者自身が判断できる表を追加
+- 2026-09-30: 追加レビュー・ループ2。Living SpecがOpenSpec公式用語に見える曖昧さを避け、タイトルと本文の中心語を Current Spec（現在仕様）へ変更
