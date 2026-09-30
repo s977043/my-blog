@@ -165,6 +165,8 @@ Use Claude Code hooks to block unsafe file writes.
 
 `CLAUDE.md` は「開発ルールのソース」として残しつつ、Codex向けには `AGENTS.md` に同じ意図を移す、という考え方が扱いやすいです。
 
+`AGENTS.md` にプロジェクトの文脈を移したあと、頼んでいない大規模リファクタを始めるといった判断の癖まで抑えたい場合は、`developer_instructions` との役割分担が効きます。[Codexはプロンプトではなくルールで制御する](/articles/codex-developer-instructions)で整理しています。
+
 ## Skillsを移行する
 
 Claude CodeでSkillsを使っている場合、Codex側にも近い考え方があります。
@@ -606,6 +608,8 @@ Claude CodeにはClaude Codeの良さがあり、Codex AppにはCodex Appの良�
 
 完全移行を急ぐより、`CLAUDE.md` と `AGENTS.md` を併存させ、徐々にCodex側の運用を厚くしていく方が現実的です。
 
+併存させた2つのファイルに何を書き分けるかは、[Codex と Claude Code を同じリポジトリで回す — AGENTS.md / CLAUDE.md の 2 層規約](/articles/dual-agent-repo-codex-and-claude-code)で、実際に運用している構成をもとに書きました。
+
 ## まとめ
 
 Claude CodeからCodex Appへの移行は、単なるファイル名の置換ではありません。
@@ -621,6 +625,13 @@ Claude CodeからCodex Appへの移行は、単なるファイル名の置換で
 5. Worktreeで小さく自動化を試す
 
 この順番なら、Claude Codeの運用資産を捨てずに、Codex Appの並列作業やAutomationの良さを取り込めます。
+
+## 関連記事
+
+- `CLAUDE.md` と `AGENTS.md` を併存させる構成: [Codex と Claude Code を同じリポジトリで回す — AGENTS.md / CLAUDE.md の 2 層規約](/articles/dual-agent-repo-codex-and-claude-code)
+- Codex の判断を安定させる `developer_instructions`: [Codexはプロンプトではなくルールで制御する](/articles/codex-developer-instructions)
+- `AGENTS.md` を短い地図に保つ置き場所の分け方: [AIが迷わないリポジトリ設計：長いプロンプトより先に整える4つの置き場所](/articles/ai-legible-repository-design)
+- 移行後、Codex に実装を任せる前の計画づくり: [Zenn Book: AI にコードを書かせる前にやること — PlanGate 実践ガイド](https://zenn.dev/minewo/books/plangate-guide)
 
 ## 参考リンク
 

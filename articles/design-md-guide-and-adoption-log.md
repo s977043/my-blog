@@ -44,6 +44,8 @@ Figma や Penpot のようなデザインツールはもちろん必要です。
 
 全部入りの巨大ドキュメントにするのではなく、設計と運用への入口に絞っているわけです。
 
+この「入口は短い地図にして、詳細は別ファイルへ委譲する」考え方は、リポジトリ全体の `AGENTS.md` や `CLAUDE.md` にもそのまま使えます。入口ファイル・局所ルール・強制する仕組み・正本の置き場所の分け方は、[AIが迷わないリポジトリ設計：長いプロンプトより先に整える4つの置き場所](/articles/ai-legible-repository-design)で整理しました。
+
 ## なぜ DESIGN.md が必要なのか
 
 `DESIGN.md` がない状態でも UI 実装は進められます。ただし、次の問題が起きやすくなります。
@@ -415,6 +417,11 @@ Growth Lab では、`DESIGN.md` を軽量な入口に絞り、詳細を関連ド
 
 - (1/3) 契約の持ち方: [PenpotとReactを同じ契約で運用するデザインシステムの作り方](https://zenn.dev/minewo/articles/penpot-react-design-system-contract)
 - (3/3) ツール選定（Open Design）の論拠: [Open Designでデザイン品質を上げる：Penpot契約運用とDESIGN.mdの続編](https://zenn.dev/minewo/articles/open-design-design-quality)
+
+## 関連記事
+
+- `DESIGN.md` と同じ「入口＋正本」の考え方をリポジトリ全体へ広げる: [AIが迷わないリポジトリ設計：長いプロンプトより先に整える4つの置き場所](/articles/ai-legible-repository-design)
+- AI 向けの入口を複数エージェントで共有する: [Codex と Claude Code を同じリポジトリで回す — AGENTS.md / CLAUDE.md の 2 層規約](/articles/dual-agent-repo-codex-and-claude-code)
 
 ## 関連ページ
 
