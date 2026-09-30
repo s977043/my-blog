@@ -544,9 +544,20 @@ function validateTalk(dir) {
     }
   }
 
-  if (/^-\s*(?:core_thesis_changed|audience_changed|duration_changed|takeaways_changed):\s*true\s*$/mi.test(review) && verdict === 'READY') {
-    errors.push('review.md: READY cannot have Contract Drift flags set to true');
+  const driftFields = ['core_thesis_changed', 'audience_changed', 'duration_changed', 'takeaways_changed'];
+  const driftValues = {};
+  for (const field of driftFields) {
+    const value = extractSectionBulletField(review, 'Contract Drift', field);
+    if (!['true', 'false'].includes(value)) {
+      errors.push('review.md: Contract Drift.' + field + ' must be true or false');
+    }
+    driftValues[field] = value;
   }
+
+  const attentionViolations = extractSectionBulletField(review, 'Visual Contract Compliance', 'attention_target_violations');
+  const densityViolations = extractSectionBulletField(review, 'Visual Contract Compliance', 'density_violations');
+  const slideFamilyViolations = extractSectionBulletField(review, 'Visual Contract Compliance', 'slide_family_violations');
+  const exceptionsReviewed = extractSectionBulletField(review, 'Visual Contract Compliance', 'exceptions_reviewed');
 
   if (verdict === 'READY') {
     if (provisional) errors.push('review.md: READY is invalid while brief.md contains provisional constraints');
@@ -554,6 +565,26 @@ function validateTalk(dir) {
     if (unverifiedClaims.length) errors.push('review.md: READY is invalid while Unverified Claims remain');
     if (hasBlockingFinding(review)) errors.push('review.md: READY is invalid while must/high findings remain');
     if (sourceVerification !== 'PASS') errors.push('review.md: READY requires source_verification PASS');
+
+    for (const field of driftFields) {
+      if (driftValues[field] !== 'false') {
+        errors.push('review.md: READY requires Contract Drift.' + field + ' = false');
+      }
+    }
+
+    const visualChecks = {
+      attention_target_violations: attentionViolations,
+      density_violations: densityViolations,
+      slide_family_violations: slideFamilyViolations,
+    };
+    for (const [field, value] of Object.entries(visualChecks)) {
+      if (value.toLowerCase() !== 'none') {
+        errors.push('review.md: READY requires Visual Contract Compliance.' + field + ' = none');
+      }
+    }
+    if (!['yes', 'not-applicable'].includes(exceptionsReviewed.toLowerCase())) {
+      errors.push('review.md: READY requires Visual Contract Compliance.exceptions_reviewed = yes or not-applicable');
+    }
 
     for (const axis of QUALITY_AXES) {
       if (axisStatuses[axis] !== 'PASS') {
@@ -606,7 +637,7 @@ function writeFixture(dir, valid) {
     : '# Speaker Notes\n\n## Talk Contract\n\n- audience: AIをチーム導入するエンジニア\n- duration_minutes: 10\n- core_thesis: 品質保証を生成後に閉じる\n\n## Notes\n\n### Slide 1\n\n- target_time: 1:00\n- say:\n');
 
   fs.writeFileSync(path.join(dir, 'review.md'),
-    '# Talk Review\n\n## Contract\n\n- audience: AIをチーム導入するエンジニア\n- duration_minutes: 10\n- core_thesis: 品質保証を生成後に閉じる\n\n## Verdict\n\n- status: READY\n- source_verification: PASS\n- render_verification: PASS\n- rehearsal_verification: PASS\n\n## Persona Findings\n\n| id | persona | priority | location | finding | suggestion |\n|---|---|---|---|---|---|\n\n## Quality Axes\n\n| axis | status | notes |\n|---|---|---|\n| Focus | PASS | |\n| Flow | PASS | |\n| Hierarchy | PASS | |\n| Legibility | PASS | |\n| Truthfulness | PASS | |\n| Speakability | PASS | |\n\n## Contract Drift\n\n- core_thesis_changed: false\n- audience_changed: false\n- duration_changed: false\n- takeaways_changed: false\n\n## Render Verification\n\n- status: PASS\n- artifact: deck.pdf\n- checked_at: 2026-09-30T12:00:00Z\n- method: full-page PDF inspection\n- tool_results: generic checks PASS\n- visual_review_scope: all pages at readable size\n- issues: none\n\n## Rehearsal Verification\n\n- status: PASS\n- run_count: 1\n- measured_minutes: 2\n\n## Unverified Claims\n\n- \n');
+    '# Talk Review\n\n## Contract\n\n- audience: AIをチーム導入するエンジニア\n- duration_minutes: 10\n- core_thesis: 品質保証を生成後に閉じる\n\n## Verdict\n\n- status: READY\n- source_verification: PASS\n- render_verification: PASS\n- rehearsal_verification: PASS\n\n## Persona Findings\n\n| id | persona | priority | location | finding | suggestion |\n|---|---|---|---|---|---|\n\n## Quality Axes\n\n| axis | status | notes |\n|---|---|---|\n| Focus | PASS | |\n| Flow | PASS | |\n| Hierarchy | PASS | |\n| Legibility | PASS | |\n| Truthfulness | PASS | |\n| Speakability | PASS | |\n\n## Contract Drift\n\n- core_thesis_changed: false\n- audience_changed: false\n- duration_changed: false\n- takeaways_changed: false\n\n## Visual Contract Compliance\n\n- attention_target_violations: none\n- density_violations: none\n- slide_family_violations: none\n- exceptions_reviewed: not-applicable\n\n## Render Verification\n\n- status: PASS\n- artifact: deck.pdf\n- checked_at: 2026-09-30T12:00:00Z\n- method: full-page PDF inspection\n- tool_results: generic checks PASS\n- visual_review_scope: all pages at readable size\n- issues: none\n\n## Rehearsal Verification\n\n- status: PASS\n- run_count: 1\n- measured_minutes: 2\n\n## Unverified Claims\n\n- \n');
 }
 
 function expectMutationFailure(root, name, file, from, to, expectedError) {
@@ -673,6 +704,22 @@ function selfTest() {
     '- measured_minutes: 2',
     '- measured_minutes: 3',
     'Rehearsal measured_minutes must match review.md',
+  );
+  expectMutationFailure(
+    root,
+    'visual-contract-violation',
+    'review.md',
+    '- density_violations: none',
+    '- density_violations: slide 2 is overloaded',
+    'Visual Contract Compliance.density_violations = none',
+  );
+  expectMutationFailure(
+    root,
+    'contract-drift-unknown',
+    'review.md',
+    '- audience_changed: false',
+    '- audience_changed:',
+    'Contract Drift.audience_changed must be true or false',
   );
 
   console.log('[test:talk] PASS');
