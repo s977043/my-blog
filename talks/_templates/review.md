@@ -51,10 +51,10 @@
 ## Visual Contract Compliance
 
 - design_system: talks/DESIGN.md
-- attention_target_violations:
-- density_violations:
-- slide_family_violations:
-- exceptions_reviewed:
+- attention_target_violations: none
+- density_violations: none
+- slide_family_violations: none
+- exceptions_reviewed: not-applicable
 - notes:
 
 ## Render Verification
