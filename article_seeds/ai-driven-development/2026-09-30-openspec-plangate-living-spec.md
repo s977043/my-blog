@@ -25,7 +25,7 @@ article_type_candidates:
 
 - 2026-09-30時点のOpenSpec公式 spec-driven schemaでは、proposal.md / capabilityごとのdelta spec.md / design.md / tasks.md を主なartifactとして扱う。
 - OpenSpecはarchive時にdelta specをmain specsへ反映し、openspec/specs/ を system as built のsource of truthとして扱う。
-- OpenSpecには人間がplanを確認するReview stepと /opsx:verify がある。「レビューや検証がない」とは扱わない。
+- OpenSpecには人間がplanを確認するReview stepがある。`verify` は optional workflow として存在し、default core profileには含まれない。「レビューや検証がない」とは扱わない。
 - 2026-09-30確認時のPlanGate mainは commit 4995ad626825492914c6152c92f65849584dff60。
 - PlanGateのplan phaseはPBI INPUTから plan.md / todo.md / test-cases.md を生成する。
 - PlanGateのC-3'契約ではPlan Packageを pbi-input.md / plan.md / todo.md / test-cases.md / review-self.md / review-external.md の6要素として束縛する。
@@ -85,7 +85,7 @@ PlanGateに追加する価値が高いのはOpenSpec一式ではなく、次の2
 ## 次に試すこと
 
 - [ ] 1 capabilityだけを対象にmain spec + delta specのPoCを行う
-- [ ] deltaをLiving Specへ反映するタイミングをC-4 / merge境界と整合させる
+- [ ] Current Spec candidateを実装と同じchange / PRに含め、mergeを正本化境界にできるか検証する
 - [ ] AC / test-cases / testsとの重複とdriftを検証する
 - [ ] 使えると判断できたらPlanGate側の正式なGap Analysisへ進める
 
@@ -113,7 +113,7 @@ PlanGateに追加する価値が高いのはOpenSpec一式ではなく、次の2
   - PlanGateのreview / approval / verification evidence契約
 - Hypothesis:
   - PlanGateへmain spec / delta specを追加すると、変更履歴から現在仕様を復元するコストを減らせる
-  - C-4 / merge後にdeltaをmain specへ反映すれば、PlanGateのChange ExecutionとCurrent System Stateを二重化せず接続できる
+  - deltaから生成したCurrent Spec candidateを実装と同じchange / PRに含め、mergeを境界に正本として有効化すれば、実装とCurrent Specのdriftを減らせる
 
 ### Outline
 
@@ -144,3 +144,5 @@ PlanGateに追加する価値が高いのはOpenSpec一式ではなく、次の2
 - 2026-09-30: 追加レビュー・ループ2。Living SpecがOpenSpec公式用語に見える曖昧さを避け、タイトルと本文の中心語を Current Spec（現在仕様）へ変更
 - 2026-09-30: 追加レビュー・ループ3。proposal / design / tasks の個別説明を統合して重複を削り、main spec / delta spec のGapへ早く到達する構成へ圧縮
 - 2026-09-30: 編集部ペルソナレビューを反映。メイン読者をAI駆動開発を実践する中級〜上級エンジニアへ置き、PlanGate比較ではなく「今の仕様をどこに残すか」をタイトル・冒頭・Article Planの主語へ変更
+
+- 2026-10-01: 編集部ループ1。OpenSpec verifyをoptional workflowと明記し、Current Specはmerge後に別更新するのではなく同一change / PRのcandidateをmergeで正本化する仮説へ修正
