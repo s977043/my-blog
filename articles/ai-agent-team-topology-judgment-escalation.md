@@ -253,6 +253,8 @@ Responsibility ultimately escalates to Human.
 
 ## Agent Team Topologyの中心はEscalationになる
 
+なお、`Agent Team Topologies` という名称・整理自体には既存の取り組みがあります。この記事では新しい固有名詞を発明したいわけではなく、自分のAI駆動開発環境で必要になった **実行時の責務境界** を便宜上Agent Team Topologyとして整理しています。
+
 ここまで分離すると、チーム全体は次のようになります。
 
 ```text
@@ -605,17 +607,17 @@ V0 DETERMINISTIC VERIFY
 V1 EVIDENCE VERIFY
  │
  ▼
-C-1 SELF REVIEW
+SELF REVIEW
  │
  ▼
-C-2 INDEPENDENT REVIEW
+INDEPENDENT REVIEW
  │
  ├──────────────┐
  │              │
  │       uncertainty / risk
  │              │
  │              ▼
- │          C-3 JUDGE
+ │             JUDGE
  │              │
  └───────┬──────┘
          ▼
