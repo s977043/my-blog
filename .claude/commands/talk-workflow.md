@@ -311,6 +311,8 @@ Verdict: READY / NEEDS_CHANGES / UNVERIFIED
 - Talk Contract driftなし
 - Visual Contract違反なし
 - important claims verified
+- 6 Quality AxesがすべてPASS
+- Visual Contract Complianceの違反がnone
 - timing plan成立
 - required Render Verification = PASS
 - required Rehearsal Verification = PASS
