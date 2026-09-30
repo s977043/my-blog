@@ -61,15 +61,13 @@ jobs:
           npm run test:article-graph
           npm run test:channel-metrics-link
           npm run test:note-wxr
+          npm run test:reader-review-targets
 
       # check:pr-staleness の self-test。bash + 一時 git リポジトリを作るため
       # 他の self-test より重い（ローカル実測 6.0 秒 / exit 0）が、CI 全体の
       # ジョブ時間（timeout-minutes: 10）に対しては十分軽いので常時実行する。
       # 分離しているのは、失敗時に「git fixture 起因か content 起因か」を
       # ステップ名だけで切り分けられるようにするため。
-      - name: Check article graph projection
-        run: npm run check:article-graph
-
       - name: PR staleness harness self-test
         run: npm run test:pr-staleness
 
@@ -82,10 +80,12 @@ jobs:
         run: npm run test:cleanup-pr
       - name: Merged branch sweep self-test
         run: npm run test:clean-merged-branches
+      - name: release/zenn sync self-test
+        run: npm run test:sync-release-zenn
       - name: gh account guard hook self-test
         run: npm run test:gh-guard
 
-      # npm run check は 20 個の検査を「全件実行してから失敗をまとめて報告」する
+      # npm run check は複数の検査を「全件実行してから失敗をまとめて報告」する
       # 集約ランナー。以前は && チェーンだったため、前方の 1 件が落ちると後続が
       # 一度も実行されず、1 回の CI で分かることが最初の失敗だけに縮んでいた
       # （PR #605 で check:learnings-index が初めてブロッキングになり、後続 6 件が

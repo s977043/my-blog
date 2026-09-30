@@ -14,6 +14,10 @@
 
 [`TEMPLATE.md`](./TEMPLATE.md) を起点にする。
 
+置き場所とファイル名は `article_seeds/<theme>/YYYY-MM-DD-<short-slug>.md`（既存 Seed の慣例。日付は front matter の `date` と揃える）。テーマに合うサブディレクトリが無ければ新しく作る。
+
+新しい Seed を作ったら `npm run build:article-graph` で投影（`docs/article-graph.*`）を更新し、同じ PR に含める。
+
 新規 Seed は最低限、次を持つ。
 
 - `seed_id`
@@ -26,7 +30,7 @@
 
 記事化判断・構成設計へ進めるときは `.claude/skills/tech-blog-writing/SKILL.md` を入口にする。このSkillは `CAPTURED → TRIAGED → PROMOTED → PLANNED` の上流整理と、初稿前の `Draft Article Plan` 記録までを担当し、本文生成・媒体別Review・Final Gate・公開処理は既存フローへ委譲する。
 
-初稿作成前に、`Draft Article Plan`（仮のArticle Plan）を本文末尾へ `## Draft Article Plan: <channel>/<slug>` として追記する。追記先は、テーマ別サブディレクトリ（`article_seeds/<theme>/`）に対応するSeedがあればそこ、なければ `article_seeds/` 直下のSeedとする。対応するSeedが無い場合は `TEMPLATE.md` から作る。Plan Approval後は同じPlanの見出しを `## Approved Article Plan: <channel>/<slug>` に変更する。複数媒体へ派生する場合はPlanを分け、上書きしない。初期Seedには空のPlanを置かない。
+初稿作成前に、`Draft Article Plan`（仮のArticle Plan）を本文末尾へ `## Draft Article Plan: <channel>/<slug>` として追記する。追記先は、テーマ別サブディレクトリ（`article_seeds/<theme>/`）の対応するSeedとする。対応するSeedが無い場合は、下記の置き場所の規則に従って `TEMPLATE.md` から作る。Plan Approval後は同じPlanの見出しを `## Approved Article Plan: <channel>/<slug>` に変更する。複数媒体へ派生する場合はPlanを分け、上書きしない。初期Seedには空のPlanを置かない。
 
 PR作成前の確認項目と「新規記事」の範囲は [`docs/article-lifecycle-contract.md`](../docs/article-lifecycle-contract.md#4-article-planの記録pr作成ゲート) の「4. Article Planの記録・PR作成ゲート」を正とする。
 
