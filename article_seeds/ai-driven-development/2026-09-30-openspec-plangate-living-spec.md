@@ -146,3 +146,5 @@ PlanGateに追加する価値が高いのはOpenSpec一式ではなく、次の2
 - 2026-09-30: 編集部ペルソナレビューを反映。メイン読者をAI駆動開発を実践する中級〜上級エンジニアへ置き、PlanGate比較ではなく「今の仕様をどこに残すか」をタイトル・冒頭・Article Planの主語へ変更
 
 - 2026-10-01: 編集部ループ1。OpenSpec verifyをoptional workflowと明記し、Current Specはmerge後に別更新するのではなく同一change / PRのcandidateをmergeで正本化する仮説へ修正
+
+- 2026-10-01: 編集部ループ2。PlanGateのC-3'内部詳細を本文の主線から外し、Change Executionの証拠として必要な要点だけを残して詳細を折りたたんだ
