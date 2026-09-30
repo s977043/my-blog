@@ -587,7 +587,7 @@ specs/auth/spec.md
 docs/working/TASK-XXXX/spec-delta/auth.md
 ~~~
 
-を書く。
+を書きます。
 
 そのままPlanGateの既存フローで、
 
@@ -610,7 +610,7 @@ spec-delta/auth.md
 specs/auth/spec.md
 ~~~
 
-へ反映する。
+へ反映します。
 
 ここで見たいのは「きれいな構造が作れるか」ではありません。
 
@@ -646,7 +646,7 @@ PlanGateは、Plan、Review、Approval、Evidenceを束縛しながら、今回�
 
 だから現在のPlanGateでは、OpenSpec一式を重ねるのではなく、
 
-**直接対応が薄いCurrent What / Changed Whatだけを小さく試す。**
+**直接対応が薄いCurrent What / Changed Whatだけを小さく試します。**
 
 まずは1 capabilityで検証し、ACやtest-casesとの二重正本が増えないかを確かめます。
 
