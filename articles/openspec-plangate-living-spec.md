@@ -136,74 +136,19 @@ OpenSpecのQuickstartには人間がplanを確認するReview stepがあり、�
 
 この記事は「OpenSpecにはReviewやVerifyがなく、PlanGateにはある」という比較ではありません。違うのは、PlanGateが **review / approval / evidenceを明示的なartifactと機械検証可能なprovenanceとして強く束縛している** 点です。
 
-## proposal.mdはpbi-input.mdとかなり近い
+## 重複するartifactは増やさない
 
-OpenSpecの proposal.md は、変更理由と変更内容、capability、impactを扱います。
+対応表を見ると、delta spec以外の主要artifactは既存のPlanGateとかなり重なります。
 
-PlanGateの pbi-input.md も、
+- `proposal.md` のWhy / Scopeは、`pbi-input.md` がすでに持っている
+- `design.md` のtechnical approachは、`design.md` と `plan.md` にまたがっている
+- `tasks.md` のimplementation checklistは、`todo.md` が担っている
 
-- Context / Why
-- What / Scope
-- Acceptance Criteria
-- Refinementで得た前提
+PlanGateの `plan.md` にはApproach、Files / Interfaces、Verification Plan、Risks、Stop Conditionなどもあり、`todo.md` にはdepends_on、Owner、対象ファイル、rollbackなど実行制御の情報があります。
 
-などを持ちます。
+そのため、これらをOpenSpec形式でもう一組追加すると、情報が増えるというより **Why / How / TaskのSSoTが二重化する** 懸念があります。
 
-したがって、責務としては、
-
-~~~text
-OpenSpec proposal.md
-        ≒
-PlanGate pbi-input.md
-~~~
-
-と見ています。
-
-OpenSpecを取り込むためだけにPlanGateへ proposal.md を追加すると、Why / ScopeのSSoTが二つになります。
-
-ここは増やさない方がよさそうです。
-
-## design.mdとtasks.mdも重複が大きい
-
-design.md も同じです。
-
-OpenSpecではtechnical approachやarchitecture decisionを扱います。
-
-PlanGateでは必要に応じて design.md を使いますが、plan.md 自体にも、
-
-- Approach
-- Files / Interfaces
-- Work Breakdown
-- Verification Plan
-- Risks
-- Stop Condition
-- Replan Trigger
-- Human Approval Boundary
-
-があります。
-
-そのため、
-
-~~~text
-OpenSpec design.md
-        ≒
-PlanGate design.md
-      + PlanGate plan.md の一部
-~~~
-
-と考えています。
-
-tasks.md と todo.md も近いです。
-
-~~~text
-OpenSpec tasks.md
-        ≒
-PlanGate todo.md
-~~~
-
-PlanGate側では depends_on、Owner、対象ファイル、rollbackなど、実行制御に必要な情報も持たせます。
-
-ここもOpenSpec形式へ置き換えるより、既存artifactを維持する方が自然です。
+比較して残ったのが、main specとdelta specでした。
 
 ## 最大のGapは「現在のシステム仕様」だった
 
