@@ -33,7 +33,10 @@ function escapeRegExp(value) {
 
 function extractBulletField(content, name) {
   const escaped = escapeRegExp(name);
-  const match = content.match(new RegExp('^[ \\t]*-[ \\t]*' + escaped + ':[ \\t]*(.*?)[ \\t]*
+  const match = content.match(new RegExp('^[ \\t]*-[ \\t]*' + escaped + ':[ \\t]*(.*?)[ \\t]*$', 'mi'));
+  return match ? match[1].trim() : '';
+}
+
 function extractSection(content, heading) {
   const lines = content.split(/\r?\n/);
   const target = '## ' + heading.toLowerCase();
