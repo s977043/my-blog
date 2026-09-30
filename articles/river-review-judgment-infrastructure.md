@@ -415,7 +415,7 @@ AI側のreviewerやverificationを増やすと、人間が読む情報も増え�
 
 そこで次に問題になるのがHuman Attentionです。
 
-River Reviewでは、Human Attention Architectureとして次の分離を検討・実装しています。
+River Reviewでは、Human Attention Architectureとして次の分離を設計しています。現在は既存のjudgment semanticsを変えず、display-onlyのDecision Surfaceから段階的に実装しています。
 
 ```text
 machine-side complexity
@@ -604,7 +604,7 @@ Engineering Artifacts
         ▼
 ┌────────────────────────┐
 │ Riverbed Memory        │
-│ Feedback / Evolution   │
+│ Judgment History       │
 └────────────────────────┘
         │
         └───────────────→ Next Review
