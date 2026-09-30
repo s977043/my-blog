@@ -139,3 +139,6 @@ PlanGateに追加する価値が高いのはOpenSpec一式ではなく、次の2
 ### 変更履歴
 
 - 2026-09-30: Zenn向けArticle Planを作成し、著者の「進めたい」をPlan Approvalとして記録
+- 2026-09-30: 初稿レビュー・ループ1。OpenSpecのReviewを設計品質レビューと誤読させる表現を修正し、design/specsの省略条件、OpenSpec archiveとGit mergeが別関心事であることを追記
+- 2026-09-30: 初稿レビュー・ループ2。PlanGateのGapを「仕様書がない」ではなく「capability単位のCurrent System Specへ直接対応する標準artifactがない」へ限定。Delta SpecのADDED / MODIFIED / REMOVEDを追加
+- 2026-09-30: 初稿レビュー・ループ3。OpenSpec一式が不要という一般化を避け、「現在のPlanGateでは重複が大きい」に限定。System State / Change Executionの2軸で読者自身が判断できる表を追加
