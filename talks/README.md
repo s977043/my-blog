@@ -158,6 +158,8 @@ StoryやDeckの改善でTalk Contract / Visual Contractを暗黙に変更しな�
   - AI定型表現や不自然な日本語
 - `.claude/skills/article-visual-review/SKILL.md`
   - semantic consistency / redundancy
+- `.claude/skills/talk-render-qa/SKILL.md`
+  - PDF/SVGの実測、原寸Visual Review、再利用差分
 
 登壇固有の視覚設計は `talks/DESIGN.md` / `talk-design` / `talk-slide-design` / `talk-review` を優先する。
 
@@ -196,4 +198,7 @@ Visual ContractがRender/Rehearsalを要求しているのに未実施なら最�
 - https://github.com/minorun365/minorun-marp-skill
 - https://qiita.com/minorun365/items/ed4c760f616cf3c0a958
 
-コード・テーマ・検査ツールは初回実装ではvendoringしない。
+上流のコード・テーマ・検査ツールは直接vendoringせず、既存Talk Workflowへ汎用ルールを吸収する。
+
+ローカルで上流の検査ツールを利用できる場合は `talk-render-qa` からRender Verificationへ接続する。
+黒地テーマなど作者固有のVisual Styleは任意とし、このリポジトリの標準には固定しない。
