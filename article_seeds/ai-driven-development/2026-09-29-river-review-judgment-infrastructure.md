@@ -76,7 +76,7 @@ River Reviewのコアは、チームのReview JudgmentをArtifact・Evidence・V
   - TOKIUM「Claude Code / Codexで『私のlimit、減りすぎ…？』と思ったときに見る記事」（2026-09-29）は、Codexの111セッション / 8,096リクエストの実測から、巨大なcached contextを多数turnで再読込することが消費を押し上げると分析している。記事ではContext 70%を運用目安として提示しつつ、70%自体に技術的閾値があるとはしていない（https://zenn.dev/tokium_dev/articles/ai-agent-usage-limit-long-sessions）
   - River Review README / concept / architecture: Review Judgment as Code、artifact-driven input、callerとの責務分担（https://github.com/s977043/river-review/blob/main/README.md, https://github.com/s977043/river-review/blob/main/pages/explanation/concept.md, https://github.com/s977043/river-review/blob/main/pages/explanation/river-architecture.md）
   - Context Budgetは tiny / medium / large と explicit budget、rankingは pathProximity / symbolUsage / siblingTest / commitRecency を持つ（https://github.com/s977043/river-review/blob/main/pages/reference/config-schema.md）
-  - Review Coverageは complete / partial / not_executed を持ち、現段階ではobserve-only（https://github.com/s977043/river-review/blob/main/docs/development/review-coverage-contract.md）
+  - Review Coverageは complete / partial / not_executed を持つ。Experimentalで、既定ではGate判定を変えず（Gate連携はopt-in）、反復の収束判定ではCoverageが不完全な実行を収束とみなさない（https://github.com/s977043/river-review/blob/main/docs/development/review-coverage-contract.md）
   - Riverbed Memoryは review / decision / pattern / wontfix / suppression 等を永続化できる（https://github.com/s977043/river-review/blob/main/pages/reference/riverbed-storage.md）
 - Hypothesis:
   - 長時間AI開発では、1回のレビューに何を入れるかというContext Selectionだけでなく、sessionをいつ切り、何をcheckpointとして次へ渡すかというContext Lifecycleが必要になる
