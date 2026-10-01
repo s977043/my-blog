@@ -4,6 +4,11 @@
 
 記事は入力ソースの1つにできるが、登壇資料を作るために記事作成を必須にしない。
 
+## 題材の扱い
+
+登壇も記事と同じく外部への発信なので、題材は `AGENTS.md` の §題材と媒体の対応 と §題材の出どころ に従う。
+my-blog 自体の運用・スクリプトを主題にしない。会社リポジトリで観測した事象を個人名義の登壇で事例にしない。
+
 ## 基本フロー
 
 ```text
@@ -115,13 +120,15 @@ StoryやDeckの改善でTalk Contract / Visual Contractを暗黙に変更しな�
 ### 既存メモ・調査結果から作る
 
 ```text
-/talk-workflow ai-review-flow docs/research.md
+/talk-workflow ai-review-flow ../river-review/README.md
 ```
+
+my-blog の外にある資料（個人リポジトリのドキュメントや調査メモ）を指定する。
 
 ### 既存記事から派生する
 
 ```text
-/talk-workflow ai-review-flow articles/example.md
+/talk-workflow ai-review-flow articles/river-review-judgment-placement.md
 ```
 
 記事本文をそのままスライドへ変換しない。
@@ -178,6 +185,20 @@ npm run check:talk
 Source Checkでは、required artifacts、Talk/Visual Contract、slide metadata、density、notes対応、予定時間、review verdict整合を確認する。
 
 Source Check PASSはRender PASSを意味しない。
+
+### 作成途中の talk を置く
+
+`npm run check` は `check:talk` を含むので、6 ファイルが揃っていない `talks/<slug>/` を commit すると CI が落ちる。
+作成途中の talk は `_` で始まるディレクトリ（例: `talks/_wip-ai-review-flow/`）に置く。引数なしの `check:talk` は `_` 始まりのディレクトリを検査対象から外す（`_templates` と同じ扱い）。
+
+完成したら `_` を外してリネームし、検査を通してから commit する。
+
+```bash
+git mv talks/_wip-ai-review-flow talks/ai-review-flow
+npm run check:talk -- ai-review-flow
+```
+
+途中の状態を確認したいときは `npm run check:talk -- _wip-ai-review-flow` のように明示指定すれば検査できる。
 
 ## Render / Rehearsal
 

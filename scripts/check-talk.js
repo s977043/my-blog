@@ -37,16 +37,39 @@ function extractBulletField(content, name) {
   return match ? match[1].trim() : '';
 }
 
+function createFenceTracker() {
+  let open = null;
+  return (line) => {
+    const match = line.match(/^ {0,3}(`{3,}|~{3,})/);
+    if (open) {
+      if (match && match[1][0] === open[0] && match[1].length >= open.length && !line.slice(match[0].length).trim()) {
+        open = null;
+      }
+      return true;
+    }
+    if (match) {
+      open = match[1];
+      return true;
+    }
+    return false;
+  };
+}
+
 function extractSection(content, heading) {
   const lines = content.split(/\r?\n/);
   const target = '## ' + heading.toLowerCase();
-  const start = lines.findIndex((line) => line.trim().toLowerCase() === target);
-  if (start < 0) return '';
-
+  const inFence = createFenceTracker();
   const result = [];
-  for (let i = start + 1; i < lines.length; i += 1) {
-    if (/^##\s+/.test(lines[i])) break;
-    result.push(lines[i]);
+  let inSection = false;
+
+  for (const line of lines) {
+    const fenced = inFence(line);
+    if (!fenced && /^##\s+/.test(line)) {
+      if (inSection) break;
+      inSection = line.trim().toLowerCase() === target;
+      continue;
+    }
+    if (inSection) result.push(line);
   }
   return result.join('\n');
 }
@@ -57,7 +80,7 @@ function extractSectionBulletField(content, heading, name) {
 
 function extractCoreThesis(content) {
   const section = extractSection(content, 'Core Thesis');
-  const match = section.match(/^[ \\t]*>[ \\t]*(.+?)[ \\t]*$/m);
+  const match = section.match(/^[ \t]*>[ \t]*(.+?)[ \t]*$/m);
   return match ? match[1].trim() : '';
 }
 
@@ -82,10 +105,21 @@ function extractFrontMatter(content) {
 }
 
 function parseSlides(content) {
-  return stripFrontMatter(content)
-    .split(/\r?\n---\r?\n/)
-    .map((s) => s.trim())
-    .filter(Boolean);
+  const slides = [];
+  const inFence = createFenceTracker();
+  let current = [];
+
+  for (const line of stripFrontMatter(content).split(/\r?\n/)) {
+    if (!inFence(line) && line === '---') {
+      slides.push(current.join('\n'));
+      current = [];
+    } else {
+      current.push(line);
+    }
+  }
+  slides.push(current.join('\n'));
+
+  return slides.map((s) => s.trim()).filter(Boolean);
 }
 
 function parseSlideMetadata(slide) {
@@ -294,7 +328,7 @@ function hasBlockingFinding(review) {
   return section.split(/\r?\n/).some((line) => {
     if (!/^\s*\|/.test(line)) return false;
     const cells = line.split('|').map((cell) => cell.trim());
-    const priority = cells[3] || '';
+    const priority = (cells[3] || '').toLowerCase();
     return priority === 'must' || priority === 'high';
   });
 }
@@ -484,7 +518,8 @@ function validateTalk(dir) {
   }
 
   const axisStatuses = parseQualityAxes(review, errors);
-  const unverifiedClaims = extractListItems(extractSection(review, 'Unverified Claims'));
+  const unverifiedClaims = extractListItems(extractSection(review, 'Unverified Claims'))
+    .filter((item) => !/^(?:none|なし)$/i.test(item));
   const unverifiedEvidence = hasUnverifiedEvidence(brief);
 
   const renderSectionStatus = extractSectionBulletField(review, 'Render Verification', 'status');
@@ -526,7 +561,7 @@ function validateTalk(dir) {
     if (measuredMinutes == null) {
       errors.push('review.md: rehearsal_verification PASS requires measured_minutes');
     }
-    if (duration != null && measuredMinutes > duration) {
+    if (duration != null && measuredMinutes != null && measuredMinutes > duration) {
       errors.push('review.md: measured rehearsal time exceeds talk duration');
     }
 
@@ -655,6 +690,21 @@ function expectMutationFailure(root, name, file, from, to, expectedError) {
   }
 }
 
+function expectMutationPass(root, name, file, from, to) {
+  const dir = path.join(root, name);
+  writeFixture(dir, true);
+  const filePath = path.join(dir, file);
+  const original = fs.readFileSync(filePath, 'utf8');
+  if (!original.includes(from)) {
+    throw new Error('self-test mutation source not found for ' + name);
+  }
+  fs.writeFileSync(filePath, original.replace(from, to));
+  const result = validateTalk(dir);
+  if (result.errors.length) {
+    throw new Error(name + ' should pass: ' + result.errors.join('; '));
+  }
+}
+
 function selfTest() {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'check-talk-'));
   const validDir = path.join(root, 'valid');
@@ -720,6 +770,55 @@ function selfTest() {
     '- audience_changed: false',
     '- audience_changed:',
     'Contract Drift.audience_changed must be true or false',
+  );
+
+  const thesis = extractCoreThesis('## Core Thesis\n\n> Ship it\n');
+  if (thesis !== 'Ship it') {
+    throw new Error('core thesis ending with t should be kept intact: ' + JSON.stringify(thesis));
+  }
+  expectMutationPass(
+    root,
+    'fenced-slide-separator',
+    'deck.md',
+    '# Title\n',
+    '# Title\n\n```yaml\n---\nkey: value\n```\n',
+  );
+  expectMutationPass(
+    root,
+    'fenced-section-heading',
+    'brief.md',
+    '## Takeaways\n\n',
+    '## Takeaways\n\n```markdown\n## not a heading\n```\n\n',
+  );
+  expectMutationFailure(
+    root,
+    'blocking-finding-mixed-case',
+    'review.md',
+    '|---|---|---|---|---|---|\n',
+    '|---|---|---|---|---|---|\n| F1 | Audience | High | slide 1 | unclear | fix |\n',
+    'READY is invalid while must/high findings remain',
+  );
+  expectMutationPass(
+    root,
+    'unverified-claims-none',
+    'review.md',
+    '## Unverified Claims\n\n- \n',
+    '## Unverified Claims\n\n-  None \n',
+  );
+  expectMutationPass(
+    root,
+    'unverified-claims-nashi',
+    'review.md',
+    '## Unverified Claims\n\n- \n',
+    '## Unverified Claims\n\n- なし\n',
+  );
+  expectMutationFailure(
+    root,
+    'unverified-claims-remaining',
+    'review.md',
+    '## Unverified Claims\n\n- \n',
+    '## Unverified Claims\n\n- 採用率の数値は未確認\n',
+    'READY is invalid while Unverified Claims remain',
   );
 
   console.log('[test:talk] PASS');

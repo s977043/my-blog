@@ -18,9 +18,11 @@ source pathが無い場合は、現在の会話で与えられたテーマ・要
 
 ```text
 /talk-workflow ai-review-flow
-/talk-workflow ai-review-flow docs/research.md
-/talk-workflow ai-review-flow articles/ai-review.md
+/talk-workflow ai-review-flow ../river-review/README.md
+/talk-workflow ai-review-flow articles/river-review-judgment-placement.md
 ```
+
+source には my-blog の外の資料か既存の公開記事を使う。題材は `AGENTS.md` の §題材と媒体の対応 と §題材の出どころ に従い、my-blog 自体の運用・スクリプトを主題にしない。
 
 ## 重要な原則
 
