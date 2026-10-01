@@ -215,6 +215,31 @@
       "legacy": false
     },
     {
+      "id": "seed-20260929-river-review-judgment-infrastructure",
+      "path": "article_seeds/ai-driven-development/2026-09-29-river-review-judgment-infrastructure.md",
+      "title": "River Reviewのコア設計：AIレビューではなく「判断のインフラ」を作る",
+      "date": "2026-09-29",
+      "status": "draft",
+      "topics": [
+        "ai-driven-development",
+        "river-review",
+        "code-review",
+        "context-management"
+      ],
+      "source": "mixed",
+      "source_url": "https://github.com/s977043/river-review",
+      "source_ref": "https://zenn.dev/tokium_dev/articles/ai-agent-usage-limit-long-sessions",
+      "evidence_status": "verified",
+      "promoted_to": [
+        "articles/river-review-judgment-infrastructure.md"
+      ],
+      "article_type_candidates": [
+        "analysis",
+        "insight"
+      ],
+      "legacy": false
+    },
+    {
       "id": "seed-20260930-openspec-plangate-living-spec",
       "path": "article_seeds/ai-driven-development/2026-09-30-openspec-plangate-living-spec.md",
       "title": "AI駆動開発で「今の仕様」をどう残すか。OpenSpecのDelta Specから考えた",
@@ -386,6 +411,11 @@
       "from": "seed-20260926-agent-team-topology-audit",
       "relation": "promoted_to",
       "to": "articles/ai-agent-team-topology-judgment-escalation.md"
+    },
+    {
+      "from": "seed-20260929-river-review-judgment-infrastructure",
+      "relation": "promoted_to",
+      "to": "articles/river-review-judgment-infrastructure.md"
     },
     {
       "from": "seed-20260930-openspec-plangate-living-spec",
