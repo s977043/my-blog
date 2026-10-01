@@ -38,6 +38,14 @@
 - `Agent Team Topologies` という既存の整理があるため、新規概念名の発明を主張していないことを本文へ追記した。
 - River Review接続図の `C-1 / C-2 / C-3` は説明コストが高いため、`SELF REVIEW / INDEPENDENT REVIEW / JUDGE` へ一般化した。
 
+## 公開前確認での追加修正（2026-10-01）
+
+- タイトルに検索語（Claude Code / Codex / マルチエージェント）を入れた。中心主張「どこで判断するか」は残した
+- TL;DRと「5つの原則」の並びを揃え、本文で説明していなかった `Effort != Autonomy` の節を追加した
+- 冒頭の「Sol / Astra」をモデル名と分かる表記にした。Multi-agentがbetaであることと、Codexのrole設定が `agents.<name>.config_file` 経由であることを公式情報に合わせて明記した
+- Runtime Receiptの例を、設定と実行がずれた `MISMATCH` のケースにした
+- River Reviewの節から、Zenn記事 `river-review-judgment-placement` へリンクした。張り返しは本記事の公開時に入れる（未公開記事へのリンクを公開記事に置かないため）
+
 ## 総合評価
 
 ### 良い点

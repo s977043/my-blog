@@ -1,5 +1,5 @@
 ---
-title: "AIエージェントのチーム設計は「誰に任せるか」より「どこで判断するか」だった"
+title: "AIエージェントのチーム設計は「どこで判断するか」で決める。Claude Code / Codexのマルチエージェント構成"
 emoji: "🧭"
 type: "idea"
 topics: ["ai", "claudecode", "codex", "aiagent", "architecture"]
@@ -14,7 +14,7 @@ CodexやClaude Codeで複数のAgent・Modelを使い始めた人向けの記事
 
 ## TL;DR
 
-複数Agentを使うようになって、最初は「Sonnetは実装、Opusは難しい判断」「SolはWorker、AstraはReviewer」のようにモデル名で役割を分けていました。
+複数Agentを使うようになって、最初は「Sonnetは実装、Opusは難しい判断」「GPT-6.1 SolはWorker、GPT-6 AstraはReviewer」のようにモデル名で役割を分けていました。
 
 ただ、モデル性能が更新されるたびに、この組織図も書き換えることになります。
 
@@ -52,7 +52,7 @@ Astra  -> Reviewer
 
 これは分かりやすいです。実際、現在のモデル特性とも大きく外れていません。
 
-OpenAIはGPT-6.1 Solを「Near-Astra performance for complex work at a lower cost」と位置づけ、`low / medium / high / xhigh / max` のreasoning effortを提供しています。GPT-6.1 SolはMulti-agentにも対応しています。
+OpenAIはGPT-6.1 Solを「Near-Astra performance for complex work at a lower cost」と位置づけ、`low / medium / high / xhigh / max` のreasoning effortを提供しています。GPT-6.1 SolはMulti-agent（beta）にも対応しています。
 
 AnthropicもSonnet 5.5をwell-scopedな日常タスクに強いモデル、Opus 5.5をcomplex / open-endedでsustained judgmentが必要な仕事に強いモデルとして説明しています。
 
@@ -356,6 +356,20 @@ context_policy: isolated
 
 までを論理契約にして、CodexやClaude Code側のAdapterが具体的な設定へ変換します。
 
+## 深く考えさせても、権限は広げない
+
+もう一つ分けているのが、EffortとAutonomyです。
+
+```text
+Effort != Autonomy
+```
+
+調査が行き詰まったときにeffortをHighへ上げるのは、推論に使う資源を増やす判断です。書き込みや外部への操作を許すかどうかとは別の判断です。
+
+例えばReviewerのeffortを上げても、書き込み権限は与えません。深く考えた結果、修正が必要だと分かっても、Reviewer自身は直さず、指摘として実装側へ戻します。
+
+8軸の表でEffortとAutonomyを別の行にしているのはこのためです。
+
 ## Escalation Policyを先に定義する
 
 Topologyの中心に置くのは、Agent一覧ではなくEscalation条件です。
@@ -427,7 +441,7 @@ GPT-6.1 Solの標準価格は100万tokenあたり入力$2、出力$10、GPT-6 As
 
 価格や性能が変わったらProfileを差し替えればよく、Topologyは変えないことです。
 
-Codexの設定リファレンスにも、custom roleとsubagentのdefault model / reasoning effortを指定する設定があります。
+Codexの設定リファレンスにも、subagentの既定のmodel / reasoning effortと、roleごとの設定ファイル（`agents.<name>.config_file`）を指定する項目があります。
 
 通常経路はこうします。
 
@@ -505,17 +519,19 @@ Human
 
 ```yaml
 desired:
-  role: reviewer
+  role: judge
   model: gpt-6-astra
   effort: high
 
 actual:
-  role: reviewer
-  model: gpt-6-astra
-  effort: high
+  role: judge
+  model: gpt-6.1-sol
+  effort: medium
 
-status: MATCH
+status: MISMATCH
 ```
+
+この例では、Judgeへ上げたつもりの判断が、実際には通常経路のモデルと既定のeffortで動いています。設定だけを見ていると、この差は見えません。
 
 Agent環境が複雑になるほど、「Highで実行したつもり」「別モデルへEscalateしたつもり」という設定と実行結果のズレが起き得ます。
 
@@ -572,6 +588,8 @@ Agentを増やすこと自体を目的にしないことも、v1では重要だ�
 このTopologyを考えていて、自分の中で一番つながったのがRiver Reviewでした。
 
 River Reviewでは、Reviewを単一のAIの意見として扱わず、Deterministic / Heuristic / Agentic Review / Human Judgmentという評価層に分け、Finding / Evidence / Verdictを扱っています。
+
+設計の詳細は[AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計](/articles/river-review-judgment-placement)に書きました。
 
 自分がそこで考えていたのは、単に「レビューを増やす」ことではありませんでした。
 
@@ -641,17 +659,17 @@ Human Judgment
 
 ## 5つの原則にまとめる
 
-現時点では、Agent Team Topologyのコアを次の5原則にまとめています。
+現時点では、Agent Team Topologyのコアを冒頭の5原則にまとめています。
 
 | 原則 | 意味 |
 | --- | --- |
 | Role != Model | モデル更新で組織設計を壊さない |
 | Effort != Autonomy | 深く考えさせても権限を広げない |
-| Verification != Review | EvidenceとJudgmentを分離する |
+| Verification != Review | コマンドの成功と、要件・設計の妥当性を分けて確かめる |
+| Reviewer != Judge | 問題を見つける役と、trade-offを決める役を分ける |
 | Context is a boundary | 独立性のため意図的に情報を切る |
-| Judgment escalates upward | 高い能力を判断点へ集中させる |
 
-そして、運用全体を一文で表すなら、
+この5つを通して、高い能力は判断点へ集中させます。運用全体を一文で表すなら、
 
 > **Work flows downward. Evidence flows upward. Judgment escalates upward.**
 
@@ -693,7 +711,7 @@ Human Judgment
 - [GPT-6 Astra Model | OpenAI API](https://developers.openai.com/api/docs/models/gpt-6-astra)
 - [OpenAI API Changelog](https://developers.openai.com/api/docs/changelog)
 - [Multi-agent | OpenAI API](https://developers.openai.com/api/docs/guides/responses-multi-agent)
-- [Configuration Reference | OpenAI](https://learn.chatgpt.com/docs/config-file/config-reference)
+- [Codex Configuration Reference | OpenAI](https://learn.chatgpt.com/docs/config-file/config-reference)
 - [Introducing Claude Sonnet 5.5 | Anthropic](https://www.anthropic.com/claude-sonnet-5-5)
 - [Introducing Claude Opus 5.5 | Anthropic](https://www.anthropic.com/claude-opus-5-5)
 - [Agent Team Topologies](https://eirwin.github.io/agent-team-topologies/)
