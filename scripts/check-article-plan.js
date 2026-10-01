@@ -19,7 +19,7 @@
  * ■ 判定
  *   article_seeds/ 配下に `## (Draft|Approved) Article Plan: <channel>/<slug>` がちょうど1件あり、
  *   その節に reader_problem / central_claim / out_of_scope と、Evidence Boundary の
- *   Observed か Verified の記録があること。空欄・「未確認」「確認予定」などで始まる値・
+ *   Observed か Verified の記録があること（ラベルに括弧付きの補足を付けてもよい）。空欄・「未確認」「確認予定」などで始まる値・
  *   SKILL.md の見本文言、コードブロックと HTML コメントの中身は記録に数えない。
  */
 
@@ -53,7 +53,7 @@ const TEMPLATE_TEXTS = [
   "未確認の見立て。Observed / Verified の代わりにしない",
 ];
 const FORMAT_HINT =
-  "期待する書式: `- reader_problem: …` / `- central_claim: …` / `- out_of_scope: …` と、`### Evidence Boundary` 配下の `- Observed: …` または `- Verified: …`";
+  "期待する書式: `- reader_problem: …` / `- central_claim: …` / `- out_of_scope: …` と、`### Evidence Boundary` 配下の `- Observed: …` または `- Verified: …`（`- Observed（補足）: …` のような括弧付きも可）";
 
 function git(root, args) {
   try {
@@ -257,14 +257,20 @@ const isFilled = (v) => {
   return !PLACEHOLDER.test(s) && !TEMPLATE_TEXTS.some((t) => s.startsWith(t));
 };
 
-/** `- key: 値` または値が空で直後に字下げした続き行がある形を記録ありとみなす */
-function hasField(lines, key) {
-  const re = new RegExp(`^(\\s*)[-*]?\\s*${key}\\s*[:：]\\s*(.*)$`, "i");
+/**
+ * `- key: 値` または値が空で直後に字下げした続き行がある形を記録ありとみなす。
+ * annotated なら `- key（補足）: 値` / `- key (補足): 値` も受け付けるが、補足が空や
+ * 「未確認」「確認予定」などで始まるラベルは記録に数えない。
+ */
+function hasField(lines, key, { annotated = false } = {}) {
+  const note = annotated ? "(?:\\s*[（(](?<note>[^）)]*)[）)])?" : "";
+  const re = new RegExp(`^(?<indent>\\s*)[-*]?\\s*${key}${note}\\s*[:：]\\s*(?<value>.*)$`, "i");
   for (let i = 0; i < lines.length; i += 1) {
     const m = lines[i].match(re);
     if (!m) continue;
-    if (isFilled(m[2])) return true;
-    const indent = m[1].length;
+    if (m.groups.note !== undefined && PLACEHOLDER.test(m.groups.note.trim())) continue;
+    if (isFilled(m.groups.value)) return true;
+    const indent = m.groups.indent.length;
     for (let j = i + 1; j < lines.length; j += 1) {
       const l = lines[j];
       if (!l.trim()) continue;
@@ -285,7 +291,7 @@ function missingFields(body) {
     const end = body.findIndex((l, i) => i > start && /^###?\s/.test(l));
     evidence = body.slice(start + 1, end < 0 ? undefined : end);
   }
-  if (!hasField(evidence, "Observed") && !hasField(evidence, "Verified")) {
+  if (!hasField(evidence, "Observed", { annotated: true }) && !hasField(evidence, "Verified", { annotated: true })) {
     missing.push("Evidence Boundary（Observed / Verified）");
   }
   return missing;
@@ -492,6 +498,20 @@ function selfTest() {
     eq("A-5 の見本文言のままは数えない", evidenceMissing(), true);
     withEvidence("- Observed: 未定義の挙動を筆者が再現した");
     eq("「未定義」で始まる実記録は通す", evidenceMissing(), false);
+
+    // 括弧付きラベル（全角・半角）は Evidence に数える。値と補足の未記入判定は弱めない
+    withEvidence("- Observed（2026-09 計測）: 筆者が CI の所要時間を計測した");
+    eq("全角括弧付きの Observed は数える", evidenceMissing(), false);
+    withEvidence("- Verified (公式): https://example.com の仕様を確認した");
+    eq("半角括弧付きの Verified は数える", evidenceMissing(), false);
+    withEvidence("- Observed（2026-09 計測）:\n  - 筆者が計測した");
+    eq("括弧付きラベルの続き行の値も数える", evidenceMissing(), false);
+    withEvidence("- Observed（2026-09 計測）: 確認予定\n- Verified (公式):");
+    eq("括弧付きラベルでも値が確認予定・空欄なら数えない", evidenceMissing(), true);
+    withEvidence("- Verified（未確認）: 公式ドキュメントを読む\n- Observed（）: 計測した");
+    eq("補足が未確認・空の括弧付きラベルは数えない", evidenceMissing(), true);
+    withEvidence("- Observed（2026-09 計測: 筆者が計測した");
+    eq("閉じていない括弧はラベルとして数えない", evidenceMissing(), true);
 
     // 新規記事の定義: ベースブランチに無い原稿は新規。リネームは移動元の追加日を引き継ぐ
     write("articles/backdated.md", "backdated\n");
