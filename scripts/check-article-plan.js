@@ -19,7 +19,7 @@
  * ■ 判定
  *   article_seeds/ 配下に `## (Draft|Approved) Article Plan: <channel>/<slug>` がちょうど1件あり、
  *   その節に reader_problem / central_claim / out_of_scope と、Evidence Boundary の
- *   Observed か Verified の記録があること。空欄・「未確認」「確認予定」などで始まる値・
+ *   Observed か Verified の記録があること（ラベルに括弧付きの補足を付けてもよい）。空欄・「未確認」「確認予定」などで始まる値・
  *   SKILL.md の見本文言、コードブロックと HTML コメントの中身は記録に数えない。
  */
 
@@ -53,7 +53,7 @@ const TEMPLATE_TEXTS = [
   "未確認の見立て。Observed / Verified の代わりにしない",
 ];
 const FORMAT_HINT =
-  "期待する書式: `- reader_problem: …` / `- central_claim: …` / `- out_of_scope: …` と、`### Evidence Boundary` 配下の `- Observed: …` または `- Verified: …`";
+  "期待する書式: `- reader_problem: …` / `- central_claim: …` / `- out_of_scope: …` と、`### Evidence Boundary` 配下の `- Observed: …` または `- Verified: …`（`- Observed（補足）: …` のような括弧付きも可）";
 
 function git(root, args) {
   try {
