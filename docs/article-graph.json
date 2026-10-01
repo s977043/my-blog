@@ -181,7 +181,9 @@
       "source_url": "",
       "source_ref": "https://teamtopologies.com/ai-success ; https://eirwin.github.io/agent-team-topologies/",
       "evidence_status": "observed",
-      "promoted_to": [],
+      "promoted_to": [
+        "articles/ai-agent-team-topology-judgment-escalation.md"
+      ],
       "article_type_candidates": [
         "experience",
         "insight",
@@ -206,6 +208,31 @@
       "source_ref": "https://github.com/s977043/plangate/issues/1410 ; https://code.claude.com/docs/ja/sessions ; https://code.claude.com/docs/en/best-practices",
       "evidence_status": "verified",
       "promoted_to": [],
+      "article_type_candidates": [
+        "analysis",
+        "insight"
+      ],
+      "legacy": false
+    },
+    {
+      "id": "seed-20260930-openspec-plangate-living-spec",
+      "path": "article_seeds/ai-driven-development/2026-09-30-openspec-plangate-living-spec.md",
+      "title": "AI駆動開発で「今の仕様」をどう残すか。OpenSpecのDelta Specから考えた",
+      "date": "2026-09-30",
+      "status": "draft",
+      "topics": [
+        "ai駆動開発",
+        "openspec",
+        "plangate",
+        "sdd"
+      ],
+      "source": "mixed",
+      "source_url": "https://openspec.dev/docs/schemas/spec-driven",
+      "source_ref": "https://github.com/s977043/PlanGate/tree/4995ad626825492914c6152c92f65849584dff60",
+      "evidence_status": "verified",
+      "promoted_to": [
+        "articles/openspec-plangate-living-spec.md"
+      ],
       "article_type_candidates": [
         "analysis",
         "insight"
@@ -354,6 +381,16 @@
       "from": "seed-20260923-content-closed-loop",
       "relation": "promoted_to",
       "to": "articles_note/new/content-closed-loop-note.md"
+    },
+    {
+      "from": "seed-20260926-agent-team-topology-audit",
+      "relation": "promoted_to",
+      "to": "articles/ai-agent-team-topology-judgment-escalation.md"
+    },
+    {
+      "from": "seed-20260930-openspec-plangate-living-spec",
+      "relation": "promoted_to",
+      "to": "articles/openspec-plangate-living-spec.md"
     }
   ],
   "warnings": [

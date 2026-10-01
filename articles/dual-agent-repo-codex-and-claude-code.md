@@ -179,3 +179,5 @@ A. 同じブランチを同時に触らせない運用が前提です。Codex �
 
 - AI が迷わないリポジトリ設計（入口 / 局所 / 仕組み / 正本の 4 分割）: [/articles/ai-legible-repository-design](/articles/ai-legible-repository-design)
 - 開発セッション直後の振り返りを改善フローにつなげる運用: [/articles/engineering-process-improvement-skill](/articles/engineering-process-improvement-skill)
+- AI 実装の入口ファイルを UI 実装向けに置く: [DESIGN.md 導入ガイド: AI実装のための入口・契約・検証をどう整えるか](/articles/design-md-guide-and-adoption-log)
+- Claude Code の設定を Codex App へ移す手順: [Claude CodeからCodex Appへ移行する実践ガイド](/articles/claude-code-to-codex-app-migration)
