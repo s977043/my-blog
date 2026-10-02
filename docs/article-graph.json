@@ -217,7 +217,7 @@
     {
       "id": "seed-20260929-river-review-judgment-infrastructure",
       "path": "article_seeds/ai-driven-development/2026-09-29-river-review-judgment-infrastructure.md",
-      "title": "River Reviewのコア設計：AIレビューではなく「判断のインフラ」を作る",
+      "title": "River Reviewのコア設計：AIレビューではなく、チームの判断を再現可能に残す",
       "date": "2026-09-29",
       "status": "draft",
       "topics": [

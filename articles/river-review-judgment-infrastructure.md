@@ -1,6 +1,6 @@
 ---
-title: "River Reviewのコア設計：AIレビューではなく「判断のインフラ」を作る"
-emoji: "🧭"
+title: "River Reviewのコア設計：AIレビューではなく、チームの判断を再現可能に残す"
+emoji: "🗂️"
 type: "tech"
 topics: ["ai", "aiagent", "codereview", "claudecode", "codex"]
 published: false
@@ -28,23 +28,19 @@ AIエージェントを使った開発を続けていると、問題はだんだ
 :::message
 対象は、AIコードレビューを単発のプロンプトではなく、チーム開発の仕組みとして運用したい人です。
 
-River Reviewの導入手順ではなく、なぜ現在の構造になっているのかを扱います。Judgment Placementの4層分類そのものは、既存記事「[AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計](/articles/river-review-judgment-placement)」に分けています。
+River Reviewは、Claude Code / Codexのプラグインや、GitHub Actionsから使うレビューのOSSです。この記事では導入手順ではなく、なぜ現在の構造になっているのかを扱います。Judgment Placementの4層分類そのものは、既存記事「[AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計](/articles/river-review-judgment-placement)」に分けています。
 :::
 
 ## TL;DR
 
-River Reviewのコアを圧縮すると、次の4点です。
+River Reviewのコアを圧縮すると、次の6点です。
 
 1. **Judgmentをモデルに閉じ込めない**。レビュー基準を、リポジトリ側でバージョン管理するSkillとして持つ
 2. **会話ではなくArtifactとEvidenceを境界にする**。別のエージェントやCI、別のセッションでも再利用できる形にする
 3. **生成と検証を分ける**。レビュアーの指摘を、決定論的な検証とReview Coverageで確かめる
-4. **実行の制御を抱え込まない**。River ReviewはReview Judgmentを返し、セッション・再試行・停止は呼び出し側に残す
-
-最近、長時間AIセッションのトークン消費を実測した記事を読み、この4点とは別に「Context Lifecycle」（セッションをどこで区切り、何を次へ渡すか）も考える必要があると感じるようになりました。
-
-ただし、そのLifecycleまでRiver Review Coreへ入れるつもりはありません。
-
-むしろ、**どこまでをReview Judgmentの責務にして、どこからをAgent Runtimeへ返すか**が重要だと考えています。
+4. **会話の全文ではなく判断を記憶する**。Riverbed Memoryに、次の判断を変える情報（決定・受け入れたリスク・抑制）だけを残す
+5. **人にはすべてを見せたうえで、判断が要る面に注意を集める**。Findingを隠さず、表示で注意を絞る
+6. **実行の制御を抱え込まない**。River ReviewはReview Judgmentを返し、セッション・再試行・停止は呼び出し側に残す
 
 ## きっかけは「長いSessionほどContextを読み直す」という実測だった
 
@@ -52,13 +48,7 @@ TOKIUMのhanafusayさんの記事「[Claude Code / Codexで『私のlimit、減�
 
 そこで示されていたのは、Prompt Cacheが高い割合でヒットしていても、Contextが大きくなれば1リクエストで再送する量そのものが増える、ということでした。
 
-記事では、長時間セッションへの対策として次の3つの運用が紹介されています。
-
-- Context使用率を目安にセッションを切り替える（記事では70%を、自動compactより手前で切るための運用上の目安としています）
-- テストやログ解析のような大きな出力をsubagent側へ隔離する
-- 長時間空いた巨大なセッションをそのままresumeしない
-
-特に気になったのが2つ目でした。
+記事では長時間セッションへの対策がいくつか紹介されています。特に気になったのは、テストやログ解析のような大きな出力をsubagent側へ隔離する、という運用でした。
 
 Subagentは、並列処理のためだけではありません。
 
@@ -226,7 +216,7 @@ Review Orchestrator
 
 AIレビューでは、指摘を出すことと、その指摘が正しいことは別です。
 
-River Reviewでは、レビュアーが出した指摘の候補を、別のLLMではなく決定論的なVerifierに通し、Evidenceやスコープ、スキーマのように機械で確かめられる条件を検証しています。意味判断まで決定論にはできませんが、機械で確かめられる条件まで毎回モデルに判断させる必要もありません。
+River Reviewでは、レビュアーが出した指摘の候補を、別のLLMではなく決定論的なVerifierに通し、根拠の参照先が差分に実在するか、重大度に根拠があるか、修正案があるかのように、機械で確かめられる条件を検証しています。意味判断まで決定論にはできませんが、機械で確かめられる条件まで毎回モデルに判断させる必要もありません。
 
 この考え方は前掲のJudgment Placementの記事でも扱ったので、ここではもう1つの分離であるReview Coverageを中心に書きます。
 
@@ -240,31 +230,9 @@ River Reviewでは、レビュアーが出した指摘の候補を、別のLLM�
 }
 ```
 
-になったとします。
+になったとします。これは `security issue = none` ではなく、`security review = not completed` かもしれません。
 
-これは、
-
-```text
-security issue = none
-```
-
-ではありません。
-
-```text
-security review = not completed
-```
-
-かもしれません。
-
-そこでReview Coverageでは、aggregate statusを次の3つに分けています。
-
-```text
-complete
-partial
-not_executed
-```
-
-「問題が無かった」と「確認できなかった」を同じ値にしないためです。
+そこでReview Coverageでは、aggregate statusを `complete` / `partial` / `not_executed` の3つに分けています。「問題が無かった」と「確認できなかった」を同じ値にしないためです。
 
 なお、Review Coverageは現時点ではExperimental（実験的）な扱いです。既定ではGateの判定を変えず、JSONの成果物や保存された実行記録に状態を残します。
 
@@ -313,19 +281,7 @@ Suppression
 Pattern
 ```
 
-長時間セッションの議論とつなげると、この違いはかなり重要です。
-
-```text
-Transcript Memory
-```
-
-と、
-
-```text
-Judgment Memory
-```
-
-は別物です。
+長時間セッションの議論とつなげると、この違いはかなり重要です。会話の全文を残す `Transcript Memory` と、判断を残す `Judgment Memory` は別物です。
 
 会話の全文を持ち続けなくても、判断に必要な状態がArtifactとMemoryへ残っていれば、セッションそのものは使い捨てにしやすくなります。
 
@@ -347,20 +303,7 @@ human-facing projection
 human decision
 ```
 
-ここで重要なのは、
-
-> Humanに見せる量を減らすために、Findingそのものを隠さない。
-
-ということです。
-
-考え方は、
-
-```text
-Visibility = complete
-Attention = selective
-```
-
-です。
+ここで重要なのは、**Humanに見せる量を減らすために、Findingそのものを隠さない**ことです。すべてを見られる状態は保ったまま（`Visibility = complete`）、注意を向けてもらう面だけを絞ります（`Attention = selective`）。
 
 人に見せる出力は、概念的には次の3層へ分けます。
 
@@ -458,7 +401,7 @@ rotate_after_review: true
 
 のようなセッション方針を入れるつもりはありません。
 
-ここで例に挙げた70%は、冒頭のTOKIUMの記事が示している運用上の目安で、技術的な閾値ではありません。適した値も、実行環境やモデルによって変わります。
+ここで例に挙げた70%は、冒頭で触れたTOKIUMの記事がセッションを切り替える運用上の目安として挙げている値で、技術的な閾値ではありません。適した値も、実行環境やモデルによって変わります。
 
 セッションの切り替え、圧縮、再試行、タイムアウト、停止は、Claude CodeやCodex、独自のエージェントなど、**呼び出し側（Agent Host）の実行方針**です。
 
@@ -491,7 +434,7 @@ River Reviewはループそのものを所有せず、判断材料を返す。
 
 ## River Reviewのコアを1枚にすると
 
-現在の構造をかなり圧縮すると、次のようになります。
+現在の構造をかなり圧縮すると、次のようになります。人向けの出力は、現時点では表示専用のDecision Surfaceです（§6のOrganizerは設計段階なので、図には入れていません）。
 
 ```text
 Engineering Artifacts
@@ -516,8 +459,8 @@ Engineering Artifacts
         │
         ▼
 ┌────────────────────────┐
-│ Organizer / Projection │
 │ Human Decision Surface │
+│ (display only)         │
 └────────────────────────┘
         │
         ▼
@@ -547,56 +490,11 @@ Agent Host
 
 この分離が、今のRiver Reviewのコア設計です。
 
-## AI開発で重要なのは「賢いAgent」だけではない
+## AIレビューから、チームが所有する判断へ
 
-AI開発の話では、
+River Reviewを作り始めた頃は、「AIレビューをもっと良くしたい」という問題から始まりました。今は、AIにレビューさせること自体より、チームの判断を責務ごとに分け、再現できる形で残すことのほうが中心にあると考えています。
 
-- どのモデルが一番賢いか
-- どのAgentが一番コードを書けるか
-- 何個のAgentを並列で動かすか
-
-に注目しがちです。
-
-もちろんモデルの性能は重要です。
-
-ただ、長時間AI開発を運用するほど、それだけでは足りなくなります。
-
-必要になるのは、
-
-```text
-Context
-Evidence
-Judgment
-Verification
-Memory
-Responsibility
-```
-
-の設計です。
-
-Agentが賢くなるほど、
-
-> Agentへ何を頼むか
-
-だけではなく、
-
-> Agentの判断を、どこに置き、どう検証し、どう残し、誰が最終責任を持つか
-
-が重要になります。
-
-River Reviewを作り始めた頃は、「AIレビューをもっと良くしたい」という問題から始まりました。
-
-現在、より近い表現はこれです。
-
-> **AIと一緒に開発するときの「判断のインフラ」を作る。**
-
-モデルは変わります。
-
-Agentも変わります。
-
-Hostも変わります。
-
-その中でも、
+モデルも、Agentも、Hostも変わります。その中でも、
 
 - 何を重要と考えるか
 - 何をEvidenceとするか
@@ -606,7 +504,9 @@ Hostも変わります。
 
 は、チーム自身が所有できるようにしたい。
 
-River Reviewのコアは、そのためのReview Judgment Layerです。
+River Reviewのコアは、そのためのReview Judgment as Codeです。判断をArtifact・Evidence・Verification・Memory・Human Judgmentへ分けておくことで、モデルやHostが変わっても同じ判断を再現できるようにしています。
+
+なお、River Reviewのドキュメントは、「判断のインフラ」（Engineering Judgment Infrastructure）を長期の方向と位置づけ、現在の機能の説明には使わないとしています。この記事で扱ったのは、その手前にある現在のコア設計です。
 
 ## 参考
 

@@ -201,3 +201,20 @@ L43-47の予告を削り、「きっかけ」節では3つの対策の箇条書�
 
 - タイトルには「River Review」「AIレビュー」が入っている。検索で見つけてもらうことより、指摘1の語彙を合わせるほうを優先する
 - River Review系の公開済みZenn記事（`river-review-judgment-placement` ほか）とは、上記の張り返しで回遊を作る。他媒体への導線は、追加するとしても末尾の `## 参考` だけにする
+
+## 編集部レビューの反映
+
+### ループ1（2026-10-02）
+
+指摘本文は書き換えず、反映内容だけを記録する。行番号は反映後の記事のもの。
+
+| 指摘 | 判断 | 反映内容 |
+| --- | --- | --- |
+| high: 「判断のインフラ」 | 採用（著者の指示） | タイトルを「River Reviewのコア設計：AIレビューではなく、チームの判断を再現可能に残す」に変更（L2）。結びを「AIレビューから、チームが所有する判断へ」に組み直し、コアをReview Judgment as Code（判断をArtifact・Evidence・Verification・Memory・Human Judgmentへ分ける）と言い直した（L493-507）。「判断のインフラ」はconcept.mdが長期の方向とするEngineering Judgment Infrastructureとしてだけ触れた（L509）。「Review Judgment Layer」は削除。Planのtitle・今の仮説・central_claim・Outline 7も同じ趣旨で言い換え、追記ログに記録した。Planの事実の食い違い2点（rankingの信号、ADR-012のStatus）も直した |
+| medium: TL;DRにMemoryとHuman Judgmentが無い | 採用 | TL;DRを6点にし、4点目に記憶、5点目に人の判断を足した（L36-43） |
+| medium: 全体図のOrganizer | 採用 | 図の箱を「Human Decision Surface / (display only)」に変え（L461-464）、前置きでOrganizerは設計段階なので図に入れていないと注記した（L437） |
+| medium: 使い方が一言もない | 採用 | `:::message` に「Claude Code / Codexのプラグインや、GitHub Actionsから使うレビューのOSS」と足した（L31）。CLIとコマンドは書いていない |
+| low: 「きっかけ」節が長い | 採用 | TL;DR直後の予告3段落を削除し、3つの対策の箇条書きをsubagentへの隔離の1点に絞った（L51）。70%の出典に触れる§7の文は、箇条書き削除に合わせて言い回しを調整した（L404） |
+| low: Verifierの「スキーマ」 | 採用 | 「根拠の参照先が差分に実在するか、重大度に根拠があるか、修正案があるか」に置き換えた（L219。提案文の英語名詞を和語にし、言語密度の警告を増やさないようにした） |
+| low: 1行段落・単語だけのコードブロック、結びの3回目の要約 | 採用 | `security issue = none` / `complete` 等 / `Transcript Memory` / `Visibility = complete` をインラインコードで本文へ入れた（L233-235, L284, L306）。結びの「賢いAgent」の一般論（旧L550-585）を削除し、経緯とチームが所有したい5項目に絞った（L493-509） |
+| low: emojiがtopology記事と同じ | 採用 | `🧭` から、`articles/` で未使用の `🗂️` に変更（L3） |
