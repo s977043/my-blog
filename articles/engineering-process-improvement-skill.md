@@ -434,3 +434,4 @@ A. リポジトリ配下の `.claude/skills/` に project-level として配置�
 
 - 実装前後の 2 層ガード設計: [AI 駆動開発の 2 層ガード設計：PlanGate と River Review で実装前後を守る](/articles/ai-dev-guardrail-plangate-river-reviewer)
 - AI が読みやすいリポジトリ設計: [AI が迷わないリポジトリ設計：長いプロンプトより先に整える 4 つの置き場所](/articles/ai-legible-repository-design)
+- 学びの記録と訂正の残し方: [推測で書いた学びが次の罠になった — AGENT_LEARNINGS.md の運用設計](/articles/agent-learnings-md-operation)
