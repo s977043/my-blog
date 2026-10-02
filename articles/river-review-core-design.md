@@ -1,5 +1,5 @@
 ---
-title: "River Reviewのコア設計：AIレビューではなく、チームの判断を再現可能に残す"
+title: "River Reviewのコア設計：AIレビューではなく、チームの判断を再現しやすい形で残す"
 emoji: "🗂️"
 type: "tech"
 topics: ["ai", "aiagent", "codereview", "claudecode", "codex"]
@@ -23,7 +23,7 @@ AIエージェントを使った開発を続けていると、問題はだんだ
 
 > チームが「何を確認し、何をEvidenceとして、どのように判断するか」を、モデルの中ではなくリポジトリ側の資産として持つ。
 
-この記事では、現在のRiver Reviewを機能一覧ではなく、**判断・Evidence・文脈の選び方・検証・記憶・人の判断の責務境界**として整理します。
+この記事では、現在のRiver Reviewを機能一覧ではなく、**判断をArtifact・Evidence・Verification・Memory・Human Judgmentへ分ける責務境界**として整理します。文脈の選び方は、その周りの責務として扱います。
 
 :::message
 対象は、AIコードレビューを単発のプロンプトではなく、チーム開発の仕組みとして運用したい人です。
@@ -44,7 +44,9 @@ River Reviewのコアを圧縮すると、次の6点です。
 
 ## きっかけは「長いセッションほど文脈を読み直す」という実測だった
 
-TOKIUMのhanafusayさんの記事「[Claude Code / Codexで『私のlimit、減りすぎ…？』と思ったときに見る記事](https://zenn.dev/tokium_dev/articles/ai-agent-usage-limit-long-sessions)」は、Codexの実ログ111セッション・8,096リクエストを集計しています。そこで示されていたのは、Prompt Cacheが高い割合でヒットしていても、文脈が大きくなれば1リクエストで再送する量そのものが増える、ということでした。
+TOKIUMのhanafusayさんの記事「[Claude Code / Codexで『私のlimit、減りすぎ…？』と思ったときに見る記事](https://zenn.dev/tokium_dev/articles/ai-agent-usage-limit-long-sessions)」は、Codexの実ログ111セッション・8,096リクエストを集計しています。
+
+そこで示されていたのは、Prompt Cacheが高い割合でヒットしていても、文脈が大きくなれば1リクエストで再送する量そのものが増える、ということでした。
 
 特に気になったのは、対策の1つとして紹介されていた、テストやログ解析のような大きな出力をサブエージェント側へ隔離する運用でした。サブエージェントは並列処理のためだけでなく、大量の文脈をメインのエージェントへ入れないための境界にもなります。
 
@@ -65,11 +67,11 @@ River Reviewの出発点は、レビューの判断基準をモデルやプロ�
 - **どの条件では指摘しないか**: 同じ差分の中で定義も追加されている参照。定義が見つからなくても、コード生成などで作られる可能性を消せないときは、指摘ではなく質問として返す
 - **回帰をどう確かめるか**: 「存在しないヘルパーを呼んでいる」fixtureと、「同じ変更の中で定義している」誤検知の例を、Skillと一緒に置いている
 
-見る対象・根拠・指摘しない条件は1つのファイルに書かれ、このSkillはRiver Reviewのリポジトリで、fixtureと一緒にバージョン管理されています。
+見る対象・根拠・指摘しない条件は1つのファイルにまとまっています。
 
 チームが自分の基準を足すときも、Skillやプロジェクト固有のレビュールール（`.river/rules.md`）を自分のリポジトリに置き、コードと一緒に管理できます。モデルは入れ替わっても構いません。**何を重要だと考えるかは、チーム側に残す。**
 
-これがReview Judgment as Codeで、River Reviewのドキュメントも中核の考え方としています。「判断のインフラ」（Engineering Judgment Infrastructure）という語は、同じドキュメントでは現在の機能ではなく長期の方向を指すものとされています。
+これがReview Judgment as Codeで、River Reviewのコンセプトのページ（`pages/explanation/concept.md`）も中核の考え方としています。「判断のインフラ」（Engineering Judgment Infrastructure）という語は、同じドキュメントでは現在の機能ではなく長期の方向を指すものとされています。
 
 判断基準の中身や、判断を決定論的なチェックからAIレビュー、人の判断まで4層に置き分ける考え方は「[AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計](/articles/river-review-judgment-placement)」で詳しく書きました。この記事では、この判断基準を中心に置いたとき、その周りの責務をどう分けているかを扱います。
 
@@ -284,7 +286,7 @@ AIの出力が増えたからといって、その上に「さらに賢いAIの�
 
 現在のRiver Reviewは、1回のレビューで何を文脈へ入れるかを、Context Budget、ranking、Skillの段階的な読み込みで制御できるようになりました。しかし、1つの開発セッションをいつ終えるかは別の責務です。
 
-長時間のエージェント実行では、実装・テスト・レビュー・修正が何周も続き、途中で区切りを記録し、文脈を圧縮するかセッションを切り替えて、Artifactから再開することになります。こうしたContext Lifecycleは必要だと考えていますが、River Reviewのコアへ次のようなセッション方針を入れるつもりはありません。
+長時間のエージェント実行では、実装・テスト・レビュー・修正が何周も続き、途中で区切りを記録し、文脈を圧縮するかセッションを切り替えて、Artifactから再開することになります。こうしたContext Lifecycleは必要だと考えていますが、River Reviewのコアへセッション方針を入れるつもりはありません。たとえば次のような設定です（実在する設定ではなく、説明のための仮の例です）。
 
 ```yaml
 soft_context_limit: 70%
@@ -381,12 +383,13 @@ River Reviewを作り始めた頃は、「AIレビューをもっと良くした
 
 は、チーム自身が所有できるようにしたい。
 
-River Reviewのコアは、そのためのReview Judgment as Codeです。判断をArtifact・Evidence・Verification・Memory・Human Judgmentへ分けておくことで、モデルや呼び出し側が変わっても、同じ基準・同じEvidenceで判断を再現しやすくしています。
+River Reviewのコアは、そのためのReview Judgment as Codeです。判断をArtifact・Evidence・Verification・Memory・Human Judgmentへ分け、文脈の選び方はその周りの責務として扱います。こうしておくことで、モデルや呼び出し側が変わっても、同じ基準・同じEvidenceで判断を再現しやすくしています。
 
 ## 参考
 
 - [River Review（GitHub）](https://github.com/s977043/river-review)
 - [River Review README](https://github.com/s977043/river-review/blob/main/README.md)
+- [River Reviewのコンセプト](https://github.com/s977043/river-review/blob/main/pages/explanation/concept.md)
 - [River Reviewのアーキテクチャ](https://github.com/s977043/river-review/blob/main/pages/explanation/river-architecture.md)
 - [設定スキーマ（Context Budget / ranking）](https://github.com/s977043/river-review/blob/main/pages/reference/config-schema.md)
 - [Review Coverage Contract](https://github.com/s977043/river-review/blob/main/docs/development/review-coverage-contract.md)

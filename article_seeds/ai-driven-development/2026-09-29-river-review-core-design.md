@@ -1,6 +1,6 @@
 ---
 seed_id: seed-20260929-river-review-core-design
-title: "River Reviewのコア設計：AIレビューではなく、チームの判断を再現可能に残す"
+title: "River Reviewのコア設計：AIレビューではなく、チームの判断を再現しやすい形で残す"
 date: 2026-09-29
 status: draft
 topics:
@@ -19,7 +19,7 @@ article_type_candidates:
   - insight
 ---
 
-# River Reviewのコア設計：AIレビューではなく、チームの判断を再現可能に残す
+# River Reviewのコア設計：AIレビューではなく、チームの判断を再現しやすい形で残す
 
 ## 観測事実
 
