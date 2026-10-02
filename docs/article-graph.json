@@ -265,6 +265,33 @@
       "legacy": false
     },
     {
+      "id": "seed-20261001-agent-execution-policy-evidence",
+      "path": "article_seeds/ai-driven-development/2026-10-01-agent-execution-policy-evidence.md",
+      "title": "AIエージェントは「よく考える」より「証拠を取りに行く」で設計する",
+      "date": "2026-10-01",
+      "status": "published",
+      "topics": [
+        "ai-driven-development",
+        "agent-execution-policy",
+        "empirical-process",
+        "claude-code",
+        "codex"
+      ],
+      "source": "mixed",
+      "source_url": "https://developers.openai.com/api/docs/guides/latest-model",
+      "source_ref": "article_seeds/ai-driven-development/2026-09-26-agent-team-topology-audit.md",
+      "evidence_status": "verified",
+      "promoted_to": [
+        "https://x.com/mine_take/status/2105518834686026114"
+      ],
+      "article_type_candidates": [
+        "experience",
+        "analysis",
+        "insight"
+      ],
+      "legacy": false
+    },
+    {
       "id": "seed-20260911-media-operating-system-boundaries",
       "path": "article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md",
       "title": "Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった",
@@ -421,6 +448,11 @@
       "from": "seed-20260930-openspec-plangate-living-spec",
       "relation": "promoted_to",
       "to": "articles/openspec-plangate-living-spec.md"
+    },
+    {
+      "from": "seed-20261001-agent-execution-policy-evidence",
+      "relation": "promoted_to",
+      "to": "https://x.com/mine_take/status/2105518834686026114"
     }
   ],
   "warnings": [
