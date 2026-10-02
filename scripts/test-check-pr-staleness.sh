@@ -24,7 +24,8 @@ run_check() { # $1=repo $2=branch → CHECK_STATUS / CHECK_OUT に格納
 
 assert() { # $1=ケース名 $2=期待exit $3=実exit $4=出力に含むべき文字列 $5=出力
   local name="$1" want="$2" got="$3" needle="$4" out="$5"
-  if [ "$got" = "$want" ] && echo "$out" | grep -q "$needle"; then
+  # echo | grep -q は pipefail 下で grep の早期終了が SIGPIPE(141) になり、一致しても偽になる
+  if [ "$got" = "$want" ] && grep -q -- "$needle" <<<"$out"; then
     echo "PASS: $name (exit=$got, '$needle' を検出)"
   else
     echo "FAIL: $name — 期待 exit=$want & 出力に '$needle' / 実際 exit=$got"
