@@ -2,7 +2,7 @@
 seed_id: seed-20261001-agent-execution-policy-evidence
 title: "AIエージェントは「よく考える」より「証拠を取りに行く」で設計する"
 date: 2026-10-01
-status: seed
+status: published
 topics:
   - ai-driven-development
   - agent-execution-policy
@@ -14,6 +14,7 @@ source_url: https://developers.openai.com/api/docs/guides/latest-model
 source_ref: article_seeds/ai-driven-development/2026-09-26-agent-team-topology-audit.md
 evidence_status: verified
 promoted_to:
+  - https://x.com/mine_take/status/2105518834686026114
 article_type_candidates:
   - experience
   - analysis
@@ -227,6 +228,12 @@ X向けでは、中心主張を次の2段に絞る。
 
 ## 追記ログ
 
+### 2026-10-02
+
+- 2026-10-01 13:43 JST に X の記事として公開済み（「AIに『よく考えろ』と言うより、『証拠を取りに行け』と設計する」、投稿 https://x.com/mine_take/status/2105518834686026114 ）。status を published にし、promoted_to に投稿 URL を記録した
+- 作業を止めた元セッションの PR #743 を引き継ぎ、Draft Article Plan を契約の書式（`- key: 値` と `### Evidence Boundary` 配下の `- Observed:` / `- Verified:`）へ直した。内容は変えていない
+- 元の PR にあった「公開前に一次体験を1件追加する」は、追加しないまま公開された
+
 ### 2026-10-01
 
 - アジャイルの経験主義をAIエージェントの実行原則として再解釈
@@ -238,31 +245,16 @@ X向けでは、中心主張を次の2段に絞る。
 
 ## Draft Article Plan: x/agent-execution-policy-evidence
 
-### reader_problem
-
-Claude Code / Codexをある程度使い込み、「どうプロンプトを書くか」から「どうエージェントを設計するか」へ関心が移り始めたエンジニア / Tech Lead / EMが、AIの不確実性への対処を「もっと考えさせる」以外の再現可能な設計として整理できていない。
-
-### central_claim
-
-**モデルが賢くなるほど、細かな思考手順ではなく、不確実性を証拠で解消するAgent Execution Policyを設計することが重要になる。**
+- reader_problem: Claude Code / Codexをある程度使い込み、「どうプロンプトを書くか」から「どうエージェントを設計するか」へ関心が移り始めたエンジニア / Tech Lead / EMが、AIの不確実性への対処を「もっと考えさせる」以外の再現可能な設計として整理できていない。
+- central_claim: モデルが賢くなるほど、細かな思考手順ではなく、不確実性を証拠で解消するAgent Execution Policyを設計することが重要になる。
+- out_of_scope: Claude CodeとCodexの優劣比較、特定モデルのベンチマーク順位、「このPolicyだけで必ず品質が上がる」という一般化、Chain-of-Thoughtの内部挙動の推測、Scrumそのものの解説
 
 ### Evidence Boundary
 
-#### Observed
-
-- AIへ追加推論を要求するより、コード検索・テスト・ログ確認など外部から確認可能な手段へ切り替えた方が前進しやすい場面がある
-- Agent Team Topology / PlanGate / River Review / E2E Verificationを検討する中で、Verification / Review / Judgmentの責務分離が重要になった
-
-#### Verified
-
-- OpenAI最新モデル向けガイダンスの leaner prompts / verification の考え方
-- OpenAI Agent evalsのtrace単位評価
-- Anthropicのagent tool use / evaluation / improvementに関する公式Engineering記事
-
-### out_of_scope
-
-- Claude CodeとCodexの優劣比較
-- 特定モデルのベンチマーク順位
-- 「このPolicyだけで必ず品質が上がる」という一般化
-- Chain-of-Thoughtの内部挙動の推測
-- Scrumそのものの解説
+- Observed:
+  - AIへ追加推論を要求するより、コード検索・テスト・ログ確認など外部から確認可能な手段へ切り替えた方が前進しやすい場面がある
+  - Agent Team Topology / PlanGate / River Review / E2E Verificationを検討する中で、Verification / Review / Judgmentの責務分離が重要になった
+- Verified:
+  - OpenAI最新モデル向けガイダンスの leaner prompts / verification の考え方
+  - OpenAI Agent evalsのtrace単位評価
+  - Anthropicのagent tool use / evaluation / improvementに関する公式Engineering記事
