@@ -47,6 +47,9 @@
 #   MIN_LINE_LEN           一致判定に使う行の最小文字数（デフォルト: 4。短い定型行のノイズ除去）
 #   MAIN_LOOKBACK          「main の直近追加行」を集める遡りコミット数（デフォルト: 30）
 #   RESURRECT_MIN          lookback 由来の一致を巻き戻しに数えるのに必要な「復活行」数（デフォルト: 1）
+#   NET_TIMEOUT            gh pr view / git fetch それぞれの打ち切り秒数（デフォルト: 15）。
+#                          ネットワーク待ちや認証の対話待ちで止まると、判定が返らないまま
+#                          呼び出し側のタイムアウトまで占有する（2026-10-01 #732 で 30 分）
 
 set -euo pipefail
 
@@ -64,6 +67,7 @@ ROLLBACK_FAIL_MATCHES="${ROLLBACK_FAIL_MATCHES:-2}"
 MIN_LINE_LEN="${MIN_LINE_LEN:-4}"
 MAIN_LOOKBACK="${MAIN_LOOKBACK:-30}"
 RESURRECT_MIN="${RESURRECT_MIN:-1}"
+NET_TIMEOUT="${NET_TIMEOUT:-15}"
 
 TAG="[check-pr-staleness]"
 
@@ -78,6 +82,18 @@ warn_exit() {
   exit 0
 }
 
+# 外部 I/O（gh / git fetch）を NET_TIMEOUT 秒で打ち切る。stdin を切り、対話プロンプトも無効にする
+run_net() {
+  if command -v timeout >/dev/null 2>&1; then
+    timeout "$NET_TIMEOUT" "$@" </dev/null
+  elif command -v gtimeout >/dev/null 2>&1; then
+    gtimeout "$NET_TIMEOUT" "$@" </dev/null
+  else
+    perl -e 'alarm shift; exec @ARGV or die "exec failed: $!\n"' "$NET_TIMEOUT" "$@" </dev/null
+  fi
+}
+export GIT_TERMINAL_PROMPT=0 GH_PROMPT_DISABLED=1
+
 [ $# -ge 1 ] || usage
 TARGET="$1"
 
@@ -87,8 +103,8 @@ if [[ "$TARGET" =~ ^[0-9]+$ ]]; then
   if ! command -v gh >/dev/null 2>&1; then
     warn_exit "gh CLI が無く PR #$TARGET を解決できません。ブランチ名で再実行してください"
   fi
-  PR_JSON=$(gh pr view "$TARGET" --json headRefName,state,baseRefName 2>/dev/null) \
-    || warn_exit "gh pr view #$TARGET に失敗（存在しない/権限/ネットワーク）。ブランチ名で再実行してください"
+  PR_JSON=$(run_net gh pr view "$TARGET" --json headRefName,state,baseRefName 2>/dev/null) \
+    || warn_exit "gh pr view #$TARGET に失敗（存在しない/権限/ネットワーク/${NET_TIMEOUT}秒で打ち切り）。ブランチ名で再実行してください"
   command -v jq >/dev/null 2>&1 \
     || warn_exit "jq が無く PR JSON を解析できません。ブランチ名で再実行してください"
   STATE=$(jq -r '.state // empty' <<<"$PR_JSON")
@@ -106,8 +122,8 @@ fi
 
 # --- 2. fetch と ref 解決 --------------------------------------------------
 if [ "$NO_FETCH" != "1" ]; then
-  git fetch -q "$REMOTE" "$BASE_BRANCH" "$BRANCH" 2>/dev/null \
-    || echo "$TAG ⚠️ fetch に失敗。ローカル ref で判定を続行（結果が古い可能性）" >&2
+  run_net git fetch -q "$REMOTE" "$BASE_BRANCH" "$BRANCH" 2>/dev/null \
+    || echo "$TAG ⚠️ fetch に失敗（${NET_TIMEOUT}秒で打ち切りを含む）。ローカル ref で判定を続行（結果が古い可能性）" >&2
 fi
 
 resolve_ref() { # $1=remote候補 $2=local候補
