@@ -1,4 +1,4 @@
-# articles/river-review-judgment-infrastructure.md の記事レビュー
+# articles/river-review-core-design.md の記事レビュー
 
 > Zennカテゴリー: Tech
 > 構成タイプ: 設計 / アーキテクチャ
@@ -11,7 +11,7 @@ River Reviewを初めて知る読者に、機能一覧ではなく「判断の�
 
 ## Article Plan
 
-- Plan: `article_seeds/ai-driven-development/2026-09-29-river-review-judgment-infrastructure.md`（`## Draft Article Plan: zenn/river-review-judgment-infrastructure`、`approved_at` は空）
+- Plan: `article_seeds/ai-driven-development/2026-09-29-river-review-core-design.md`（`## Draft Article Plan: zenn/river-review-core-design`、`approved_at` は空）
 - Why（`reader_problem`）/ What（`central_claim`）/ 一次情報（`Evidence Boundary` の Observed・Verified）/ 書かない範囲（`out_of_scope`）の4項目は揃っている
 - Planの記述で、現行実装と食い違う点が2つある。どちらも本文は正しく書けているので、記事の公開ブロッカーではない。Planの更新は著者の判断で別コミットにする
   - Verified「rankingは pathProximity / symbolUsage / siblingTest / commitRecency を持つ」: 設定で重みを指定できるのは4つだが、パイプライン（`src/lib/repo-context.mjs`）が計算するのは `pathProximity` だけ
@@ -218,3 +218,24 @@ L43-47の予告を削り、「きっかけ」節では3つの対策の箇条書�
 | low: Verifierの「スキーマ」 | 採用 | 「根拠の参照先が差分に実在するか、重大度に根拠があるか、修正案があるか」に置き換えた（L219。提案文の英語名詞を和語にし、言語密度の警告を増やさないようにした） |
 | low: 1行段落・単語だけのコードブロック、結びの3回目の要約 | 採用 | `security issue = none` / `complete` 等 / `Transcript Memory` / `Visibility = complete` をインラインコードで本文へ入れた（L233-235, L284, L306）。結びの「賢いAgent」の一般論（旧L550-585）を削除し、経緯とチームが所有したい5項目に絞った（L493-509） |
 | low: emojiがtopology記事と同じ | 採用 | `🧭` から、`articles/` で未使用の `🗂️` に変更（L3） |
+
+### ループ2（2026-10-02）
+
+ループ2の指摘は編集部から直接受けたもので、上の指摘コメントには含まれない。行番号は反映後の記事（`articles/river-review-core-design.md`）のもの。
+
+| 指摘 | 判断 | 反映内容 |
+| --- | --- | --- |
+| high H1: 中心主張と節の分量 | 採用 | §1 に同梱Skill `hallucinated-reference` の例を足し、何を見るか・何をEvidenceとするか・どの条件では指摘しないか・fixtureでの回帰確認を示した（L59-64。river-review の `skills/midstream/hallucinated-reference/` の SKILL.md と fixtures 2件で確認）。§7 のフロー図2つは文章にした（L291）。「きっかけ」節は3段落に縮めた（L45-51）。節の行数（見出しから次の見出しの前まで）は §1 が23行、「きっかけ」が8行、§7 が46行（反映前は §1 が14行、「きっかけ」が26行、§7 が94行） |
+| high H2: 「同じ判断を再現できる」は強すぎる | 採用 | 「同じ基準・同じEvidenceで判断を再現しやすくしています」に変えた（L403） |
+| medium M1: TL;DR 4 の「だけ」、Riverbed の一覧 | 採用 | 「だけ」を外した（L41）。分類の一覧の前に「typeではなく、残したい情報の分類として」と入れた（L225） |
+| medium M2: Memory への登録 | 採用 | 全体図の前置きに、Memoryへの登録はsuppressionの追加やeval結果の保存のような明示的な操作だと添えた（L333。`pages/reference/riverbed-storage.md` で確認） |
+| medium M3: slug の変更 | 採用 | `river-review-judgment-infrastructure` から `river-review-core-design` へ変更。記事・Seed・本ファイルを `git mv` し、Seed の seed_id・promoted_to・Plan の見出しと slug、本ファイル冒頭の対象パスとPlanのパスを更新した。article-graph を再生成した。旧 slug は Seed 追記ログの変更記録にだけ残る |
+| medium M4: 結びの Engineering Judgment Infrastructure | 採用（§1 へ移動） | 結びの段落を削除し、§1 の Review Judgment as Code の説明の直後へ移した（L72）。記事は現在のコアの話で終わる |
+| medium M5: §6 の英語名詞と表記の揺れ | 採用 | §6 の地の文を和語に寄せた（判断面、判定役、表示の区分など。L238-282）。英語は図と固有名に残した。表記は「サブエージェント」「エージェント」「人」「レビュー」にそろえた（Agent Host は呼び出し側の別名として括弧で残す） |
+| low L1: 定型表現 | 採用 | 「ここで重要なのは」「次に重要なのが」「かなり重要」をすべて言い換えた。太字だけの1行段落は5か所から2か所（L68, L199）に減らした |
+| low L2: 本筋から外れた段落 | 採用 | Review Team の節末尾の2段落を削除した |
+| low L3: `:::message` の重複案内 | 採用 | Judgment Placement 記事への案内の1文を削除した（L31） |
+| low L4: 入力の例 | 採用 | 図を「plan / diff / tests / JUnit / 既存レビューコメント」にした（L84-89） |
+| low L5: Verifier の重大度 | 採用 | 「Skillが宣言した重大度を超えていないか」にした（L173。`verifier.mjs` の `checkSeverityJustified` で確認） |
+| low L6: 「かなり制御できる」 | 採用 | 「Context Budget、ranking、Skillの段階的な読み込みで制御できる」にした（L287） |
+| （ループ2の副作用への対応） | 自主対応 | 段落を統合したことで言語密度の警告が15件に増えたため、長い段落を分け、地の文の英語名詞（storage contract、preset、suppression、eval など）を和語にして8件まで戻した。§1 は Skill の例を足したことで敬体と常体の混在の警告が出たため、常体の文を敬体に寄せて解消した |

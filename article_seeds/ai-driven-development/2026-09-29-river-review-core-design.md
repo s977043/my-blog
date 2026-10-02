@@ -1,5 +1,5 @@
 ---
-seed_id: seed-20260929-river-review-judgment-infrastructure
+seed_id: seed-20260929-river-review-core-design
 title: "River Reviewのコア設計：AIレビューではなく、チームの判断を再現可能に残す"
 date: 2026-09-29
 status: draft
@@ -13,7 +13,7 @@ source_url: https://github.com/s977043/river-review
 source_ref: "https://zenn.dev/tokium_dev/articles/ai-agent-usage-limit-long-sessions"
 evidence_status: verified
 promoted_to:
-  - articles/river-review-judgment-infrastructure.md
+  - articles/river-review-core-design.md
 article_type_candidates:
   - analysis
   - insight
@@ -55,11 +55,11 @@ River Reviewのコアは、Review Judgment as Codeを中心に、チームのRev
 
 - [ ] 公開時に `articles/river-review-judgment-placement.md` から本記事へ張り返す
 
-## Draft Article Plan: zenn/river-review-judgment-infrastructure
+## Draft Article Plan: zenn/river-review-core-design
 
 - approved_at:
 - channel: zenn
-- slug: river-review-judgment-infrastructure
+- slug: river-review-core-design
 - article_type: design / architecture
 - reader_problem: AI支援開発でレビューのSkill・Reviewer・Verifier・Coverage・Memoryなどを増やしていくと、個別機能は説明できても「何をコア責務として残し、何をAgent Hostへ出すべきか」が分かりにくくなる。River Reviewを初めて知る読者も、機能一覧だけでは設計意図をつかみにくい
 - central_claim: River ReviewのコアはAIにレビューさせることではなく、Review Judgment as Codeを中心に、チームのReview JudgmentをArtifact・Evidence・Verification・Memory・Human Judgmentへ分離し、再現可能な形で保持することにある
@@ -85,12 +85,12 @@ River Reviewのコアは、Review Judgment as Codeを中心に、チームのRev
 ### Outline
 
 1. 長時間セッションの記事を読んで、Contextの「量」よりLifecycleの境界が気になった
-2. River Reviewの中心はReview Judgment as Code。モデルではなくチーム側に判断基準を残す
+2. River Reviewの中心はReview Judgment as Code。モデルではなくチーム側に判断基準を残す。同梱Skillを1つ例に、何を見るか・何をEvidenceとするか・どの条件では指摘しないか・fixtureでの回帰確認を示す。「判断のインフラ」（Engineering Judgment Infrastructure）は長期の方向として、ここでだけ触れる
 3. ConversationではなくArtifactとEvidenceを境界にする
 4. Context Engineeringは「全部読む」ではなく判断に必要な情報を選ぶ。Budget / Progressive Disclosure / Review Teamの分離を説明する
 5. 生成と検証を分ける。Reviewer → Deterministic Verifier → Review Coverage
 6. 判断をMemoryへ残し、人間にはOrganizer / Decision Surfaceで必要な判断を投影する
-7. Context LifecycleはCoreへ抱え込まない。HostがSession / Retry / Stopを持ち、River ReviewはReview Judgmentを返す。まとめでは中心主張を再掲し、「判断のインフラ」（Engineering Judgment Infrastructure）は将来の方向としてだけ触れる
+7. Context LifecycleはCoreへ抱え込まない。HostがSession / Retry / Stopを持ち、River ReviewはReview Judgmentを返す。まとめでは中心主張を再掲する
 
 ## 追記ログ
 
@@ -102,3 +102,4 @@ River Reviewのコアは、Review Judgment as Codeを中心に、チームのRev
 
 - レビュー #744 の high 指摘を受け、著者の指示で言い回しを現行の語彙へ変更（意味は維持）。title・今の仮説・central_claim・Outline 7 から、現在の River Review を「判断のインフラ」と呼ぶ表現を外し、Review Judgment as Code を中心とする言い方へそろえた。「判断のインフラ」は River Review の concept.md が長期の方向（Engineering Judgment Infrastructure）とする語なので、将来の方向としてだけ使う
 - 同レビューの Article Plan 指摘に合わせ、Verified の2点を実装に合わせて直した（ranking は pathProximity のみ計算し他の3つは設定上の重み、ADR-012 の Status は Proposed）
+- レビュー #744 ループ2の指摘を受け、公開前のうちに slug を `river-review-judgment-infrastructure` から `river-review-core-design` へ変更した（記事・本 Seed・レビュー成果物のファイル名、seed_id、promoted_to、Plan の見出しと slug）。「判断のインフラ」への言及は結びから §1 へ移したため、Outline 2 と 7 を合わせて直した

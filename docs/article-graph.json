@@ -215,8 +215,8 @@
       "legacy": false
     },
     {
-      "id": "seed-20260929-river-review-judgment-infrastructure",
-      "path": "article_seeds/ai-driven-development/2026-09-29-river-review-judgment-infrastructure.md",
+      "id": "seed-20260929-river-review-core-design",
+      "path": "article_seeds/ai-driven-development/2026-09-29-river-review-core-design.md",
       "title": "River Reviewのコア設計：AIレビューではなく、チームの判断を再現可能に残す",
       "date": "2026-09-29",
       "status": "draft",
@@ -231,7 +231,7 @@
       "source_ref": "https://zenn.dev/tokium_dev/articles/ai-agent-usage-limit-long-sessions",
       "evidence_status": "verified",
       "promoted_to": [
-        "articles/river-review-judgment-infrastructure.md"
+        "articles/river-review-core-design.md"
       ],
       "article_type_candidates": [
         "analysis",
@@ -413,9 +413,9 @@
       "to": "articles/ai-agent-team-topology-judgment-escalation.md"
     },
     {
-      "from": "seed-20260929-river-review-judgment-infrastructure",
+      "from": "seed-20260929-river-review-core-design",
       "relation": "promoted_to",
-      "to": "articles/river-review-judgment-infrastructure.md"
+      "to": "articles/river-review-core-design.md"
     },
     {
       "from": "seed-20260930-openspec-plangate-living-spec",
