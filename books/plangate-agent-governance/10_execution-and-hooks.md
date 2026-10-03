@@ -239,6 +239,27 @@ path、shell、matcher、worktree、runtime、配線によって壊れます。
 
 だから後半の第16章では、Harness自身をEvalする話へつながります。
 
+## HookはStopを担当する
+
+Execution中の3分類に戻ると、Hookの主な役割は **Stop** です。
+
+~~~text
+Continue
+→ 承認scope内で通常実装
+
+Stop
+→ 決定論的な不変条件違反
+   例: 未承認、forbidden file、破壊的操作
+
+Escalate
+→ Hookだけでは決められない意味的変更
+   例: 新しいsecurity risk、scope変更
+~~~
+
+Hookへ任せるのは、機械的に判定できるStop条件です。
+
+「この設計変更を受け入れるべきか」のような意味判断までHookへ押し込むと、false positiveを増やしやすくなります。
+
 ## この章で持ち帰ること
 
 Prompt上の「お願い」をすべてHookへ変える必要はありません。
