@@ -243,6 +243,40 @@
 - NEXT: Loop 3で最小の具体例と主張境界を追加する
 
 
+### Part II Draft Loop 3 — Concrete walkthrough / claim boundary
+
+#### 検討
+
+- 04〜06章を同じ架空タスクでつなぎ、概念を実際のflowへ落とす
+- Governance HarnessはPlanGate自身のself-positioningであり、標準カテゴリ準拠の主張ではないと明記する
+- Artifactの追加コストもtrade-offとして扱う
+- 「Gateが多いほど良い」ではなく、riskに見合う境界を置くという結論へ寄せる
+
+#### Review
+
+- First-time engineer: 1つのタスクを追うことでPlan / Review / Gate / Evidence / Handoffの関係を具体的に理解できる
+- Skeptical OSS reader: Governance Harnessを一般標準として権威づけず、PlanGate固有の設計解釈として読める
+- EM / Tech Lead: ceremonyを最大化する話ではなく、stop conditionとauthorityを設計する話として転用できる
+- Maintainer: ultra-light / Mode / Context Lifecycleと矛盾せず、現行仕様の詳細を過剰一般化していない
+
+#### 対応
+
+- 04章に注文一覧APIの最小walkthroughを追加
+- 05章で同じ例を「仕事 / 状態 / 制御」の3層へ写像
+- 06章でsession interruptionからの再開例へ接続
+- Governance Harnessのclaim boundaryを明記
+- Artifact / Governance ceremony自体のコストを追加
+
+#### Post Review
+
+- PASS: 04=Flow、05=Architecture、06=Stateという章責務が明確
+- PASS: 抽象語が同じ具体例へ接続され、読者が概念を保持しやすい
+- PASS: 最大構成をbest practiceとして押し付けていない
+- PASS: 現行PlanGate v8.23のC-3'/C-4、Context Lifecycle、Mode思想と整合
+- PASS: 第2部（04〜06章）は本文初稿として次Partへ進める状態
+- REMAINING: 公開前にPlanGate最新releaseへ再照合し、固有ファイル名・hook数・mode仕様など変動しやすい部分を更新する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
