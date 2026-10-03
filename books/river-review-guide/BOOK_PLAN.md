@@ -596,3 +596,36 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: checker自体にhermetic self-testを持たせ、既存CI設計と整合した
 - REMAINING: branch push単体ではCIが起動しないため、実行結果はPRまたはworkflow_dispatch環境で確認する必要がある
 - NEXT: Publish Prep Loop 3でpublish checklistを新しい自動Gateへ合わせ、公開判定を整理する
+
+
+### Publish Prep Loop 3 — Explicit release gate
+
+#### 検討
+- 本文完成と公開準備完了を同じ状態にしない
+- current main / Latest Releaseを公開直前に再確認する
+- repository checks / preview / final readをblocking gateとして明示する
+- `published: true` は本文編集とは別の最終操作にする
+
+#### Review
+- River Review main: `60f55e75d6eaead1956c6945afc53f57acd64dd9` のまま（2026-10-04再確認）
+- Latest Release: `v1.124.5` のまま
+- Review Coverage / Riverbedのstability記述にもdriftなし
+- 新Book checker: 初回writeのcorruptionをPost Reviewで検出し修正済み
+- 修正版checker: syntax PASS / self-test 6/6 PASS
+- `package.json`: Book checkerがaggregate `npm run check` に含まれる
+- CI: `test:zenn-book-structure` をself-test stepへ追加済み
+- 実branch checkout上の `npm run check:river-review-book` / `npm run check` / `npm run preview` は未実行
+
+#### 対応
+- 公開情報のverification dateを2026-10-04へ更新
+- `PUBLISH_CHECKLIST.md` にchecker self-testと再検証結果を反映
+- `EDITORIAL_QA.md` にchecker QAと初回corruption修正を記録
+- `RELEASE_GATE.md` を新設し、CONTENT_COMPLETE / RELEASE_BLOCKEDを明示
+- Release state machineとrollback conditionsを追加
+
+#### Post Review
+- PASS: 「本文完成」と「公開可能」をrepository上で明確に分離できた
+- PASS: versioned claimsは2026-10-04時点でもfresh
+- PASS: 新checker自体はself-testで検証済み
+- BLOCKED: repository checkoutでのaggregate checkとZenn previewが未完了
+- DECISION: `published: false` を維持する
