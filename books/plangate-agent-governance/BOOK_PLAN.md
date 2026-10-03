@@ -705,6 +705,38 @@
 - NEXT: Loop 2で公式仕様 / 本書の判断原則を分離し、導入チェックリストを追加する
 
 
+### Part VII Draft Loop 2 — Phase/Mode separation / official vs book guidance
+
+#### 検討
+
+- Phaseを導入成熟度、Modeをtask risk / 運用強度として別軸にする
+- 現行PlanGate公式仕様と、本書がそこから導く判断原則を明示的に分離する
+- 18章の最小Governance Loopを公式Phaseの追加定義に見せない
+- 最初の1周で「導入しないもの」もScopeとして決める
+
+#### Review
+
+- Reader: Phase 3導入済み = 全taskを重く回す、という誤読を防げる
+- Technical: staged-adoption-guideの「習熟度初期値」とmode-classificationのtask強度という別軸に整合
+- Editorial: official factsとbook interpretationの境界が明確になった
+- Adoption: 最初のtaskでmulti-agent / strict hooks / metrics / evalを先回り導入しない理由が明確
+
+#### 対応
+
+- 17章へPhase vs Modeを追加
+- 17章へ「公式仕様 / 本書の判断原則」区分を追加
+- 18章へ「本書の演習であり公式Phase名ではない」を追加
+- 18章へ最初の1周で追加しない機能を明記
+
+#### Post Review
+
+- PASS: 現行仕様と本書独自の整理を混同しなくなった
+- PASS: 過剰導入を避けるReader Guidanceが強化された
+- ISSUE: 第7部の終わりとして、導入後に「続ける / 強める / 弱める / やめる」を判断する出口条件がまだ弱い
+- ISSUE: Book全体の中心主張「信頼しなくても任せられる環境」へ最後に明確に戻したい
+- NEXT: Loop 3でadoption outcome reviewとBook central claimへの着地を追加する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
