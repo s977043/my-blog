@@ -101,13 +101,13 @@ AIへ実装やrepairを広く任せても、最終Authorityまで同じ範囲へ
 
 C-Xは主に承認・判断境界です。
 
-| 略号 | 現行PlanGateでの意味 | 本書での読み方 |
-| --- | --- | --- |
-| C-1 | Self Review | Planを作った側が構造的な抜けを確認 |
-| C-2 | External / Independent Review | 別視点でPlanを確認 |
-| C-3 | Human Plan Approval | PlanをExecutionへ渡すHuman-owned Authority boundary |
-| C-3' | ai-loopの限定AI裁定経路 | C-3を撤廃せず、eligible runだけ委譲 |
-| C-4 | PR Approval | 最終受入。Human-owned |
+| 略号 | 主な意味 |
+| --- | --- |
+| C-1 | Self Review。Planを作った側が構造的な抜けを確認 |
+| C-2 | External / Independent Review。別視点でPlanを確認 |
+| C-3 | Human Plan Approval。Executionへ渡すHuman-owned Authority boundary |
+| C-3' | ai-loopの限定AI裁定経路。eligible runだけ委譲 |
+| C-4 | PR Approval。最終受入はHuman-owned |
 
 個別条件は変わりうるため、本書では番号より「ReviewとApprovalを分ける」ことを重視しています。
 
