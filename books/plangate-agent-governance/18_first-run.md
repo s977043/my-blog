@@ -1,19 +1,27 @@
-# 1タスクを最後まで回す
+# 最小構成で1タスクを最後まで回す
 
-> Draft. 最小構成でPlanGateの一連の流れを体験する。
+> Draft. この章では細かなPlan記法ではなく、新Bookで扱った境界を一周体験する。
 
 ## 題材
 
-## Requirementを書く
+小さく、失敗しても戻しやすく、受入基準を外部から確認できるタスクを選ぶ。
 
-## Planを作る
+## Requirementを用意する
 
-## Review / Approval
+詳細な書き方は既存 `plangate-guide` に委譲し、ここではWhy / Scope / Acceptance Criteriaが揃っていることだけを前提にする。
 
-## Execution
+## PlanをArtifactとして作る
 
-## Verification
+## ReviewとApprovalを分ける
 
-## Handoff
+## Approved PlanからExecutionする
+
+## Fresh EvidenceでVerificationする
+
+## Handoffを残す
+
+## Human Judgmentで閉じる
 
 ## 次に追加するもの
+
+摩擦や失敗が観測されるまで、Hook / Metrics / Evalを先回りして全部追加しない。
