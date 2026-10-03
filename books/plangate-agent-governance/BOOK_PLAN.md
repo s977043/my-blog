@@ -339,6 +339,38 @@
 - NEXT: Loop 3で「止めるためではなく安全に任せるため」の意味と、re-plan triggerを整理する
 
 
+### Part III Draft Loop 3 — Safe delegation / re-plan triggers
+
+#### 検討
+
+- 「止める仕組み」ではなく「止まる条件を決めることで、その間を任せる仕組み」として第3部を再定義する
+- Planは確認箇所を減らす境界、Evidenceは安全に進み続ける材料でもあると補強する
+- Approvalへ戻る条件を、Scope / Acceptance / Risk / Architecture / Authority / Evidenceの汎用軸で整理する
+- 些細な変更まで再承認する運用を避け、承認の意味が変わるときだけ戻る原則を置く
+
+#### Review
+
+- Engineer: Gateが待ち行列ではなく、委譲範囲を明確にする仕組みとして読める
+- EM / Tech Lead: re-plan triggerをチームPolicyへ転用できる
+- Editorial: 第3部のPlan / Evidence / Approvalが「安全な委譲」という一つの目的へ収束した
+- Technical: plan_hash等の機械的検出と、意味的な再判断条件を混同していない
+
+#### 対応
+
+- Part III導入をsafe delegation中心に刷新
+- 07章へ「境界が実装中の確認を減らす」を追加
+- 08章へEvidenceが継続実行の根拠にもなることを追加
+- 09章へre-plan trigger 6軸と「承認した意味が変わるとき戻る」を追加
+
+#### Post Review
+
+- PASS: 「止めるためのGate」から「任せるための境界」へ意味づけを修正
+- PASS: 読者が自分の開発フローへ持ち帰れる判断軸になった
+- PASS: 07=Boundary、08=Evidence、09=Authorityの章責務が明確
+- PASS: 第3部（07〜09章）は本文初稿として次Partへ進める状態
+- REMAINING: 公開前に現行PlanGate releaseと照合し、Autonomous APPROVE / C-3' / mode条件など変動しやすい実装詳細を更新する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
