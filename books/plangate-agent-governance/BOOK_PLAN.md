@@ -672,6 +672,39 @@
 - REMAINING: ai-loop V2 / Ratchetはcurrent mainの進行中設計を含むため、公開前にcanonとrelease状態を再照合する
 
 
+### Part VII Draft Loop 1 — Current staged adoption / first governance loop
+
+#### 検討
+
+- 初期Book案のLevel 1〜5を現行正本に合わせ、CLI導入後はPhase 0〜3、plugin-onlyはLevel 0として説明する
+- 公式Phase 0（ultra-light / gateなし）と、本書で体験する最小Governance Loopを混同しない
+- 全面導入ではなくcoexistence / partial adoptionを正規の選択肢として扱う
+- 18章はPlan記法のHow-toではなくBoundary→Evidence→Approval→Execution→Verification→Judgmentを一周する章にする
+
+#### Review
+
+- Reader: 最初からC-3 / Hook / multi-agentを全部入れなくてよいことが明確
+- Technical: current staged-adoption-guide / plugin-only-adoption / coexistence-guideと整合
+- Editorial: 第7部がBook全体の概念を「導入判断」と「1タスク」に収束させている
+- Maintenance: when-not-to-useの旧Level 1→5表記と現行Phase 0〜3の差を隠さず注記した
+
+#### 対応
+
+- Part VIIと17〜18章を全文ドラフト化
+- 17章をPhase 0〜3 + plugin-only Level 0へ更新
+- warning→blockをAuthority変更として説明
+- 部分導入と非採用を明示
+- 18章に公式Phase 0と最小Governance Loopの二段導線を追加
+
+#### Post Review
+
+- PASS: 現行導入正本とBookの導線が整合
+- ISSUE: 17章は公式Phase説明と本書独自の導入判断が混ざり、やや長い
+- ISSUE: when-not-to-useの固定的な「3人以上 / 3ヶ月以上」等の条件を本書でどう扱うかを明示した方がよい
+- ISSUE: 18章は概念一周として良いが、読了後に「明日どこから始めるか」のチェックリストがあると強い
+- NEXT: Loop 2で公式仕様 / 本書の判断原則を分離し、導入チェックリストを追加する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
