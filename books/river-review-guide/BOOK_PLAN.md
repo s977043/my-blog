@@ -629,3 +629,58 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: 新checker自体はself-testで検証済み
 - BLOCKED: repository checkoutでのaggregate checkとZenn previewが未完了
 - DECISION: `published: false` を維持する
+
+
+### PR / CI Loop 1 — Draft PR and diff review
+
+#### 検討
+- CONTENT_COMPLETEの次はbranch内レビューではなくPR単位で差分とCIを確認する
+- RELEASE_BLOCKEDのためReady for ReviewではなくDraft PRから始める
+- Book本文だけでなくCI / package / checkerの3ファイルを重点レビューする
+
+#### Review
+- Draft PR #750を作成
+- Changed files: 55（Book配下52 + CI / package / checker 3）
+- Additions: 4,924 / Deletions: 1
+- Book外変更は `.github/workflows/ci.yml`, `package.json`, `scripts/check-zenn-book-structure.js` のみ
+- checkerの実ファイルを再取得し、parseChaptersのcapture groupが存在することを確認
+- patch表示だけからcapture group欠落と誤認したが、実ファイル確認で誤検出と判定
+
+#### 対応
+- PR #750をDraftで作成
+- CIを起動
+- patchだけでなくbranch上の実ファイルとCIをEvidenceにする方針へ修正
+
+#### Post Review
+- PASS: PRの変更範囲はBook + Book QA/CIに限定されている
+- PASS: 公開フリップは含めていない
+- PASS: Dependency reviewは成功
+- NEXT: PR / CI Loop 2でContent checksの実行結果を確認する
+
+### PR / CI Loop 2 — Fix the first CI failure
+
+#### 検討
+- CI failureを本文の問題 / checkerの問題 / repository既存問題へ分類する
+- checker self-testと実Book checkを別Evidenceとして扱う
+
+#### Review
+- Content harness self-tests: SUCCESS
+- `test:zenn-book-structure`: 6/6 PASS
+- `list:books`: SUCCESS。River Review BookをZenn CLIが認識
+- aggregate `npm run check`: FAILURE
+- failureは `check:river-review-book` の1件のみ
+- 原因: `99_afterword.md` を通常のnumbered content chapterとしてSources必須にしていた
+- 既存article sentence-style等の出力はWARNのみで今回failureの原因ではない
+
+#### 対応
+- `00_` / `99_` をreserved chapterとしてSources必須判定から除外
+- `isNumberedContentChapter()` を追加
+- `99_afterword` がSourcesなしでPASSするself-test fixtureを追加
+- checker self-testを6ケースから7ケースへ拡張
+
+#### Post Review
+- PASS: failure原因はBook本文ではなくcheckerの境界条件と特定
+- PASS: 予約章の扱いを明示的な関数へ分離
+- PASS: regression fixtureを追加
+- PENDING: 更新commitに対するCI rerunで7/7 self-testと実Book checkを確認
+- NEXT: PR / CI Loop 3で再CIとPR全体を最終レビューする
