@@ -154,3 +154,38 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: 第4部が単なるHow-to集ではなく、Artifact間の整合を見る実践編になった
 - PASS: Plan / Diff / Tests / Review Result / Repo Contextのつながりが明確
 - NEXT: ループ3で「AIレビューをどう検証し、どう改善するか」と導入戦略まで完成させる
+
+
+### Loop 3 — Review reliability / learning / adoption
+
+#### 検討
+
+- Bookを「使い方」で終わらせず、レビュー自体の信頼性を検証対象にする
+- Review CoverageはExperimental、Riverbed v1は実装済み、external store v2はplannedという状態差を本文構造に反映する
+- Skill改善はPrompt調整だけでなくfixture / eval / judgment promotionへ接続する
+- generate → review → reviseの反復・停止・merge authorityはcaller側に残す
+- 導入はPlugin / comment-only等の低リスク経路から段階的に進める
+
+#### Review
+
+- Reader: 「AIレビューを導入する」から「レビュー判断システムを運用する」へ理解が進む
+- Editorial: Part 5=信頼性、Part 6=改善、Part 7=導入で役割が重ならない
+- Technical: Review CoverageのExperimental表記、Riverbed v1/v2、Loop Convergenceのcaller ownershipが現行docsと整合
+- Adoption: 最大構成をbest practiceとして押し付けず、1 Skill / Plugin / comment-onlyから始める逃げ道がある
+
+#### 対応
+
+- 第5部「AIレビューそのものを信頼しすぎない」を追加
+- 第6部「レビュー判断を学習・改善する」を追加
+- 第7部「自分のチームへ導入する」を追加
+- Glossary / Antipatterns / Roadmap / Afterwordを追加
+- config.yamlを全7部・33章構成へ更新
+- STYLE.mdへCurrent / Experimental / Directionの表記ルールを追加
+
+#### Post Review
+
+- PASS: Why → What → Design → Practice → Reliability → Improvement → Adoptionが一冊のReader Journeyとして閉じた
+- PASS: READMEの機能順ではなく、読者が判断設計を学ぶ順になった
+- PASS: River Review固有機能と一般化できる設計原則の境界が明確
+- PASS: 現行仕様と長期方向を混同しにくい構造になった
+- REMAINING: 各章は現時点では構成稿。本文執筆ではIssue / PR / fixtureの具体例を章ごとに1つ以上割り当て、current mainを再照合する

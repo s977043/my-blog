@@ -1,5 +1,5 @@
 title: "AIエージェント時代のレビューを設計する — River Review 実践ガイド"
-summary: "AIによってコードを書く速度が上がるほど、何を確認し、何を根拠に、誰が判断するかが重要になる。本書ではRiver Reviewを題材に、Review Judgment as Codeから実践・運用までを体系的に扱う。"
+summary: "AIによってコードを書く速度が上がるほど、何を確認し、何を根拠に、誰が判断するかが重要になる。本書ではRiver Reviewを題材に、Review Judgment as Code、Artifact、Evidence、Skill、Judgment Placement、Human Judgment、Review Coverage、Memory、Evaluationを体系的に解説し、チームのレビュー判断を再利用・検証・改善できる仕組みを扱う。"
 topics: ["AI", "AIエージェント", "コードレビュー", "ClaudeCode", "Codex"]
 published: false
 price: 0
@@ -28,3 +28,24 @@ chapters:
   - 17_test-review
   - 18_w-check
   - 19_repo-wide-review
+  - part5_review-reliability
+  - 20_review-coverage
+  - 21_generation-and-verification
+  - 22_context-engineering
+  - 23_review-team
+  - part6_learning-and-improvement
+  - 24_riverbed-memory
+  - 25_suppression-and-resurface
+  - 26_skill-evaluation
+  - 27_improvement-loop
+  - 28_generate-review-revise
+  - part7_adoption
+  - 29_start-with-one-skill
+  - 30_project-specific-judgment
+  - 31_plugin-to-ci
+  - 32_human-review-boundary
+  - 33_continuous-improvement
+  - a1_glossary
+  - a2_antipatterns
+  - a3_roadmap
+  - 99_afterword
