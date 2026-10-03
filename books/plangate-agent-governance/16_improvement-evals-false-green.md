@@ -344,6 +344,57 @@ fixtureだけを通すpatchではなく、failure classへ修正を当てます�
 
 新しいtestが最初から旧実装でもPASSするなら、検出力を証明していません。
 
+## Regression suiteを「事故の墓場」にしない
+
+failureを再現testへ残すのは重要です。
+
+しかし、事故のたびにfixtureを1件ずつ永久追加すると、test suiteは過去の事故履歴そのものになります。
+
+~~~text
+incident A
+→ test A
+
+incident B
+→ test B
+
+incident C
+→ test C
+~~~
+
+だけでは、なぜ別testなのか、何を守っているのか分からなくなります。
+
+そこでfixtureを、個別Incidentだけでなく**failure class / invariant**へ結びつけます。
+
+たとえば#1326なら、
+
+> 「この特定commandをallowする」
+
+だけでなく、
+
+> **`git push` とforce tokenが同じcommand segmentに属するときだけdangerousと分類する**
+
+というinvariantにします。
+
+すると、新しいcaseが見つかっても、
+
+- 既存classの境界値として追加するのか
+- 新しいfailure classなのか
+- 既存fixtureと統合できるのか
+
+を判断できます。
+
+### Regression assetを見直す
+
+定期的に次も見ます。
+
+- 同じinvariantを重複testしていないか
+- fixtureの前提がもう存在しないのに残っていないか
+- known-badが本当にbaselineでFAILするか
+- known-goodが過剰にBLOCKされていないか
+- test自体が対象コードの内部実装へ結合しすぎていないか
+
+Regression Guardも保守対象です。
+
 ## Harness改善Candidateは自分を裁かない
 
 VerifierやEval自身を変更すると、さらに難しくなります。
@@ -388,6 +439,36 @@ Verifier Candidateを評価するなら、変更後Verifierの出力だけでな
 原則はシンプルです。
 
 > **評価対象と、評価を成立させるAuthorityを分離する。**
+
+## known fixtureだけに最適化しない
+
+公開されたregression fixtureだけを見てCandidateを改善すると、そのケースだけ通るpatchを作ることもできます。
+
+これはHarness改善でも同じです。
+
+~~~text
+known-badを知る
+↓
+そのinputだけ特別扱い
+↓
+fixture PASS
+↓
+未知の同型failureは残る
+~~~
+
+そこで現行V2のEvaluation Trust Boundaryでは、Candidate作成前にIDを固定したsealed / held-out fixtureを評価Authority側で持つ考え方があります。
+
+Candidateはそのfixtureを自分で変更できません。
+
+目的は「秘密のテストを作ること」ではありません。
+
+> **改善が既知ケースの暗記ではなく、failure classへ効いているかを見る。**
+
+ためです。
+
+known fixtureは開発・再現に使い、独立したfixtureはpromotion evaluationへ使う。
+
+この分離が、Evalへの過学習を減らします。
 
 ## PASS / FAIL / INCONCLUSIVEを分ける
 
@@ -451,6 +532,35 @@ critical regression
 
 結果を見て条件を変えたら、新しいEvalとしてやり直します。
 
+## failureが出ても、最初に新しいAgentやHookを作らない
+
+Harness改善では、問題を見つけると新しい仕組みを足したくなります。
+
+しかし、componentが増えるほど、
+
+- routing
+- distribution
+- activation
+- ownership
+- Eval
+
+の面積も増えます。
+
+現行Ratchet Traceabilityでは、改善候補を考える順序として、概ね次を置いています。
+
+1. 既存configurationの是正
+2. deterministic test / lint / invariant
+3. 既存Verifierの改善
+4. reuse / update / merge / deprecate
+5. 既存ownershipでは表現できない場合だけcreate
+
+Source:
+- https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/ratchet-traceability.md
+
+これは、failureからすぐ新しいSkillやAgentを生やさないための **Create Last** 原則と読めます。
+
+Harness改善そのものがinstruction debtを増やさないようにします。
+
 ## 改善を自動化してもPromotionは分ける
 
 ai-loop V2のRatchetは、failureからHarness改善候補を作り、paired evaluationする方向へ進んでいます。
@@ -478,6 +588,88 @@ Autonomy != Authority
 
 はHarness改善にも適用されます。
 
+## Promotion後に「再発したか」を観測する
+
+paired evaluationでPASSしても、改善の学習は終わりではありません。
+
+productionで同じfailure patternが再発していないかを観測します。
+
+現行Ratchet Traceabilityでは、counterfactualな
+
+~~~text
+prevented_recurrence_count
+~~~
+
+は記録しない方針です。
+
+「この改善で事故を10件防いだ」のような、観測できない数字を作らないためです。
+
+代わりに最小の観測として、
+
+~~~text
+eligible_run_count = N
+matching_failure_run_count = M
+same_pattern_recurrence_rate = M / N
+~~~
+
+を置きます。
+
+しかもclassifierが変われば比較条件も変わるため、同じclassifier digestで観測したrunだけを比較対象にします。
+
+ここで言えるのは、
+
+> **同じ定義で観測したfailure patternが、その後どれくらい発生したか。**
+
+までです。
+
+原因と効果を過度に断定しません。
+
+## 改善ループを閉じる
+
+ここまでをつなぐと、Harness Improvement Loopは次のようになります。
+
+~~~text
+Production Failure
+        ↓
+Failure Evidence
+        ↓
+failure classを特定
+        ↓
+known-bad / known-goodを再現
+        ↓
+最小のImprovement Candidate
+        ↓
+independent / sealed evaluation
+        ↓
+PASS / FAIL / INCONCLUSIVE
+        ↓
+separate Promotion Authority
+        ↓
+Production observation
+        ↓
+same-pattern recurrenceを測る
+        └──────────────→ 次の改善
+~~~
+
+これで、
+
+~~~text
+修正した
+→ testが通った
+→ 完了
+~~~
+
+ではなく、
+
+~~~text
+失敗から学ぶ
+→ 独立評価する
+→ 採用する
+→ 実運用で再観測する
+~~~
+
+までが一つのloopになります。
+
 ## この章で持ち帰ること
 
 Harness Evalで最初に問うのは、
@@ -499,6 +691,8 @@ False Greenを避けるために、
 5. failureをregression fixtureへ固定する
 6. Candidateと評価Authorityを分離する
 7. 分からない状態をINCONCLUSIVEにする
+8. fixtureをfailure class / invariantへ整理する
+9. promotion後も同じpatternの再発を観測する
 
 という順で考えます。
 
