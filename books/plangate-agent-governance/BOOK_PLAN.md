@@ -470,6 +470,40 @@
 - REMAINING: 公開前にhook wiring / Codex parity / ai-loop V2 taxonomyの現行release差分を再監査する
 
 
+### Part V Draft Loop 1 — Context / independent review / Delivery boundary
+
+#### 検討
+
+- 13章は会話履歴の持ち越しではなくcanonical state + evidence checkpointを中心にする
+- Intent Context Packageの context_ref / snapshot_ref をsemantic identity / exact audit identityとして説明する
+- 14章は「別Agent = 独立レビュー」ではなく、Role / Context / Evidence / Authorityの分離として書く
+- 15章はPR_CREATED != MERGE_READY、MERGE_READY != MERGEDの二段境界を中心にする
+- v8.23.0はChangelog上TBDのため、current main / v8.23.0 candidateとして表記する
+
+#### Review
+
+- Reader: 13→14→15が「状態を渡す→独立して確かめる→PR後も収束させる」で連続する
+- Technical: Context Lifecycle / Dynamic Context Engine / Review Principles / V2 taxonomy / Core Contractと整合
+- Editorial: Agent数やmodel diversityを主役にせず、boundary設計を主役にできている
+- Evidence: PR #1396 / #1411 / #1402相当の実装はcurrent main / changelogの公開情報へtraceできる
+
+#### 対応
+
+- Part Vと13〜15章を全文ドラフト化
+- 13章へcontract/dynamic context、fresh-context trigger、handoff APIを統合
+- 14章へreview context isolation、C-2 lane分離、adversarial roundを統合
+- 15章へPR_CONVERGING / MERGE_READY / stop reason / owner separationを統合
+- v8.23.0のrelease statusをTBDとして明示
+
+#### Post Review
+
+- PASS: 第5部のReader Journeyが成立
+- ISSUE: 13章はContext Engine / Lifecycle / Intent Packageの3概念が入り、やや実装詳細が多い
+- ISSUE: 14章の「独立性」は概念的で、読者が実際に何を渡す/渡さないかを即使える形にしたい
+- ISSUE: 15章はV2 taxonomyの説明が多く、Deliveryの具体的な1ループをもう少し前面に出せる
+- NEXT: Loop 2でContextの概念圧縮、Review Package contract、Delivery walkthroughを強化する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
