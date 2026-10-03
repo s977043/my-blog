@@ -76,3 +76,26 @@ RELEASE_READY後でも、次のいずれかが見つかったら前段階へ戻�
 `published: false → true` は、**RELEASE_READYを確認した後の独立した変更**として行う。
 
 本文修正と公開フリップを同時に行わないことで、公開直前のEvidenceをfreshに保つ。
+
+
+## Post-publish correction path
+
+公開後に誤り・仕様drift・表示崩れが見つかった場合も、公開画面を直接修正しない。
+
+~~~text
+Book source update
+  ↓
+follow-up PR
+  ↓
+structure / source / browser visual checks
+  ↓
+review
+  ↓
+merge
+  ↓
+Zenn sync
+~~~
+
+修正時も `SOURCE_MAP.md` で影響章を確認し、versioned claimが変わる場合はRiver Review main / Latest Releaseを再照合する。
+
+この導線により、公開後修正も本PRと同じEvidence chainを再利用する。
