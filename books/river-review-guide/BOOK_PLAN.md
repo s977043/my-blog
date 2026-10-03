@@ -484,3 +484,32 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: 概念名とコード識別子の表記境界が明確になった
 - PASS: 一括置換を避け、Source URLやschema名を壊していない
 - NEXT: Final Edit Loop 2で中盤章の冗長表現と章間遷移を圧縮する
+
+
+### Final Edit Loop 2 — Compress the reliability sequence
+
+#### 検討
+- 第4部末〜第5部は W-check → repo-wide → Coverage → Verification → Context → Review Team と概念が連続し、説明の重複が読書速度を落としやすい
+- 内容を削るのではなく、各章の「新しく増える問い」を1つに絞る
+- 一覧で理解できる箇所は表へ圧縮し、前章で説明済みの原則を繰り返さない
+
+#### Review
+- 18章: Deduplicate / Hallucination guard / Synthesisを個別小見出しにする必要は薄い
+- 19章: Context Budgetとsecret protectionは両方重要だが、説明を短くできる
+- 21章: ReviewerとVerifierの責務差は比較表の方が速く理解できる
+- 22章: Progressive Disclosure 3段階は表へ圧縮できる
+- 23章: Role数より責務分離が主張なので、Agent一般論を減らせる
+
+#### 対応
+- 18章を「Review ResultもArtifact」という1主張へ集約
+- 19章を「Contextを安全に選ぶ」に集約
+- 21章をReviewer / Verifier比較表中心へ変更
+- 22章をContext Budget / Progressive Disclosure / Coverage差の3点へ圧縮
+- 23章を「観点分離 != 独立検証」に集中
+- 20章はversioned contractの詳細が必要なため大幅圧縮しない
+
+#### Post Review
+- PASS: 第4部末から第5部への流れが「review result → context → execution completeness → finding validity → context quality → reviewer responsibility」と連続した
+- PASS: 実装仕様を削らず、同じ説明の再登場を減らした
+- PASS: 20章のExperimental / Gate opt-inなど時制依存情報は維持した
+- NEXT: Final Edit Loop 3で公開前の静的監査項目をrepository-ownedに強化する

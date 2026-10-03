@@ -2,72 +2,42 @@
 
 ここまで、実装Artifactをレビューしてきました。
 
-次は一段視点を上げます。
+次に扱うのは、**レビュー結果そのもの**です。
 
-> **レビュー結果そのものも、Artifactとしてレビューする。**
+> **AIレビューの出力も、最終回答ではなくReview Artifactとして扱う。**
 
-River ReviewのWチェックは、このための仕組みです。
+River ReviewのWチェックは、この考えを実行します。
 
 ## review-self と review-external
 
-Artifact Input Contractでは、既存レビュー結果を次の2種類で受け取れます。
+Artifact Input Contractでは、既存レビューを2種類で受け取れます。
 
 | Artifact | 意味 |
 | --- | --- |
 | review-self | 実装者自身のセルフレビュー |
 | review-external | 外部AI / 人間レビュアーの結果 |
 
-どちらもMarkdownとして渡せます。
+locale追加の例なら、実装エージェントのセルフレビュー、別AIのレビュー、人間レビューを次のレビュー材料にできます。
 
-たとえばlocale追加について、
+## Wチェックで確認すること
 
-- 実装エージェントのセルフレビュー
-- Codexのレビュー
-- 人間のレビュー
+複数レビューを集める目的は多数決ではありません。
 
-があれば、それらをWチェックの入力にできます。
+| 処理 | 目的 |
+| --- | --- |
+| Deduplicate | 同じ場所・Evidenceを指すFindingを統合する |
+| Hallucination guard | Evidenceのpathやcode snippetを実際のdiffと照合する |
+| Synthesis | 確認済みFindingをVerdict materialへ整理する |
 
-## なぜレビュー結果まで疑うのか
+たとえば「存在しない関数が未定義」というレビューコメントがあっても、その関数自体がdiffに存在しなければ指摘を再検証できます。
 
-AIレビューもハルシネーションします。
+Verdictが得られても、それは最終merge権限ではありません。
 
-たとえば、
+## 入力不足も状態として残す
 
-> src/profile/locale.ts の validateLocale が未定義です
+review-selfかreview-externalの片方だけでも処理できる場合があります。
 
-という指摘があっても、実際のdiffにその関数が存在しないかもしれません。
-
-レビューコメントが存在することと、指摘対象が存在することは別です。
-
-Wチェックでは、複数レビューの統合処理で次のような処理を行います。
-
-### Deduplicate
-
-同じ場所・同じEvidenceを指すFindingを統合します。
-
-3人が同じ問題を指摘しても、3件の別問題として数えません。
-
-### Hallucination guard
-
-FindingのEvidenceが参照するpathやcode snippetを実際のdiffと照合します。
-
-実在しないコードを根拠にした指摘はdismiss対象にできます。
-
-### Synthesis
-
-確認済みFindingをまとめ、merge-ready / human-review / blockのようなVerdict materialへ整理します。
-
-ただし、このVerdictが最終merge権限ではありません。
-
-## degraded modeを明示する
-
-review-selfかreview-externalのどちらかが無くてもWチェックは動作できます。
-
-しかし両方揃っている場合と同じ情報量ではありません。
-
-この状態を「動いたから同品質」とみなさず、degraded modeとして扱う考え方が重要です。
-
-これは次章以降のReview Coverageにもつながります。
+ただし、両方揃った場合と同品質とはみなしません。
 
 ~~~text
 Execution succeeded
@@ -75,28 +45,26 @@ Execution succeeded
 All intended evidence was available
 ~~~
 
-## レビューを増やせば正しくなるわけではない
+この「処理は動いたが、予定した材料は揃っていない」という区別が、後のReview Coverageにつながります。
 
-Wチェックは「AIを3体使えば正しい」という多数決ではありません。
+## 独立性はレビュー数では決まらない
 
-必要なのは、
+同じPrompt・同じContext・同じModelで3回レビューしても、強い独立検証にはなりません。
 
-- レビュー間の重複を減らす
+重要なのは、
+
+- 観点を分ける
 - Evidenceを再確認する
-- 独立した観点の差を残す
-- 不確実なFindingを人へ返す
+- 不確実なFindingを残す
+- 必要ならHuman Judgmentへ返す
 
 ことです。
 
-同じPromptと同じContextを3回渡しても、独立性は高くありません。
-
-レビュー数ではなく、**責務とEvidenceの分離**が重要です。
-
 ## この章で持ち帰ること
 
-AIレビューの出力を最終回答として扱わず、**レビュー結果も検証対象Artifactへ戻す**ことができます。
+AIレビューの出力も、**再検証できるArtifact**として扱います。
 
-次章では、diffだけではEvidenceが不足する場合に、リポジトリ全体からContextを追加する方法を見ます。
+次章では、そのReview Artifactを評価するためにdiff外のContextが必要な場合を扱います。
 
 ### Sources
 

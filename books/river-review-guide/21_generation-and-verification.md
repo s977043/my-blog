@@ -1,97 +1,60 @@
 # 生成と検証を分ける
 
-ReviewerがFindingを出したからといって、そのFindingをそのまま採用する必要はありません。
+ReviewerがFindingを出したことと、そのFindingが契約上妥当であることは別です。
 
-River Reviewでは、
+River Reviewでは、**意味判断を生成する責務**と**機械的に確かめられる条件を検証する責務**を分けます。
 
-> **Findingを生成する責務**  
-> と  
-> **機械的に確かめられる条件を検証する責務**
+## ReviewerとVerifier
 
-を分けています。
+| | Reviewer | Verifier |
+| --- | --- | --- |
+| 主な役割 | 文脈を読んで意味判断する | 機械確認できる契約を検査する |
+| 例 | Plan-Diff整合、Test Adequacy、設計上のRisk | Evidence有無、phase整合、severity上限、diff参照 |
+| LLM | Agentic Reviewでは使う | 現行実装はrule-based |
+| 出力の意味 | Finding候補 | Findingの契約検証 |
 
-## Reviewerが得意なこと
+現行Verifierは、たとえば次を確認します。
 
-Agentic Reviewerは、複数Artifactや意味をまたぐ判断に向いています。
-
-- PlanとDiffの意図が合うか
-- API変更が責務境界として妥当か
-- テストがRiskに対して十分か
-- 既存設計との意味的な不整合があるか
-
-これらは文脈理解が必要です。
-
-## Verifierが得意なこと
-
-一方、River ReviewのVerifierはLLMを使わずrule-basedに確認します。
-
-現行実装では、たとえば次を見ます。
-
-- FindingにEvidenceがあるか
+- Evidenceがあるか
 - Finding phaseとSkill phaseが整合するか
-- Finding severityがSkill宣言のseverityを超えていないか
-- Fix / Suggestionがactionableな長さを持つか
-- Evidenceが参照するfileがdiffに存在するか
-- Finding lineが実際の追加行か、pre-existingか
-
-ここは「意味判断」ではありません。
+- severityがSkill宣言を超えていないか
+- Fix / Suggestionがactionableか
+- Evidenceのfile referenceがdiffに存在するか
+- Finding lineが実際の追加行か
 
 ## なぜLLMへ全部再確認させないのか
 
-同じLLMに、
+「file pathがdiffに存在するか」のような条件は、文字列とparsed diffで確認できます。
 
-> このFindingは本当に正しいですか？
+これをLLMへ戻すと、再現性とコストの面で不利です。
 
-と聞けば、再び自然言語の判断が返ります。
+Judgment Placementの原則どおり、**証明可能な条件はDeterministicへ置きます**。
 
-しかし「Evidenceに書かれたfile pathがdiffに存在するか」は、文字列とparsed diffで確認できます。
-
-機械で証明できるものをLLMへ戻すと、
-
-- 再現性が下がる
-- コストが増える
-- 同じ種類のハルシネーションが再発する
-
-可能性があります。
-
-Judgment Placementの原則どおり、決定論的に確認できる部分は下層へ移します。
-
-## Verifierも万能ではない
-
-VerifierがPASSしたから、Findingの意味内容まで正しいわけではありません。
-
-たとえば、
-
-- fileは実在する
-- lineもdiff内
-- Evidence labelもある
-- Fixも書いてある
-
-としても、「設計として問題か」は別です。
+## Verifier PASSは意味的な正しさではない
 
 ~~~text
 Verifier PASS
   = contract checks passed
 
 Semantic correctness
-  = still review / judgment problem
+  = still a judgment problem
 ~~~
 
-この境界を守ることが重要です。
+file・line・Evidenceが正しくても、「その設計が本当に問題か」は別です。
 
-## Verification Failureをどう扱うか
+VerifierはAgentic Reviewの代替ではなく、その前後に置く契約検査です。
 
-FindingがVerifierの条件を満たさない場合、そのFindingをそのまま人へ見せるのではなく、rejected / suppressed / diagnosticsへ回せます。
+## Verification Failure
 
-こうすると、人間が読むFindingの中へ「参照先が存在しない」「severityが勝手に引き上がった」といった機械的ノイズが混ざりにくくなります。
+契約を満たさないFindingは、そのまま人へ見せるのではなく、rejected / suppressed / diagnosticsなどへ回せます。
+
+これにより、参照先が存在しない、severityが宣言を超える、といった機械的ノイズを減らせます。
 
 ## この章で持ち帰ること
 
-生成と検証を分離すると、LLMにしかできない判断へLLMを集中できます。
-
 **意味判断はAgentic、証明可能な契約はDeterministic。**
 
-次章では、Agentic Reviewへ渡すContext自体をどう絞るかを扱います。
+次章では、Agentic Reviewへ渡すContextそのものをどう絞るかを扱います。
 
 ### Sources
 

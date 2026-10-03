@@ -1,85 +1,55 @@
 # 観点を分けて並列レビューする
 
-AIエージェントを使うと、「複数Agentにレビューさせれば品質が上がる」と考えたくなります。
-
-River ReviewのReview Teamで重要なのは、Agent数ではありません。
+Review Teamの目的は、Agent数を増やすことではありません。
 
 > **レビュー観点の責務を分けること。**
 
 ## Reviewer Role
 
-現在のRiver Reviewには、たとえば次のReviewer Roleがあります。
+現在のRiver Reviewには、bug-hunter、security-scanner、test-gap、dependency-reviewer、frontend-reviewer、ci-cd-reviewerなどのRoleがあります。
 
-- bug-hunter
-- security-scanner
-- test-gap
-- dependency-reviewer
-- frontend-reviewer
-- ci-cd-reviewer
+変更内容に応じて必要なRoleを選ぶことで、1人の万能レビュアーへすべてを詰め込むより責務を明確にできます。
 
-それぞれ見る失敗モードが違います。
+reviewSignalsや変更ファイルを使って、必要なRoleだけを選択する考え方です。
 
-1人の万能レビュアーへ「バグもsecurityもtestsもdependencyも全部見て」と依頼するより、責務を分けることで観点を明確にできます。
+## 観点分離と独立検証は違う
 
-## auto selection
-
-すべてのRoleを毎回実行する必要もありません。
-
-変更ファイルやreviewSignalsから必要なRoleを選択できます。
-
-たとえば認証変更ならsecurity-scanner、UI変更ならfrontend-reviewer、deployment changeならci-cd-reviewerを追加する、といった形です。
-
-ここでも重要なのは **必要なものだけ動かす** ことです。
-
-## Review Teamは完全独立Agent群ではない
-
-現在のReview Teamは、1つのorchestrator内で観点別Roleを並列実行し、Findingをまとめる構造です。
+現在のReview Teamは、1つのorchestrator内で観点別Roleを並列実行し、Findingを統合します。
 
 ~~~text
 Orchestrator
-  ├─ Role A
-  ├─ Role B
-  └─ Role C
+  ├─ bug-hunter
+  ├─ security-scanner
+  └─ test-gap
        ↓
 Findings merge
 ~~~
 
-「複数Agentが独立に最終判断する仕組み」とは違います。
+これは「完全に独立した複数Agentが最終判断する仕組み」とは違います。
 
-最終的なContinue / Stop / Human Escalationはcaller側に残ります。
+同じContext・Model・Prompt構造を共有していれば、Roleが別でも強い独立検証にはなりません。
 
-## 多様性と独立性は同じではない
+さらに独立性が必要なら、Context / Model / Evidence package / Authorityまで分離する必要があります。
 
-別Roleを使っても、同じContext・同じModel・同じPrompt構造を共有していれば、完全に独立した検証とは言えません。
-
-Review Teamが提供するのはまず**観点の分離**です。
-
-さらに強い独立性が必要なら、
-
-- separate context
-- separate model
-- separate evidence package
-- separate authority
-
-まで設計する必要があります。
-
-本書では「Agentを増やすこと」を目的にしません。
-
-## Finding mergeも判断の一部
+## 統合時のノイズも管理する
 
 複数Roleが同じ問題を見つけることがあります。
 
-そのまま人へ3件見せると、重要度が水増しされます。
+そのまま件数を足すのではなく、
 
-重複排除・Evidence統合・severity整合を行い、Human Decision Surfaceへ過剰なノイズを出さないことが必要です。
+- 重複Findingを統合する
+- Evidenceをまとめる
+- severityの不整合を確認する
+
+ことで、Human Decision Surfaceへ過剰なノイズを出さないようにします。
+
+最終的なContinue / Stop / Human EscalationのAuthorityはCaller側に残ります。
 
 ## この章で持ち帰ること
 
 Review Teamの価値は並列数ではなく、**レビュー責務を明示的に分解できること**です。
 
-ここまでで、レビュー自体のReliabilityを扱いました。
-
-次の第6部では、過去判断と評価結果を使ってReview Judgmentを改善する仕組みへ進みます。
+これで第5部のReliability設計が揃いました。次の第6部では、過去判断と評価結果を使ってReview Judgmentを改善します。
 
 ### Sources
 

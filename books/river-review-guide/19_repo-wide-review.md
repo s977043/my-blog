@@ -2,22 +2,11 @@
 
 PR diffだけでは判断できない問題があります。
 
-locale追加の例なら、
-
-- 対応するlocale定義は別ファイルにある
-- 同じProfile型を利用するconsumerが別packageにある
-- fallbackの既存パターンが別componentにある
-- API contract testが別directoryにある
-
-といったケースです。
-
-このときdiffだけを見ても、整合性を判断できません。
+locale追加の例でも、locale定義、同じ型を使うconsumer、fallback pattern、contract testが別ファイルにあれば、diffだけでは整合性を確認できません。
 
 ## repo-wide reviewが追加するもの
 
-River Reviewのrepo-wide reviewは、変更ファイルから関連Contextを集めてレビューへ追加します。
-
-公開ガイドでは、full file、関連tests、symbol usage、configやsibling fileなどを対象にします。
+River Reviewのrepo-wide reviewは、変更ファイルから関連Contextを集めます。
 
 ~~~text
 Changed Diff
@@ -31,84 +20,51 @@ Related Context
 Agentic Review
 ~~~
 
-これにより、cross-fileな不整合を見つけやすくなります。
+目的はリポジトリ全体を読むことではなく、**判断に必要な周辺情報を足すこと**です。
 
-## 「全部読む」はやらない
+## Contextには予算がある
 
-repo-wide reviewの目的は、リポジトリ全体を毎回LLMへ送ることではありません。
+Contextを増やすほど良いわけではありません。
 
-Contextにはコストがあります。
-
-- token量
-- latency
-- 注意の分散
-- secret混入リスク
+- token / latency
+- Attentionの分散
 - irrelevant contextによる誤判断
+- secret混入リスク
 
-そのためRiver ReviewではContext Budgetを持ち、sectionごとの上限やreview modeで量を制限できます。
+が増えるためです。
 
-必要なContextを選び、不要なものはskippedとして扱う方が、判断しやすい場合があります。
+River ReviewではContext Budgetを使い、review modeやsectionごとに量を制御できます。
+
+取得できなかったContextは「確認済み」とせず、skippedなどの状態として扱うことが重要です。
 
 ## Context収集はsecurity boundaryでもある
 
-リポジトリ全体からファイルを読むなら、秘密情報をLLMへ送らない設計が必要です。
+repo-wide context collectorでは、危険な情報をpromptへ入れないために複数段階で扱います。
 
-River Reviewのrepo-wide context collectorでは、path-level denyとcontent redactionを組み合わせます。
+| 段階 | 役割 |
+| --- | --- |
+| Path-level deny | .env、秘密鍵、credential系pathなどを対象外にする |
+| Content redaction | 読み込んだtext内のtoken / API key patternなどを除去する |
 
-### Path-level deny
-
-.env、秘密鍵、credential系など、危険なpathをそもそもContext対象から外します。
-
-### Content redaction
-
-読み込んだtextにもtokenやAPI key patternが含まれる可能性があるため、promptへ渡す前にredactします。
-
-つまりrepo-wide reviewは、
-
-> Contextを増やす機能
-
-ではなく、
-
-> **安全な範囲で、判断に必要なContextを選ぶ機能**
-
-と考えた方が正確です。
+repo-wide reviewは「Contextを最大化する機能」ではなく、**安全な範囲で必要なContextを選ぶ機能**です。
 
 ## Project RuleもContextになる
 
-.river/rules.md を使うと、プロジェクト固有のArchitecture / Forbidden Pattern / Testing RuleなどをレビューContextへ入れられます。
+`.river/rules.md` を使うと、Architecture / Forbidden Pattern / Testing Ruleなどproject固有の基準をレビューへ渡せます。
 
-これにより、
-
-「一般論として悪いか」
-
-ではなく、
-
-「このチームの設計基準に合っているか」
-
-を判断しやすくなります。
+これにより、「一般論として悪いか」ではなく、**このチームの設計基準に合うか**を判断できます。
 
 ## locale追加へ戻る
 
-diffだけではlocale追加自体に問題がなくても、repo-wide contextから、
+周辺Contextから、同じAPI型を使うconsumer、locale enumの正本、fallback pattern、contract testを確認できれば、FindingのEvidenceを具体化できます。
 
-- 同じAPI型を使うconsumer
-- locale enumの正本
-- fallback pattern
-- contract test
-
-を見つけられれば、より具体的なEvidenceを持って判断できます。
-
-逆に関連Contextが取得できなかった場合は、「全体整合を確認済み」とは言えません。
-
-この違いが、次のPartで扱うReview CoverageやContext Coverageにつながります。
+逆に必要Contextを取得できなければ、「リポジトリ全体との整合を確認済み」とは言えません。
 
 ## この章で持ち帰ること
 
-repo-wide reviewの価値は、Contextを最大化することではありません。
+repo-wide reviewでは、Contextを増やすのではなく、**判断に必要なContextを安全性と予算の中で選びます**。
 
-**判断に必要な周辺Contextを、安全性と予算の中で選択すること**です。
-
-次の第5部では、AIレビューそのものの完遂性・Evidence・Contextをどう検証するかへ進みます。
+ここまでで第4部の実践は終わりです。次の第5部では「レビューが実行されたこと」自体の信頼性を検証します。
 
 ### Sources
 
