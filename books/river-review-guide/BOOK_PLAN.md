@@ -541,3 +541,28 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: placeholder誤検出を人間レビューで解消
 - PASS: 静的QAとrender / CLI QAの境界を維持
 - REMAINING: `npm run list:books`, `npm run check`, `npm run preview`, 全章最終通読、公開直前のRiver Review差分確認
+
+
+### Publish Prep Loop 1 — Full-read transition review
+
+#### 検討
+- 全章の最終通読では、個別章の内容よりPart境界の受け渡しを優先して確認する
+- 重点確認対象は各Partの最終章と次Partの先頭章
+- 本編最終章と「おわりに」が同じ結論を二重に語らないよう役割を分ける
+
+#### Review
+- 04章: 第1部の結論は明確だが、第2部へのhandoffが欠けている
+- 08 / 13 / 19 / 23 / 28章: 次Partへの遷移が明示されている
+- 33章: Book全体の最終主張まで言い切っており、99_afterwordと役割が重なる
+- 99_afterword: 「レビューを組織の判断資産へ」という感情的・抽象的な締めとして残す価値がある
+
+#### 対応
+- 04章へ第1部終了と第2部へのhandoffを追加
+- 33章は運用上の結論までに留め、Book全体の最終メッセージは99_afterwordへ集約
+- 章数・構成・主張自体は変更しない
+
+#### Post Review
+- PASS: 各Part境界に明示的なhandoffが揃った
+- PASS: 33章=運用の結論、99_afterword=Book全体の締めという役割分担になった
+- PASS: 記事の寄せ集めではなく、一冊として終端まで接続した
+- NEXT: Publish Prep Loop 2でrepository既存チェック手順とBook固有チェックの整合を確認する

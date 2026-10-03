@@ -106,6 +106,8 @@ version管理すると「レビュー基準を固定化する仕組み」に見�
 
 Review Judgment as Codeは、レビューをコード化することではなく、**レビュー判断を所有・検証・改善可能にすること**です。
 
+ここまでで第1部の問題設定は終わりです。次の第2部では、この考えをRiver Reviewがどの責務境界で実装しているのかを見ます。
+
 ### Sources
 
 - [River Review Concept](https://github.com/s977043/river-review/blob/main/pages/explanation/concept.md)
