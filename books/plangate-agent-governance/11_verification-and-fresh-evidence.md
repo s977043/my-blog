@@ -223,6 +223,28 @@ PlanGate Core Contractでも、完了系の報告・記録の直前に一次Evid
 Source:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/core-contract.md
 
+## VerificationはContinueの条件を更新する
+
+3分類で見ると、Verificationの役割は **Continueしてよい状態かをEvidenceで更新すること**です。
+
+~~~text
+Verification PASS
+→ 現在の成果物についてContinue候補
+
+Verification FAIL
+→ repair可能なら原因調査して修正
+→ Planが有効なら再Verification
+
+FAILがPlan前提を壊す
+→ Escalate / Re-plan
+~~~
+
+ここで大切なのは、FAIL = 即Humanという単純化をしないことです。
+
+承認されたPlanがまだ有効で、root causeが分かり、その範囲内でrepairできるならAI側で継続できます。
+
+一方、FAILから「そもそもPlanが間違っていた」と分かったなら、第3部のre-plan triggerへ戻ります。
+
 ## この章で持ち帰ること
 
 AIの「テストは通っています」を疑い続けることが目的ではありません。
