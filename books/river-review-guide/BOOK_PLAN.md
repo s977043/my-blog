@@ -255,3 +255,42 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: Wチェックとrepo-wide reviewが高度機能カタログではなく、Artifact / Evidence / Context原則の実践として読める
 - ISSUE: Part 5〜7はまだ説明密度が薄く、Review Coverageの具体Gap、Riverbed lifecycle、Eval、段階導入の根拠を増やす必要がある
 - NEXT: Draft Loop 3でReliability / Improvement / Adoptionを本文化し、Book全体の読了後アクションまで閉じる
+
+
+### Draft Loop 3 — Reliability / memory / staged adoption
+
+#### 検討
+- Part 5で「0 findings」と「review complete」を分け、Review Coverageの実装背景とExperimental境界を具体化する
+- Part 6でMemoryをTranscriptではなくJudgmentとして扱い、active / superseded / archivedのlifecycleまで説明する
+- Evalはpositive fixtureだけでなくnegative fixtureとPlanner selectionも対象にする
+- Improvement LoopはPrompt改善に閉じず、Judgment Placementのpromotionへ接続する
+- Loop ConvergenceではCONVERGEDの根拠にCoverageを含め、max iterations等の外部Policyはcaller所有に残す
+- Part 7は最大構成を推奨せず、1 Skill → Plugin/local → comment-only CI → selective gateの順で導入する
+- Human JudgmentはReview VerdictとAuthorityを分離し、Cliff領域を明示する
+
+#### Review
+- First-time engineer: 「全部入れないと使えない」という印象がなく、1 Skillから開始できる
+- Tech Lead / EM: Human waitingを減らしつつ、security / payment / personal data / irreversible changeのAuthorityを人間に残せる
+- Technical: Review Coverage Experimental、Riverbed v1 Implemented / v2 Planned、Progressive Disclosureの実装差分、Loop caller ownershipが現行docsと整合
+- Eval: Finding数ではなくFalse Positive / Missed Issue / negative fixture / Planner selectionまで品質対象にしている
+- Operations: Memoryの蓄積だけでなくsupersede / expire、Suppressionのresurface条件を扱っている
+
+#### 対応
+- Part 5の20〜23章を本文初稿へ更新
+- Part 6の24〜28章を本文初稿へ更新
+- Part 7の29〜33章を本文初稿へ更新
+- 20章へIssue #2212のpartial execution gapを具体化
+- 24章へRiverbed v1のentry lifecycleとv2境界を追加
+- 26章へpositive / negative fixtureとPlanner evalを追加
+- 28章へCoverage-qualified convergenceとcaller-owned stop policyを追加
+- 31章へIntegration Modeとcomment-onlyからの段階導入を追加
+- 32章へDecision Surface / Authority Matrixを追加
+- 33章へ観測→分類→資産化→評価→昇格の継続改善loopを追加
+
+#### Post Review
+- PASS: Why → What → Design → Practice → Reliability → Improvement → Adoptionの全7部が本文として接続した
+- PASS: River Reviewを「AIレビュー製品の使い方」ではなく「レビュー判断システムの設計・運用」として一貫して説明できた
+- PASS: Implemented / Experimental / Planned / Directionの主張境界を維持した
+- PASS: Human Judgmentを自動化の失敗扱いにせず、責任を残す設計として扱った
+- PASS: 最大構成をbest practiceとして押し付けず、段階導入と撤退可能性を確保した
+- REMAINING: 公開前には全33章の一次情報リンクをcurrent mainへ再照合し、Zenn previewで表・コードブロック・Partページの表示を通し確認する

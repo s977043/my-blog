@@ -1,13 +1,134 @@
 # 人間レビューとの境界を決める
 
-Human Reviewの境界は「AIが自信なさそうなら人へ聞く」だけでは不十分です。
+自動化を増やしても、すべての判断をAIへ渡すわけではありません。
 
-チーム側で、どの種類の変更がHuman-ownedなのかを明示します。
+重要なのは、
 
-例:
+> **AIができるか**
 
-- 低リスクで機械検証可能 → 自律継続
-- 意味判断が必要だが可逆 → Agentic Review + 観測
-- security boundary / payment / personal data / irreversible migration → Human Approval Required
+ではなく、
 
-重要なのは、人間レビューを減らすことではなく、**責任を伴う判断へ人間の注意を集中させること**です。
+> **誰がその判断の責任を持つべきか**
+
+です。
+
+## 4つの扱いに分ける
+
+チームへ導入するときは、レビュー結果を次のような扱いへ分けると整理しやすくなります。
+
+| 扱い | 意味 | 例 |
+| --- | --- | --- |
+| Automatic | 機械的に継続してよい | format / type / deterministic checks |
+| Ask | 不明点を質問してEvidenceを増やす | contract不明 / context不足 |
+| Escalate | 人の判断へ戻す | security境界 / policy conflict |
+| Human Approval Required | 承認があるまで進めない | payment / personal data / irreversible migration |
+
+この分類はRiver Reviewの固定enumそのものではなく、本書で導入判断を整理するための見方です。
+
+## VerdictとAuthorityを分ける
+
+River ReviewがFindingやdecisionを返しても、それはAuthorityではありません。
+
+~~~text
+Review Engine
+  ↓
+Finding / Evidence / Verdict
+  ↓
+Decision Surface
+  ↓
+Authority Owner
+~~~
+
+たとえばRiver Reviewが「重大なFindingなし」と返しても、payment変更ならHuman Approval Requiredのpolicyを維持できます。
+
+逆にdocs typoのような低リスク変更を毎回人間へ戻す必要もありません。
+
+## Cliffでは人間承認を残す
+
+Human Judgment Focusでは、高リスク領域をCliffとして扱います。
+
+代表例は、
+
+- authentication / authorization
+- payment
+- personal data
+- security boundary
+- irreversible migration
+
+です。
+
+ここでRiver Reviewが担うのは、
+
+- Riskの検出
+- Evidenceの整理
+- 既存policyとの照合
+- Humanへ返す理由の明示
+
+までです。
+
+最終的に受け入れる責任は人間側に残します。
+
+## 「人が見る」を曖昧なfallbackにしない
+
+よくある設計は、
+
+> AIが自信なさそうなら人へ聞く
+
+です。
+
+これだけでは、いつ人に戻るかがモデルの自己評価に依存します。
+
+代わりに、
+
+- file / domain risk
+- change type
+- Evidence completeness
+- policy
+- irreversibility
+
+など、外から確認できる条件でHuman Handoffを設計します。
+
+## HillではObservationという選択もある
+
+すべてをGO / STOPの二択にする必要はありません。
+
+可逆で中リスクの変更なら、
+
+> 進めるが一定期間内に人間レビューする
+
+というGO_WITH_OBSERVATION型もあります。
+
+これにより、Human waitingを減らしつつ、重要な意味判断を後から回収できます。
+
+ただし期限を過ぎても無視してよい、という意味ではありません。
+
+Observation expiryを過ぎたら再レビューや停止へ戻す必要があります。
+
+## Human Reviewの価値を「最後の検査」に限定しない
+
+人間が強いのは、バグ検出だけではありません。
+
+- 事業優先順位
+- ユーザーへの影響
+- 組織責任
+- 倫理的判断
+- 長期Architecture
+- 例外受入
+
+など、Value Judgmentを含む領域です。
+
+AIレビューが増えるほど、こうした判断へ人のAttentionを残すことが重要です。
+
+## この章で持ち帰ること
+
+Human-in-the-loopは、すべての出力を人が読むことではありません。
+
+**責任を伴う判断のAuthorityを明示し、そこへ人間を配置すること**です。
+
+最後の章では、この境界も含めてレビューシステム自体を継続的に改善します。
+
+### Sources
+
+- [Human Judgment Focus](https://github.com/s977043/river-review/blob/main/pages/explanation/human-judgment-focus.md)
+- [Judgment Placement](https://github.com/s977043/river-review/blob/main/pages/explanation/judgment-placement.md)
+- [Loop Convergence Contract](https://github.com/s977043/river-review/blob/main/pages/reference/loop-convergence-contract.md)
