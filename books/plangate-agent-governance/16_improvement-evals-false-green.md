@@ -14,6 +14,28 @@ PlanGate自身では、greenだったのに守りたい性質が成立してい�
 
 この章では、それらを個別バグとしてではなく、4つのFalse Greenパターンとして整理します。
 
+## この章の地図
+
+この章は長いため、先に全体像を置きます。
+
+~~~text
+前半
+False Greenを4パターンで見分ける
+→ Proxy / Coverage / Classifier / Observer
+
+中盤
+失敗を改善へ変える
+→ Claim / Oracle / Controls / Regression
+
+後半
+改善Candidateを安全に採用する
+→ Trust Boundary / held-out Eval / Promotion / Recurrence
+~~~
+
+最初に読むなら前半と「最小Eval Contract」までで十分です。
+
+Harness改善そのものを設計するときに、後半のEvaluation Trust Boundary以降へ進んでください。
+
 ## False Greenを4つに分ける
 
 このBookではFalse Greenを、
