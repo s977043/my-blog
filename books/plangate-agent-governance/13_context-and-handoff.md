@@ -198,6 +198,42 @@ Context management自体がceremonyになるからです。
 
 ここでも、長時間・複数主体になったときだけ強くする設計です。
 
+## Identityを引き継ぐ
+
+Handoffで状態を渡すとき、「最新Planです」「テスト済みです」だけでは足りません。
+
+どの対象なのかを特定できる必要があります。
+
+たとえば、
+
+~~~text
+Task
+→ task id / context_ref
+
+Plan
+→ plan_hash
+
+Context snapshot
+→ snapshot_ref
+
+Implementation
+→ commit SHA / PR head
+
+Evidence
+→ どのcommitに対する実行結果か
+~~~
+
+です。
+
+これにより次のAgentが、
+
+> このEvidenceは今のHEADに対するものか。  
+> このApprovalは今のPlanに対するものか。
+
+を確認できます。
+
+Contextを渡すというより、**状態とIdentityの組を渡す**と考える方が正確です。
+
 ## Handoffは「会話の要約」ではなく再開API
 
 Handoffで大事なのは、過去をきれいに要約することではありません。
