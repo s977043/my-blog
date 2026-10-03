@@ -41,59 +41,49 @@ Review結果は、そのJudgmentの材料です。
 
 Review Agentが「PASS」と言ったから、そのAgentに実行権限まで自動的に渡るわけではありません。
 
-## C-1 / C-2 / C-3は役割が違う
+## PlanGateでの分担
 
-PlanGateでは、Planの実装前に複数の確認点を持ちます。
+PlanGateでは、実装前に次の3つを分けています。
 
-### C-1 — Self Review
-
-Planを作った側が、構造的な抜けを確認します。
-
-たとえばScope、Acceptance Criteria、Risks、test-casesなどです。
-
-これは「自分で書いたから正しい」とするのではなく、明示したチェック項目で一度崩す工程です。
-
-### C-2 — Independent / External Review
-
-Modeや運用に応じて、別のReviewerや外部モデルからPlanを見ます。
-
-目的は、同じ文脈・同じ作成者だけでは気づきにくい問題を探すことです。
-
-すべての軽いタスクで最大構成のC-2が必要なわけではありません。
-
-### C-3 — Approval Boundary
-
-ここで初めて、
-
-> このPlanをExecutionへ渡してよいか
-
-を判断します。
-
-重要なのは、「必ず人間がクリックすること」ではありません。
-
-> **どの条件なら誰にApproval Authorityを渡せるかが、先に定義されていること。**
-
-です。
-
-## Riskに応じてApproval Authorityを変える
-
-現行PlanGateでは、人間承認を残すケースと、限定的に自律承認できるケースを分けています。
-
-概念的には次のようになります。
-
-| 状況 | Authority |
+| 段階 | 主な問い |
 | --- | --- |
-| ultra-light / lightの低リスク作業 | 軽いGateや自動化余地あり |
-| 明示的に自律実行を委任された一部standard | 条件を満たせばAutonomous APPROVEの余地あり |
-| high-risk / critical | Human C-3 |
-| Hardening Override | Human C-3 |
-| schema / destructive / security関連 | Human C-3 |
-| ai-loopのeligible run | C-3'の限定経路あり |
-| PRの最終受入 | C-4 Human-owned |
+| C-1 Self Review | 構造的な抜けや自己矛盾はないか |
+| C-2 Independent / External Review | 別視点から重大な問題はないか |
+| C-3 Approval Boundary | このPlanをExecutionへ渡してよいか |
 
-詳細条件は今後変わりうるため、このBookでは個別ルールより原則を重視します。
+C-1とC-2はReviewです。
 
-> **リスクが上がるほど、Authorityを自動化側からHuman-owned boundaryへ戻す。**
+C-3はAuthorityを扱います。
+
+ここでの核心は、
+
+> **Reviewを通過したことと、Execution Authorityを渡したことを同一視しない。**
+
+ことです。
+
+## Authority Policyはリスクで変える
+
+現行PlanGateでは、すべてのタスクを同じC-3運用にはしていません。
+
+低リスクや明示的な自律委任では自動化余地を持たせつつ、high-risk / critical、Hardening Override、schema / destructive / security関連などでは人間側へAuthorityを戻します。ai-loopにはeligible run向けのC-3'もありますが、C-4はHuman-ownedです。
+
+個別条件は将来変わりうるため、このBookでは次の原則を中心にします。
+
+~~~text
+低リスク
+→ Authorityを限定的に委譲できる
+
+リスクが上がる
+→ Independent Reviewを厚くする
+→ Human-owned boundaryへ戻す
+
+最終受入
+→ Human-owned
+~~~
+
+重要なのは、「必ず人間がクリックする」ことではありません。
+
+**誰が、どの条件なら、どこまで決めてよいかを先にPolicyとして持つこと**です。
 
 ## APPROVE / CONDITIONAL / REJECT
 
