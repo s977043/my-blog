@@ -1,14 +1,20 @@
-# 全部入れない — Phase 0から段階導入する
+# 全部入れない — 2つの導入軸を読み分ける
 
 PlanGateには、Workflow、Skill、Agent、Gate、Hook、Metrics、Evalなど多くの要素があります。
 
 一覧だけを見ると、「これを全部入れないとPlanGateにならないのか」と感じるかもしれません。
 
-現行の段階導入ガイドは、そうしていません。
+現行ドキュメントには、**2つの段階表現が併存**しています。
 
-CLI導入後の成長パスは **Phase 0〜3**、CLIを入れないplugin-only環境はその前段の **Level 0** として整理されています。
+- README: **Level 1〜5** — どの機能範囲まで採用するかを示す段階
+- staged-adoption-guide: **Phase 0〜3** — Day 1から運用習熟を進める導入ロードマップ
+- plugin-only-adoption: **Level 0** — CLIを入れずに観点・型だけ試す入口
 
-## 現行の段階導入
+どれか一つが「正しく」、残りが「旧い」と断定するより、用途を分けて読む方が安全です。
+
+## 本書ではPhase 0〜3を導入手順に使う
+
+この章では、**実際にどの順序で導入するか**を説明するため、staged-adoption-guideのPhase 0〜3を主軸にします。
 
 | 段階 | 主目的 | まだ使わなくてよいもの |
 | --- | --- | --- |
@@ -17,6 +23,8 @@ CLI導入後の成長パスは **Phase 0〜3**、CLIを入れないplugin-only�
 | Phase 1 | Planを先に作る習慣 | C-2 / C-3 / strict Hook / Metrics |
 | Phase 2 | Approval Boundaryを導入 | full external review / strict一式 |
 | Phase 3 | strict / external review / Metrics | projectに不要な機能 |
+
+READMEのLevel 1〜5は、Plan approval → handoff → hooks/validate → metrics → eval/timelineと、**採用する機能範囲を段階化する別の見取り図**として参照します。
 
 重要なのはPhase番号を覚えることではありません。
 
@@ -291,13 +299,26 @@ Boundaryを維持するコスト
 
 後者は、その仕様と本書全体の議論から整理した設計上の解釈です。
 
-## 現行ドキュメントのLevel / Phase表記
+## LevelとPhaseを混同しない
 
-2026年10月3日時点のmainでは、段階導入の正本はPhase 0〜3、plugin-onlyはLevel 0です。
+2026年10月3日時点のmainでは、READMEにLevel 1〜5、staged-adoption-guideにPhase 0〜3、plugin-only-adoptionにLevel 0が併存しています。
 
-一方、when-not-to-useの一部には旧いLevel 1→5表記が残っています。
+本書では、
 
-本書では段階導入の正本を優先してPhase 0〜3として説明します。公開前に再確認します。
+~~~text
+Level 1〜5
+= 採用する機能範囲の見取り図
+
+Phase 0〜3
+= 導入・習熟のロードマップ
+
+Mode
+= 個々のtask risk / 運用強度
+~~~
+
+として読み分けます。
+
+公開ドキュメント間で用語が完全統一されているとは扱いません。
 
 Sources:
 - https://github.com/s977043/PlanGate/blob/main/docs/staged-adoption-guide.md
