@@ -1,5 +1,36 @@
 # Book Plan
 
+## Iteration Log
+
+### Loop 1 — Reader navigation / positioning
+
+#### 検討
+
+- 18章の論点境界は維持する
+- Zenn目次では章がフラットに見えるため、7つのPartを独立ページとして追加する
+- 既存Bookとの違いを「はじめに」で最初に宣言する
+- 最後に中心主張へ戻る「おわりに」を追加する
+
+#### Review
+
+- Reader: PlanGateを知らない読者が、いきなり抽象概念へ入る前に読書目的を把握できる
+- Editorial: Why -> What -> Before -> Execute -> Scale -> Improve -> Adopt の位置が目次で見える
+- Technical: 既存Bookを置換せず、Plan前後まで扱う別Bookだと明確になった
+
+#### 対応
+
+- `00_introduction.md` を追加
+- Part 1〜7 の区切りページを追加
+- `99_afterword.md` を追加
+- `config.yaml` の章順を更新
+
+#### Post Review
+
+- PASS: 既存Bookとのポジショニング衝突は解消
+- PASS: 第4コンテンツ章までにPlanGate全体像へ到達する
+- NEXT: 各章の抽象度に差があり、「具体例がある章」と「概念だけの章」が混在しているため、Loop 2でEvidence設計を揃える
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
