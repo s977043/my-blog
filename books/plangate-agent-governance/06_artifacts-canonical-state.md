@@ -10,61 +10,82 @@ AIエージェントと長く作業していると、会話には大量の情報
 - 最新の決定
 - いま何をしているか
 
-人間同士の会話なら「さっきの話はもう古い」と感覚的に扱えることもあります。
+この会話をそのまま「現在の状態」として扱うと、何が有効な決定なのか分かりにくくなります。
 
-AIエージェントの実行状態をそこへ依存させると、何が現在の決定なのか分かりにくくなります。
-
-PlanGate v8.23のContext Lifecycleでは、長時間セッションの状態を**会話履歴そのものではなく、canonical artifactsとevidenceの参照で引き渡す**方針を明示しています。
+PlanGate v8.23のContext Lifecycleでは、長時間セッションの状態を**会話履歴そのものではなく、現在有効なArtifactとEvidenceの参照で引き渡す**方針を明示しています。
 
 ## 会話履歴は便利だが、正本には向かない
 
-会話履歴には、その場の思考過程が豊富にあります。
+会話は探索には向いています。
+
+案を出し、比較し、失敗し、やり直す。その過程を残せます。
 
 しかし、実行状態の正本として見ると問題があります。
 
 ### 古い判断が残る
 
-最初はA案を採用し、途中でB案へ変えたとしても、会話にはA案も残ります。
+A案からB案へ変えても、会話には両方残ります。
 
 ### 必要な情報とノイズが混ざる
 
-最新のPlanを知りたいだけなのに、調査ログや失敗した試行まで読み直す必要が出ます。
+最新のPlanを知りたいだけなのに、調査ログや失敗した試行まで読み直すことになります。
 
-### 別Agentへそのまま渡しにくい
+### 次のAgentを前の推論へ引っ張る
 
-Builderの長い会話をReviewerへそのまま渡すと、独立レビューなのにBuilderの推論へ引っ張られる可能性があります。
+Builderの会話をReviewerへそのまま渡すと、「独立レビュー」でもBuilderの説明に引っ張られます。
 
-### セッションやRuntimeへ依存する
+### セッションへ依存する
 
-会話履歴が唯一の状態だと、model / runtime / workerを切り替えたときの再開条件が不安定になります。
+会話が唯一の状態だと、model / runtime / workerを変えたときの再開条件が曖昧になります。
 
-そこでPlanGateは、重要な状態を会話から外へ出します。
+そこで重要な状態を会話の外へ出します。
+
+## まず4種類に分けて考える
+
+初見では、ファイル名を覚える必要はありません。
+
+まず次の4つで十分です。
+
+| 状態 | 答えたい問い |
+| --- | --- |
+| Plan | 何を、どの範囲で実行するのか |
+| Current State | 今どこまで進み、次は何をするのか |
+| Evidence | その主張や完了を何で確認したのか |
+| Handoff | 次の主体は何を読めば再開できるのか |
+
+この4種類を会話の外へ出すと、セッションが切れても仕事の状態を復元しやすくなります。
 
 ## 「正本」は1ファイルではない
 
-ここで注意したいのは、「全部を一つのcanonical.mdへ集める」という話ではないことです。
+ここでいう正本は、巨大な `canonical.md` を一つ作る意味ではありません。
 
-PlanGateでは関心ごとに既存の正本があります。
+関心ごとに「ここを見れば現在の答えが分かる」という所有先を決めます。
 
-現行Context Lifecycleの整理では、たとえば次のようになっています。
+たとえば、
 
-| 知りたいこと | 主な正本・所有先 |
-| --- | --- |
-| 最終的な実行Plan | canonicalな `plan.md` |
-| 現在のタスク位置 | `INDEX.md` + `current-state.md` |
-| 重要な判断理由 | decision-log / ADR |
-| 検証・レビュー結果 | evidence / report / Review Artifactへの参照 |
-| session / tool handoff | local-exec-handoff |
-| workerへの作業パッケージ | context-packager / dispatch |
-| crash-consistent runtime state | RunState |
+```text
+何を実行する？
+→ Plan
 
-このBookで「Artifactを正本にする」と言うときは、**役割ごとに所有者を決め、同じ意味の正本を増やさない**という意味です。
+今どこ？
+→ Current State
 
-## Plan / todo / test-casesは何を分けているのか
+本当に確認した？
+→ Evidence
 
-PlanGateの初期からあるArtifactにも役割があります。
+次の担当は何を見る？
+→ Handoff
+```
 
-### plan
+という形です。
+
+同じ意味の情報を複数箇所へコピーしないことの方が重要です。
+
+## Plan / todo / test-casesにも別の役割がある
+
+PlanGateでは、実装前のArtifactも分けています。
+
+### Plan
 
 何を、なぜ、どの設計で進めるか。
 
@@ -72,17 +93,13 @@ Approvalの対象になります。
 
 ### todo
 
-Planを実行可能な仕事へ分けたもの。
-
-現在位置や依存関係を扱いやすくします。
+Planを、実行可能な仕事へ分けます。
 
 ### test-cases
 
-Acceptance Criteriaを、実装後に確認できる条件へ落としたもの。
+Acceptance Criteriaを、実装後に確認できる条件へ落とします。
 
-Verificationの入力になります。
-
-この3つを分けることで、
+つまり、
 
 ```text
 何を作るか
@@ -92,40 +109,42 @@ Verificationの入力になります。
 何をもって満たしたと確認するか
 ```
 
-を混ぜずに扱えます。
+です。
 
-## current-stateとhandoffは「次の主体」が読むためにある
+細かな書き方は既存のPlanGate実践ガイドへ譲ります。本書で重要なのは、それぞれが後段のGateやVerificationで違う役割を持つことです。
+
+## Handoffは「会話の要約」ではなく再開インターフェース
 
 長時間実行では、「今まで何を考えたか」より、「次に何をすればよいか」が重要になります。
 
-PlanGateのContext Lifecycleでは、checkpoint時に、
+Handoffで渡したいのは、会話の全文ではありません。
 
 - 現在のphase
-- 完了済み / 実行中の仕事
+- 完了済みの仕事
+- 現在の仕事
 - blocker
 - next action
 - Planからの逸脱
+- 必要なEvidenceへの参照
 
-などを現在状態へ反映します。
+など、次の主体が再開するために必要な情報です。
 
-そしてownerやsessionが変わるときは、既存のhandoff surfaceを使います。
-
-つまり、Handoffは会話の要約ではなく、
+その意味でHandoffは、
 
 > **次の主体が現在の正本から安全に再開するためのインターフェース**
 
-として扱います。
+と考えられます。
 
 ## Fresh Contextは「全部忘れる」ことではない
 
-v8.23では、model / runtime / workerの変更、独立reviewerの開始、worker handoffなどで、standard以上ではcheckpoint後にfresh contextから再開する方針があります。
+現行PlanGateでは、model / runtime / workerの変更、独立Reviewerの開始、worker handoffなどで、standard以上ではcheckpoint後にfresh contextから再開する方針があります。
 
 ここでいうfresh contextは、状態を捨てることではありません。
 
 ```text
 conversation / tool history
         ↓
-canonical stateをcheckpoint
+現在有効な状態をcheckpoint
         ↓
 必要なArtifactとEvidenceを再読込
         ↓
@@ -134,9 +153,19 @@ fresh session / fresh reviewer
 
 です。
 
-古い会話をそのまま持ち越す代わりに、**現在有効な状態を再構成して渡す**という考え方です。
+古い会話を持ち越す代わりに、**現在有効な状態を再構成して渡す**という考え方です。
 
-この設計は、第5部のContext / Handoffでさらに詳しく扱います。
+具体的な実装では、現行PlanGateは次のように既存の所有先を再利用しています。
+
+- executable Plan: canonicalな `plan.md`
+- current position: `INDEX.md` + `current-state.md`
+- rationale: decision-log / ADR
+- evidence: report / Review Artifact等への参照
+- session/tool handoff: local-exec-handoff
+- worker package: context-packager / dispatch
+- runtime state: RunState
+
+ここはv8.23時点の実装詳細です。読者が最初から名前を覚える必要はありません。
 
 ## 正本を増やしすぎると逆に壊れる
 
@@ -152,19 +181,19 @@ Artifactを増やせば安全になるわけではありません。
 
 へ重複して書けば、どれが最新か分からなくなります。
 
-実際、Context Lifecycleの公開文書でも、新しいcheckpoint schemaやContext Manifest、RunStateを追加しないことを明示しています。
+Context Lifecycleの公開文書でも、新しいcheckpoint schemaやContext Manifest、RunStateを追加しないことを明示しています。
 
 既存の所有者を再利用し、必要な情報は参照でつなぎます。
 
-これは重要な設計原則です。
-
 > **状態を外へ出す。ただし、同じ意味の正本を増やさない。**
+
+これが重要です。
 
 ## 会話に残してよいもの、正本へ出すもの
 
 すべての会話を保存する必要はありません。
 
-PlanGateのContext Lifecycleでは、raw chat transcriptやhidden reasoningを実行状態として保存しない方針を明示しています。
+現行Context Lifecycleでは、raw chat transcriptやhidden reasoningを実行状態として保存しない方針です。
 
 残すべきなのは、
 
@@ -173,7 +202,7 @@ PlanGateのContext Lifecycleでは、raw chat transcriptやhidden reasoningを�
 - failure
 - blocker
 - current state
-- evidenceへの安定した参照
+- Evidenceへの安定した参照
 
 です。
 
@@ -186,16 +215,17 @@ Source:
 
 長時間動くAIエージェントにとって、会話履歴は便利な作業メモですが、安定した正本ではありません。
 
-PlanGateでは、
+最初は次の4つだけ押さえれば十分です。
 
-> **重要な状態を役割ごとのArtifactへ出し、Evidenceを参照でつなぎ、次の主体は現在の正本から再開する。**
+```text
+Plan
+Current State
+Evidence
+Handoff
+```
 
-という方向へ進んでいます。
+> **重要な状態を役割ごとのArtifactへ出し、同じ意味の正本を増やさず、次の主体は現在の状態から再開する。**
 
 これで第2部の地図が揃いました。
-
-- 第4章: 次へ進める条件をWorkflowとして持つ
-- 第5章: Workflow / Skill / Agent / Gate / Artifact / Hookへ責務を分ける
-- 第6章: 状態を会話から外へ出し、正本の所有者を分ける
 
 次の第3部では、実装前にそのArtifactをどう作り、推測をEvidenceへ変え、Approval Boundaryへつなぐかを見ていきます。
