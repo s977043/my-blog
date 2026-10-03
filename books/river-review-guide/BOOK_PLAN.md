@@ -513,3 +513,31 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: 実装仕様を削らず、同じ説明の再登場を減らした
 - PASS: 20章のExperimental / Gate opt-inなど時制依存情報は維持した
 - NEXT: Final Edit Loop 3で公開前の静的監査項目をrepository-ownedに強化する
+
+
+### Final Edit Loop 3 — Static editorial QA
+
+#### 検討
+- preview前でも機械的に確認できる不整合はrepository上で先に潰す
+- H1 / Sources / fence / placeholderを33章すべて監査する
+- 静的QAとZenn renderer確認を同じ「完了」にしない
+
+#### Review
+- 01〜33章: H1は全章1つ
+- 01〜33章: 全章に最低1つのSources URL
+- fenced code blockの開閉不整合: 0
+- TBD / FIXME / XXX: 0
+- TODO match: 12章のレビュー例1件のみで、未執筆placeholderではない
+- 31章はSourceが1本のみだったためIntegration Modeの根拠を補強可能
+
+#### 対応
+- `EDITORIAL_QA.md` を追加
+- 31章へRiver Review READMEをSource追加
+- `PUBLISH_CHECKLIST.md` に静的QA完了項目を追加
+- npm / Zenn preview未実行項目は未完了のまま維持
+
+#### Post Review
+- PASS: 33章の基本Markdown構造に静的不整合なし
+- PASS: placeholder誤検出を人間レビューで解消
+- PASS: 静的QAとrender / CLI QAの境界を維持
+- REMAINING: `npm run list:books`, `npm run check`, `npm run preview`, 全章最終通読、公開直前のRiver Review差分確認

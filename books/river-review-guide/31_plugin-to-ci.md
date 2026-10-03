@@ -119,3 +119,4 @@ River Reviewは「CIへ入れてblockingにして完成」ではありません�
 ### Sources
 
 - [Adopter Playbook](https://github.com/s977043/river-review/blob/main/pages/guides/adopter-playbook.md)
+- [River Review README](https://github.com/s977043/river-review/blob/main/README.md)
