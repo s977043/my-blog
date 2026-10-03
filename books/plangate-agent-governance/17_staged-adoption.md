@@ -16,13 +16,15 @@ PlanGateには、Workflow、Skill、Agent、Gate、Hook、Metrics、Evalなど�
 
 この章では、**実際にどの順序で導入するか**を説明するため、staged-adoption-guideのPhase 0〜3を主軸にします。
 
-| 段階 | 主目的 | まだ使わなくてよいもの |
-| --- | --- | --- |
-| plugin-only Level 0 | 観点・型を試す | CLI / Hookによる機械強制 |
-| Phase 0 | ultra-lightで1タスクを完走 | Plan / Gate / Agent / Hook / Metrics |
-| Phase 1 | Planを先に作る習慣 | C-2 / C-3 / strict Hook / Metrics |
-| Phase 2 | Approval Boundaryを導入 | full external review / strict一式 |
-| Phase 3 | strict / external review / Metrics | projectに不要な機能 |
+| 段階 | 主目的 |
+| --- | --- |
+| plugin-only Level 0 | CLIなしで観点・型を試す |
+| Phase 0 | ultra-lightで1タスクを完走 |
+| Phase 1 | Planを先に作る習慣をつくる |
+| Phase 2 | Approval Boundaryを導入する |
+| Phase 3 | 必要なHook / external review / Metricsを強化する |
+
+各Phaseで「何をまだ使わなくてよいか」は、後続の節で具体的に説明します。
 
 READMEのLevel 1〜5は、Plan approval → handoff → hooks/validate → metrics → eval/timelineと、**採用する機能範囲を段階化する別の見取り図**として参照します。
 
