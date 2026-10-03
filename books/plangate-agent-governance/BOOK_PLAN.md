@@ -212,6 +212,37 @@
 - NEXT: Loop 2で「3つの層」へ再整理し、詳細名を本文と補足に分離する
 
 
+### Part II Draft Loop 2 — Concept compression / beginner load
+
+#### 検討
+
+- 05章の6要素列挙を「仕事 / 状態 / 制御」の3層へ圧縮する
+- GateとHookを同義にせず、Gate=条件 / Hook=実行時検査の一手段とする
+- 06章はv8.23の具体ファイル名より先に Plan / Current State / Evidence / Handoff の4概念を置く
+- 実装詳細は「現行PlanGateでは」の補足へ下げる
+
+#### Review
+
+- First-time reader: 覚える単位が6要素から3層へ減り、全体像を保持しやすい
+- Editorial: 05章が機能カタログではなくHarnessの構造説明になった
+- Technical: HookをGateそのものとして扱わず、Context Lifecycleの所有権も重複SSoTを作らない形で説明できている
+
+#### 対応
+
+- 05章を3層モデルへ再構成
+- 06章冒頭を4つの状態（Plan / Current State / Evidence / Handoff）へ簡略化
+- v8.23固有名は実装補足へ移動
+- 既存Bookへ委譲するPlan How-to境界を再確認
+
+#### Post Review
+
+- PASS: 初見読者の用語負荷を低減
+- PASS: Governance Harnessの構成を一枚の表で理解できる
+- ISSUE: 04〜06章は概念説明が中心で、実際の1タスクがどう流れるかの具体像がまだ弱い
+- ISSUE: 「Governance Harness」がPlanGate自身の自己定義なのか一般名称なのか、冒頭でさらに明示した方がよい
+- NEXT: Loop 3で最小の具体例と主張境界を追加する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
