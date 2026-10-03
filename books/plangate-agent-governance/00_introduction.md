@@ -25,3 +25,18 @@ Artifact、Evidence、Approval Boundary、Verification、Human Judgment、Contex
 ## 読み終えたときの状態
 
 個々のプロンプトを工夫するだけでなく、AIが間違えても壊れにくく、進行状況を証拠で確認でき、必要な場所で人間が判断できる開発環境を設計する観点を持ち帰ることを目指します。
+
+
+## 情報の基準日
+
+PlanGateの具体仕様は、**2026年10月3日時点のcurrent main**を再確認して記述しています。
+
+release状態はGitHub Releasesを優先し、同日時点のLatest releaseは **v8.22.0** です。一方、mainのREADMEにはv8.23.0をLatestとする記述があり、生成済みChangelogページではv8.23.0がTBDのまま残っています。
+
+そのため本書では、v8.23系のContext / ai-loop V2機能を「current mainで確認できる実装」として扱い、release済みとは断定しません。
+
+また、段階導入についてもREADMEのLevel 1〜5とstaged-adoption-guideのPhase 0〜3が併存しているため、用途を分けて説明します。
+
+Source:
+- https://github.com/s977043/PlanGate/releases/latest
+- https://github.com/s977043/PlanGate/blob/main/docs/changelog.md
