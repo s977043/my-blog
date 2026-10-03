@@ -974,3 +974,45 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: Book metadataと45章公開リスト
 - BLOCKED: `cover.png` / `cover.jpg` 未配置
 - DECISION: coverが決まるまでPR #750はDraft、公開フリップしない
+
+
+### Cover Loop 1 — Brand and Zenn contract
+
+#### 検討
+- visual reviewで唯一残ったblockerはBook cover
+- Zenn公式の推奨は500×700px、book directory直下のcover.png / cover.jpeg
+- 一覧サムネイルでは情報量を減らし、大きいtitleと識別色を優先する
+
+#### Review
+- River Review既存brand assetを確認
+- brand color: #0b1f33 / #1a75ff → #1fd1a1
+- existing social previewの中心メッセージ: Review Judgment as Code
+- Book title全文を1行へ入れる初稿は右端clipが発生しNG
+- 3行構成にすると500×700実寸・125×175相当thumbnailとも判読可能
+
+#### 対応
+- 500×700 `cover.png` を作成
+- dark background / River gradient / River Review / 日本語Book title / Review Judgment as Codeへ統一
+- 既存social previewとbrand continuityを維持
+- PNGをpalette最適化し、品質を保ったまま軽量化
+- `books/river-review-guide/cover.png` としてcommit
+
+#### Post Review
+- PASS: 500×700
+- PASS: title clippingなし
+- PASS: thumbnailでも主titleとRiver Reviewを識別可能
+- NEXT: Previewでcover validation warningが消えることを検証
+
+### Cover Loop 2 — Make the cover a browser contract
+
+#### 検討
+- asset存在だけではZennがcoverとして正しく読み込めたことを証明しない
+- BookHeaderのvalidation errorとcover image loadをbrowser Gateへ追加する
+
+#### 対応
+- `.book-header__validation-errors` が0件であることを必須化
+- `.book-header__cover-img` のcomplete / naturalWidth / naturalHeightを確認
+- cover metadataをbrowser reportへ保存
+
+#### Post Review
+- PENDING: latest PR CIでvalidation=0 / cover load PASSを確認
