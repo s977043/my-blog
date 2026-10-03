@@ -537,6 +537,39 @@
 - NEXT: Loop 3でmulti-agentを必要時だけ使う原則とIdentity Bindingを統合する
 
 
+### Part V Draft Loop 3 — Minimal topology / Identity Binding / ownership
+
+#### 検討
+
+- Multi-agentを目的化せず、responsibility separation benefit > coordination costのときだけ増やす
+- Handoff / Review / Deliveryを横断するIdentity Bindingを明示する
+- task / plan / context snapshot / implementation / evidence / review targetのidentityを区別する
+- 複数Agent数より先にstate / evidence / decision / authority ownershipを決める
+
+#### Review
+
+- Engineer: small taskでは単一Agentでよいという逃げ道が明確で、過剰設計を避けられる
+- EM / Tech Lead: Agent topologyをrisk / coordination complexityで選ぶ判断軸が得られる
+- Technical: context_ref / snapshot_ref / plan_hash / commit identity / Fresh Evidenceの既存設計が横断原則として接続
+- Reviewer: fresh contextだけでなくreviewed target identityの一致まで確認する構造になった
+- Delivery: old-head CI / old reviewを現在HEADのgreenとして扱わない説明が入った
+
+#### 対応
+
+- Part V導入へ「Agentを増やす条件」とIdentity Binding表を追加
+- 13章へstate + identityをhandoffする原則を追加
+- 14章へmulti-agent不要ケースとreview target bindingを追加
+- 15章へhead/evidence/review identity reconcileとownership-first原則を追加
+
+#### Post Review
+
+- PASS: Multi-agentを過剰推奨せず、必要性ベースのtopologyになった
+- PASS: Context / Review / DeliveryをIdentity Bindingで横断接続できた
+- PASS: Agent topologyよりownership topologyを先に決める原則が明確
+- PASS: 第5部（13〜15章）は本文初稿として次Partへ進める状態
+- REMAINING: v8.23.0はTBDのため、公開前にrelease状態とai-loop V2 runtimeの最新canonを必ず再照合する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
