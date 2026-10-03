@@ -39,6 +39,52 @@ Changelog上ではまだv8.23.0はTBDなので、本章ではこの設計を「�
 Source:
 - https://github.com/s977043/PlanGate/blob/main/docs/changelog.md
 
+## 1つのDelivery loopで見る
+
+前の章まで使ってきた「注文一覧APIにstatus絞り込みを追加する」例で考えます。
+
+PRを作ったあとにCIで1件失敗し、Reviewerから1件major指摘が来たとします。
+
+~~~text
+PR_CREATED
+  ↓
+checksを取得
+  ↓
+test FAILをEvidence化
+  ↓
+root causeを調査
+  ↓
+Plan内repair
+  ↓
+Fresh Verification
+  ↓
+PR更新
+  ↓
+Review findingを取得
+  ↓
+Plan内repair
+  ↓
+Fresh Verification
+  ↓
+checks / findings / stateを再照合
+  ↓
+MERGE_READY
+~~~
+
+途中で、
+
+> status filterには実はschema migrationが必要
+
+と分かったなら、repairを続けずRe-plan / Escalateへ戻ります。
+
+つまりDelivery loopは、
+
+> **何が何でもgreenになるまで直し続けるloop**
+
+ではありません。
+
+第4部の Continue / Stop / Escalate Policyを、PR作成後にも適用するloopです。
+
 ## PR_CONVERGINGという途中状態
 
 ai-loop V2 taxonomyでは、PR作成後の収束を `PR_CONVERGING` というLifecycle Stateで表します。
@@ -211,6 +257,22 @@ ai-loop V2 taxonomyでは、
 「まだ頑張れそうだから続ける」ではなく、loopを止める条件をstateとは別に持ちます。
 
 これも長時間自律化に必要な境界です。
+
+## 用語より「収束条件」を先に決める
+
+V2にはRunStateやtaxonomyがありますが、読者が最初に必要なのは全enumではありません。
+
+自分のDelivery automationで最低限決めたいのは、
+
+- 何を取得すれば現状が分かるか
+- 何なら自動repairしてよいか
+- repair後に何を再検証するか
+- どの状態ならMERGE_READYと言えるか
+- 何が起きたらEscalate / Blockするか
+
+です。
+
+state machineは、その条件が増えてから導入しても構いません。
 
 ## この章で持ち帰ること
 
