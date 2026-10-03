@@ -371,6 +371,38 @@
 - REMAINING: 公開前に現行PlanGate releaseと照合し、Autonomous APPROVE / C-3' / mode条件など変動しやすい実装詳細を更新する
 
 
+### Part IV Draft Loop 1 — Enforcement / Fresh Evidence / Authority
+
+#### 検討
+
+- 10章は「Hookがある=守れている」とせず、matcher / runtime / CLI / wiringを含む実効強制として扱う
+- #1277をFalse Negative、#1326をFalse Positiveの具体例として対比する
+- 11章は完了宣言をcurrent artifactへのClaimとして扱い、Fresh Evidenceへ結びつける
+- 12章はAutonomyとAuthorityを別軸にし、MERGE_READY != MERGEDを責任境界の具体例として使う
+
+#### Review
+
+- Reader: 承認後の安全性を「Hookを増やすこと」ではなく、Enforcement→Evidence→Authorityの流れで理解できる
+- Technical: 現行hook-enforcementの未防御経路、quality-command stale判定、Core Contract、ai-loop V2 taxonomyと整合
+- Skeptical OSS reader: PlanGate自身のHook gapとfalse positiveを隠さず、mechanical enforcementを絶対視していない
+- Editorial: 10→11→12が「越境を防ぐ→完了を証明する→決定権を分ける」で接続する
+
+#### 対応
+
+- Part IVと10〜12章を全文ドラフト化
+- 10章へ#1277 / #1326とpositive/negative controlを統合
+- 11章へstale evidence / quality command evidence / verify-then-reportを統合
+- 12章へrisk-based Autonomy / AuthorityとMERGE_READY境界を統合
+
+#### Post Review
+
+- PASS: 技術的な実効性を過大評価せず説明できた
+- ISSUE: 10章は現行Hookの欠落を詳しく書いたため、PlanGateの弱点列挙に見える可能性がある
+- ISSUE: 11章のFresh / Relevant / Reproducibleは本書側の整理であり、公式三要件のように見せない方がよい
+- ISSUE: 12章はHuman-ownedの説明が多く、自律化の価値をさらに前面に出せる
+- NEXT: Loop 2で「失敗から何を設計原則にしたか」を強化し、主張境界を整理する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
