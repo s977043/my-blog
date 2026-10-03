@@ -193,6 +193,31 @@ Claudeの `Edit|Write` matcherだけにあるGuardは、Bash経由では同じ�
 Source:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/hook-enforcement.md
 
+## Enforcementの品質は「網羅率」だけでなく摩擦も見る
+
+実運用では、Guardが守る範囲だけでなく、開発フローへ与える摩擦も重要です。
+
+#1326のようにsafe commandを誤blockすると、Agentは不自然な迂回やcommand分割を始めます。
+
+その結果、
+
+~~~text
+強いGuard
+→ 安全
+
+ではなく
+
+適切なGuard
+→ 危険操作を止める
+→ 安全操作は通す
+→ bypassしにくい
+→ 失敗時に理由が分かる
+~~~
+
+という設計が必要になります。
+
+Guard品質はblock件数ではなく、**意図した境界を低摩擦で守れているか**で評価します。
+
 ## Hookは最後の目的ではない
 
 Hookを増やすことが目的ではありません。
