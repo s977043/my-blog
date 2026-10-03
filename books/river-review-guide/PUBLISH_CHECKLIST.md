@@ -40,7 +40,7 @@ Verification date: 2026-10-04
 - [x] 01〜33章でコードフェンス不整合がないことを静的確認
 - [x] TBD / FIXME / XXXなど未執筆プレースホルダがないことを静的確認
 - [x] `EDITORIAL_QA.md` に静的監査結果を記録
-- [ ] 全33章を通読し、用語ゆれ・冗長表現を最終校正する
+- [x] 全33章を通読し、用語ゆれ・冗長表現を最終校正する
 
 ## 4. Repository checks
 
@@ -56,13 +56,13 @@ Verification date: 2026-10-04
 
 ## 5. Zenn preview
 
-- [ ] `npm run preview`
+- [x] `npm run preview` server / Book route smoke test（CI）
 - [ ] Bookトップのtitle / summary / topicsを確認
-- [ ] Part 1〜7の見出しと章順を確認
+- [x] Part 1〜7の見出しと章順をReader QAで確認
 - [ ] 表がモバイル幅で読めるか確認
 - [ ] code block / text diagramが崩れていないか確認
 - [x] 外部GitHub Source linkをPart 1〜7から1本ずつspot check（7/7取得成功）
-- [ ] 33章 + 付録 + おわりにを通しでnavigation確認
+- [x] 33章 + 付録 + おわりにを通しでnavigation確認
 
 ## 6. Publish decision
 
