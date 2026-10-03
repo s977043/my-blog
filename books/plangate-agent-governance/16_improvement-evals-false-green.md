@@ -1,14 +1,25 @@
-# EvalとFalse Green
+# Greenを疑う — EvalとFalse Green
 
-> Draft. Harness自体の「守れているつもり」を疑い、再現可能な評価へ落とす。
+> Draft. Harness自体の「守れているつもり」を、実挙動と対照実験で疑う。
 
 ## Greenでも守れていなかった
+
+## False Greenの4クラス
+
+- 設定やファイルが存在するだけで「動作している」と判定する
+- path / worktreeなど入力空間の一部だけを検証する
+- 文字列近似で実際のcommand semanticsを見ない
+- 検査手段そのものが副作用を持つ
 
 ## linked worktreeで外れたApproval Boundary
 
 ## 文字列判定が生んだFalse Positive / False Negative
 
-## 誤起動で危険なコマンドがspawnされた経路
+## 誤起動で副作用が出た検査
+
+## Positive ControlとNegative Control
+
+「危険な操作を止める」テストだけでなく、「安全な操作を通す」対照も持つ。
 
 ## Detect -> Reproduce -> Fix -> Regression Guard
 
