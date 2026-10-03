@@ -4,11 +4,11 @@
 
 ## Current status
 
-**PREVIEW_SERVER_VERIFIED / VISUAL REVIEW BLOCKED**
+**VISUAL_REVIEW_PASSED / COVER BLOCKED**
 
 Evaluated: 2026-10-04
 
-本文・構成・source traceability、repository checks、Zenn preview serverのBook route smoke test、最終Reader QAまで完了した。ただしbrowser上のvisual reviewが未完了なので `published: true` へは進めない。
+本文・構成・source traceability、repository checks、Zenn preview server、全45章browser render、代表章のmobile / desktop visual review、Bookトップのtitle / summary / topics / chapter一覧確認まで完了した。ただしBook cover assetが未配置でZenn Preview validation warningが残るため `published: true` へは進めない。
 
 ## Evidence already satisfied
 
@@ -39,9 +39,11 @@ Evaluated: 2026-10-04
 2. [x] `npm run list:books` — Zenn CLIがBookを正常認識
 3. [x] `npm run check` — 26 checks PASS
 4. [x] `npm run preview` — CIでpreview server / Book route HTTP smoke test PASS
-5. [ ] mobile幅を含む表 / code block / text diagramの目視
+5. [x] mobile幅を含む表 / code block / text diagramの目視 — browser artifactで確認
 6. [x] 33章 + 付録 + おわりにの最終通読
 7. [x] 外部GitHub Source linkのspot check — 7/7取得成功
+8. [x] Bookトップ title / summary / topics / included chapters=45 をactual Preview routeで確認
+9. [ ] Book coverを追加し、Preview validation warningを0件にする
 
 ## Release state machine
 
