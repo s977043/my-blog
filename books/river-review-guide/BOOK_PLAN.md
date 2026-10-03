@@ -382,3 +382,27 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: 長いBookでもWhy → What → Design → Practice → Reliability → Improvement → Adoptionの現在地が保てる
 - PASS: 公開前作業がrepository-owned checklistになった
 - REMAINING: `npm run check` と `npm run preview` の実行・目視はローカル/CI実行環境で行う。公開意思決定はその結果を見て行う
+
+
+### Reader Loop 1 — First-time engineer
+
+#### 検討
+- 初見読者は第3部で Skill / Artifact / Evidence / Judgment Placement / Human Judgment が短い間隔で登場し、概念を同時に保持する負荷が高い
+- 章を削るより、Book冒頭で読書経路を示し、第3部に日本語の一言定義を置く方がReader Journeyを壊さない
+- 付録用語集は「調べる場所」なので、本文側でも最低限の読み替えを持たせる
+
+#### Review
+- First-time engineer: 33章を最初から全部読む前提だと長く見える
+- Reader: 「設計思想だけ知りたい」「実践から見たい」「導入判断をしたい」の3目的がある
+- Editorial: 用語の厳密さは維持しつつ、最初の一言だけ日本語へ落とすと理解が早い
+
+#### 対応
+- はじめにへ3つの読書経路を追加
+- 第3部へ5概念の日本語一言定義表を追加
+- 用語集へ「まず押さえる5語」を追加
+
+#### Post Review
+- PASS: 全章を順番に読まなくても目的別に入れる
+- PASS: 第3部で英語ラベルを覚える前に責務を理解できる
+- PASS: 既存の正式用語は変更していない
+- NEXT: Reader Loop 2でTech Lead / EM視点から、導入判断に必要なDecision Surfaceを強化する
