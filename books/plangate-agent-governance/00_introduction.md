@@ -15,7 +15,7 @@ Artifact、Evidence、Approval Boundary、Verification、Human Judgment、Contex
 - なぜ実装速度より判断がボトルネックになるのか
 - Verification / Review / Judgmentをなぜ分けるのか
 - Planを「参考資料」ではなく実行許可の前提にする方法
-- Prompt上のお願いをHookで制約へ変える方法
+- Prompt上のお願いのうち、機械判定できる境界をHook / CLIの実行時検査へ移す方法
 - 完了宣言ではなくFresh Evidenceで判断する方法
 - 会話ではなくArtifactへContextを移す方法
 - 複数Agent、長時間実行、PR後のDeliveryへどう広げるか
