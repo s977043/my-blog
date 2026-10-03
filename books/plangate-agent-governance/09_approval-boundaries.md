@@ -163,6 +163,33 @@ Review / Approvalへ戻る
 
 ここで止まれることが重要です。
 
+## 何が変わったらReview / Approvalへ戻るか
+
+実運用で重要なのは、Planの文字が1文字でも変わったら必ず止める、という単純なルールではありません。
+
+読者が自分の環境へ持ち帰るなら、次のような **re-plan trigger** を決めておくと使いやすくなります。
+
+| 変化 | 再判断の目安 |
+| --- | --- |
+| Scope | In / Outの境界を越える |
+| Acceptance | 成功条件そのものが変わる |
+| Risk | security / destructive / migrationなど新しい高リスクが出る |
+| Architecture | 承認時になかった責務・依存・schema変更が必要になる |
+| Authority | Human-owned領域やprotected resourceへ触れる |
+| Evidence | 承認時の重要Assumptionが否定される |
+
+逆に、
+
+- 承認範囲内の変数名調整
+- 実装順序の入れ替え
+- 同じAcceptance Criteriaを満たす局所的な実装選択
+
+まで毎回Approvalへ戻すと、Gateが単なる待ち行列になります。
+
+> **Approvalへ戻るのは、承認した意味が変わるとき。**
+
+という基準にすると、止める場所と任せる場所を分けやすくなります。
+
 ## Human Presenceも「絶対防御」とは書かない
 
 現行PlanGateの `plangate approve` は、人間の承認判断をJSON手書きにせず、対話TTY・環境・親process・nonce challengeなどでhuman presenceをbest-effortに確認し、approval artifactを生成します。
