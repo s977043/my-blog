@@ -504,6 +504,39 @@
 - NEXT: Loop 2でContextの概念圧縮、Review Package contract、Delivery walkthroughを強化する
 
 
+### Part V Draft Loop 2 — Concept compression / Review Package / Delivery walkthrough
+
+#### 検討
+
+- Context関連の実装名を、Contract / Current State / Handoffの3問へ圧縮する
+- Reviewer independenceをReview Packageのinput contractとして具体化する
+- Deliveryはtaxonomy説明より先にPR_CREATED→repair→reverify→MERGE_READYの1 loopを見せる
+- state machine導入を目的化せず、収束条件を先に決める
+
+#### Review
+
+- First-time engineer: Context Engine / Intent Package / Lifecycleの違いを全部覚えなくても13章を理解できる
+- Reviewer designer: 「渡す / 渡さない」が明確で実運用へ転用できる
+- EM / Tech Lead: Delivery automationをenum導入からではなく収束条件から設計できる
+- Technical: raw reasoning非継承、fresh evidence、re-plan trigger、MERGE_READY境界が前章までのcontractと一貫
+
+#### 対応
+
+- 13章へContextを3つの問いに圧縮する表と「再開可能性」判定を追加
+- 14章へReview Package contractと独立性5問を追加
+- 15章へ具体的なPR後Delivery walkthroughを追加
+- 15章でstate machineより収束条件を優先する説明を追加
+
+#### Post Review
+
+- PASS: 実装詳細の認知負荷を下げた
+- PASS: Review independenceが実行可能なcontractになった
+- PASS: MERGE_READYまでのloopが具体的に見える
+- ISSUE: 第5部全体で「複数Agentを使うこと自体の価値/不要なケース」が薄い
+- ISSUE: Handoff / Review / Deliveryそれぞれでidentity（どのPlan/diff/Evidenceか）の重要性を横断原則としてまとめたい
+- NEXT: Loop 3でmulti-agentを必要時だけ使う原則とIdentity Bindingを統合する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
