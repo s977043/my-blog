@@ -34,6 +34,22 @@ plugin-onlyならCLIなしのLevel 0からでも構いません。
 
 この段階が通ったあと、Bookで扱ってきた判断境界を最小構成で一周します。
 
+## ここからは「本書の演習」であり、公式Phase名ではない
+
+このあと行う最小Governance Loopは、PlanGate公式の新しいPhaseを定義するものではありません。
+
+公式Phase 0はultra-lightです。
+
+一方、このBookでは中心概念を一周するために、Plan / Review / Approval / Verificationまで意図的に使います。
+
+そのため、この演習は現行staged adoptionの感覚ではPhase 1〜2の要素をまたぎます。
+
+目的はPhase番号を再定義することではなく、
+
+> **判断境界を一度、小さなtaskで体験すること。**
+
+です。
+
 ## 題材は「小さく、外から確認できるもの」にする
 
 最初のGovernance Loopに向くタスクは、
@@ -332,6 +348,22 @@ PlanGateの導入度を上げることは目的ではありません。
 > **必要なBoundaryが、必要な強さで存在すること。**
 
 が目的です。
+
+## 最初の1周では「追加しないもの」も決める
+
+最小構成を守るため、最初の1タスクでは原則として次を先回り導入しません。
+
+- multi-agent orchestration
+- full strict Hook set
+- Metrics dashboard
+- Harness Eval / Ratchet
+- PR後の完全自動Delivery loop
+
+もちろん、既に必要性が分かっているprojectでは例外です。
+
+ただ、まだfailureを観測していないなら、まずBoundary / Evidence / Approval / Verificationの一周から始めます。
+
+**導入しないものを明示することも、Scope管理です。**
 
 ## 明日やるなら、この7項目だけ
 
