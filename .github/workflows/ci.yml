@@ -126,8 +126,23 @@ jobs:
 
           test -s /tmp/river-review-book.html
 
+          CHROME_PATH="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_PATH"
+          npm install --no-save --package-lock=false --ignore-scripts playwright-core@1.63.0
+          CHROME_PATH="$CHROME_PATH" ZENN_PREVIEW_URL="http://127.0.0.1:8000" \
+            node scripts/check-zenn-book-browser.mjs
+
           cleanup_preview
           trap - EXIT
+
+      - name: Upload River Review Book browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: river-review-book-browser-evidence
+          path: artifacts/zenn-book-browser
+          if-no-files-found: warn
+          retention-days: 7
 
       # publish-readiness ゲートの fixture self-test（hermetic・git 不要）。
       # 新設 check スクリプトの初版バグ対策（#393/#417 の再発防止）として常時実行する。

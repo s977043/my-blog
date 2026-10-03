@@ -830,3 +830,31 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 
 #### Post Review
 - PENDING: 最新HEADのCIでpreview smoke PASSかつjobが正常終了すること
+
+
+### Visual Loop 1 — Browser-level Zenn validation
+
+#### 検討
+- HTTP 200はrender pathの存在しか証明せず、mobile horizontal overflowやbroken imageは検出できない
+- browser verificationを再現可能なCI Gateへ移す
+- 新しい恒久dependencyは増やさず、CI内で `playwright-core@1.63.0` をno-save installする
+- Browser本体はGitHub Runner既存Chromeを利用する
+
+#### Review
+- Playwright Core current stableを2026-10-04に確認: 1.63.0
+- Zenn preview server smokeは既にPASS
+- remaining visual riskはmobile viewport / table / code block / text diagram / broken image
+- screenshot artifactを残せばautomation結果をHuman Reviewでも再確認できる
+
+#### 対応
+- `scripts/check-zenn-book-browser.mjs` を追加
+- mobile 390pxでconfig上の全45 routeをbrowser navigation
+- global horizontal overflow / uncontained wide element / broken image / empty renderを検査
+- desktop 1440pxでは代表5routeを検査
+- 代表5routeをmobile / desktop双方でfull-page screenshot
+- `report.json` とscreenshotsをGitHub Actions artifactへ保存
+- Playwright CoreはCIの一時dependencyとして1.63.0へ固定
+
+#### Post Review
+- PENDING: PR CIで全45 mobile routes + representative desktop routesがPASSするか
+- PENDING: screenshot artifactを取得し、Human visual reviewする

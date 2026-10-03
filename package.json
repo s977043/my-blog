@@ -8,6 +8,7 @@
     "list:books": "zenn list:books",
     "check:river-review-book": "node scripts/check-zenn-book-structure.js books/river-review-guide --require-sources-numbered",
     "test:zenn-book-structure": "node scripts/check-zenn-book-structure.js --self-test",
+    "check:river-review-book-browser": "node scripts/check-zenn-book-browser.mjs",
     "new:qiita": "qiita new --root Qiita",
     "pull:qiita": "qiita pull --root Qiita",
     "publish:qiita": "bash scripts/publish-qiita.sh",
