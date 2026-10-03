@@ -294,3 +294,29 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: Human Judgmentを自動化の失敗扱いにせず、責任を残す設計として扱った
 - PASS: 最大構成をbest practiceとして押し付けず、段階導入と撤退可能性を確保した
 - REMAINING: 公開前には全33章の一次情報リンクをcurrent mainへ再照合し、Zenn previewで表・コードブロック・Partページの表示を通し確認する
+
+
+### Polish Loop 1 — Remove conceptual duplication
+
+#### 検討
+- 初稿全体で同じ概念が複数回説明されている箇所を、前半=概念、後半=運用へ分離する
+- 07章と24章のRiverbed、08章と23章のReview Team、12章と27章のPromotion、13章と32章のHuman Judgmentを主対象にする
+- 重複を削るだけでなく、後続章へ意図的に引き継ぐ導線を追加する
+
+#### Review
+- Editorial: 07/08/12/13で詳細を先取りしすぎており、後半章の新規性を弱めている
+- Reader: 同じ語彙が再登場すること自体は問題ないが、同じ説明が再登場するとBookが長く感じる
+- Technical: 章削除は不要。責務の粒度を変えるだけでReader Journeyを維持できる
+
+#### 対応
+- 07章をCore Modelの概観に限定し、Riverbed lifecycle詳細を24章へ寄せる
+- 08章からReview Teamの詳細を外し、実行surfaceとjudgment ownershipに集中する
+- 12章はJudgment Placementの分類原則まで、promotion運用は27章へ寄せる
+- 13章はHuman Attentionの配分原則まで、Verdict / Authority / Handoff policyは32章へ寄せる
+- 各章末に後続章への役割分担を明示する
+
+#### Post Review
+- PASS: 前半で概念を理解し、後半で運用詳細へ進む階層が明確になった
+- PASS: 23 / 24 / 27 / 32章に「後で読む理由」が生まれた
+- PASS: Bookの総章数を変えずに重複感を削減できた
+- NEXT: Polish Loop 2でcurrent mainと全重要主張を再照合し、古い・曖昧な表現を修正する
