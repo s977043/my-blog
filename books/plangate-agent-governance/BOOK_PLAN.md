@@ -58,6 +58,38 @@
 - NEXT: 一次情報は揃ったが、章同士の責務境界に一部重複がある。Loop 3で重複削減とReader Journeyを最終調整する
 
 
+### Loop 3 — Responsibility boundary / de-duplication
+
+#### 検討
+
+- 新Bookが既存 `plangate-guide` の「良いPlanの書き方」を再演しないよう責務を固定する
+- Concept章とPlanGate具体化章の二段構造は維持する
+- 読者が「全部導入しないと意味がない」と誤解しないよう、When NOT to useと段階導入を強化する
+- jargonは概念の名前として使うが、最初に日本語で責務を説明する
+
+#### Review
+
+- Reader: 既存Bookを読んでいなくても理解できるが、Plan記法の詳細へ脱線しない
+- Editorial: Principle -> PlanGate implementation の反復になり、章の重複ではなく「抽象→具体」の役割差が明確
+- Technical: Governance costもtrade-offとして扱い、最大構成をbest practiceとして一般化しない
+
+#### 対応
+
+- 04章へ「PlanGateがやらないこと」を具体化
+- 05章を配布形態ではなく責務分解として再定義
+- 07 / 18章に既存Bookとのnon-duplication boundaryを追加
+- 11 / 16 / 17章のタイトルと論点をreader problem中心へ変更
+- Levelを上げる条件とWhen NOT to useを明文化
+
+#### Post Review
+
+- PASS: 既存Book = Plan作成のHow、新Book = Governance設計のWhy/Where/Boundary で分離できた
+- PASS: 全18章に固有の役割があり、統合すると失われる論点がある
+- PASS: 「全部入りPlanGate推奨」という誤読を抑えた
+- PASS: 本文執筆へ進める構成品質に到達
+- REMAINING: 各章本文の執筆時に、Issueの当時仕様と現行v8.23+仕様を再照合する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
@@ -86,6 +118,39 @@ PlanGate はそのために、Plan / Review / Approval / Execution / Verificatio
 - AIコーディングの基本操作は知っている
 - PlanGate は知らなくても読める
 - Scrum / TDD / SDD の専門知識は必須にしない
+
+## Cross-Book Responsibility Contract
+
+### Existing: `plangate-guide`
+
+主担当:
+
+- Why / Scope / Acceptance Criteriaをどう書くか
+- 設計案比較、Mode、test-casesをどう作るか
+- Planをどうレビューし、最初の1タスクを回すか
+
+### New: `plangate-agent-governance`
+
+主担当:
+
+- なぜPlanがApprovalの入力になるのか
+- Gate / Hook / Verification / Evidenceの責務分離
+- Autonomy / Authority / Human Judgment
+- Context / Handoff / multi-agent independence
+- Delivery / MERGE_READY
+- Harness Eval / False Green
+- 段階導入とGovernance cost
+
+新Book内でPlanのHow-toが必要になった場合は、概念理解に必要な最小限だけ説明する。
+
+## Vocabulary Contract
+
+- 初出では日本語の責務を先に説明し、その後に英語ラベルを置く
+- `Verification / Review / Judgment` は同義語として混ぜない
+- `Autonomy / Authority` は別軸として扱う
+- `Artifact / Evidence` は「存在するもの」と「主張を支える証拠」を区別する
+- PlanGate固有略号（C-X / V-X / WF-X / EH-X）は必要になる章まで出さない
+- 用語を増やすこと自体を価値にしない
 
 ## Reader Transformation
 
