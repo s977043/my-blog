@@ -55,7 +55,7 @@ PlanGate公式用語ではなく、この章で使う整理です。
 | Classifier Green | 判定ロジックとcommand semantics | #1326 |
 | Observer Green | 検査と観測対象の非干渉性 | #1169 |
 
-## 1. Proxy Green — 「ある」を「効いている」と扱う
+### 1. Proxy Green — 「ある」を「効いている」と扱う
 
 Issue #1085では、Codex pluginが実際には1件もロードされていないのにdoctorが、
 
@@ -117,7 +117,7 @@ Source:
 
 「設定した」「登録した」「呼び出した」は、それぞれ別のClaimです。
 
-## 2. Coverage Green — 見ている範囲だけでは正しかった
+### 2. Coverage Green — 見ている範囲だけでは正しかった
 
 Coverage Greenには二つの形があります。
 
@@ -187,7 +187,7 @@ root pathでPASS
 
 「1つの代表例で動いた」を全体保証へ広げません。
 
-## 3. Classifier Green — 検出したが、意味を判定していなかった
+### 3. Classifier Green — 検出したが、意味を判定していなかった
 
 Issue #1326では、force pushを止めるGuardが安全なcommandまでBLOCKしました。
 
@@ -240,7 +240,7 @@ all dangerous blocked
 
 Guard品質は「何件blockしたか」ではなく、意図したsemanticsをどれだけ正しく分類できるかで見ます。
 
-## 4. Observer Green — Eval自身が対象を変えていた
+### 4. Observer Green — Eval自身が対象を変えていた
 
 Issue #1169では、read-only検査のつもりでPython scriptを `sh` から起動した結果、docstring内のbacktickがshell command substitutionとして評価されました。
 
@@ -366,7 +366,7 @@ fixtureだけを通すpatchではなく、failure classへ修正を当てます�
 
 新しいtestが最初から旧実装でもPASSするなら、検出力を証明していません。
 
-## Regression suiteを「事故の墓場」にしない
+### Regression suiteを「事故の墓場」にしない
 
 failureを再現testへ残すのは重要です。
 
@@ -417,7 +417,9 @@ incident C
 
 Regression Guardも保守対象です。
 
-## Harness改善Candidateは自分を裁かない
+## Evaluation Trust Boundaryを作る
+
+### Harness改善Candidateは自分を裁かない
 
 VerifierやEval自身を変更すると、さらに難しくなります。
 
@@ -447,7 +449,7 @@ Source:
 
 を都合よく変更できません。
 
-## Evalを変更するときは、外側のOracleを持つ
+### Evalを変更するときは、外側のOracleを持つ
 
 Verifier Candidateを評価するなら、変更後Verifierの出力だけでなく、
 
@@ -462,7 +464,7 @@ Verifier Candidateを評価するなら、変更後Verifierの出力だけでな
 
 > **評価対象と、評価を成立させるAuthorityを分離する。**
 
-## known fixtureだけに最適化しない
+### known fixtureだけに最適化しない
 
 公開されたregression fixtureだけを見てCandidateを改善すると、そのケースだけ通るpatchを作ることもできます。
 
@@ -492,7 +494,7 @@ known fixtureは開発・再現に使い、独立したfixtureはpromotion evalu
 
 この分離が、Evalへの過学習を減らします。
 
-## PASS / FAIL / INCONCLUSIVEを分ける
+### PASS / FAIL / INCONCLUSIVEを分ける
 
 Evidenceが足りないとき、
 
@@ -527,7 +529,7 @@ INCONCLUSIVEはFAILとは違いますが、Promotion Readyでもありません�
 
 ための値です。
 
-## Eval条件はCandidateより先に固定する
+### Eval条件はCandidateより先に固定する
 
 結果を見たあとで、
 
@@ -554,7 +556,9 @@ critical regression
 
 結果を見て条件を変えたら、新しいEvalとしてやり直します。
 
-## failureが出ても、最初に新しいAgentやHookを作らない
+## 改善Candidateを最小化してPromotionする
+
+### failureが出ても、最初に新しいAgentやHookを作らない
 
 Harness改善では、問題を見つけると新しい仕組みを足したくなります。
 
@@ -583,7 +587,7 @@ Source:
 
 Harness改善そのものがinstruction debtを増やさないようにします。
 
-## 改善を自動化してもPromotionは分ける
+### 改善を自動化してもPromotionは分ける
 
 ai-loop V2のRatchetは、failureからHarness改善候補を作り、paired evaluationする方向へ進んでいます。
 
