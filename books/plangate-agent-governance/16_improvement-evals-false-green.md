@@ -1,40 +1,41 @@
 # Greenを疑う — EvalとFalse Green
 
-AI開発にGuardやEvalを追加すると、安心感が増します。
+GuardやEvalを入れると、画面にはgreenが増えます。
 
-CIはgreen。doctorもgreen。reviewもPASS。
+CI PASS。doctor OK。registered: YES。review PASS。
 
-しかし、greenという色は、
+しかし本当に知りたいのは、
 
-> **「検査が通った」**
-
-ことしか直接には示しません。
-
-本当に知りたいのは、
-
-> **その検査が、守りたい性質を実際に測っているか。**
+> **greenかどうかではなく、そのgreenが何を証明しているか。**
 
 です。
 
-この差を見落とすと、False Greenが生まれます。
+PlanGate自身では、greenだったのに守りたい性質が成立していないケースが何度もありました。
 
-## False Greenとは何か
+この章では、それらを個別バグとしてではなく、4つのFalse Greenパターンとして整理します。
+
+## False Greenを4つに分ける
 
 このBookではFalse Greenを、
 
-> **検査や状態表示は成功を示しているが、守りたい実挙動・契約・対象範囲は成立していない状態**
+> **検査や状態表示は成功を示しているが、判断したいClaimを実挙動で確認できていない状態**
 
 と呼びます。
 
-これはPlanGate固有の公式用語ではなく、この章で複数の失敗をまとめるための呼び方です。
+PlanGate公式用語ではなく、この章で使う整理です。
 
-重要なのは「テストがバグっていた」という単純な話ではありません。
+4つのパターンにすると再利用しやすくなります。
 
-False Greenには、いくつか違う構造があります。
+| パターン | 何がずれるか | PlanGateの例 |
+| --- | --- | --- |
+| Proxy Green | 代理指標と実挙動 | #1085 |
+| Coverage Green | 検査範囲と現実の入力空間 | #1173 / #1277 |
+| Classifier Green | 判定ロジックとcommand semantics | #1326 |
+| Observer Green | 検査と観測対象の非干渉性 | #1169 |
 
-## 1. 存在を動作の証拠にしていた
+## 1. Proxy Green — 「ある」を「効いている」と扱う
 
-PlanGate Issue #1085では、Codex pluginが実際には1件もロードされていないのに、doctorが
+Issue #1085では、Codex pluginが実際には1件もロードされていないのにdoctorが、
 
 ~~~text
 registered: YES
@@ -42,305 +43,318 @@ registered: YES
 
 を返していました。
 
-原因は、判定が「marketplace cache directoryが存在するか」を見ていたことです。
+判定根拠はmarketplace cache directoryの存在でした。
 
-しかし本当に確認したかったのは、
+しかし、確認したかったClaimは、
 
-> CodexがPlanGate pluginのskillを実際にロードし、利用できる状態か。
+> Codex runtimeがPlanGate pluginを実際に利用できるか。
 
-でした。
+です。
 
 ~~~text
-測っていたもの
-= cache directoryの存在
+proxy
+cache directory exists
 
-知りたかったもの
-= runtimeでpluginが実際にloadされたか
+claim
+plugin works in runtime
 ~~~
 
-この二つがずれていました。
-
-さらにvalidatorでもloaderでもplugin成立条件を満たしていないことが実測され、単なる表示上の問題ではないことが確認されています。
+がずれていました。
 
 Source:
 - https://github.com/s977043/PlanGate/issues/1085
 
-### 教訓
-
-Artifactや設定の**存在**を、runtime behaviorのEvidenceへ昇格させない。
+この失敗を一般化すると、
 
 ~~~text
-file exists
+installed
 ≠
-loaded
-
 registered
 ≠
-fired
-
+selected
+≠
 fired
 ≠
-decisionへ影響した
+produced evidence
+≠
+influenced decision
 ~~~
 
-という段階を分けます。
+です。
 
-## 2. 検査同士は整合していたが、現実を見ていなかった
+現行ai-loop V2のHarnessManifestでは、Runtime Activationをこの6段階に分けています。
 
-Issue #1173では、pluginへ配布するPython fileのallowlistが2箇所にありました。
+Verifier / Gateの改善では、単にcomponentが存在・発火しただけではなく、Evidenceが実際のDecisionへ影響した `influenced_decision` まで要求する設計です。
 
-既存testは、この2つのallowlistが一致していることを確認していました。
+Source:
+- https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/harness-manifest.md
 
-そしてtestはPASSしていました。
+### 持ち帰る原則
 
-問題は、
+> **存在確認を、動作確認の代わりにしない。**
 
-> **どちらのallowlistも、実際の `scripts/ai-loop/*.py` 一覧と比較していなかった**
+「設定した」「登録した」「呼び出した」は、それぞれ別のClaimです。
 
-ことです。
+## 2. Coverage Green — 見ている範囲だけでは正しかった
 
-実体は30ファイル、allowlistは28ファイル。
+Coverage Greenには二つの形があります。
 
-`discovery.py` と `test_discovery.py` が配布されていませんでした。
+### 検査同士は一致していた
 
-しかし、
+Issue #1173では、plugin配布allowlistが2箇所にありました。
+
+既存testは、
 
 ~~~text
 allowlist A == allowlist B
 ~~~
 
-は成立しているのでCIはgreenでした。
+を確認し、PASSしていました。
 
-これは自己整合性を測っていて、現実との整合性を測っていない例です。
+しかし、実体の `scripts/ai-loop/*.py` は30ファイル、allowlistは28ファイル。
+
+2ファイルが配布対象から漏れていました。
+
+~~~text
+A == B
+~~~
+
+でも、
+
+~~~text
+A == reality
+~~~
+
+とは限りません。
 
 Source:
 - https://github.com/s977043/PlanGate/issues/1173
 
-### 教訓
+### 代表経路では動いていた
 
-比較対象が同じ誤りを共有していないかを見る。
+Issue #1277では、Hardening Override Guardがrepository rootでは正しくBLOCKしていました。
 
-~~~text
-configuration A
-↔ configuration B
-~~~
-
-だけではなく、
-
-~~~text
-configuration
-↔ actual filesystem / runtime / external state
-~~~
-
-との対照が必要です。
-
-## 3. 入力空間の一部しか見ていなかった
-
-Issue #1277では、Hardening Override対象fileを止めるEH-3が通常repository rootでは機能していました。
-
-しかしlinked worktreeではpath normalizationの前提が崩れ、
-
-- root側 `CLAUDE.md` → BLOCK
-- worktree側 `CLAUDE.md` → allow
-
-となっていました。
-
-Guardは存在していました。
-
-通常経路のtestもありました。
-
-それでも、「worktree」という実際に日常利用される入力空間が検証されていませんでした。
+一方、linked worktreeではpath normalizationの前提が崩れ、同じ保護対象fileをallowしていました。
 
 Source:
 - https://github.com/s977043/PlanGate/issues/1277
 
-### 教訓
+つまり、
 
-Guardを評価するときは、
+~~~text
+root pathでPASS
+≠
+保証したいpath class全体でPASS
+~~~
 
-> 正常な1入力で動いたか
+です。
 
-ではなく、
+### 持ち帰る原則
 
-> **どの入力空間を保証対象にするのか**
+> **Evalの対象集合を明示する。**
 
-を先に定義します。
+たとえば、
 
-path、worktree、shell、runtime、provider、distribution形態などは、別の入力クラスになりえます。
+- repository root / linked worktree
+- Claude / Codex
+- local / plugin distribution
+- Bash / Edit / Write
+- current HEAD / stale HEAD
 
-## 4. 危険を止めたが、安全まで止めていた
+のように、保証対象となる入力クラスを先に決めます。
 
-Issue #1326は逆方向の失敗です。
+「1つの代表例で動いた」を全体保証へ広げません。
 
-protected branchでforce pushを止めるEH-12が、
+## 3. Classifier Green — 検出したが、意味を判定していなかった
 
-- `git worktree remove --force`
-- echo内の文字列
-- `git push ... && echo a + b`
+Issue #1326では、force pushを止めるGuardが安全なcommandまでBLOCKしました。
 
-のような安全なcommandまでblockしていました。
+`git push` と `--force` が同じcommand segmentに属するかを見ず、文字列全体から独立に探していたためです。
 
-原因は、`git push` と `--force` や `+` が同じcommand segmentに属するかを見ず、文字列全体から独立に探していたことです。
+結果として、
+
+- 別commandの `--force`
+- echo内の `+`
+- 実行されない文字列
+
+まで危険操作と分類されました。
 
 Source:
 - https://github.com/s977043/PlanGate/issues/1326
 
-このケースでは、危険操作を止めるpositive caseだけ見ていればgreenになります。
+ここで必要なのは、単にdangerous caseがBLOCKされるテストではありません。
 
-しかしGuard品質にはもう一つ必要です。
+### Positive Control
 
-> **安全な操作を通すこと。**
-
-### Positive ControlとNegative Control
-
-たとえば、
+本当に止めたい入力を止める。
 
 ~~~text
-Positive Control
 git push --force-with-lease origin main
-→ BLOCKされるべき
-
-Negative Control
-git push origin HEAD && echo a + b
-→ allowされるべき
+→ BLOCK
 ~~~
 
-の両方を持ちます。
+### Negative Control
 
-「何を止めるか」と「何を止めないか」をセットで検証します。
+通したい入力を通す。
 
-## 5. 検査そのものが副作用を持っていた
+~~~text
+git push origin HEAD && echo a + b
+→ allow
+~~~
 
-Issue #1169では、read-only検査のつもりでPython scriptを `sh` から起動すると、module docstring内のbacktickがshell command substitutionとして評価されました。
+です。
 
-その結果、install scriptが実行され、`.codex/skills/**` の34ファイルが書き換わりました。
+~~~text
+all dangerous blocked
+~~~
+
+だけを見ると、全部BLOCKするGuardも高得点になります。
+
+### 持ち帰る原則
+
+> **検出力と誤検出率を同時に見る。**
+
+安全系ではfail-closedが重要でも、false positiveが増えすぎると、利用者やAgentは迂回経路を作り始めます。
+
+Guard品質は「何件blockしたか」ではなく、意図したsemanticsをどれだけ正しく分類できるかで見ます。
+
+## 4. Observer Green — Eval自身が対象を変えていた
+
+Issue #1169では、read-only検査のつもりでPython scriptを `sh` から起動した結果、docstring内のbacktickがshell command substitutionとして評価されました。
+
+install scriptが実行され、`.codex/skills/**` の34ファイルが書き換わりました。
 
 Source:
 - https://github.com/s977043/PlanGate/issues/1169
 
-これは、
+検査のつもりの操作が、観測対象を変更していたわけです。
 
-> 検査結果が正しいか
+~~~text
+before
+評価対象A
 
-以前の問題です。
+evalを実行
+↓
+対象を書き換える
 
-> **検査そのものが観測対象を変えていないか。**
+after
+評価対象Bを測定
+~~~
 
-という問いが必要になります。
+この状態では「検査がPASSした」というEvidence自体の意味が弱くなります。
 
-measurementがsystemへ副作用を与えると、Evidence取得そのものが状態を変えます。
+### 持ち帰る原則
 
-## 5つの事例に共通すること
+> **Evalの副作用も脅威モデルに入れる。**
 
-ここまでの失敗を並べると、共通構造が見えます。
+read-onlyを期待する検査では、
 
-| 事例 | greenが示していたもの | 本当に知りたかったもの |
-| --- | --- | --- |
-| #1085 | cacheが存在 | pluginがruntimeで利用可能 |
-| #1173 | allowlist同士が一致 | 配布対象が実体と一致 |
-| #1277 | root経路でGuardが動く | 保証対象の全主要path classで動く |
-| #1326 | dangerous caseをblock | dangerousをblockしsafeをallow |
-| #1169 | check scriptを実行 | read-onlyに検査できる |
+- working treeが変わっていないか
+- external stateを更新していないか
+- credentialsやcacheを汚していないか
 
-False Greenの本質は、
+も確認対象になります。
 
-> **測定値と、本当に判断したいClaimがずれていること。**
+## False Greenの本質は「ClaimとOracleのずれ」
+
+4つのパターンは違って見えます。
+
+しかし、共通しているのは、
+
+~~~text
+判断したいClaim
+        ≠
+検査が実際に測っているもの
+~~~
 
 です。
 
+だからEvalを作るとき、最初にtest codeを書くのではなく、Claimを固定します。
+
+## 最小Eval Contract
+
+このBookでは、Harness Evalを最低限次の6項目で考えます。
+
+| 項目 | 問い |
+| --- | --- |
+| Claim | 何が成立したと言いたいのか |
+| Target Identity | どのHarness / commit / runtimeを評価しているか |
+| Oracle | 何を見ればClaimを判定できるか |
+| Controls | known-badとknown-goodの両方があるか |
+| Coverage | どの入力クラスを保証し、何を保証しないか |
+| Promotion Boundary | 誰が評価条件を固定し、誰が採用を決めるか |
+
+たとえばplugin activationなら、
+
+~~~text
+Claim
+pluginがruntimeで実際に利用できる
+
+Target
+candidate HarnessManifest
+
+Oracle
+runtime activation evidence
+
+Controls
+manifestあり → loadされる
+manifestなし → loadされない
+
+Coverage
+isolated Codex runtime
+
+Promotion
+Candidate自身の自己申告だけでは採用しない
+~~~
+
+となります。
+
+この6項目がないEvalは、greenになっても「何のgreenか」が曖昧になりやすくなります。
+
 ## Detect → Reproduce → Fix → Regression Guard
 
-Harnessの失敗を見つけたとき、このBookでは次の4段階で扱います。
+実運用でfailureを見つけたら、次の順にします。
 
-### 1. Detect
+### Detect
 
-実運用で違和感や失敗を観測する。
+違和感や失敗を観測する。
 
-- 本来loadされるはずなのに動かない
-- Guardが素通りした
-- safe commandが止まった
-- 配布先だけ壊れた
+### Reproduce
 
-この段階では原因を決めつけません。
-
-### 2. Reproduce
-
-最小ケースへ落とします。
+最小ケースへ落とし、
 
 ~~~text
 input
 expected
 actual
-environment / identity
+target identity
 ~~~
 
-を固定し、再現できる形にします。
+を固定します。
 
-特に重要なのが対照です。
+### Fix
 
-- known-badが失敗する
-- known-goodが成功する
+fixtureだけを通すpatchではなく、failure classへ修正を当てます。
 
-を並べます。
+### Regression Guard
 
-### 3. Fix
+再現ケースを継続実行できるfixture / test / canaryへ残します。
 
-原因へ修正を入れます。
+ここで重要なのが、**修正前の実装で本当にFAILすること**です。
 
-ただし、「今のfixtureが通るようにする」だけでは不十分です。
+新しいtestが最初から旧実装でもPASSするなら、検出力を証明していません。
 
-なぜその失敗クラスが起きたかを見ます。
+## Harness改善Candidateは自分を裁かない
 
-たとえば、
+VerifierやEval自身を変更すると、さらに難しくなります。
 
-- path normalizationの前提
-- command tokenization
-- runtime activation
-- allowlist ownership
+変更後Verifierが自分自身を評価して、
 
-のように、失敗クラスへ修正を当てます。
+> PASSしました。
 
-### 4. Regression Guard
+と言っても、それだけでは採用根拠になりません。
 
-再現ケースをtest / fixture / canaryへ残します。
-
-~~~text
-失敗を発見
-↓
-人間が一度直す
-↓
-忘れる
-~~~
-
-ではなく、
-
-~~~text
-失敗を発見
-↓
-再現fixture
-↓
-修正
-↓
-fixtureを継続実行
-~~~
-
-へ変えます。
-
-ここで初めて、経験がHarnessの能力になります。
-
-## 「修正後にgreen」だけでもまだ足りない
-
-ここでもう一段問題があります。
-
-VerifierやEvalそのものを変更したとき、
-
-> 変更後のVerifierが「PASS」と言った
-
-だけで採用してよいでしょうか。
-
-これは自己評価になります。
-
-PlanGateのai-loop V2では、Evaluation Trust Boundaryとして、
+現行ai-loop V2のEvaluation Trust Boundaryでは、
 
 > **Candidate cannot modify the authority that judges the candidate.**
 
@@ -349,187 +363,145 @@ PlanGateのai-loop V2では、Evaluation Trust Boundaryとして、
 Source:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/evaluation-trust-boundary.md
 
-つまり、Harness改善Candidateが、
+つまりCandidateは、自分の採用評価中に、
 
-- 自分を裁くEvaluation Harness
-- sealed fixture
+- Evaluation Harness
+- sealed / held-out fixtures
 - Promotion Policy
 - threshold
-- protected Gate
-- Human-owned boundary
+- 自分を裁くprotected Gate
+- Human-owned Boundary
 
-を同時に自分に都合よく変更できないようにします。
+を都合よく変更できません。
 
-## Verifierを変えるなら、変更後Verifierだけで評価しない
+## Evalを変更するときは、外側のOracleを持つ
 
-VerifierやGateを改善するときは特に危険です。
-
-たとえば「検出率を改善した」という変更を、その変更後Verifier自身のPASSだけで採用すると、
-
-~~~text
-Verifierを弱くする
-↓
-全部PASSする
-↓
-「改善しました」
-~~~
-
-も成立してしまいます。
-
-現行V2のEvaluation Trust Boundaryでは、Verifier / Eval Candidateを、
+Verifier Candidateを評価するなら、変更後Verifierの出力だけでなく、
 
 - stable meta-verifier
 - known mutants
 - sealed positive / negative fixtures
 - baseline detection power
 
-などで評価する考え方を置いています。
+のような外側の材料を使います。
 
-つまり、
+原則はシンプルです。
 
-> **改善対象と、改善を裁く基盤を分離する。**
+> **評価対象と、評価を成立させるAuthorityを分離する。**
 
-ということです。
+## PASS / FAIL / INCONCLUSIVEを分ける
 
-## Eval条件は結果を見る前に固定する
-
-もう一つ重要なのが、評価条件のpre-registrationです。
-
-Candidateを作る前に、
-
-- fixture IDs
-- verifier set
-- baseline
-- trial count
-- metrics
-- threshold
-- critical regression condition
-
-を固定します。
-
-結果が悪かったからthresholdを下げる。
-
-落ちたfixtureを「今回対象外」にする。
-
-trial数を減らす。
-
-これを許すとEvalは採用理由づくりになります。
-
-> **結果を見てから評価条件を緩めたら、新しいEvaluationとしてやり直す。**
-
-という境界が必要です。
-
-## PASS / FAILだけでなくINCONCLUSIVEを持つ
-
-Evidenceが取れなかったときに、
+Evidenceが足りないとき、
 
 ~~~text
 FAILしていない
 → PASS
 ~~~
 
-へ倒すとFalse Greenになります。
+にしないことも重要です。
 
-そこでV2では、
+現行V2ではPromotion Decisionを、
 
 - PASS
 - FAIL
 - INCONCLUSIVE
 
-を分けます。
+へ分けています。
 
 たとえば、
 
 - baseline identityが取れない
-- Verifierが利用不能
-- fixtureがsealedではない
-- activationが確認できない
+- verifierが利用不能
+- activation evidenceが不足
+- sealed fixtureのintegrityが確認できない
 - trial数不足
 
 ならINCONCLUSIVEです。
 
-INCONCLUSIVEはFAILとは違います。
+INCONCLUSIVEはFAILとは違いますが、Promotion Readyでもありません。
 
-しかし、Promotion Readyにもなりません。
+> **分からない状態をgreenへ変換しない。**
 
-これは、
+ための値です。
 
-> **分からないことをgreenへ変換しない**
+## Eval条件はCandidateより先に固定する
 
-ための状態です。
+結果を見たあとで、
 
-## Harness改善を自動化しても、Promotion Authorityは別にする
+- thresholdを下げる
+- failing fixtureを対象外にする
+- trial数を減らす
+- verifier setを狭める
 
-ai-loop V2のRatchetでは、
+と、EvalはCandidateを採用するための説明へ変わります。
+
+そのためEvaluation Trust Boundaryでは、Candidate実装前にevaluation planを固定する方針を持っています。
+
+読者が自分のHarnessで最小限取り入れるなら、
 
 ~~~text
-FailureRecord / Evidence
-  ↓
-Harness Improvement Candidate
-  ↓
-paired evaluation
-  ↓
-Experiment Result
-  ↓
-Promotion Decision
-  ↓
-Human-owned Production Promotion
+baseline
+known-bad
+known-good
+promotion threshold
+critical regression
 ~~~
 
-という方向を取っています。
+だけでも先に固定します。
 
-現在の実行可能sliceは限定的ですが、設計上重要なのは、
+結果を見て条件を変えたら、新しいEvalとしてやり直します。
 
-> Candidate生成とProduction採用を同じAuthorityにしない
+## 改善を自動化してもPromotionは分ける
 
-ことです。
+ai-loop V2のRatchetは、failureからHarness改善候補を作り、paired evaluationする方向へ進んでいます。
+
+~~~text
+Failure Evidence
+→ Improvement Candidate
+→ evaluator-observed delta
+→ known-bad + negative control
+→ Experiment Result
+→ Promotion Decision
+→ Human-owned Production Promotion
+~~~
 
 Source:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/ratchet-traceability.md
 
-AIが失敗から改善案を作り、fixtureで評価するところまでは自律化できます。
+Candidate生成やEvalを自動化しても、Production promotionまで同じ主体に渡しません。
 
-しかし、
+第12章の、
 
-> Harnessが自分を改善し、自分で評価し、自分でproductionへ昇格する
+~~~text
+Autonomy != Authority
+~~~
 
-ところまで一気につなげない。
-
-第12章の `Autonomy != Authority` は、Harness自身の改善にも適用されます。
+はHarness改善にも適用されます。
 
 ## この章で持ち帰ること
 
-Harnessにgreen checkを増やすだけでは、信頼性は上がりません。
+Harness Evalで最初に問うのは、
 
-見るべきなのは、
+> testはいくつあるか。
 
-1. そのcheckは何をClaimしているか
-2. Claimに対応する実挙動を測っているか
-3. known-badとknown-goodの両方で検出力を確認したか
-4. failureを再現fixtureへ固定したか
-5. 改善Candidateが自分を裁くAuthorityを変更していないか
-6. Evidence不足をINCONCLUSIVEとして扱えるか
+ではありません。
+
+> **そのgreenは、どのClaimを、どのOracleと対照で確かめた結果なのか。**
 
 です。
 
-まとめると、
+False Greenを避けるために、
 
-~~~text
-Observe failure
-↓
-Reproduce with controls
-↓
-Fix the failure class
-↓
-Freeze regression evidence
-↓
-Evaluate candidate independently
-↓
-Promote through separate authority
-~~~
+1. Proxyで実挙動を代用しない
+2. 保証対象のCoverageを明示する
+3. Positive / Negative Controlを持つ
+4. Eval自身の副作用を見る
+5. failureをregression fixtureへ固定する
+6. Candidateと評価Authorityを分離する
+7. 分からない状態をINCONCLUSIVEにする
 
-となります。
+という順で考えます。
 
 > **Harnessもまた、信頼する対象ではなく、検証し続ける対象です。**
 
-次の第7部では、この考え方を全部入りで導入するのではなく、Level 1から段階的に自分の開発へ持ち込む方法を扱います。
+次の第7部では、この仕組みを最初から全部導入せず、必要なLevelから段階的に持ち込む方法を扱います。
