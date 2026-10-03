@@ -34,6 +34,34 @@ Approval Boundaryを置く
 
 という順で、失敗コストに合わせてGovernanceを強くすることです。
 
+## PhaseとModeは別の軸
+
+ここは混同しやすいところです。
+
+現行の段階導入ガイドでは、Phaseは**導入・習熟の進み方**を表します。
+
+一方、Modeは**そのタスク自体に必要な運用強度**を表します。
+
+~~~text
+Phase
+= チーム / projectがPlanGateをどこまで導入しているか
+
+Mode
+= 今回のtaskにどれだけ重いGateが必要か
+~~~
+
+したがって、
+
+> Phase 3まで導入したチームだから、すべてのtaskをcriticalで回す
+
+という意味ではありません。
+
+導入が進んだあとも、軽いtaskは軽いModeで扱います。
+
+逆に、導入初期でも高リスクtaskを軽く扱ってよいという意味でもありません。
+
+**導入成熟度とtask riskを別軸で持つ**ことが、過剰なceremonyを避けるポイントです。
+
 ## Level 0 — CLIなしで「型」だけ試す
 
 CLI導入の判断コストが高いなら、plugin-onlyから始められます。
@@ -239,6 +267,29 @@ Boundaryを維持するコスト
 ~~~
 
 かどうかです。
+
+## 公式仕様と、本書の判断原則を分ける
+
+この章では、二つを混ぜないようにします。
+
+### PlanGate公式の現在仕様
+
+- plugin-only Level 0
+- Phase 0〜3
+- warningからstrictへの段階導入
+- coexistence / partial adoption
+- when-not-to-useの非採用ケース
+
+### 本書で提案している判断原則
+
+- 機能一覧ではなく、観測したfailureから次の仕組みを足す
+- warning→blockをAuthority変更として扱う
+- 人数や期間の固定値より、Boundary便益と維持コストで判断する
+- PhaseとModeを別軸にする
+
+前者は現行PlanGateの仕様です。
+
+後者は、その仕様と本書全体の議論から整理した設計上の解釈です。
 
 ## 現行ドキュメントのLevel / Phase表記
 
