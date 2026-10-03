@@ -149,6 +149,35 @@ Reviewerから指摘が来た場合も、
 
 repairは成果物を変えるので、必要なVerificationを更新します。
 
+## DeliveryでもIdentityがずれるとFalse Greenになる
+
+CIがgreenでも、それが古いHEADに対する結果なら現在のPRのEvidenceではありません。
+
+Reviewも同じです。
+
+~~~text
+HEAD A
+→ CI green
+→ review PASS
+
+repairして HEAD B
+→ 以前のgreenをそのまま利用
+~~~
+
+ではMERGE_READYを主張できません。
+
+Deliveryでreconcileする対象は、statusの色だけではなく、
+
+- PR head identity
+- Verification対象
+- Review対象
+- unresolved finding
+- RunState
+
+が同じ現在状態を指しているかです。
+
+第13章のIdentity Bindingが、ここでDeliveryのFresh Evidenceへつながります。
+
 ## Reconcileは「全部green」を見るだけではない
 
 複数のsignalがあると、状態の食い違いが起きます。
@@ -204,6 +233,27 @@ AIは、
 Source:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/taxonomy.md
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/core-contract.md
+
+## Agentを増やすより、ownerを分ける
+
+長時間Deliveryでは、必ずしも各責務を別Agent processにする必要はありません。
+
+先に必要なのは、
+
+- stateを誰が更新するか
+- evidenceを誰が生成するか
+- decisionを何から導くか
+- final Authorityを誰が持つか
+
+というownershipです。
+
+一つのAgent runtimeでも、これらの契約を分けることはできます。
+
+逆に複数Agentでも、全員が同じstateを自由に書き換えれば責務境界は弱くなります。
+
+> **Multi-agent topologyよりownership topologyを先に決める。**
+
+という順序です。
 
 ## owner-backedという考え方
 
