@@ -105,7 +105,7 @@ C-Xは主に承認・判断境界です。
 | --- | --- | --- |
 | C-1 | Self Review | Planを作った側が構造的な抜けを確認 |
 | C-2 | External / Independent Review | 別視点でPlanを確認 |
-| C-3 | Plan Approval | PlanをExecutionへ渡すAuthority boundary |
+| C-3 | Human Plan Approval | PlanをExecutionへ渡すHuman-owned Authority boundary |
 | C-3' | ai-loopの限定AI裁定経路 | C-3を撤廃せず、eligible runだけ委譲 |
 | C-4 | PR Approval | 最終受入。Human-owned |
 
@@ -169,7 +169,7 @@ Hook
 
 Modeは**タスクriskの軸**です。
 
-## Phase — 導入成熟度 [Official]
+## Level / Phase — 段階導入 [Official]
 
 現行ドキュメントには、READMEのLevel 1〜5、staged-adoption-guideのPhase 0〜3、plugin-only-adoptionのLevel 0が併存しています。
 
