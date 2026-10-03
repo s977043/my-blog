@@ -182,6 +182,36 @@
 - REMAINING: 公開前には全Book横断で表記揺れと現行PlanGate versionとの差分を再監査する
 
 
+### Part II Draft Loop 1 — Full draft / current architecture alignment
+
+#### 検討
+
+- 第4章で最初にPlanGate全体フローを見せ、「できる」と「進めてよい」を分離する
+- 第5章はPlugin分類ではなく、Workflow / Skill / Agent / Gate / Artifact / Hookの責務分解として書く
+- 第6章は「単一ファイルを正本にする」ではなく、関心ごとの既存SSoTとfresh-context checkpointを説明する
+- v8.23のContext Lifecycleと現行Glossaryを一次情報として再照合する
+
+#### Review
+
+- Reader: 第1部の抽象概念が、第4章で具体的なPlanGate flowへ接続する
+- Editorial: 04=全体地図、05=構成要素、06=状態管理と役割が重ならない
+- Technical: C-3' / C-4 Human-owned / Context Lifecycle / RunState ownershipなど現行仕様との矛盾を避けている
+
+#### 対応
+
+- 04〜06章を全文ドラフト化
+- C-3 / C-4に加え、C-3'は限定経路として注記
+- Plugin導入 != Governance成立を明記
+- Context Lifecycleの既存SSoT表とfresh-context方針を第6章へ反映
+
+#### Post Review
+
+- PASS: 第2部だけでPlanGateの全体像と構成要素を理解できる
+- ISSUE: 第5章で構成要素が6つ連続し、機能カタログに見える箇所がある
+- ISSUE: 第6章はv8.23固有のArtifact名が増え、初心者には実装詳細が早すぎる
+- NEXT: Loop 2で「3つの層」へ再整理し、詳細名を本文と補足に分離する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
