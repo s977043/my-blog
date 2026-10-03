@@ -737,6 +737,38 @@
 - NEXT: Loop 3でadoption outcome reviewとBook central claimへの着地を追加する
 
 
+### Part VII Draft Loop 3 — Adoption outcome review / central claim
+
+#### 検討
+
+- 導入を「強める」一方向にせず、Keep / Strengthen / Simplify / Removeで見直す
+- 責務が既存CIやworkflowへ移ったら、PlanGate側の重複Gateを削除できるようにする
+- 第18章の最後をBook全体のCentral Claimへ戻す
+- 1タスク完走の成功条件を「AIを信頼できた」ではなく「自己申告に依存せず任せられた」に置く
+
+#### Review
+
+- Engineer: Governance debtを増やし続けず、弱める / 外す判断も正規化できる
+- EM / Tech Lead: Boundaryの価値と維持コストを継続的に見直す運用へつながる
+- Editorial: 最終章が導入手順だけで終わらず、BookのWhyへ戻る
+- Central Claim: Artifact / Evidence / Boundary / Authorityが「信頼しなくても任せられる環境」という一本の主張へ収束した
+
+#### 対応
+
+- Part VIIにKeep / Strengthen / Simplify / Removeを追加
+- 17章へ導入後の4方向レビューを追加
+- 18章へ「この1周で確認したかったこと」を追加
+- BookのCentral Claimを最終章で再提示
+
+#### Post Review
+
+- PASS: 段階導入が機能追加ロードマップではなくGovernance調整ループになった
+- PASS: 導入 / 強化 / 簡略化 / 撤去が同じ判断体系で扱える
+- PASS: 17=Adoption Policy、18=Minimum Governance Loopの責務が明確
+- PASS: 第7部（17〜18章）は本文初稿として完了
+- REMAINING: 付録 / おわりにの本文化、全Book横断の用語・version・source監査を行う
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
