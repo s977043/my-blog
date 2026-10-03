@@ -52,6 +52,26 @@ function findBodyHtml(value, seen = new Set()) {
   return null;
 }
 
+async function fetchBookMeta() {
+  const apiUrl = `${baseUrl}/api/books/${bookSlug}`;
+  const response = await fetch(apiUrl);
+  if (!response.ok) {
+    throw new Error(`book meta: preview API HTTP ${response.status} at ${apiUrl}`);
+  }
+
+  const payload = await response.json();
+  const book = payload?.book;
+  if (!book) throw new Error("book meta not found in preview API payload");
+  if (!book.title || !book.summary) {
+    throw new Error(`book meta missing title/summary: ${JSON.stringify(book)}`);
+  }
+  if (!Array.isArray(book.topics) || book.topics.length === 0) {
+    throw new Error(`book meta topics missing: ${JSON.stringify(book.topics)}`);
+  }
+
+  return { apiUrl, book };
+}
+
 async function fetchRenderedChapter(slug) {
   const apiUrl = `${baseUrl}/api/books/${bookSlug}/chapters/${slug}.md`;
   const response = await fetch(apiUrl);
@@ -215,6 +235,47 @@ async function main() {
     const stylesheetHrefs = await loadPreviewStyles(browser);
     report.stylesheetHrefs = stylesheetHrefs;
 
+    const { apiUrl: bookApiUrl, book } = await fetchBookMeta();
+    report.book = {
+      apiUrl: bookApiUrl,
+      title: book.title,
+      summary: book.summary,
+      topics: book.topics,
+    };
+
+    const bookUi = await browser.newContext({
+      viewport: { width: 1440, height: 1000 },
+      deviceScaleFactor: 1,
+    });
+    const bookUiPage = await bookUi.newPage();
+    const bookUiResponse = await bookUiPage.goto(`${baseUrl}/books/${bookSlug}`, {
+      waitUntil: "networkidle",
+      timeout: 30_000,
+    });
+    if (!bookUiResponse || !bookUiResponse.ok()) {
+      throw new Error(`book top HTTP ${bookUiResponse?.status() ?? "NO_RESPONSE"}`);
+    }
+    await bookUiPage.getByText(book.title, { exact: false }).first().waitFor({ timeout: 10_000 });
+    const bookTopText = await bookUiPage.locator("body").innerText();
+    if (!bookTopText.includes(book.summary)) {
+      throw new Error("book top does not render configured summary");
+    }
+    for (const topic of book.topics) {
+      if (!bookTopText.includes(topic)) {
+        throw new Error(`book top does not render topic: ${topic}`);
+      }
+    }
+    const chapterItems = await bookUiPage.locator(".book-show__chapters a").count();
+    if (chapterItems !== chapters.length) {
+      throw new Error(`book top chapter count mismatch: UI=${chapterItems} config=${chapters.length}`);
+    }
+    report.book.chapterCount = chapterItems;
+    await bookUiPage.screenshot({
+      path: path.join(artifactDir, "desktop-book-top.png"),
+      fullPage: true,
+    });
+    await bookUi.close();
+
     const rendered = new Map();
     for (const slug of chapters) {
       rendered.set(slug, await fetchRenderedChapter(slug));
@@ -300,7 +361,7 @@ async function main() {
   }
 
   console.log(
-    `[check:zenn-book-browser] OK: ${chapters.length} mobile rendered chapters + 7 desktop chapters`,
+    `[check:zenn-book-browser] OK: book top + ${chapters.length} mobile rendered chapters + 7 desktop chapters`,
   );
 }
 
