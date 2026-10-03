@@ -2,7 +2,7 @@
 
 > 内部編集用。Zennのchaptersには含めない。
 >
-> Audit date: 2026-10-03
+> Audit date: 2026-10-04
 
 ## Static chapter audit
 
@@ -46,3 +46,23 @@ Integration Modeの全体像も扱うため、River Review READMEを追加した
 Static QA PASSは **公開可能判定ではない**。
 
 公開前には `PUBLISH_CHECKLIST.md` の未完了項目を確認する。
+
+
+## Book structure checker QA
+
+`scripts/check-zenn-book-structure.js` を追加し、River Review Bookの構造チェックをCI contractへ移した。
+
+確認済み:
+
+- checker sourceの構文確認: PASS
+- `--self-test`: 6 / 6 PASS
+- `package.json`: `check:river-review-book` がaggregate `npm run check` に含まれる
+- `.github/workflows/ci.yml`: `test:zenn-book-structure` がself-test stepに1回だけ含まれる
+
+初回writeではencoding / content corruptionをPost Reviewで検出し、次commitで修正した。修正版をGitHubから再取得し、異常文字列が無いことを確認済み。
+
+まだ確認していないこと:
+
+- branch checkout上での `npm run check:river-review-book`
+- aggregate `npm run check`
+- Zenn CLIによる `npm run list:books`
