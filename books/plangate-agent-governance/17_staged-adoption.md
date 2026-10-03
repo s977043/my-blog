@@ -305,6 +305,29 @@ Sources:
 - https://github.com/s977043/PlanGate/blob/main/docs/coexistence-guide.md
 - https://github.com/s977043/PlanGate/blob/main/docs/pages/explanation/product/when-not-to-use.md
 
+## 導入後は4方向で見直す
+
+Governanceは、一度入れたら増やし続けるものではありません。
+
+一定期間使ったら、各Boundaryを次の4方向で見直します。
+
+| 判断 | いつ選ぶか |
+| --- | --- |
+| Keep | failureを抑え、摩擦も許容範囲 |
+| Strengthen | 同じ境界違反が繰り返される |
+| Simplify | 手作業やceremonyが便益より重い |
+| Remove | 既存CIやworkflowへ責務が移り、二重化した |
+
+たとえば、warning Hookをblockへ上げるのはStrengthenです。
+
+一方、既存CIで同じ検査が十分に担保できるようになったなら、PlanGate側の重複GateをRemoveする選択もあります。
+
+重要なのは、
+
+> **導入量ではなく、責務の重複とfailure coverageを管理する。**
+
+ことです。
+
 ## この章で持ち帰ること
 
 段階導入の成功条件は、Phase 3へ到達することではありません。
