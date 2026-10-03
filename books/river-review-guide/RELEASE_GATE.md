@@ -4,11 +4,11 @@
 
 ## Current status
 
-**CONTENT COMPLETE / RELEASE BLOCKED**
+**AUTOMATION_VERIFIED / PREVIEW BLOCKED**
 
 Evaluated: 2026-10-04
 
-本文・構成・source traceabilityは公開候補として成立している。ただし、実行環境でのCLI checkとZenn previewが未完了なので `published: true` へは進めない。
+本文・構成・source traceabilityに加え、PR上のrepository checksまで完了した。ただしZenn previewと最終通読が未完了なので `published: true` へは進めない。
 
 ## Evidence already satisfied
 
@@ -23,20 +23,25 @@ Evaluated: 2026-10-04
 - [x] `SOURCE_MAP.md` でreverse impact mapを作成
 - [x] River Review main snapshotを2026-10-04に再確認: `60f55e75d6eaead1956c6945afc53f57acd64dd9`
 - [x] Latest Releaseを2026-10-04に再確認: `v1.124.5`
-- [x] Zenn Book structure checkerのsyntax / self-test: 6 / 6 PASS
+- [x] Zenn Book structure checker self-test: 7 / 7 PASS
 - [x] Book checkerをaggregate `npm run check` とCI self-testへ配線
+- [x] `check:river-review-book`: 45 chapters PASS
+- [x] aggregate `npm run check`: 26 checks PASS
+- [x] `npm run list:books`: River Review Book認識
+- [x] PR #750 current reviewed HEAD: Content checks / Dependency review SUCCESS
+- [x] Part 1〜7 representative Source links: 7 / 7 accessible
 
 ## Blocking gates
 
 以下が1つでも未完了なら `published: true` にしない。
 
-1. [ ] `npm run check:river-review-book` — branch現物のBook構造
-2. [ ] `npm run list:books` — Zenn CLIがBookを正常認識
-3. [ ] `npm run check` — repository全体のcontent gate
+1. [x] `npm run check:river-review-book` — 45 chapters PASS
+2. [x] `npm run list:books` — Zenn CLIがBookを正常認識
+3. [x] `npm run check` — 26 checks PASS
 4. [ ] `npm run preview` — Zenn rendererでBookを表示
 5. [ ] mobile幅を含む表 / code block / text diagramの目視
 6. [ ] 33章 + 付録 + おわりにの最終通読
-7. [ ] 外部GitHub Source linkのspot check
+7. [x] 外部GitHub Source linkのspot check — 7/7取得成功
 
 ## Release state machine
 

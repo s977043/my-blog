@@ -46,11 +46,11 @@ Verification date: 2026-10-04
 
 このrepositoryの既存scriptを使う。
 
-- [x] `test:zenn-book-structure` self-test 6/6 PASS（初回CI）
-- [ ] `npm run check:river-review-book` をbranch現物で実行
+- [x] `test:zenn-book-structure` self-test 7/7 PASS（PR #750 CI）
+- [x] `npm run check:river-review-book`（45 chapters PASS）
 - [x] `npm run list:books`（PR #750 初回CIでPASS）
-- [ ] `npm run check`
-- [ ] internal link / title / markdown hygieneの失敗を解消する
+- [x] `npm run check`（26 checks PASS）
+- [x] internal link / title / markdown hygieneのblocking failureなし
 
 未実行のままチェックを付けない。
 
@@ -61,7 +61,7 @@ Verification date: 2026-10-04
 - [ ] Part 1〜7の見出しと章順を確認
 - [ ] 表がモバイル幅で読めるか確認
 - [ ] code block / text diagramが崩れていないか確認
-- [ ] 外部GitHub linkが開くかspot check
+- [x] 外部GitHub Source linkをPart 1〜7から1本ずつspot check（7/7取得成功）
 - [ ] 33章 + 付録 + おわりにを通しでnavigation確認
 
 ## 6. Publish decision

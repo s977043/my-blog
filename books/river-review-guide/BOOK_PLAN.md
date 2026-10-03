@@ -684,3 +684,35 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: regression fixtureを追加
 - PENDING: 更新commitに対するCI rerunで7/7 self-testと実Book checkを確認
 - NEXT: PR / CI Loop 3で再CIとPR全体を最終レビューする
+
+
+### PR / CI Loop 3 — Re-run CI and tighten the release gate
+
+#### 検討
+- checker修正後のCIでself-testだけでなく、実Book / aggregate checkまで通ることを確認する
+- PR全体のmergeabilityと変更範囲を再確認する
+- preview前に一次情報linkの代表spot checkを行い、source driftを減らす
+
+#### Review
+- 修正commit `94a422cfd15baccc71aa31a0e4ebe65a9051a889`: CI SUCCESS
+- `test:zenn-book-structure`: 7/7 PASS
+- `check:river-review-book`: 45 chapters PASS
+- aggregate `npm run check`: 26 checks PASS
+- `npm run list:books`: River Review Bookを正常認識
+- 現在HEAD `d82ddb651d7e3c85c0ee3aa9142cebe67f3a5724`: Content checks / Dependency review SUCCESS
+- PR #750: mergeable=true / Draft維持
+- Part 1〜7から代表一次情報を1本ずつspot checkし、7/7取得成功
+
+#### 対応
+- Publish Checklistのrepository checksを完了扱いへ更新
+- external GitHub source spot checkを完了扱いへ更新
+- Release Gateを `AUTOMATION_VERIFIED / PREVIEW_BLOCKED` へ進める
+- checker QAを7/7 self-test / 45 chapter / 26 aggregate checksの実CI Evidenceへ更新
+- Zenn preview / mobile目視 / 33章最終通読は未完了のまま維持
+
+#### Post Review
+- PASS: Book構造・Zenn CLI認識・repository aggregate checksがCI上で通った
+- PASS: PRはmergeableで、Dependency reviewも成功
+- PASS: 代表Source 7/7が現在も取得可能
+- BLOCKED: `npm run preview` とrenderer目視、全33章最終通読が未完了
+- DECISION: PR #750はDraft、`published: false` を維持
