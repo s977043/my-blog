@@ -802,6 +802,38 @@
 - NEXT: Loop 2でofficial/book label、pitfall index、closingの重複削減を行う
 
 
+### Appendix/Closing Loop 2 — Official vs Book model / lookup UX
+
+#### 検討
+
+- A1でPlanGate公式用語と本書独自の説明モデルを明示的に分ける
+- A2は18項目をfailure classから探せる索引を置く
+- AfterwordでPlanGateを唯一解として見せず、責務を満たす別実装も正規化する
+
+#### Review
+
+- Technical writer: Book modelを公式仕様として誤引用するリスクが下がる
+- Reader: pitfallを通読せず症状から引ける
+- Skeptical reader: PlanGate adoptionそのものを結論にせず、Boundary / Evidence / Authorityの説明可能性を価値に置けている
+- Editorial: 最終章とAfterwordの「小さく始める」重複を増やさず、思想の着地に集中できた
+
+#### 対応
+
+- A1へOfficial / Book modelの凡例を追加
+- 主要Official headingへlabelを追加
+- Book独自モデルへlabelを追加
+- A2へfailure class別索引を追加
+- Afterwordへ「PlanGateは一実装であり唯一解ではない」を追加
+
+#### Post Review
+
+- PASS: 用語のprovenanceが明確
+- PASS: 付録のlookup usabilityが改善
+- PASS: product advocacyではなく設計原則として閉じられた
+- ISSUE: Book全体の完了判定として、Draft placeholder / stale Level表記 / current source表記を横断確認する必要がある
+- NEXT: Loop 3でappendix/closingだけでなくBook-wide consistency checkを行い、残る小さな不整合を修正する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
