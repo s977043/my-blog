@@ -403,6 +403,40 @@
 - NEXT: Loop 2で「失敗から何を設計原則にしたか」を強化し、主張境界を整理する
 
 
+### Part IV Draft Loop 2 — Failure-to-principle / evidence claim boundary / flow efficiency
+
+#### 検討
+
+- Hook gapを弱点一覧で終わらせず、mechanical enforcementだから観測・再現・回帰防止できるという設計原則へつなぐ
+- Guard品質を「blockの強さ」ではなく、dangerousを止めsafeを通す低摩擦境界として整理する
+- Fresh / Relevant / ReproducibleをPlanGate公式要件ではなく、本書内のEvidence読解観点と明示する
+- Autonomyの価値を、Human-owned削減ではなくHuman waiting削減 / flow efficiencyとして前面に出す
+
+#### Review
+
+- Reader: PlanGate自身のfailureを隠さず、それがなぜHarness改善に使えるか理解できる
+- Editorial: 10章が失敗事例集ではなくEnforcement Designの章になった
+- Technical: Evidence三観点のclaim boundaryが明確になり、公式contractとの混同を回避
+- EM / Tech Lead: AutonomyをAgent稼働率ではなくflow efficiencyで評価する視点が追加された
+
+#### 対応
+
+- 10章へ「失敗をregression testへ変えられることがmechanical enforcementの価値」を追加
+- Guard摩擦 / false positiveを品質軸として明文化
+- 11章でFresh / Relevant / Reproducibleを本書内チェック観点へ限定
+- 11章にEvidenceが人間の二重確認を減らす側面を追加
+- 12章でHuman waiting削減とHuman-owned boundary最小化を強化
+
+#### Post Review
+
+- PASS: failure disclosureとPlanGate価値が両立
+- PASS: Evidenceの主張境界が明確
+- PASS: Autonomyを「Humanを消すこと」ではなくflowを進める能力として説明できた
+- ISSUE: 10〜12章を通した「実装中にいつ止まるべきか」が散在している
+- ISSUE: 12章のrisk tableは分かりやすいが、読者が自分のsystemへ転用するためのstop/escalate原則を一枚にまとめたい
+- NEXT: Loop 3でExecution中のStop / Continue / Escalate policyを統合する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
