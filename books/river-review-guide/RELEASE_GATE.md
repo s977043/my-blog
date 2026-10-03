@@ -4,11 +4,11 @@
 
 ## Current status
 
-**AUTOMATION_VERIFIED / PREVIEW BLOCKED**
+**PREVIEW_SERVER_VERIFIED / VISUAL REVIEW BLOCKED**
 
 Evaluated: 2026-10-04
 
-本文・構成・source traceabilityに加え、PR上のrepository checksまで完了した。ただしZenn previewと最終通読が未完了なので `published: true` へは進めない。
+本文・構成・source traceability、repository checks、Zenn preview serverのBook route smoke test、最終Reader QAまで完了した。ただしbrowser上のvisual reviewが未完了なので `published: true` へは進めない。
 
 ## Evidence already satisfied
 
@@ -38,9 +38,9 @@ Evaluated: 2026-10-04
 1. [x] `npm run check:river-review-book` — 45 chapters PASS
 2. [x] `npm run list:books` — Zenn CLIがBookを正常認識
 3. [x] `npm run check` — 26 checks PASS
-4. [ ] `npm run preview` — Zenn rendererでBookを表示
+4. [x] `npm run preview` — CIでpreview server / Book route HTTP smoke test PASS
 5. [ ] mobile幅を含む表 / code block / text diagramの目視
-6. [ ] 33章 + 付録 + おわりにの最終通読
+6. [x] 33章 + 付録 + おわりにの最終通読
 7. [x] 外部GitHub Source linkのspot check — 7/7取得成功
 
 ## Release state machine
