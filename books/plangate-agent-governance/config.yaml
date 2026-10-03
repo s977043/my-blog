@@ -1,0 +1,26 @@
+title: "AIエージェントに開発を任せるための判断境界 — PlanGate設計ガイド"
+summary: "AIエージェントを信頼できるようにするのではなく、信頼しなくても仕事を任せられる環境をどう作るか。PlanGateの実運用から、Artifact、Evidence、Approval Boundary、Human Judgment、Context、Handoff、Verification、段階導入までを体系化する。"
+topics: ["AI", "ClaudeCode", "Codex", "AIエージェント", "開発手法"]
+published: false
+price: 0
+chapters:
+  - 01_judgment-bottleneck
+  - 02_trust-artifacts
+  - 03_verification-review-judgment
+  - 04_plangate-overview
+  - 05_governance-harness
+  - 06_artifacts-canonical-state
+  - 07_requirements-and-plan
+  - 08_evidence-over-assumption
+  - 09_approval-boundaries
+  - 10_execution-and-hooks
+  - 11_verification-and-fresh-evidence
+  - 12_autonomy-vs-authority
+  - 13_context-and-handoff
+  - 14_multi-agent-independence
+  - 15_delivery-to-merge-ready
+  - 16_improvement-evals-false-green
+  - 17_staged-adoption
+  - 18_first-run
+  - a1_glossary
+  - a2_pitfalls
