@@ -31,6 +31,33 @@
 - NEXT: 各章の抽象度に差があり、「具体例がある章」と「概念だけの章」が混在しているため、Loop 2でEvidence設計を揃える
 
 
+### Loop 2 — Evidence traceability / concrete failures
+
+#### 検討
+
+- 抽象概念だけで章を成立させず、PlanGateのIssue / PR / 再現結果へtraceできる構成にする
+- 「実例」は成功談だけでなく、Gateが外れた・検出器が誤判定した・greenが嘘だった失敗を優先する
+- Observed / Verified / Interpretationを章内で混ぜない
+
+#### Review
+
+- Reader: 概念が「作者の思想」だけでなく、何が起きてその設計になったかで理解できる
+- Editorial: 01 / 08 / 10 / 13 / 15 / 16が具体例を軸に相互接続できる
+- Technical: Issue / PR番号を固定し、後から現在実装との差分を再確認できる
+
+#### 対応
+
+- 主要8章へ `Primary Evidence` を追加
+- #351 / #1277 / #1326 / #1169 / #1085 / #1173 / #1396 / #1411 / #1402 を一次情報として割り当て
+- Evidence typeを Observed / Verified で明示
+
+#### Post Review
+
+- PASS: 各Partに最低1つ具体的な一次情報が入った
+- PASS: False Green章が抽象的なEval論ではなく、複数の実事故クラスを比較できる構造になった
+- NEXT: 一次情報は揃ったが、章同士の責務境界に一部重複がある。Loop 3で重複削減とReader Journeyを最終調整する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
@@ -99,6 +126,19 @@ Delivery / Eval / False Green
   ↓
 段階導入して自分の開発へ持ち込む
 ```
+
+## Evidence Traceability Matrix
+
+| Chapter | Primary evidence | What it proves |
+| --- | --- | --- |
+| 01 | PlanGate #351 | AIの推定とプロジェクト固有の実数が大きくずれる |
+| 08 | PlanGate #351 | 推測を実測へ切り替える必要性 |
+| 09 | README / docs | ReviewとApprovalを別の境界として扱う |
+| 10 | #1277 / #1326 | Guardは存在だけでなく実際の入力空間で検証が必要 |
+| 11 | README / #1402 | 完了判定にはfreshなverification evidenceが必要 |
+| 13 | #1396 / #1411 | Contextをsemantic state / snapshot / fresh contextとして受け渡す |
+| 15 | #1402 | DeliveryのAI責務終点をMERGE_READYとして定義できる |
+| 16 | #1085 / #1169 / #1173 / #1277 / #1326 | greenや「guardあり」が実挙動の証明にならない |
 
 ## Evidence Boundary
 
