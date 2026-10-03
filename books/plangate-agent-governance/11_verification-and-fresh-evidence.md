@@ -1,8 +1,12 @@
-# Fresh Evidenceで完了を判定する
+# 「完了しました」ではなくFresh Evidenceで判定する
 
-> Draft. AIの完了宣言ではなく最新の検証証拠を要求する。
+> Draft. AIの完了宣言ではなく、現在の成果物に対する最新の検証証拠を要求する。
 
 ## NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
+
+## VerificationはReviewとは違う
+
+ここでは「改善余地があるか」ではなく、定義済みの条件を満たしているかを確かめる。
 
 ## L-0
 
@@ -15,6 +19,11 @@
 ## V-4 Release Check
 
 ## Evidenceが古くなる瞬間
+
+- コードが変わった
+- dependency / generated artifactが変わった
+- 別branch / worktreeへ移った
+- repair後に再検証していない
 
 ## Primary Evidence
 
