@@ -1,27 +1,33 @@
 # 第4部 River Reviewで実際にレビューする
 
-この部では、同じ変更を複数のArtifactとして追います。
+## この部で答える問い
 
-説明用の仮想例は次です。
+> **同じ変更を、実装前から実装後までどのArtifactでレビューすればよいのか。**
 
-> User Profile APIへ optional な locale フィールドを追加し、UI表示とテストも更新する。
+第3部と同じ「User Profile APIへoptional localeを追加する」例を使います。
 
-この変更を、
+## 章の流れ
 
 ~~~text
+First Review
+   ↓
 Plan
-  ↓
+   ↓
 Diff
-  ↓
+   ↓
 Tests
-  ↓
-Review Result
-  ↓
+   ↓
+Review Result / W-check
+   ↓
 Repository Context
 ~~~
 
-と追います。
+新しいツールを章ごとに増やすのではなく、**同じ変更をどのArtifact・Evidenceから判断するか**を切り替えます。
 
-新しいツールを章ごとに増やすのではなく、**同じ変更をどのArtifact・Evidenceから判断するか**を変えていきます。
+実際のプロジェクトではファイル名やコマンドが異なります。目的はCLI暗記ではありません。
 
-実際のプロジェクトではファイル名やコマンドが異なります。本部の目的はRiver ReviewのCLIを暗記することではなく、レビュー対象を切り替える考え方をつかむことです。
+## 読み終えたとき
+
+レビューを「PR完成後の1回」ではなく、**Plan → Diff → Tests → Review Resultへ連続した判断工程として配置**できる状態を目指します。
+
+第5部では、そのレビュー自体が完遂・検証できているかを疑います。

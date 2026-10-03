@@ -71,3 +71,23 @@ Takeaway
 - **Observed**: Issue / PR / 実行ログなどで観測できる事実
 - **Verified**: current mainのコード・schema・公開docsで確認した現行仕様
 - **Interpretation**: 設計意図や一般化。Observed / Verifiedと混ぜない
+
+
+## Partページ
+
+Partページは本文の要約を繰り返さず、navigationとして次を短く示す。
+
+- この部で答える問い
+- 章の流れ
+- 読み終えたときの状態
+
+Partをまたぐときは、前部で得た理解と次部で扱う問いを1文で接続する。
+
+## Versioned claims
+
+version依存の主張は、可能な限り公開前のverification snapshotへ紐づける。
+
+- `main` だけを根拠にせず、検証したcommit SHAを `00_introduction.md` / `a3_roadmap.md` に残す
+- ImplementedとStableを同義にしない
+- Experimental / opt-in / observe-onlyを本文で必要に応じて明示する
+- 公開・改訂前にLatest Releaseとsnapshot以降の差分を再確認する

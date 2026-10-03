@@ -1,19 +1,19 @@
 # 第7部 自分のチームへ導入する
 
-最後は導入です。
+## この部で答える問い
 
-ここまで読んだあと、Skills、Review Team、Memory、Coverage、Evalを全部まとめて入れたくなるかもしれません。
+> **どこから始めれば、レビュー自動化を過剰導入せずに価値を確認できるのか。**
 
-しかし、最初から最大構成にする必要はありません。
+Skills、Review Team、Memory、Coverage、Evalを最初から全部入れる必要はありません。
 
-むしろRiver ReviewのAdopter Playbookは、**導入経路とGateの強さを段階的に選ぶ**ことを重視しています。
+むしろ、価値が確認できる最小の判断から始めます。
 
 ~~~text
 One useful judgment
       ↓
 Plugin / local review
       ↓
-Team-owned Skill
+Team-owned Skill / Rule
       ↓
 Comment-only CI
       ↓
@@ -22,8 +22,18 @@ Selective Gate
 Continuous Evaluation
 ~~~
 
-導入の目的は機能数を増やすことではありません。
+この部では、1 Skillから始める方法、project固有判断、PluginからCIへの段階導入、Human Review境界、継続改善を扱います。
 
-> **人間が繰り返している価値の高い判断を、再利用・評価できる形へ移すこと。**
+## 読み終えたとき
 
-この部では、その最小単位から始めます。
+自分のチームで、
+
+- 最初に自動化する判断
+- project側へ残すRule / Skill
+- CIへ上げる条件
+- Human Approvalを残す領域
+- 改善を測るFeedback
+
+を決められる状態を目指します。
+
+Book全体のゴールは「River Reviewを全部使うこと」ではありません。**レビュー判断をチームが所有し、検証・改善できる運用を始めること**です。

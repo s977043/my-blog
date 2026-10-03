@@ -352,3 +352,33 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: Review Coverageがどこで既定適用され、どこでopt-inかを区別できた
 - PASS: self-correction loopの停止Evidenceが現行contractと一致した
 - NEXT: Polish Loop 3でZenn読者としての可読性・Part導線・公開前チェックリストを仕上げる
+
+
+### Polish Loop 3 — Zenn reader experience / publish readiness
+
+#### 検討
+- 参照Bookの強みは章数ではなく、summaryで読了後の状態を示し、Partを学習順のナビゲーションとして使っている点にある
+- 本BookのPart 1 / 2が短く、単なる区切りに見えるため、全Partで「この部で答える問い」「章の流れ」「読了後の状態」を揃える
+- Bookトップのsummaryにも、33章で何を学び、最後に何ができるかを明記する
+- 公開作業を会話に残さず、repository側へpublish checklistとして固定する
+
+#### Review
+- Reader: 45 entryの長いBookでも、Part単位の目的が見えるため現在地を見失いにくい
+- Editorial: Partページは本文の繰り返しではなくnavigationに限定する
+- Zenn: summaryは「問題 → 扱う範囲 → 読了後の状態」を先に出す
+- Operations: repositoryには `npm run check` と `npm run preview` が既にあり、公開前手順として再利用できる
+- Safety: 未実行のpreview / checkを実行済みとは記録しない
+
+#### 対応
+- config.yaml summaryを読者価値先出しへ更新
+- Part 1〜7を同じnavigation formatへ統一
+- STYLE.mdにPartページとverification snapshotの編集ルールを追加
+- PUBLISH_CHECKLIST.mdを新設し、current main再照合済み項目と未実行項目を分離
+- Zenn preview / repository checksは未実行のまま明記
+
+#### Post Review
+- PASS: Bookトップから読了後の状態が分かる
+- PASS: 各Partが「何のために読むか」を説明するnavigationになった
+- PASS: 長いBookでもWhy → What → Design → Practice → Reliability → Improvement → Adoptionの現在地が保てる
+- PASS: 公開前作業がrepository-owned checklistになった
+- REMAINING: `npm run check` と `npm run preview` の実行・目視はローカル/CI実行環境で行う。公開意思決定はその結果を見て行う

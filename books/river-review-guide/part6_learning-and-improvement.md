@@ -1,20 +1,12 @@
 # 第6部 レビュー判断を学習・改善する
 
-レビュー基準は、一度Skillへ書いたら完成ではありません。
+## この部で答える問い
 
-運用すると必ず、
+> **レビューの誤検知・見逃し・過去判断を、次のレビュー改善へどう戻すのか。**
 
-- 有用だったFinding
-- false positive
-- missed issue
-- WontFix
-- accepted risk
-- 設計判断
-- 評価結果
+運用すると、有用だったFinding、false positive、missed issue、WontFix、accepted risk、設計判断、評価結果が蓄積します。
 
-が蓄積します。
-
-この部では、それらを単なるログで終わらせず、**次のReview Judgmentを変える材料**として扱います。
+それらを単なるログで終わらせません。
 
 ~~~text
 Review
@@ -30,6 +22,10 @@ Judgment Update
 Next Review
 ~~~
 
-中心にあるのは「モデルを学習させること」ではありません。
+扱うのはRiverbed Memory、Suppression / Resurface、Skill Evaluation、Judgment Promotion、generate → review → reviseの収束です。
 
-**チームの判断基準を、観測と評価から改善すること**です。
+## 読み終えたとき
+
+レビュー品質の改善を「Promptを書き直す」だけに閉じず、**Memory / Fixture / Evaluation / Placementを使った改善loop**として設計できる状態を目指します。
+
+第7部では、この仕組みをチームへ無理なく導入する順序を扱います。
