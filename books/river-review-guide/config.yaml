@@ -1,0 +1,15 @@
+title: "AIエージェント時代のレビューを設計する — River Review 実践ガイド"
+summary: "AIによってコードを書く速度が上がるほど、何を確認し、何を根拠に、誰が判断するかが重要になる。本書ではRiver Reviewを題材に、Review Judgment as Codeから実践・運用までを体系的に扱う。"
+topics: ["AI", "AIエージェント", "コードレビュー", "ClaudeCode", "Codex"]
+published: false
+price: 0
+chapters:
+  - 00_introduction
+  - part1_why-review-design
+  - 01_judgment-bottleneck
+  - 02_value-of-review
+  - 03_who-owns-judgment
+  - 04_review-judgment-as-code
+  - part2_what-is-river-review
+  - 05_what-river-review-solves
+  - 06_review-the-development-flow
