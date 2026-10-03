@@ -432,3 +432,30 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: Human AuthorityをRisk tierと接続できた
 - PASS: 導入を後戻り可能にし、false positiveが多い状態でblockingへ進みにくくした
 - NEXT: Reader Loop 3で公開編集者視点から、33章の一次情報traceabilityとメンテナンス性を仕上げる
+
+
+### Reader Loop 3 — Publication editor / source maintainability
+
+#### 検討
+- 各章末にはSourcesがあるが、River Review側の仕様変更から影響章を逆引きしにくい
+- 公開後にmainが進む前提では、章単位のSourceだけでなくBook全体のsource mapが必要
+- 公開編集では「sourceがある」ことと「source coverageを確認済み」を分けて記録する
+
+#### Review
+- Source audit: 01〜33章すべてに最低1つのSource sectionを確認（33/33）
+- Technical editor: runtime implementation / public docs / issue / retrospectiveのSource種別を区別できると再検証しやすい
+- Maintenance: Stable Interfaces / Review Coverage / Riverbed / Loop Convergenceなど変化しやすいsourceから影響章を逆引きしたい
+- Publishing: Source mapは読者向けchapterではなく内部編集資料にする
+
+#### 対応
+- `SOURCE_MAP.md` を新設し、01〜33章の主要sourceと再確認ポイントを一覧化
+- sourceを Design / Reference / Runtime / Issue / Observed の種別で整理
+- `PUBLISH_CHECKLIST.md` にsource coverage 33/33とSOURCE_MAP更新確認を追加
+- Source mapはconfig.yaml chaptersへ含めない
+
+#### Post Review
+- PASS: 33/33章でsource coverageを確認できた
+- PASS: River Review側の変更から影響章を逆引きできる
+- PASS: 本文のSourcesと内部maintenance mapの責務を分離できた
+- PASS: 公開後の改訂コストを下げる構造になった
+- REMAINING: Zenn CLIによる `npm run check` / `npm run preview` と全章目視は未実行

@@ -26,6 +26,8 @@ Verification date: 2026-10-03
 - [x] 自動承認・自動mergeをNon-goalとして維持
 - [x] Review VerdictとExecution Authorityを分離
 - [x] Loopの反復・停止・max iterationsはcaller ownershipを維持
+- [x] 01〜33章すべてに最低1つのSource linkがある（33/33）
+- [x] `SOURCE_MAP.md` にchapter → source / reverse impact mapを作成
 
 ## 3. Editorial review
 
@@ -59,6 +61,7 @@ Verification date: 2026-10-03
 ## 6. Publish decision
 
 - [ ] verification snapshot以降のRiver Review main差分を再確認
+- [ ] `SOURCE_MAP.md` の影響章を使って変更sourceを再監査
 - [ ] Latest Releaseが変わっていないか再確認
 - [ ] `published: false` を変更する前にpreview結果を確認
 - [ ] 公開後に誤りが見つかった場合の修正導線を確保
