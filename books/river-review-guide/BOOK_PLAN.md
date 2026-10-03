@@ -880,3 +880,28 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 #### Post Review
 - PENDING: corrected rendererで全45章mobile + 7章desktopを再検証
 - PENDING: corrected screenshot artifactのHuman visual review
+
+
+### Visual Loop 2 — Screenshot readability review
+
+#### 検討
+- Browser GateがPASSしても、Human visual evidence自体が読めなければvisual reviewは成立しない
+- screenshotを実見し、日本語font / spacing / table / code blockを確認する
+
+#### Review
+- corrected browser Gate: 45/45 mobile + 7/7 desktop PASS
+- overflow: 0
+- broken images: 0
+- uncontained wide elements: 0
+- screenshot layoutは縦方向に収まっている
+- ただしGitHub Runner Chromeに日本語fontがなく、多数の日本語glyphが豆腐化している
+- これはBook Markdownではなくrendering environmentの問題
+
+#### 対応
+- CI visual stepで `fonts-noto-cjk` を導入
+- `fc-cache -f` 後にbrowser screenshotを再生成
+- Playwright / Book本文のdependencyには追加しない
+
+#### Post Review
+- PENDING: 日本語が正常表示されたartifactを再取得してHuman visual review
+- PASS: font欠落を本文の文字化けと誤認しない境界を記録
