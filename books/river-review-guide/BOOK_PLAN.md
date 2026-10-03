@@ -220,3 +220,38 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: モデル性能を主役にせず、判断基準の所有権を主役にできた
 - ISSUE: 第3部以降はまだ章間で概念密度に差があり、特にEvidence / Human Judgment / Artifactの関係を具体例でつなぐ必要がある
 - NEXT: Draft Loop 2で第3〜4部を同一walkthroughへ統合する
+
+
+### Draft Loop 2 — Judgment design / one walkthrough
+
+#### 検討
+- 第3〜4部を個別機能の羅列にせず、User Profile APIへoptional localeを追加する同一例でつなぐ
+- 09〜13章は Skill / Artifact / Evidence / Judgment Placement / Human Judgment の責務を明確に分離する
+- 14〜19章は Plan → Diff → Tests → Review Result → Repo Context の順に、同じ変更を異なるArtifactから見る
+- Verifierの責務は意味判断ではなく、Evidence存在・severity上限・diff scopeなど機械確認可能な部分に限定する
+- Wチェックのverdictとmerge authorityを同義にしない
+- repo-wide contextでは、Contextを増やす価値だけでなくsecret redaction / budget / selectionのコストも説明する
+
+#### Review
+- First-time engineer: 第3部の5問を保持したまま第4部へ進める
+- Tech Lead: SkillをPromptではなくレビュー職務として読み替えられる
+- Technical: Artifact Input Contract / Skill schema / Verifier / Judgment Placement / Human Judgment Focusと整合
+- Skeptical reader: 仮想例は説明用と明示し、実装事実のEvidenceと混同していない
+- Security: repo-wide reviewを「全部送る」設計として紹介せず、多段redactionとbudgetを含めている
+
+#### 対応
+- Part 3導入へ5つの問いと共通walkthroughを追加
+- 09〜13章を本文初稿へ更新
+- Part 4導入と14〜19章を同一walkthroughで本文化
+- 11章へ現行Verifierのrule-based checksを具体化
+- 12章へJudgment promotionを追加
+- 13章へCliff / Hill / FieldとVerdict != Authorityを明記
+- 18章へWチェックのdeduplicate / hallucination guard / synthesisを追加
+- 19章へrepo-wide contextのbenefit / budget / redactionを追加
+
+#### Post Review
+- PASS: Design章とPractice章が同じconcept vocabularyでつながった
+- PASS: 「何を見る / 何を根拠に / どこで判断 / 誰が決める」が一貫している
+- PASS: Wチェックとrepo-wide reviewが高度機能カタログではなく、Artifact / Evidence / Context原則の実践として読める
+- ISSUE: Part 5〜7はまだ説明密度が薄く、Review Coverageの具体Gap、Riverbed lifecycle、Eval、段階導入の根拠を増やす必要がある
+- NEXT: Draft Loop 3でReliability / Improvement / Adoptionを本文化し、Book全体の読了後アクションまで閉じる
