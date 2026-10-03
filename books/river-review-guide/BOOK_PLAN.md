@@ -742,3 +742,21 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PENDING: PR CI上で実route / titleがPASSするか確認
 - SAFETY: visual qualityはこのsmoke testではPASS扱いにしない
 - NEXT: CI結果をReviewし、必要ならroute / render assumptionsを修正する
+
+
+### Preview Loop 1 — Post Review / responsibility correction
+
+#### Review
+- CIはpreview server起動後、Book routeへのHTTP request成功までは到達した
+- failureはraw HTMLへのtitle grepで発生
+- Zenn previewはbrowser側renderを含むため、raw HTMLにBook titleが存在することをsmoke test契約にするのは過剰
+- server起動 / route応答 と visual content confirmationを分離すべき
+
+#### 対応
+- smoke testからraw HTML title grepを削除
+- HTTP 200 + response body non-emptyを自動Gateにする
+- title / summary / layoutはbrowser preview reviewへ残す
+
+#### Post Review
+- PASS: automationが証明できる範囲へ責務を戻した
+- PENDING: 修正後CIでpreview route smoke testがPASSすること
