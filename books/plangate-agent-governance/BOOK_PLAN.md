@@ -866,6 +866,38 @@
 - REMAINING: 公開前の最終工程として、PlanGate current mainのsource/version再監査、表記揺れ、リンク、Zenn renderを横断確認する
 
 
+### Publication Review Loop 1 — Current source / release-state audit
+
+#### 検討
+
+- PlanGate current mainとGitHub Releasesを再照合し、release事実とmain上の未リリース差分を分ける
+- README / staged-adoption-guide / plugin-only-adoptionに併存するLevel / Phase表記を一方へ無理に統一しない
+- 本書は導入手順にPhase 0〜3、機能範囲の説明にREADME Level 1〜5を使い分ける
+- v8.23系のContext / V2機能はrelease済みと断定せずcurrent mainの差分として扱う
+
+#### Review
+
+- Release source: GitHub Releases Latest = v8.22.0
+- Main README: v8.23.0をLatestと記載
+- Generated changelog page: v8.23.0 - TBD
+- Adoption docs: README Level 1〜5 / staged guide Phase 0〜3 / plugin-only Level 0が併存
+- Conclusion: upstream source自体に不整合があるため、Book側で一方を事実として上書きしない
+
+#### 対応
+
+- 13 / 15章のv8.23表現をcurrent main未リリース差分へ修正
+- 17章を「2つの導入軸を読み分ける」へ再構成
+- A1のPhase説明をLevel / Phase / Modeの3軸へ更新
+- Introduction / BOOK_PLANを現行整理へ同期
+
+#### Post Review
+
+- PASS: release済み / main実装の混同を解消
+- PASS: 公開docs間の用語差を隠さず説明
+- ISSUE: 本文の外部URL表記・章間表記揺れ・古いsource labelを全章横断で確認する必要がある
+- NEXT: Loop 2でsource / wording / cross-reference consistencyを監査する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
@@ -1162,20 +1194,18 @@ Focus:
 
 ## Part VII — 導入する
 
-### 17 Phase 0から段階導入する
+### 17 2つの導入軸を読み分ける
 
 Goal:
 全部入りを要求しない。
 
-Current adoption path:
-- plugin-only Level 0
-- Phase 0: ultra-lightで導入確認
-- Phase 1: Plan
-- Phase 2: Approval Boundary
-- Phase 3: strict / external review / metrics
+Current public docs:
+- README: Level 1〜5（採用する機能範囲）
+- staged-adoption-guide: Phase 0〜3（導入・習熟ロードマップ）
+- plugin-only-adoption: Level 0（CLIなしの入口）
 
 Book principle:
-観測したfailureに応じて必要なBoundaryだけ強化し、不要ならSimplify / Removeする。
+Level / Phase / Modeを混同せず、観測したfailureに応じて必要なBoundaryだけ強化し、不要ならSimplify / Removeする。
 
 ### 18 1タスクを最後まで回す
 
@@ -1221,5 +1251,5 @@ C-X / V-X / WF-X / EH-X / Mode / Hardening Override / MERGE_READY。
 - [x] Verification / Review / Judgment の責務が混ざっていない
 - [x] Autonomy / Authority の境界が明記されている
 - [x] Context / Handoff / MERGE_READY が後付け付録ではなく本編に入っている
-- [x] plugin-only Level 0 / Phase 0から段階導入できる
+- [x] Level / Phase / Modeを区別して段階導入できる
 - [x] PlanGate を使わない方がよいケースも本文か付録で明記する
