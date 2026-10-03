@@ -277,6 +277,37 @@
 - REMAINING: 公開前にPlanGate最新releaseへ再照合し、固有ファイル名・hook数・mode仕様など変動しやすい部分を更新する
 
 
+### Part III Draft Loop 1 — Plan as judgment input / evidence / approval
+
+#### 検討
+
+- 07章は既存BookのPlan How-toを再演せず、PlanをReview / Approval / Verificationの入力として説明する
+- 08章は「よく考える」より、判断を変えうるUnknownへCheapest Useful Verificationを当てる原則として書く
+- 09章はReviewとApprovalを分け、現行C-3 / Autonomous APPROVE / C-3' / Human-owned例外を正確に扱う
+- 承認後にPlanの意味が変わればApprovalも再評価対象になる、という一本の因果でつなぐ
+
+#### Review
+
+- Reader: 07→08→09が「境界を作る→前提を確認する→実行権限を渡す」で理解しやすい
+- Editorial: 既存Bookの記法・テンプレ解説と重複せず、新BookのGovernance軸を維持
+- Technical: plan_hash binding、三値C-3、human-presence best-effort、risk-based autonomyを現行公開仕様に合わせた
+
+#### 対応
+
+- 07〜09章を全文ドラフト化
+- Part IIの注文一覧API例を引き継いで3章を接続
+- #351を08章の主要Observed caseとして本文化
+- 09章でC-1 / C-2 / C-3の責務差とApproval Authorityを明示
+
+#### Post Review
+
+- PASS: 第3部の因果が成立
+- ISSUE: 07章のPlan / todo / test-cases説明が既存Bookとやや重複して見える
+- ISSUE: 08章のCheapest Useful Verificationが著者独自の一般用語に見える可能性がある
+- ISSUE: 09章はC-3系の例外説明が多く、中心主張が埋もれやすい
+- NEXT: Loop 2で重複削減・用語境界・Approval章の情報階層を調整する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
