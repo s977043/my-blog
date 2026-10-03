@@ -2,12 +2,16 @@
 
 最後は導入です。
 
-River Reviewの全機能を最初から入れる必要はありません。価値が確認できる最小の判断から始め、ノイズ・コスト・人間監督の境界を観測しながら広げます。
+ここまで読んだあと、Skills、Review Team、Memory、Coverage、Evalを全部まとめて入れたくなるかもしれません。
 
-```text
+しかし、最初から最大構成にする必要はありません。
+
+むしろRiver ReviewのAdopter Playbookは、**導入経路とGateの強さを段階的に選ぶ**ことを重視しています。
+
+~~~text
 One useful judgment
       ↓
-Agent / Plugin
+Plugin / local review
       ↓
 Team-owned Skill
       ↓
@@ -16,4 +20,10 @@ Comment-only CI
 Selective Gate
       ↓
 Continuous Evaluation
-```
+~~~
+
+導入の目的は機能数を増やすことではありません。
+
+> **人間が繰り返している価値の高い判断を、再利用・評価できる形へ移すこと。**
+
+この部では、その最小単位から始めます。
