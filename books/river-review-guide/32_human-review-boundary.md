@@ -16,12 +16,10 @@
 
 チームへ導入するときは、レビュー結果を次のような扱いへ分けると整理しやすくなります。
 
-| 扱い | 意味 | 例 |
-| --- | --- | --- |
-| Automatic | 機械的に継続してよい | format / type / deterministic checks |
-| Ask | 不明点を質問してEvidenceを増やす | contract不明 / context不足 |
-| Escalate | 人の判断へ戻す | security境界 / policy conflict |
-| Human Approval Required | 承認があるまで進めない | payment / personal data / irreversible migration |
+- **Automatic** — 機械的に継続してよい。例: format / type / deterministic checks。
+- **Ask** — 不明点を質問し、Evidenceを増やしてから判断する。例: contract不明 / context不足。
+- **Escalate** — 人の判断へ戻す。例: security境界 / policy conflict。
+- **Human Approval Required** — 明示的な人間承認があるまで進めない。例: payment / personal data / irreversible migration。
 
 この分類はRiver Reviewの固定enumそのものではなく、本書で導入判断を整理するための見方です。
 
@@ -31,11 +29,9 @@
 
 同じmajor Findingでも、変更domainによって責任の置き場所が違うからです。
 
-| Risk tier | Reviewの役割 | Authority |
-| --- | --- | --- |
-| Field | 定型チェック・既知patternを確認 | policy条件内なら自律継続、事後監査 |
-| Hill | 意味的整合・Evidence不足を整理 | callerが継続可能だが、観測期限や人確認を設定 |
-| Cliff | Risk検出・Evidence整理・policy照合 | **Human Approval Required** |
+- **Field** — Reviewは定型チェックや既知patternを確認する。Authorityはpolicy条件内での自律継続に置き、必要に応じて事後監査する。
+- **Hill** — Reviewは意味的整合やEvidence不足を整理する。Callerは継続できるが、観測期限や人の確認条件を設定する。
+- **Cliff** — ReviewはRisk検出・Evidence整理・policy照合まで担当する。Authorityは **Human Approval Required** とする。
 
 たとえばdocs変更のmajor Findingと、payment flowのmajor Findingを同じ自動処理にしません。
 
