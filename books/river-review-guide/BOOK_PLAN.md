@@ -905,3 +905,28 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 #### Post Review
 - PENDING: 日本語が正常表示されたartifactを再取得してHuman visual review
 - PASS: font欠落を本文の文字化けと誤認しない境界を記録
+
+
+### Visual Loop 3 — Verify the actual Book top route
+
+#### 検討
+- chapter本文のrenderはPreview API + Zenn stylesheetで検証済み
+- 残るBookトップのtitle / summary / topics / chapter一覧は、Zenn CLIの実routeそのものを使う
+- Zenn CLI公式sourceでBook routeが `/books/:slug`、chapter routeが `/books/:slug/:chapter_filename` であることを確認
+
+#### Review
+- 初期の `/books/.../view/...` は誤ったrouteだった
+- official clientは `/api/books/:slug` からBook metadataを取得してBookHeaderを描画する
+- Bookトップ検証はactual Editor routeが適切
+- chapter visualはEditor shellを除いたrendered contentが適切
+
+#### 対応
+- `/api/books/river-review-guide` でtitle / summary / topicsを検証
+- `/books/river-review-guide` をdesktop browserで実表示
+- title / summary / 全topicsが実画面textに存在することを確認
+- chapter list countがconfigの45件と一致することを確認
+- `desktop-book-top.png` をvisual artifactへ追加
+
+#### Post Review
+- PENDING: CI PASSとBookトップartifactの目視
+- PASS条件: metadata整合 + UI表示 + 45 chapter list + visual anomalyなし
