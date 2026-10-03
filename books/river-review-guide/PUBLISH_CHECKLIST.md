@@ -72,7 +72,7 @@ Verification date: 2026-10-04
 - [x] `SOURCE_MAP.md` の影響章を確認（source driftなしのため追加再監査なし）
 - [x] Latest Releaseが変わっていないか再確認（v1.124.5）
 - [x] `published: false` を変更する前にpreview結果を確認
-- [ ] 公開後に誤りが見つかった場合の修正導線を確保
+- [x] 公開後の修正導線を `Book修正 → follow-up PR → same CI / visual Gate → merge` として確保
 
 ## Release boundary
 
