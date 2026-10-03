@@ -570,6 +570,40 @@
 - REMAINING: v8.23.0はTBDのため、公開前にrelease状態とai-loop V2 runtimeの最新canonを必ず再照合する
 
 
+### Part VI Draft Loop 1 — False Green taxonomy / evaluation trust boundary
+
+#### 検討
+
+- False Greenを「greenだが守りたいClaimを測れていない状態」と定義する
+- #1085 / #1173 / #1277 / #1326 / #1169を、異なるfailure classとして比較する
+- Harness改善をDetect → Reproduce → Fix → Regression Guardへ落とす
+- Verifier/Eval改善はCandidate自身のPASSで採用せず、Evaluation Trust Boundaryへ接続する
+- ai-loop V2 RatchetのProduction promotionはHuman-ownedであることを維持する
+
+#### Review
+
+- Reader: 5事例を「PlanGateのバグ一覧」ではなく、測定Claimと実挙動のズレとして理解できる
+- Technical: current mainのEvaluation Trust Boundary / Ratchet Traceabilityと整合
+- Skeptical OSS reader: PlanGate自身の失敗を一次情報として開示し、成功談だけで設計原則を正当化していない
+- Editorial: 第10章のHook failureはExecution側、本章はHarnessをどう評価・改善するかに責務を分離できている
+
+#### 対応
+
+- Part VIと16章を全文ドラフト化
+- 5つのObserved failureを比較表へ統合
+- positive / negative control、INCONCLUSIVE、pre-registrationを本文化
+- Candidate cannot modify the authority that judges the candidateをHarness改善の中心原則へ接続
+- RatchetのFailure→Candidate→Evaluation→Promotionを導入
+
+#### Post Review
+
+- PASS: 第6部の中心主張が成立
+- ISSUE: 5事例すべてを順に詳述しており、前半がやや長く感じる
+- ISSUE: False Greenの「クラス」と個別issueが1対1に見え、汎用的な再利用性をもう一段上げたい
+- ISSUE: Eval Trust Boundaryの後半がV2固有語に寄り、読者が自分のHarnessへ持ち帰る最小形が弱い
+- NEXT: Loop 2でfailure classを4つの汎用パターンへ圧縮し、最小Eval Contractを提示する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
