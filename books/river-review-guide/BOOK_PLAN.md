@@ -1045,3 +1045,26 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: content / source / CI / browser / visual / coverの全公開前Gate
 - OPEN BLOCKER: 0
 - DECISION: Bookはrelease-ready。公開フリップだけを独立した次操作として残す
+
+
+### Publish Loop 1 — Explicit publish flip
+
+#### 検討
+- Release GateはRELEASE_READY、Publish Checklistは47/47完了
+- 本文・cover・source・browser Evidenceと公開フリップを分離する方針を維持
+- 公開フリップでは `config.yaml` の `published` 以外を変更しない
+
+#### Review
+- current `published: false`
+- open blocker: 0
+- latest browser / cover CI: SUCCESS
+- PR #750: mergeable=true
+
+#### 対応
+- `published: false → true`
+- Release Gateを `PUBLISH_FLIPPED / CI VERIFICATION PENDING` へ変更
+- 本文・chapters・coverは変更しない
+
+#### Post Review
+- PENDING: publish flipを含むPR CI
+- PENDING: Zenn list / browser Gateがpublished=trueでも継続PASSすること
