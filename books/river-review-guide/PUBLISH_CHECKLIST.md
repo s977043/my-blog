@@ -57,19 +57,21 @@ Verification date: 2026-10-04
 ## 5. Zenn preview
 
 - [x] `npm run preview` server / Book route smoke test（CI）
-- [ ] Bookトップのtitle / summary / topicsを確認
+- [x] Bookトップのtitle / summary / topicsを実Preview routeで確認
 - [x] Part 1〜7の見出しと章順をReader QAで確認
-- [ ] 表がモバイル幅で読めるか確認
-- [ ] code block / text diagramが崩れていないか確認
+- [x] 表がモバイル390pxで読めるかbrowser artifactで確認
+- [x] code block / text diagramがmobile / desktop artifactで崩れていないことを確認
 - [x] 外部GitHub Source linkをPart 1〜7から1本ずつspot check（7/7取得成功）
 - [x] 33章 + 付録 + おわりにを通しでnavigation確認
 
 ## 6. Publish decision
 
+- [ ] `books/river-review-guide/cover.png` または `cover.jpg` を追加し、Zenn Previewのcover validation warningを解消
+
 - [x] verification snapshot以降のRiver Review main差分を再確認（2026-10-04: driftなし）
 - [x] `SOURCE_MAP.md` の影響章を確認（source driftなしのため追加再監査なし）
 - [x] Latest Releaseが変わっていないか再確認（v1.124.5）
-- [ ] `published: false` を変更する前にpreview結果を確認
+- [x] `published: false` を変更する前にpreview結果を確認
 - [ ] 公開後に誤りが見つかった場合の修正導線を確保
 
 ## Release boundary
