@@ -6,16 +6,70 @@
 
 > **AIが生成する成果物が増えるほど、何を見て、何を根拠に、誰が「良い」と判断するのか。**
 
-AIエージェントによってコードを書く速度は上がりました。一方、その成果物を判断する仕事は自動ではなくなりません。
+AIエージェントによってコードを書く速度は大きく上がりました。一方で、成果物を作る速度が上がっても、その成果物を受け入れてよいかを判断する速度は自動では上がりません。
 
-筆者が開発しているOSS River Reviewでは、この問題を **Review Judgment as Code** として扱っています。
+生成される量が増えるほど、「計画と一致しているか」「テストは必要な失敗パスまで確認しているか」「AIのレビューコメント自体は正しいか」「どこから先は人が責任を持って判断すべきか」といった問いが増えます。
 
-レビュー観点・判断基準・Evidence・責任範囲・エスカレーション条件・品質評価方法を、一度きりのプロンプトや個人の経験に閉じ込めず、versioned / repo-owned / testableな資産として扱う考え方です。
+筆者が開発しているOSS [River Review](https://github.com/s977043/river-review) は、この問題を **Review Judgment as Code** として扱っています。
 
-## 読み終えたときの状態
+レビュー観点・判断基準・Evidence・責任範囲・エスカレーション条件・品質評価方法を、一度きりのプロンプトや個人の経験に閉じ込めず、**versioned / repo-owned / testable な資産**として持つ考え方です。
 
-目標はRiver Reviewのコマンドを覚えることではありません。
+## River Reviewを「AIコードレビューツール」とだけ捉えない
 
-自分の開発環境で「この判断は機械で決めるか、AIへ任せるか、人が判断するか」「何をEvidenceにするか」を設計できる状態を目指します。
+現在のRiver Reviewは、自身を **Review Judgment Platform / team-owned audit layer** と位置づけています。
 
-River Reviewの具体仕様は、公開リポジトリ `s977043/river-review` のcurrent mainを一次情報として確認します。
+入力はdiffだけではありません。
+
+~~~text
+Requirement
+Design
+Plan
+Diff
+Tests
+JUnit
+Coverage
+Existing Review
+        ↓
+   River Review
+        ↓
+Finding / Evidence / Verdict
+~~~
+
+判断をどこで実行するかも分けます。
+
+~~~text
+Deterministic
+Heuristic
+Agentic Review
+Human Judgment
+~~~
+
+機械で証明できるものは機械へ、意味理解が必要なものはAgentic Reviewへ、責任や不可逆性を伴うものはHuman Judgmentへ置きます。
+
+## この本で扱うこと
+
+1. **Why** — なぜAI時代にレビュー判断の設計が必要なのか
+2. **What** — River Reviewは何を責務として持つのか
+3. **Design** — Skill / Artifact / Evidence / Judgmentをどう分けるのか
+4. **Practice** — Plan / Diff / Tests / Review Resultを実際にどうレビューするのか
+5. **Reliability** — AIレビューそのものをどう検証するのか
+6. **Improvement** — MemoryとEvaluationで判断基準をどう改善するのか
+7. **Adoption** — チームへどの順序で導入するのか
+
+目標はRiver Reviewのコマンドを暗記することではありません。「この判断は機械で決めるか、AIへ任せるか、人が判断するか」「何をEvidenceにするか」を設計できる状態を目指します。
+
+## 情報の基準
+
+River Reviewの具体仕様は、**2026年10月3日時点の公開リポジトリ current main** を一次情報として確認して記述します。
+
+同日時点でGitHub ReleasesのLatestは **v1.124.5（2026年9月25日公開）** です。本書ではrelease済み機能だけでなくcurrent main上のExperimentalな契約も扱うため、次の状態を区別します。
+
+- **Implemented** — current mainで実装を確認できる
+- **Experimental** — 実装は存在するがStable Contractではない、またはobserve-only / opt-in
+- **Planned / Direction** — 設計・roadmap上の予定や長期方向
+
+### Sources
+
+- [River Review README](https://github.com/s977043/river-review/blob/main/README.md)
+- [River Review 設計思想](https://github.com/s977043/river-review/blob/main/docs/philosophy.md)
+- [River Review Releases](https://github.com/s977043/river-review/releases)
