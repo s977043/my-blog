@@ -35,3 +35,16 @@ Detect
 ポイントは、Harnessもsoftwareだということです。
 
 > **Harnessを信頼するのではなく、Harnessの主張もEvidenceで検証する。**
+
+
+## 改善のたびに新しいGuardを増やすわけではない
+
+failureを見つけるたびにSkill / Agent / Hook / testを1個ずつ足すと、Harness自体が複雑になります。
+
+改善では、
+
+> **新しい仕組みを増やす前に、既存の責務で表現できないかを見る。**
+
+ことも重要です。
+
+第6部では、failureを残すだけでなく、同じfailure classをまとめ、既存Verifierやinvariantへ吸収し、実運用で再発を観測するところまでを改善と考えます。
