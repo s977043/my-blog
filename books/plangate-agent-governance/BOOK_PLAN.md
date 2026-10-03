@@ -637,6 +637,41 @@
 - NEXT: Loop 3でregression suiteの保守とrecurrence measurementを加え、改善loopを閉じる
 
 
+### Part VI Draft Loop 3 — Regression maintenance / held-out Eval / recurrence
+
+#### 検討
+
+- incidentごとにfixtureを増やすだけではなく、failure class / invariantへ統合する
+- known fixtureだけに最適化するEval overfittingを避けるため、sealed / held-out fixtureの意味を説明する
+- Harness改善でもCreate Lastを使い、Skill / Agent / Hookの無制限増殖を避ける
+- Promotion後にproduction recurrenceを観測し、改善loopを閉じる
+- 観測できない prevented count は作らず、同一classifier条件でsame-pattern recurrenceを測る
+
+#### Review
+
+- Harness maintainer: regression suite自体がinstruction/test debtになるリスクを扱えている
+- Eval engineer: known-badで開発し、held-outでpromotionを評価する分離が明確
+- EM / Tech Lead: 新component追加より既存invariant改善を優先する判断軸を持ち帰れる
+- Evidence reviewer: 「防げたはず」のcounterfactualではなく、観測可能なrecurrenceだけを扱っている
+- Editorial: Detect→Eval→Promotion→Production observationまで改善loopが閉じた
+
+#### 対応
+
+- Part VIへ「改善のたびに新しいGuardを増やさない」を追加
+- 16章へRegression suite maintenanceを追加
+- sealed / held-out fixtureによるEval overfitting対策を追加
+- RatchetのCreate Last順序を一般原則として追加
+- same-pattern recurrence rateとclosed improvement loopを追加
+
+#### Post Review
+
+- PASS: False Green検出から継続的Harness改善まで一章で完結
+- PASS: 「テストを増やすほど良い」という誤読を抑えた
+- PASS: Candidate / Evaluation / Promotion / Production observationのAuthority境界が明確
+- PASS: 第6部（16章）は本文初稿として次Partへ進める状態
+- REMAINING: ai-loop V2 / Ratchetはcurrent mainの進行中設計を含むため、公開前にcanonとrelease状態を再照合する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
