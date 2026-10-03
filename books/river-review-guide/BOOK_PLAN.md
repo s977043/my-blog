@@ -189,3 +189,34 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: River Review固有機能と一般化できる設計原則の境界が明確
 - PASS: 現行仕様と長期方向を混同しにくい構造になった
 - REMAINING: 各章は現時点では構成稿。本文執筆ではIssue / PR / fixtureの具体例を章ごとに1つ以上割り当て、current mainを再照合する
+
+
+### Draft Loop 1 — Why / What full draft
+
+#### 検討
+- 構成稿だった01〜08章を、River Reviewの一次情報と実例に接続して本文化する
+- Whyは一般論だけでなく、River Review自身のHarness retrospectiveで観測した「1巡では拾えなかった静かな変更」を具体例に使う
+- Review Judgment as Codeは実在Skill hallucinated-reference を使ってResponsibility / Evidence / Guard / Handoffまで示す
+- WhatではAIコードレビューSaaSではなくReview Judgment Platform / team-owned audit layerという現行位置づけを明確にする
+- current releaseとcurrent mainを区別する
+
+#### Review
+- First-time engineer: 「なぜ必要か」から入るため、River Review固有用語の押し付けになっていない
+- Skeptical reader: 自プロダクトの振り返りをEvidenceとして使い、一般的なAI性能の断定には広げていない
+- Technical: README / philosophy / review-scope / skill実体と整合し、PlanGate依存とも誤読しにくい
+- Editorial: 01→04でWhyが閉じ、05→08で具体的なRiver Review像へ自然に進む
+
+#### 対応
+- 00_introduction.md をBook全体の読み方と情報基準まで含む本文へ拡張
+- 01〜08章を構成稿から本文初稿へ更新
+- 01章へ2026-09-05 Harness retrospectiveの観測事例を追加
+- 04章へ hallucinated-reference Skillの具体例を追加
+- 05章へNon-goalsとCaller / PlanGate / Human境界を追加
+- 08章へAgent-driven / Deterministic / Headless LLMの3実行形態を追加
+
+#### Post Review
+- PASS: 第1〜2部だけで「Why → Review Judgment as Code → River Reviewの責務」が理解できる
+- PASS: 抽象語が具体的なSkill・Artifact・実例へ接続した
+- PASS: モデル性能を主役にせず、判断基準の所有権を主役にできた
+- ISSUE: 第3部以降はまだ章間で概念密度に差があり、特にEvidence / Human Judgment / Artifactの関係を具体例でつなぐ必要がある
+- NEXT: Draft Loop 2で第3〜4部を同一walkthroughへ統合する
