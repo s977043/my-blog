@@ -2,6 +2,19 @@
 
 PlanGateを使うときに起きやすい誤解を、症状と戻り方でまとめます。
 
+## 症状から探す
+
+| 困っていること | 見る項目 |
+| --- | --- |
+| Plan / Approvalが重い・曖昧 | 1〜6 |
+| Hook / Verificationが信用できない | 7〜10 |
+| session / review / multi-agentが崩れる | 11〜13 |
+| PR後のDeliveryが人間へ戻る | 14〜15 |
+| Harnessのgreenを信用できない | 16〜17 |
+| Governanceが増え続ける | 18 |
+
+順番に読む必要はありません。起きているfailure classから該当箇所へ戻るための付録です。
+
 ## 1. 何でも重いPlanにする
 
 **症状**: 小さなtypo修正でも詳細Plan、複数Review、厳格なGateを要求する。
