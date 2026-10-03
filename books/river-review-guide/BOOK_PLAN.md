@@ -930,3 +930,23 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 #### Post Review
 - PENDING: CI PASSとBookトップartifactの目視
 - PASS条件: metadata整合 + UI表示 + 45 chapter list + visual anomalyなし
+
+
+### Visual Loop 3 — Post Review / chapter list boundary
+
+#### Review
+- actual Book top routeはtitle / summary / topicsの描画まで成功
+- chapter count checkだけ `UI=52 / config=45` で失敗
+- Zenn Previewはconfigに含まれる本編と、Book directory内の未指定Markdownを「excluded chapters」として別表示する
+- 差分7件は内部QA / planning Markdownで、Zenn deploy対象ではない
+- 全anchor数を公開chapter数として数えたchecker側の境界ミス
+
+#### 対応
+- 最初の `.book-show__chapters` をincluded chaptersとして数える
+- `.book-show__excluded-chapters` は別countとしてreportへ保存
+- included=45をconfig contractとしてGate化
+- excluded countは情報として保持し、公開章欠落とは扱わない
+
+#### Post Review
+- PENDING: corrected countでCI PASS
+- PENDING: actual Book top screenshotのHuman visual review
