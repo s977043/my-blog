@@ -898,6 +898,40 @@
 - NEXT: Loop 2でsource / wording / cross-reference consistencyを監査する
 
 
+### Publication Review Loop 2 — Source / wording / cross-reference consistency
+
+#### 検討
+
+- Book内で引用しているPlanGate docs / issue参照を横断抽出して存在確認する
+- release状態とcurrent main仕様の基準日をIntroductionで明示する
+- v8.23をversion labelとして不用意に本文へ埋め込まない
+- A1のOfficial用語は現行GlossaryのHuman C-3 / C-3'分離に合わせる
+
+#### Review
+
+- PlanGate blob/main参照20件: 20/20 existence確認
+- Issue参照6件: 本文で使用している#351 / #1085 / #1169 / #1173 / #1277 / #1326を再確認済み
+- 06章: v8.23 release断定が残っていた
+- A1: C-3をHuman-ownedと明示した方が現行Glossaryに忠実
+- Introduction: source baselineがなかったため、upstream不整合の扱いが各章へ分散していた
+
+#### 対応
+
+- Introductionへ2026-10-03 source baselineを追加
+- release statusはGitHub Releases Latest=v8.22.0を優先すると明記
+- 06章の「PlanGate v8.23」をcurrent mainへ修正
+- A1をHuman C-3 / C-3'の分離へ精密化
+- Level / Phase見出しを両方の公式表現を含む形へ修正
+
+#### Post Review
+
+- PASS: 参照先の存在確認が完了
+- PASS: release / main / docs inconsistencyの扱いをBook全体で統一
+- PASS: C-3 / C-3' / C-4のAuthority境界が現行Glossaryと整合
+- ISSUE: Zenn構造としてconfig chaptersと実ファイルの一致、Markdown構造、CI結果を最終確認する必要がある
+- NEXT: Loop 3でpublication artifact / CI / rendering-riskを検証する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
