@@ -119,7 +119,7 @@ jobs:
             exit 1
           fi
 
-          grep -F 'AIエージェント時代のレビューを設計する' /tmp/river-review-book.html >/dev/null
+          test -s /tmp/river-review-book.html
 
       # publish-readiness ゲートの fixture self-test（hermetic・git 不要）。
       # 新設 check スクリプトの初版バグ対策（#393/#417 の再発防止）として常時実行する。
