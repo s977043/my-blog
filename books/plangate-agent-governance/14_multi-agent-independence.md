@@ -209,6 +209,35 @@ Source:
 
 これらが揃わず、モデル名だけ違っても、独立レビューの形だけが残ります。
 
+## Review対象のIdentityもbindする
+
+Reviewerが独立していても、古いdiffを見ていたら意味がありません。
+
+Review Artifactには少なくとも、
+
+- 対象Plan
+- 対象commit / diff
+- 使用したEvidence
+- review結果
+
+の対応関係が必要です。
+
+repair後にHEADが変わったなら、以前のreviewがどこまで有効かを再判断します。
+
+~~~text
+reviewed commit A
+        ↓
+repair
+        ↓
+commit B
+
+Aへのreview
+≠
+自動的にBへのreview
+~~~
+
+Fresh Contextだけでなく、**Review targetのIdentity**も独立性の一部です。
+
 ## 「指摘ゼロ」を成功条件にしない
 
 Review Principlesでは、adversarial reviewの収束条件を「指摘ゼロ」にしていません。
@@ -252,6 +281,36 @@ review unavailable
 PlanGateのReview Principlesでも、unavailableは理由、代替観点、未充足riskを残す設計です。
 
 「レビューできなかった」をgreenへ変換しないことが重要です。
+
+## 複数Agentを使わない方がよいケース
+
+責務分離が重要でも、毎回Planner / Builder / Verifier / Reviewerを別Agentにする必要はありません。
+
+たとえば、
+
+- typoや小さなconfig変更
+- deterministic testで十分な修正
+- contextが小さくhandoff costの方が高い
+- Reviewer追加による新しい観点がほぼない
+
+なら、単一Agent + deterministic verificationで十分な場合があります。
+
+逆に、
+
+- security boundary
+- irreversible action
+- architecture変更
+- long-running repair loop
+- Builderのassumptionを独立して疑いたい
+
+なら、Contextを切った別Reviewerの価値が上がります。
+
+> **Agent topologyはtask riskとcoordination complexityから決める。**
+
+という位置づけです。
+
+Source:
+- https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/README.md
 
 ## Fresh Contextにもコストがある
 
