@@ -75,7 +75,7 @@ Evidence insufficient
 
 Evidenceです。
 
-この話は、後のContext EngineeringとIdentityの話につながります。
+この話は、後のContext EngineeringとReview Coverageの話につながります。
 
 ## この章で持ち帰ること
 
