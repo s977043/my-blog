@@ -119,6 +119,37 @@
 - NEXT: Loop 2でtrustの表現とautomation/human boundaryを精密化する
 
 
+### Draft Loop 2 — Trust wording / authority boundary
+
+#### 検討
+
+- 「Artifactを信頼する」を slogan のままにせず、「判断根拠を自己申告から外部確認可能な材料へ移す」と定義する
+- Artifact と Evidence の関係を「器 / 主張を支える材料」に分ける
+- Judgmentを同期Human approvalと同義にしない
+- AutomationできるVerification / Reviewと、Authorityの所在を分ける
+
+#### Review
+
+- Reader: Artifact自体のfalse greenまで後半へ自然につながる
+- Editorial: 第2章末の問いが第3章へ直結し、重複が減った
+- Technical: 「人間が全部見る」ではなく、risk-based automationとAuthorityの明示というPlanGateの現在方向に整合する
+
+#### 対応
+
+- 02章タイトルを「判断根拠をAgentの自己申告からArtifactとEvidenceへ移す」へ変更
+- Artifact / Evidence / Judgmentの定義を精密化
+- 03章に「Judgmentは人が全部クリックする意味ではない」を追加
+- Autonomy / Authorityへの予告を追加
+
+#### Post Review
+
+- PASS: trustという語の誤解を抑えた
+- PASS: Human Judgmentとautomationが対立しない説明になった
+- ISSUE: 第1部全体で英語ラベルがまだ多く、初見読者の認知負荷が高い
+- ISSUE: 第1章の冒頭は強いが、01〜03章を通した「3つの問い」のまとめがない
+- NEXT: Loop 3で用語密度と第1部の読了感を調整する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
