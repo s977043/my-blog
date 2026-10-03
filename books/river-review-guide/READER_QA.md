@@ -81,3 +81,48 @@ Reader QAでは次を判定しない。
 - font / line-wrap / horizontal scrollの実挙動
 
 これらはpreview visual reviewの責務として残す。
+
+
+## Browser visual review
+
+GitHub Actions上でZenn Previewを起動し、Playwright Core + Chromeで実レンダリングを確認した。
+
+### Automated browser evidence
+
+- Zenn Preview APIから45章すべてのrendered `bodyHtml` を取得
+- Zenn Preview stylesheet + `.znc` で本文を再描画
+- mobile: 390×844 / 45章すべて
+- desktop: 1440×1000 / 代表7章
+- content overflow: 0
+- broken images: 0
+- uncontained table / pre / code / svg: 0
+- 日本語font: `fonts-noto-cjk` を導入して再確認
+
+### Human screenshot review
+
+代表章として、00 / 06 / 13 / 21 / 29 / 32 / 付録Cをmobile / desktopで目視した。
+
+確認結果:
+
+- 13章のCliff / Hill / Field 3列表は390pxでも判読可能
+- 21章のReviewer / Verifier表は390pxでも横切れなし
+- 29 / 32章のdecision table縦化はmobileで有効
+- code blockは本文領域内に収まる
+- 見出し・本文・Sourcesのspacingにblockingな崩れなし
+- desktop本文幅・余白にblockingな崩れなし
+
+### Actual Book top
+
+Zenn CLI公式route `/books/river-review-guide` をdesktopで実表示した。
+
+- title: PASS
+- summary: PASS
+- topics 5件: PASS
+- included chapters: 45 / 45
+- excluded internal Markdown: 7（Zenn deploy対象外として別表示）
+
+ただし、BookHeaderにcover validation warningを確認した。
+
+> 本のカバー画像（cover.pngもしくはcover.jpg）を `/books/river-review-guide` に配置してください
+
+したがって本文visualはPASSだが、Release Readyではない。
