@@ -785,3 +785,31 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: 比較に適した短い2列表は維持
 - PASS: 29章 / 32章の内容量と判断順序は維持
 - NEXT: Preview Loop 3でCI render結果とBook全体の最終Reader Gateを確認する
+
+
+### Preview Loop 3 — Final reader pass
+
+#### 検討
+- automation / structure reviewの後に、Book全体をReader Journeyとして再度通読する
+- 修正対象は「実在しないforward reference」「version date drift」「mobileで不要に横幅を使う構造」に限定する
+- 新しい主張や章は増やさない
+
+#### Review
+- 01〜33章、Part 1〜7、付録A〜C、99_afterwordを通読
+- 11章にBook内に存在しない `Identity` へのforward referenceを発見
+- 20 / 22 / 24章に10月3日表記が残り、冒頭・付録Cの10月4日再確認と時点が揺れていた
+- 29 / 32章の3列decision tableはmobile横幅リスクが高かった
+- その他の章間handoff、結論、用語境界にはblockingな問題なし
+
+#### 対応
+- 11章のIdentity参照をReview Coverageへ修正
+- 20 / 22 / 24章のverification表記を2026-10-04再確認へ統一
+- 29 / 32章のdecision tableを縦方向blockへ変更
+- `READER_QA.md` を追加し、最終Reader Reviewを記録
+
+#### Post Review
+- PASS: 全33章 + Part + 付録 + おわりにのReader Journeyを確認
+- PASS: forward referenceのbroken navigationを解消
+- PASS: verification dateをBook全体で統一
+- PASS: mobile layout riskを減らした
+- REMAINING: Zenn browser rendererでのvisual reviewのみ
