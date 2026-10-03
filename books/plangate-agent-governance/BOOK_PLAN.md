@@ -90,6 +90,35 @@
 - REMAINING: 各章本文の執筆時に、Issueの当時仕様と現行v8.23+仕様を再照合する
 
 
+### Draft Loop 1 — Part I first full draft
+
+#### 検討
+
+- 第1部はPlanGateの機能紹介を急がず、「判断の失敗」から入る
+- #351の1,697ファイル事例を第1章の主シーンにする
+- 第2章でArtifactとEvidenceを明確に分ける
+- 第3章でVerification / Review / Judgmentを責務として分離し、第2部の全体フローへ接続する
+
+#### Review
+
+- Reader: 抽象的なGovernance論から始めず、具体的な失敗から読める
+- Editorial: 01 -> 02 -> 03が「なぜ / 何を見る / どう判断する」で連続する
+- Technical: #351と現行README / philosophyの主張に限定し、一般的な効果を過度に断定していない
+
+#### 対応
+
+- 01〜03章を全文ドラフト化
+- 旧Draft placeholder / Primary Evidenceメモを本文へ統合
+- 各章末から次章への接続を追加
+
+#### Post Review
+
+- PASS: 第1部だけで中心問題が理解できる
+- ISSUE: 「信頼する」という語が強く、Artifact自体を無条件に信頼するようにも読める
+- ISSUE: 第3章のHuman Judgmentが「何でも人が決める」に見える余地がある
+- NEXT: Loop 2でtrustの表現とautomation/human boundaryを精密化する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
