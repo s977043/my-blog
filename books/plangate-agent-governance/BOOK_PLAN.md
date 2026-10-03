@@ -969,6 +969,36 @@
 - REMAINING: 実ブラウザ上のZenn visual previewは未実施。公開判断前に必要ならpreviewでレイアウトのみ最終確認する
 
 
+### Visual/Render Review Loop 1 — Long chapter navigation / table width
+
+#### 検討
+
+- browser previewが実行できないため、chapter length / heading density / table width / long-line riskを静的に監査する
+- 最長16章を分割せず、章内navigationで認知負荷を下げる
+- mobileで横スクロールしやすい多列tableを、情報量を落とさず2列へ圧縮する
+
+#### Review
+
+- 16章: 約10.4k chars / 19 H2でBook内最長
+- 17章: table rows 23
+- A1: table rows 42
+- 全章H1 / fence構造自体は正常
+- 長文章の問題は内容不足ではなく現在地を失いやすいこと
+
+#### 対応
+
+- 16章冒頭へ「この章の地図」を追加し、前半 / 中盤 / 後半の読み方を明示
+- 17章の導入表を3列→2列へ圧縮
+- A1のC-X表を3列→2列へ圧縮
+
+#### Post Review
+
+- PASS: 最長章でreader orientationが改善
+- PASS: mobile横幅リスクを減らした
+- ISSUE: Part dividerの情報量にばらつきがあり、目次上で役割が見えにくい可能性がある
+- NEXT: Loop 2でPart dividerと章末bridgeの視認性をレビューする
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
