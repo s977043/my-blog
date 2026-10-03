@@ -858,3 +858,25 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 #### Post Review
 - PENDING: PR CIで全45 mobile routes + representative desktop routesがPASSするか
 - PENDING: screenshot artifactを取得し、Human visual reviewする
+
+
+### Visual Loop 1 — Post Review / renderer correction
+
+#### Review
+- 初回browser Gateは45/45章で同じ `399px > 390px` を検出
+- wide table / pre / code / svgは0件で、Book固有差ではなかった
+- screenshot artifactを実見すると、検証対象はBook本文ではなくZenn Editor shellだった
+- guessed `/books/.../view/...` routeは本文previewの正本として使えない
+
+#### 対応
+- Zenn Preview API `/api/books/<slug>/chapters/<file>.md` をrendered HTMLの正本へ変更
+- API payloadから `bodyHtml` を取得
+- Zenn Preview rootが読み込むstylesheetを再利用
+- official `znc` class + standalone preview shellで本文だけをbrowser描画
+- overflow判定をdocument全体ではなくpreview shell / articleへ限定
+- representative screenshotを5→7章へ拡張
+- Editor UI起因の横幅をBook failureとして扱わない
+
+#### Post Review
+- PENDING: corrected rendererで全45章mobile + 7章desktopを再検証
+- PENDING: corrected screenshot artifactのHuman visual review
