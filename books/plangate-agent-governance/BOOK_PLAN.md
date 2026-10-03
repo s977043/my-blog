@@ -150,6 +150,38 @@
 - NEXT: Loop 3で用語密度と第1部の読了感を調整する
 
 
+### Draft Loop 3 — First-time reader / terminology load
+
+#### 検討
+
+- 第1部を「3つの問い」で始め、章ごとの役割を先に渡す
+- 英語用語は日本語の責務を説明した後にラベルとして導入する
+- #351を一般的なAI性能の証明として使わず、PlanGateの設計変更につながった観測事例として限定する
+- 03章の結論でも3つの問いへ戻り、第1部を閉じる
+
+#### Review
+
+- First-time engineer: PlanGate固有語を知らなくても読み進められる
+- Tech Lead / EM: 「何を根拠に / 何を確認し / 誰が決めるか」の3点を自分の開発プロセスへ転用しやすい
+- Skeptical OSS reader: #351の単一事例を一般化しておらず、Observed factとInterpretationの境界が明確
+- Editorial: 01の具体例 → 02の判断材料 → 03の責務分離が一本の導線になった
+
+#### 対応
+
+- Part 1導入へ3つの問いを追加
+- Artifact / Evidence / Verification / Judgment / Autonomy / Authorityを日本語先行に変更
+- 01章へ単一事例の一般化を避ける注記を追加
+- 03章末を3つの問いで再整理
+
+#### Post Review
+
+- PASS: 第1部のReader Journeyが成立
+- PASS: 用語の認知負荷を下げつつ、後続章で使う英語ラベルも導入できた
+- PASS: 事実 / 設計解釈 / 一般論の境界が明確
+- PASS: 第1部（01〜03章）は本文初稿として次Partへ進める状態
+- REMAINING: 公開前には全Book横断で表記揺れと現行PlanGate versionとの差分を再監査する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
