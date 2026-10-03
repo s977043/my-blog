@@ -604,6 +604,39 @@
 - NEXT: Loop 2でfailure classを4つの汎用パターンへ圧縮し、最小Eval Contractを提示する
 
 
+### Part VI Draft Loop 2 — Generic failure classes / minimal Eval Contract
+
+#### 検討
+
+- 5つのIssueを個別順に並べず、Proxy / Coverage / Classifier / Observerの4パターンへ一般化する
+- HarnessManifestのactivation 6段階を使い「存在 ≠ 効いた」を具体化する
+- 読者が自分のHarnessへ持ち帰れる最小Eval ContractをClaim / Identity / Oracle / Controls / Coverage / Promotionで定義する
+- Evaluation Trust BoundaryのV2固有語は、評価対象と評価Authorityを分離する原則へ圧縮する
+
+#### Review
+
+- First-time engineer: 個別Issueを覚えなくても4つのfailure patternで自分の検査を見直せる
+- Eval designer: greenの意味をClaimとOracleから定義する実務的な入口ができた
+- Technical: HarnessManifest activation、Evaluation Trust Boundary、Ratchet Traceabilityとの接続が明確
+- Editorial: 前半の事例説明を圧縮し、後半の改善方法へ早く到達する
+
+#### 対応
+
+- 16章を4つのFalse Greenパターンで全面再構成
+- #1173 / #1277をCoverage Greenとして統合
+- Runtime Activation 6段階をProxy Greenの一般化へ利用
+- 最小Eval Contract 6項目を追加
+- V2固有のEval設計を一般原則→PlanGate実装例の順へ変更
+
+#### Post Review
+
+- PASS: issue集から再利用可能なEval章へ変わった
+- PASS: 「greenの意味を先に定義する」が章の中心になった
+- ISSUE: regression fixtureを増やし続けるとtest suiteが過去事故の墓場になるリスクに触れていない
+- ISSUE: Harness改善の成功を「fixtureが通った」だけで終えず、実運用で再発率を見る流れを追加したい
+- NEXT: Loop 3でregression suiteの保守とrecurrence measurementを加え、改善loopを閉じる
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
