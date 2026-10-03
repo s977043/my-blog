@@ -813,3 +813,20 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: verification dateをBook全体で統一
 - PASS: mobile layout riskを減らした
 - REMAINING: Zenn browser rendererでのvisual reviewのみ
+
+
+### Preview Loop 1 — Process cleanup correction
+
+#### Review
+- HTTP smoke自体はPASSしたが、古いCI runが長時間 `in_progress` のまま残った
+- `npm run preview &` はnpm wrapper配下のZenn processを残す可能性があり、step cleanupとして不十分
+- preview verificationでは「renderできた」だけでなく「検証後にprocessを確実に閉じる」ことも必要
+
+#### 対応
+- `npm run preview &` を `./node_modules/.bin/zenn preview &` へ変更
+- cleanup functionで `kill` + `wait` を明示
+- smoke成功後にもcleanupを実行し、EXIT trapを解除
+- orphan processをCI jobへ残さない設計に修正
+
+#### Post Review
+- PENDING: 最新HEADのCIでpreview smoke PASSかつjobが正常終了すること
