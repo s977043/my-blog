@@ -20,7 +20,7 @@ Artifact、Evidence、Approval Boundary、Verification、Human Judgment、Contex
 - 会話ではなくArtifactへContextを移す方法
 - 複数Agent、長時間実行、PR後のDeliveryへどう広げるか
 - Harness自体のFalse Greenをどう検出し改善するか
-- Level 1から段階導入する方法
+- plugin-only Level 0 / Phase 0から段階導入する方法
 
 ## 読み終えたときの状態
 
