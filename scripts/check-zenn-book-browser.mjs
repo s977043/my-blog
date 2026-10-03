@@ -265,11 +265,22 @@ async function main() {
         throw new Error(`book top does not render topic: ${topic}`);
       }
     }
-    const chapterItems = await bookUiPage.locator(".book-show__chapters a").count();
-    if (chapterItems !== chapters.length) {
-      throw new Error(`book top chapter count mismatch: UI=${chapterItems} config=${chapters.length}`);
+    const includedChapterItems = await bookUiPage
+      .locator(".book-show__chapters")
+      .first()
+      .locator("a")
+      .count();
+    const excludedChapterItems = await bookUiPage
+      .locator(".book-show__excluded-chapters .book-show__chapters a")
+      .count();
+
+    if (includedChapterItems !== chapters.length) {
+      throw new Error(
+        `book top included chapter count mismatch: UI=${includedChapterItems} config=${chapters.length}`,
+      );
     }
-    report.book.chapterCount = chapterItems;
+    report.book.chapterCount = includedChapterItems;
+    report.book.excludedMarkdownCount = excludedChapterItems;
     await bookUiPage.screenshot({
       path: path.join(artifactDir, "desktop-book-top.png"),
       fullPage: true,
