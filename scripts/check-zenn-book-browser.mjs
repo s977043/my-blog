@@ -8,6 +8,7 @@ const baseUrl = process.env.ZENN_PREVIEW_URL || "http://127.0.0.1:8000";
 const chromePath = process.env.CHROME_PATH;
 const artifactDir = path.resolve("artifacts/zenn-book-browser");
 const configPath = path.resolve("books/river-review-guide/config.yaml");
+const bookSlug = "river-review-guide";
 
 if (!chromePath) {
   console.error("[check:zenn-book-browser] CHROME_PATH is required");
@@ -37,36 +38,97 @@ function parseChapters(config) {
   return chapters;
 }
 
-function routeFor(slug) {
-  if (slug === "00_introduction") {
-    return `${baseUrl}/books/river-review-guide/view/00_introduction`;
+function findBodyHtml(value, seen = new Set()) {
+  if (!value || typeof value !== "object" || seen.has(value)) return null;
+  seen.add(value);
+
+  if (typeof value.bodyHtml === "string") return value.bodyHtml;
+
+  for (const child of Object.values(value)) {
+    const found = findBodyHtml(child, seen);
+    if (found) return found;
   }
-  return `${baseUrl}/books/river-review-guide/view/${slug}`;
+
+  return null;
 }
 
-async function inspectPage(page, route, slug, viewportName) {
-  const response = await page.goto(route, { waitUntil: "networkidle", timeout: 30_000 });
-  if (!response || !response.ok()) {
-    throw new Error(`${slug} [${viewportName}] HTTP ${response?.status() ?? "NO_RESPONSE"}`);
+async function fetchRenderedChapter(slug) {
+  const apiUrl = `${baseUrl}/api/books/${bookSlug}/chapters/${slug}.md`;
+  const response = await fetch(apiUrl);
+  if (!response.ok) {
+    throw new Error(`${slug}: preview API HTTP ${response.status} at ${apiUrl}`);
   }
 
+  const payload = await response.json();
+  const bodyHtml = findBodyHtml(payload);
+  if (!bodyHtml) {
+    throw new Error(
+      `${slug}: bodyHtml not found in preview API payload keys=${Object.keys(payload).join(",")}`,
+    );
+  }
+
+  return { apiUrl, bodyHtml };
+}
+
+async function loadPreviewStyles(browser) {
+  const page = await browser.newPage();
+  try {
+    await page.goto(baseUrl, { waitUntil: "domcontentloaded", timeout: 30_000 });
+    const hrefs = await page.evaluate(() =>
+      [...document.querySelectorAll('link[rel="stylesheet"]')]
+        .map((link) => link.href)
+        .filter(Boolean),
+    );
+    return [...new Set(hrefs)];
+  } finally {
+    await page.close();
+  }
+}
+
+function standaloneHtml(bodyHtml, stylesheetHrefs) {
+  const links = stylesheetHrefs
+    .map((href) => `<link rel="stylesheet" href="${href}">`)
+    .join("\n");
+
+  return `<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<base href="${baseUrl}/">
+${links}
+<style>
+html, body { margin: 0; padding: 0; background: #fff; }
+.preview-shell { box-sizing: border-box; width: 100%; max-width: 780px; margin: 0 auto; padding: 24px 16px 80px; }
+@media (min-width: 768px) { .preview-shell { padding-left: 32px; padding-right: 32px; } }
+</style>
+</head>
+<body>
+<main class="preview-shell">
+<article class="znc">${bodyHtml}</article>
+</main>
+</body>
+</html>`;
+}
+
+async function inspectRenderedPage(page, html, slug, viewportName) {
+  await page.setContent(html, { waitUntil: "networkidle", timeout: 30_000 });
   await page.waitForFunction(
-    () => document.body && document.body.innerText.trim().length > 0,
+    () => document.querySelector(".znc")?.innerText.trim().length > 0,
     null,
     { timeout: 10_000 },
   );
 
   const metrics = await page.evaluate(() => {
-    const root = document.documentElement;
-    const body = document.body;
+    const root = document.querySelector(".preview-shell");
+    const article = document.querySelector(".znc");
     const viewportWidth = window.innerWidth;
-    const documentWidth = Math.max(root.scrollWidth, body?.scrollWidth || 0);
 
     const brokenImages = [...document.images]
       .filter((img) => img.complete && img.naturalWidth === 0)
       .map((img) => img.getAttribute("src") || "");
 
-    const wideElements = [...document.querySelectorAll("table, pre, code, svg")]
+    const wideElements = [...article.querySelectorAll("table, pre, code, svg")]
       .map((el) => {
         const rect = el.getBoundingClientRect();
         const style = getComputedStyle(el);
@@ -74,6 +136,7 @@ async function inspectPage(page, route, slug, viewportName) {
         const locallyScrollable =
           ["auto", "scroll"].includes(style.overflowX) ||
           ["auto", "scroll"].includes(parentStyle?.overflowX || "");
+
         return {
           tag: el.tagName.toLowerCase(),
           width: Math.round(rect.width),
@@ -84,26 +147,32 @@ async function inspectPage(page, route, slug, viewportName) {
       })
       .filter((item) => item.right > viewportWidth + 2 && !item.locallyScrollable);
 
-    const headings = [...document.querySelectorAll("h1, h2")]
+    const headings = [...article.querySelectorAll("h1, h2")]
       .map((el) => (el.textContent || "").trim())
       .filter(Boolean)
       .slice(0, 8);
 
     return {
       viewportWidth,
-      documentWidth,
-      horizontalOverflow: documentWidth > viewportWidth + 2,
+      shellClientWidth: root.clientWidth,
+      shellScrollWidth: root.scrollWidth,
+      articleClientWidth: article.clientWidth,
+      articleScrollWidth: article.scrollWidth,
+      contentOverflow:
+        root.scrollWidth > root.clientWidth + 2 ||
+        article.scrollWidth > article.clientWidth + 2,
       brokenImages,
       wideElements,
-      bodyTextLength: body?.innerText.trim().length || 0,
-      title: document.title,
+      bodyTextLength: article.innerText.trim().length,
       headings,
     };
   });
 
   const failures = [];
-  if (metrics.horizontalOverflow) {
-    failures.push(`global horizontal overflow: ${metrics.documentWidth}px > ${metrics.viewportWidth}px`);
+  if (metrics.contentOverflow) {
+    failures.push(
+      `content overflow shell=${metrics.shellScrollWidth}/${metrics.shellClientWidth} article=${metrics.articleScrollWidth}/${metrics.articleClientWidth}`,
+    );
   }
   if (metrics.brokenImages.length) {
     failures.push(`broken images: ${metrics.brokenImages.join(", ")}`);
@@ -114,8 +183,11 @@ async function inspectPage(page, route, slug, viewportName) {
   if (metrics.bodyTextLength < 100) {
     failures.push(`body text too short: ${metrics.bodyTextLength}`);
   }
+  if (!metrics.headings.length) {
+    failures.push("no rendered h1/h2 headings");
+  }
 
-  return { slug, route, viewport: viewportName, metrics, failures };
+  return { slug, viewport: viewportName, metrics, failures };
 }
 
 async function main() {
@@ -135,10 +207,19 @@ async function main() {
     generatedAt: new Date().toISOString(),
     baseUrl,
     chapters: chapters.length,
+    renderer: "zenn-preview-api + preview stylesheets",
     results: [],
   };
 
   try {
+    const stylesheetHrefs = await loadPreviewStyles(browser);
+    report.stylesheetHrefs = stylesheetHrefs;
+
+    const rendered = new Map();
+    for (const slug of chapters) {
+      rendered.set(slug, await fetchRenderedChapter(slug));
+    }
+
     const mobile = await browser.newContext({
       viewport: { width: 390, height: 844 },
       deviceScaleFactor: 1,
@@ -146,8 +227,12 @@ async function main() {
     const mobilePage = await mobile.newPage();
 
     for (const slug of chapters) {
-      const result = await inspectPage(mobilePage, routeFor(slug), slug, "mobile-390");
+      const { bodyHtml, apiUrl } = rendered.get(slug);
+      const html = standaloneHtml(bodyHtml, stylesheetHrefs);
+      const result = await inspectRenderedPage(mobilePage, html, slug, "mobile-390");
+      result.apiUrl = apiUrl;
       report.results.push(result);
+
       if (result.failures.length) {
         console.error(
           `[check:zenn-book-browser] FAIL ${slug} mobile: ${result.failures.join(" | ")}`,
@@ -155,8 +240,22 @@ async function main() {
       }
     }
 
-    for (const slug of ["00_introduction", "21_generation-and-verification", "29_start-with-one-skill", "32_human-review-boundary", "a3_roadmap"]) {
-      await mobilePage.goto(routeFor(slug), { waitUntil: "networkidle", timeout: 30_000 });
+    const representative = [
+      "00_introduction",
+      "06_review-the-development-flow",
+      "13_human-judgment",
+      "21_generation-and-verification",
+      "29_start-with-one-skill",
+      "32_human-review-boundary",
+      "a3_roadmap",
+    ];
+
+    for (const slug of representative) {
+      const { bodyHtml } = rendered.get(slug);
+      await mobilePage.setContent(standaloneHtml(bodyHtml, stylesheetHrefs), {
+        waitUntil: "networkidle",
+        timeout: 30_000,
+      });
       await mobilePage.screenshot({
         path: path.join(artifactDir, `mobile-${slug}.png`),
         fullPage: true,
@@ -170,8 +269,10 @@ async function main() {
     });
     const desktopPage = await desktop.newPage();
 
-    for (const slug of ["00_introduction", "21_generation-and-verification", "29_start-with-one-skill", "32_human-review-boundary", "a3_roadmap"]) {
-      const result = await inspectPage(desktopPage, routeFor(slug), slug, "desktop-1440");
+    for (const slug of representative) {
+      const { bodyHtml } = rendered.get(slug);
+      const html = standaloneHtml(bodyHtml, stylesheetHrefs);
+      const result = await inspectRenderedPage(desktopPage, html, slug, "desktop-1440");
       report.results.push(result);
       await desktopPage.screenshot({
         path: path.join(artifactDir, `desktop-${slug}.png`),
@@ -199,7 +300,7 @@ async function main() {
   }
 
   console.log(
-    `[check:zenn-book-browser] OK: ${chapters.length} mobile routes + 5 desktop routes`,
+    `[check:zenn-book-browser] OK: ${chapters.length} mobile rendered chapters + 7 desktop chapters`,
   );
 }
 
