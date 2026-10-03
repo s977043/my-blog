@@ -566,3 +566,33 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: 33章=運用の結論、99_afterword=Book全体の締めという役割分担になった
 - PASS: 記事の寄せ集めではなく、一冊として終端まで接続した
 - NEXT: Publish Prep Loop 2でrepository既存チェック手順とBook固有チェックの整合を確認する
+
+
+### Publish Prep Loop 2 — Put Book structure under CI
+
+#### 検討
+- repositoryの `npm run check` は多数のcontent checkを持つが、既存の多くは `articles/` / Qiita / noteを対象とし、Zenn Book本文を直接検査しない
+- River Review Bookで手作業確認してきた H1 / chapter存在 / duplicate / fence / Sources をCIへ移す
+- 既存Bookへ一括で新規制約を課すと影響範囲が広いため、checkerは汎用化しつつRiver Review Bookだけstrict対象にする
+
+#### Review
+- `list:books`: Zenn CLIがBookを認識するかは確認できるが、Book固有の編集規約までは保証しない
+- `check:internal-links`: articles / Qiita / noteが対象でbooksは対象外
+- `check:article-sentence-style`: articles系が対象でbooksは対象外
+- CI方針: self-testを持つ新設checkはContent harness self-testsで常時実行する既存ルールがある
+- 新checkerはexternal dependency不要で、Node built-insのみで実装可能
+
+#### 対応
+- `scripts/check-zenn-book-structure.js` を追加
+- checkerを任意Book directoryに対して再利用可能にした
+- River Review Bookでは numbered chapterにSources URLを必須化
+- duplicate chapter / missing file / H1数 / fence不整合 / placeholderを検査
+- `check:river-review-book` を `npm run check` に追加
+- `test:zenn-book-structure` をCI self-testへ追加
+
+#### Post Review
+- PASS: 手作業で確認していたBook構造の主要項目をCI contractへ移せた
+- PASS: 既存3 Bookには新しいstrict ruleを強制していない
+- PASS: checker自体にhermetic self-testを持たせ、既存CI設計と整合した
+- REMAINING: branch push単体ではCIが起動しないため、実行結果はPRまたはworkflow_dispatch環境で確認する必要がある
+- NEXT: Publish Prep Loop 3でpublish checklistを新しい自動Gateへ合わせ、公開判定を整理する
