@@ -40,6 +40,36 @@ How do we adopt it as a team?
 6. レビュー判断を学習・改善する
 7. 自分のチームへ導入する
 
+## Evidence Map
+
+BookはRiver Review公開リポジトリを一次情報とする。主要章の正本候補は次。
+
+| 章 | 主な一次情報 |
+| --- | --- |
+| 04 Review Judgment as Code | `pages/explanation/concept.md`, `docs/philosophy.md` |
+| 06 開発の流れ | `pages/explanation/concept.md`, `pages/explanation/review-scope.md` |
+| 07 Skills / Gates / Riverbed | `README.md`, `pages/explanation/concept.md` |
+| 08 実行モデル | `pages/explanation/what-is-river-review.md` |
+| 09 Skill | `pages/explanation/skills.md`, `pages/reference/skill-schema.md` |
+| 10 Artifact | `pages/reference/artifact-input-contract.md`, `pages/reference/review-artifact.md` |
+| 11 Evidence | `pages/reference/review-artifact.md`, verifier実装・fixture |
+| 12 Judgment Placement | `pages/explanation/judgment-placement.md` |
+| 13 Human Judgment | `pages/explanation/human-judgment-focus.md`, design philosophy |
+| 18 Wチェック | `pages/guides/w-check.md` |
+| 19 repo-wide review | `pages/guides/repo-wide-review.md` |
+| 20 Review Coverage | `docs/development/review-coverage-contract.md`, schema |
+| 22 Context | `pages/explanation/progressive-disclosure.md`, architecture |
+| 24 Riverbed | `pages/explanation/riverbed-memory.md`, storage reference |
+| 28 Loop | `pages/reference/loop-convergence-contract.md` |
+
+## Claim Boundary
+
+- **Observed**: Issue / PR / 実行ログ / fixtureで観測できること
+- **Verified**: current mainのコード・schema・公開docsで確認した現行仕様
+- **Interpretation**: なぜその設計にしたか、読者が持ち帰れる一般化
+- **Experimental**: 現行実装に存在してもobserve-only等の制約があるもの
+- **Direction**: Engineering Judgment Infrastructureなど長期方向
+
 ## Scope
 
 扱う: Review Judgment as Code / Skills / Gates / Riverbed / Artifact / Evidence / Judgment Placement / Human Judgment / Review Coverage / Verification / Context / Review Team / Memory / Evaluation / staged adoption。
@@ -51,29 +81,47 @@ How do we adopt it as a team?
 ### Loop 1 — Reader navigation / positioning
 
 #### 検討
-
-- 参照Bookの強みを「Why → What → Components → Practice → Principles → Extension → Hands-on」の学習順序として取り込む
+- 参照Bookの強みを章数ではなく学習順序として取り込む
 - README順ではなく読者の理解順へ並べる
-- River Reviewを知らないことを前提にする
 - Bookの中心を機能紹介ではなくReview Judgmentの設計へ置く
 
 #### Review
-
 - Reader: 第1部だけで問題意識とReview Judgment as Codeまで到達できる
-- Editorial: 「問題 → 製品 → 設計 → 実践 → 信頼性 → 改善 → 導入」の順が自然
+- Editorial: 問題 → 製品 → 設計 → 実践 → 信頼性 → 改善 → 導入が自然
 - Technical: Experimental / Plannedを現在機能と混ぜない方針が必要
-- Positioning: 既存単発記事は深掘り、Bookは体系導線とする
 
 #### 対応
-
 - `books/river-review-guide/` を新設
-- Bookの中心主張と7部構成を定義
-- 第1部と第2部冒頭までの読める骨格を実装
+- 第1部と第2部冒頭まで実装
 - `STYLE.md` で主張境界を固定
 
 #### Post Review
-
 - PASS: 機能カタログではなくReader Journeyとして成立
-- PASS: River Review未経験者から入れる
-- PASS: Review Judgment as Codeが早い段階で中心に置かれている
 - NEXT: 現行River Reviewの一次情報を章ごとに割り当てる
+
+### Loop 2 — Evidence traceability / concrete responsibility
+
+#### 検討
+- 抽象概念だけで章を成立させず、公開docs / schema / code / fixtureへtraceできるようにする
+- 第3部はSkill / Artifact / Evidence / Judgment Placement / Human Judgmentという責務の分解として書く
+- current mainの仕様と長期構想を同じ強さで書かない
+- 「AIレビューを信頼する方法」ではなく「どこに判断を置くか」を主役にする
+
+#### Review
+- Reader: 第3部まで読むと、River Review固有機能ではなく自分のレビュー設計へ転用できる
+- Editorial: 09〜13章が「何を判断する / 何を入力にする / 何を根拠にする / どこで判断する / 誰が責任を持つ」で連続する
+- Technical: Artifact Input Contract、Judgment Placement、Human Judgment FocusをSSoTとして明示できる
+- Skeptical reader: verdictを承認と同義にせず、人間責任の境界を保持している
+
+#### 対応
+- Evidence Mapを追加
+- 第2部のコアモデル・実行モデルを追加
+- 第3部を責務境界の5章として追加
+- Judgment Placementは4層SSoTに合わせる
+- Human JudgmentはCliff / Hill / Fieldと「責任を委譲しない」を中心にする
+
+#### Post Review
+- PASS: Bookの思想が現行River Reviewの公開仕様へtraceできる
+- PASS: 第3部が機能説明でなく再利用可能な設計原則になった
+- PASS: Human JudgmentとAgentic Reviewの責務が混ざっていない
+- NEXT: 実践章で同じ1つの変更をPlan → Diff → Test → W-checkまで追える構成にする
