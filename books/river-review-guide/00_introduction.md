@@ -84,7 +84,7 @@ Review Coverage、Memory、Evaluation、Human Judgment、段階導入までを�
 
 ## 情報の基準
 
-River Reviewの具体仕様は、**2026年10月3日時点の公開リポジトリ current main** を一次情報として確認して記述します。
+River Reviewの具体仕様は、**2026年10月4日時点の公開リポジトリ current main** を一次情報として確認して記述します。
 
 公開前レビューで再現できるよう、本稿の仕様確認snapshotは次です。
 
