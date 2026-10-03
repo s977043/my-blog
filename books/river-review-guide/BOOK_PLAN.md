@@ -125,3 +125,32 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: 第3部が機能説明でなく再利用可能な設計原則になった
 - PASS: Human JudgmentとAgentic Reviewの責務が混ざっていない
 - NEXT: 実践章で同じ1つの変更をPlan → Diff → Test → W-checkまで追える構成にする
+
+
+### Loop 2 — Practice walkthrough extension
+
+#### 検討
+
+- 概念理解だけで終わらせず、同じ変更をPlan → Diff → Tests → review resultへ追えるようにする
+- First Runはインストール手順の羅列ではなく、入力と出力の関係を先に理解させる
+- Wチェックとrepo-wide reviewを高度機能扱いだけにせず、「レビュー結果もArtifact」「局所差分だけでは不足」という設計原則へ接続する
+
+#### Review
+
+- Reader: 第4部で初めて手を動かすが、第1〜3部の概念と分断されていない
+- Editorial: 14=全体、15=Plan、16=Diff、17=Tests、18=review result、19=context拡張で責務が重ならない
+- Technical: PlanGate依存にせずArtifact Input Contractを基準にできる
+- Safety: Wチェックのverdictを自動merge権限として扱わない
+
+#### 対応
+
+- 第4部を追加
+- 1つの例を複数章で追跡する方針をPart導入に固定
+- WチェックをReview Artifactの再レビューとして位置づけ
+- repo-wide reviewをContext Engineeringの実践例として位置づけ
+
+#### Post Review
+
+- PASS: 第4部が単なるHow-to集ではなく、Artifact間の整合を見る実践編になった
+- PASS: Plan / Diff / Tests / Review Result / Repo Contextのつながりが明確
+- NEXT: ループ3で「AIレビューをどう検証し、どう改善するか」と導入戦略まで完成させる
