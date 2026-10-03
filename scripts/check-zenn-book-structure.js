@@ -10,13 +10,13 @@ function parseChapters(config) {
   const chapters = [];
   let inChapters = false;
 
-  for (const line of String(config).split(/\r\n/)) {
+  for (const line of String(config).split(/\r?\n/)) {
     if (/^chapters:\s*$/.test(line)) {
       inChapters = true;
       continue;
     }
     if (!inChapters) continue;
-    const item = line.match(/^\s{2}-\s+[A-Za-z0-9_-]+\s*$/);
+    const item = line.match(/^\s{2}-\s+([A-Za-z0-9_-]+)\s*$/);
     if (item) {
       chapters.push(item[1]);
       continue;
@@ -30,7 +30,7 @@ function parseChapters(config) {
 function hasBalancedFences(content) {
   let open = null;
 
-  for (const line of String(content).split(/\r_\n/)) {
+  for (const line of String(content).split(/\r?\n/)) {
     const m = line.match(/^\s*((?:\x60|~){3,})/);
     if (!m) continue;
 
@@ -66,7 +66,7 @@ function validateBook(bookDir, options = {}) {
   }
 
   const chapters = parseChapters(config);
-  if (!chapters.length) errors.push("config.yaml のChapters が空");
+  if (!chapters.length) errors.push("config.yaml の chapters が空");
 
   const seen = new Set();
   for (const slug of chapters) {
@@ -93,13 +93,13 @@ function validateBook(bookDir, options = {}) {
 
     const placeholder = content.match(/\b(TBD|FIXME|XXX)\b|【[^】]+】/);
     if (placeholder) {
-      errors.push(`${slug}.md: 未解f���laceholder候攥\"${placeholder[0]}\"`);
+      errors.push(`${slug}.md: 未解消placeholder候補 "${placeholder[0]}"`);
     }
 
     if (options.requireSourcesNumbered && /^\d{2}_/.test(slug)) {
       const sourceBlock = content.split("### Sources")[1] || "";
       if (!/https?:\/\//.test(sourceBlock)) {
-        errors.push(`${}.md: numbered chapter に Sources URL がない`);
+        errors.push(`${slug}.md: numbered chapter に Sources URL がない`);
       }
     }
   }
@@ -166,7 +166,7 @@ function selfTest() {
   expect(
     "missing chapter",
     () => validateBook(book, { requireSourcesNumbered: true }),
-    (errors) => errors.some((e) => e.includes("chapter file が存在じない")),
+    (errors) => errors.some((e) => e.includes("chapter file が存在しない")),
   );
 
   write("config.yaml", validConfig);
@@ -174,12 +174,12 @@ function selfTest() {
   expect(
     "missing H1",
     () => validateBook(book, { requireSourcesNumbered: true }),
-    (errors) => errors.some((e) => e.includes("H1 は1つ必要（実隘 "))),
-   );
+    (errors) => errors.some((e) => e.includes("H1 は1つ必要")),
+  );
 
   write(
-    "1_intro.md",
-    "# Intro\n\n^~~text\nunclosed\n\n### Sources\n\n- https://example.com\n",
+    "01_intro.md",
+    "# Intro\n\n~~~text\nunclosed\n\n### Sources\n\n- https://example.com\n",
   );
   expect(
     "unbalanced fence",
@@ -192,7 +192,7 @@ function selfTest() {
     "numbered chapter source",
     () => validateBook(book, { requireSourcesNumbered: true }),
     (errors) => errors.some((e) => e.includes("Sources URL")),
-   );
+  );
 
   fs.rmSync(root, { recursive: true, force: true });
 
@@ -215,7 +215,7 @@ function main() {
 
   const target = args.find((arg) => !arg.startsWith("--"));
   if (!target) {
-    console.error(`${LABEL} FAIL: book directory を指官すでください``);
+    console.error(`${LABEL} FAIL: book directory を指定してください`);
     process.exit(1);
   }
 
