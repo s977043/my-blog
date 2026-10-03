@@ -760,3 +760,28 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 #### Post Review
 - PASS: automationが証明できる範囲へ責務を戻した
 - PENDING: 修正後CIでpreview route smoke testがPASSすること
+
+
+### Preview Loop 2 — Mobile reading risk review
+
+#### 検討
+- 長いBookではdesktopの比較表がmobileで横スクロールを増やし、意思決定章ほど読みにくくなりやすい
+- すべての表を壊すのではなく、3列で文章量が多いdecision tableだけを縦方向へ変える
+- 2列の短い比較表は比較性を優先して維持する
+
+#### Review
+- 29章: Skill候補4軸の3列表は、各セルが文になっておりmobileでは横幅を使う
+- 32章: Automatic / Ask / Escalate / Human Approvalと、Field / Hill / Cliffの2つの3列表が連続する
+- 31章: 2列表は短く、integration mode比較として表の価値が高い
+- 20章: 2列表はstatus定義なので表の方が理解しやすい
+
+#### 対応
+- 29章の4軸表を縦方向の4判断ブロックへ変換
+- 32章の2つの3列表を縦方向のDecision / Risk blockへ変換
+- 情報・用語・判断境界は削らない
+
+#### Post Review
+- PASS: mobileで横スクロールが必要なdecision tableを削減
+- PASS: 比較に適した短い2列表は維持
+- PASS: 29章 / 32章の内容量と判断順序は維持
+- NEXT: Preview Loop 3でCI render結果とBook全体の最終Reader Gateを確認する
