@@ -36,17 +36,15 @@ AIが次のように書いたとします。
 
 だから、安く確認できることは確認します。
 
-## Cheapest Useful Verification
+## このBookでは「Cheapest Useful Verification」と呼ぶ
 
-ここで使いたい考え方が、**Cheapest Useful Verification**です。
-
-このBookでは、
+ここから先、このBookでは、
 
 > **次の意思決定に必要な範囲で、十分な証拠を最小コストで取りに行く。**
 
-という実践上の呼び方として使います。
+という実践原則を **Cheapest Useful Verification** と呼びます。
 
-業界標準の固有用語を主張しているわけではありません。
+これはPlanGateの公式フェーズ名でも、業界標準の用語でもありません。本書内で「調べ尽くすのではなく、次の判断を変える確認を優先する」という考えを短く呼ぶためのラベルです。
 
 何でも徹底調査するのではなく、判断を変えうるUnknownに対して、一番安く有用な確認方法を選びます。
 
@@ -163,7 +161,7 @@ Plan / Scope / Mode / Approachは変わるか？
 
 変わるなら、確認する価値が高い。
 
-これがCheapest Useful Verificationの「Useful」の部分です。
+この「次の判断が変わるか」を見るのが、本書でいうCheapest Useful Verificationの「Useful」の部分です。
 
 ## 前提が崩れたら、Planへ戻る
 
