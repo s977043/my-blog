@@ -834,6 +834,38 @@
 - NEXT: Loop 3でappendix/closingだけでなくBook-wide consistency checkを行い、残る小さな不整合を修正する
 
 
+### Appendix/Closing Loop 3 — Book-wide consistency / structure completion
+
+#### 検討
+
+- 公開対象全ファイルを横断してDraft placeholder / stale adoption terminology / release overclaimを検査する
+- BOOK_PLANのiteration logは当時の判断記録として維持し、現在のNarrative / chapter responsibilityだけ最新化する
+- IntroductionのHook表現を、mechanical enforcementを絶対視しない本文と揃える
+- 構成DoDを実際の本文状態に合わせて完了判定する
+
+#### Review
+
+- Book-wide scan: 公開対象にDraft placeholderなし
+- Adoption: Level 1→5は17章の「旧表記」説明以外では公開本文に残っていない
+- Release claim: v8.23.0はcurrent main / candidateとして扱い、released断定をしていない
+- Vocabulary: Verification / Review / Judgment、Autonomy / Authority、Artifact / Evidenceの責務分離を維持
+- Editorial: Introduction → 7 Parts → Appendix → Afterwordが同じCentral Claimへ収束
+
+#### 対応
+
+- IntroductionのHook表現を「機械判定できる境界を実行時検査へ移す」へ精密化
+- BOOK_PLANのNarrativeと02章表記を現行本文へ同期
+- Book StructureのDefinition of Doneを完了へ更新
+
+#### Post Review
+
+- PASS: 付録 / おわりにを含む全公開章の初稿が揃った
+- PASS: 現行導入体系と旧表記の境界が明確
+- PASS: product feature catalogではなくJudgment Boundary設計のBookとして一貫
+- PASS: Appendix/Closingの3-loop review完了
+- REMAINING: 公開前の最終工程として、PlanGate current mainのsource/version再監査、表記揺れ、リンク、Zenn renderを横断確認する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
@@ -921,7 +953,7 @@ AIが速くなった
   ↓
 判断がボトルネックになった
   ↓
-AgentではなくArtifact/Evidenceを信頼する
+判断根拠をAgentの自己申告からArtifact/Evidenceへ移す
   ↓
 正しく作れたかと、作ってよいかは別
   ↓
@@ -992,7 +1024,7 @@ Primary example:
 Takeaway:
 実装前判断の失敗は、コード品質だけでは防げない。
 
-### 02 AgentではなくArtifactを信頼する
+### 02 判断根拠をAIの自己申告から成果物と証拠へ移す
 
 Goal:
 Agent の自己申告ではなく外部から確認可能な成果物を判断材料にする。
@@ -1183,11 +1215,11 @@ C-X / V-X / WF-X / EH-X / Mode / Hardening Override / MERGE_READY。
 
 ## Definition of Done for Book Structure
 
-- [ ] 既存 Book と reader problem が重複していない
-- [ ] 第4章までに PlanGate 全体像が見える
-- [ ] 各部に最低1つ PlanGate の公開一次事例がある
-- [ ] Verification / Review / Judgment の責務が混ざっていない
-- [ ] Autonomy / Authority の境界が明記されている
-- [ ] Context / Handoff / MERGE_READY が後付け付録ではなく本編に入っている
-- [ ] plugin-only Level 0 / Phase 0から段階導入できる
-- [ ] PlanGate を使わない方がよいケースも本文か付録で明記する
+- [x] 既存 Book と reader problem が重複していない
+- [x] 第4章までに PlanGate 全体像が見える
+- [x] 各部に最低1つ PlanGate の公開一次事例がある
+- [x] Verification / Review / Judgment の責務が混ざっていない
+- [x] Autonomy / Authority の境界が明記されている
+- [x] Context / Handoff / MERGE_READY が後付け付録ではなく本編に入っている
+- [x] plugin-only Level 0 / Phase 0から段階導入できる
+- [x] PlanGate を使わない方がよいケースも本文か付録で明記する
