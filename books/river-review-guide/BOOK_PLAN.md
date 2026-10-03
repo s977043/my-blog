@@ -950,3 +950,27 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 #### Post Review
 - PENDING: corrected countでCI PASS
 - PENDING: actual Book top screenshotのHuman visual review
+
+
+### Visual Loop 3 — Final review result
+
+#### Review
+- actual Book top routeのtitle / summary / topicsはPASS
+- included chaptersは45 / 45
+- internal QA Markdown 7件はexcluded sectionとして表示され、deploy対象ではない
+- mobile 45章browser Gate: PASS
+- representative mobile / desktop screenshot: Human visual review PASS
+- BookHeaderにcover image missing validation warningを検出
+
+#### 対応
+- Publish ChecklistでBook top / mobile table / code / diagramを完了扱いへ更新
+- `READER_QA.md` にbrowser evidenceとHuman visual reviewを記録
+- Release Gateを `VISUAL_REVIEW_PASSED / COVER_BLOCKED` へ更新
+- cover assetを独立したblocking gateとして追加
+- `published: false` は維持
+
+#### Post Review
+- PASS: Book本文のvisual / structural / browser render品質
+- PASS: Book metadataと45章公開リスト
+- BLOCKED: `cover.png` / `cover.jpg` 未配置
+- DECISION: coverが決まるまでPR #750はDraft、公開フリップしない
