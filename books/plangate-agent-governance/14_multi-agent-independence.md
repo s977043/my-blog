@@ -1,13 +1,236 @@
 # 独立レビューを本当に独立させる
 
-> Draft. 複数Agentを増やすだけでは独立性が得られない問題を扱う。
+AIエージェントを増やせば、レビュー品質は上がるでしょうか。
 
-## Planner / Builder / Verifier / Reviewer
+Planner、Builder、Reviewerを3体用意する。
 
-## 同じContextを共有するReviewer
+モデルも変える。
 
-## Fresh Contextでレビューを始める
+一見すると、かなり独立したチェックに見えます。
+
+しかし、3体すべてに同じ長い会話履歴を渡していたらどうでしょうか。
+
+> **Agentが別でも、前提が同じなら独立性は弱い。**
+
+ここが複数Agent設計で重要な点です。
+
+## 「別Agent」と「独立Reviewer」は同じではない
+
+独立性には複数の要素があります。
+
+たとえば、
+
+- roleが違う
+- modelが違う
+- promptが違う
+- contextが違う
+- evidence sourceが違う
+- previous reasoningを見ていない
+
+などです。
+
+モデルを変えることは、その一つにすぎません。
+
+~~~text
+same context
++ same assumptions
++ same evidence selection
++ different model
+~~~
+
+でも、同じ盲点を共有することはあります。
+
+## Reviewerへ渡すものを絞る
+
+PlanGateのContext Lifecycleでは、independent reviewerが始まるとき、standard以上ではcheckpoint後にfresh contextから始める方針があります。
+
+Reviewerが読むのは、
+
+- canonical Plan
+- review package
+- diff
+- test / verification Evidence
+- 必要なproject rules
+
+です。
+
+一方、
+
+- Builderのraw chat
+- hidden reasoning
+- superseded alternatives
+- 「なぜ自分の実装が正しいと思うか」という長い弁明
+
+は、レビューContextとして機械的に持ち越しません。
+
+目的は情報を減らすことそのものではありません。
+
+> **Reviewerが自分で観測できる材料から判断を始められるようにすること。**
+
+です。
+
+## ReviewerはBuilderと違う問いを持つ
+
+役割分離も必要です。
+
+Builderの問いは、
+
+> どうすればこのPlanを実装できるか。
+
+です。
+
+Reviewerの問いは、
+
+> このdiffはPlanとAcceptanceを満たし、見落としている重大な問題がないか。
+
+です。
+
+Verifierならさらに違います。
+
+> 定義済みの条件をEvidenceでPASS / FAILできるか。
+
+となります。
+
+~~~text
+Builder
+→ 作る
+
+Verifier
+→ 条件を満たしたか確かめる
+
+Reviewer
+→ 定義外の問題も探す
+
+Human
+→ 残るtrade-offとAuthorityを判断する
+~~~
+
+Agent数ではなく、**問いと責務を分けること**が先です。
+
+## C-2でも「何を見るか」を分けている
+
+PlanGateのReview Principlesでは、C-2のPlan Reviewを二つのlaneへ分けています。
+
+### 設計妥当性lane
+
+読む:
+
+- Plan
+- todo
+- test-cases
+- PBI
+
+主眼:
+
+- planの論理
+- Acceptance coverage
+- scope整合
+
+### Codebase整合lane
+
+読む:
+
+- existing pattern
+- relevant codebase
+
+主眼:
+
+- 既存実装と矛盾していないか
+- 追加すべきAC候補がないか
+
+この分け方の狙いは、全Agentが同じものを全部読むことではありません。
+
+**別の情報源・別の問いを持たせること**です。
+
+Source:
+- https://github.com/s977043/PlanGate/blob/main/.claude/rules/review-principles.md
 
 ## Modelを変えるだけでは足りない
 
-## Human Judgmentへ戻す条件
+別モデルを使うことには価値があります。
+
+同じmodel family特有の癖や推論傾向から離れられる可能性があります。
+
+ただし、
+
+> Model diversity = Review independence
+
+とは言えません。
+
+独立性を高めたいなら、少なくとも次を見ます。
+
+| 軸 | 問い |
+| --- | --- |
+| Role | BuilderとReviewerの目的は違うか |
+| Context | raw implementation reasoningを共有していないか |
+| Evidence | Reviewer自身がdiff / testsを確認できるか |
+| Authority | Reviewerが自己承認していないか |
+| Failure handling | unavailable / inconclusiveを「問題なし」にしていないか |
+
+これらが揃わず、モデル名だけ違っても、独立レビューの形だけが残ります。
+
+## 「指摘ゼロ」を成功条件にしない
+
+Review Principlesでは、adversarial reviewの収束条件を「指摘ゼロ」にしていません。
+
+high-risk / criticalなどでは複数roundを要求し、2round目以降は、
+
+- 前回修正が本当に効いたか
+- 修正が新しい穴を作っていないか
+- fail-closed化が正常系を壊していないか
+
+を疑います。
+
+そして収束は、
+
+> **新しい回避クラス / failure classが出なくなったか**
+
+で見ます。
+
+これも独立性の一部です。
+
+同じ視点で「もう一回レビュー」するのではなく、前回の修正そのものを疑う視点へ変えます。
+
+## Reviewer unavailableを「問題なし」にしない
+
+外部ReviewerがquotaやCLI不在で実行できないこともあります。
+
+このとき、
+
+~~~text
+review result = 0 findings
+~~~
+
+と、
+
+~~~text
+review unavailable
+~~~
+
+は全く違います。
+
+PlanGateのReview Principlesでも、unavailableは理由、代替観点、未充足riskを残す設計です。
+
+「レビューできなかった」をgreenへ変換しないことが重要です。
+
+## Fresh Contextにもコストがある
+
+もちろん、毎回新しいsessionを立ち上げ、Artifactを読み直すにはコストがあります。
+
+そのため現行Context Lifecycleでは、ultra-light / lightへmandatory ceremonyを増やしていません。
+
+Independent reviewの強さもriskに応じて変えます。
+
+> **独立性は最大化するものではなく、誤判断コストに見合う強さで設計する。**
+
+という考え方です。
+
+## この章で持ち帰ること
+
+独立レビューに必要なのは、「別のAIを呼ぶこと」だけではありません。
+
+> **Role、Context、Evidence、Authorityを分け、ReviewerがBuilderの推論ではなく現在のArtifactから判断できるようにする。**
+
+これがReview Boundaryです。
+
+次章では、Reviewが終わったあとも残るCIやrepairを含め、AIのDelivery責務をどこまで伸ばすかを扱います。
