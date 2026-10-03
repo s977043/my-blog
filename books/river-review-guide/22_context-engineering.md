@@ -40,7 +40,7 @@ Required References
 
 ### 現在の実装状態
 
-2026年10月3日のverification snapshotでは、全Stageが完全分離済みではありません。
+2026年10月4日に再確認したverification snapshotでは、全Stageが完全分離済みではありません。
 
 - 全Skillロードの既存経路がある
 - metadata summaryはproto実装
