@@ -110,6 +110,20 @@ Handoff
 → existing handoff surface
 ~~~
 
+## Contextは3つの問いに圧縮できる
+
+実装名をいったん忘れると、長時間実行で必要なのは次の3つです。
+
+| 問い | 何を見るか |
+| --- | --- |
+| 何が固定された契約か | Requirement / approved Plan / Acceptance / Approval |
+| 今どこにいるか | Current State / blocker / next action / current Evidence |
+| 次の主体へ何を渡すか | Handoff / Review Package / stable refs |
+
+Dynamic Context Engine、Intent Context Package、Context Lifecycleは、この3つの問いを別の角度から支える仕組みです。
+
+最初から各schema名を覚える必要はありません。
+
 ## Intent Context Packageは「意味」と「スナップショット」を分ける
 
 現在のmain / v8.23.0候補では、Intent Context Package v1が導入されています。
@@ -224,6 +238,22 @@ Context Lifecycleでは、independent review時に、
 を使い、implementerのconversational reasoningを引き継がない方針を明記しています。
 
 これは次章の「独立レビュー」へつながります。
+
+## 実装名より「再開できるか」で判断する
+
+Context設計が機能しているかは、ファイル数で判断しません。
+
+次のAgentが前の会話を読まなくても、
+
+1. 承認された仕事を特定できる
+2. 現在地を特定できる
+3. 未解決事項を特定できる
+4. Evidenceへ辿れる
+5. 次のactionを開始できる
+
+なら、Handoffとして機能しています。
+
+逆にContext Manifestやhandoff fileが存在しても、これらが分からなければ再開可能とは言えません。
 
 ## この章で持ち帰ること
 
