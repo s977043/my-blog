@@ -50,6 +50,10 @@ function hasBalancedFences(content) {
   return open === null;
 }
 
+function isNumberedContentChapter(slug) {
+  return /^\d{2}_/.test(slug) && !/^(?:00|99)_/.test(slug);
+}
+
 function validateBook(bookDir, options = {}) {
   const errors = [];
   const configPath = path.join(bookDir, "config.yaml");
@@ -96,7 +100,7 @@ function validateBook(bookDir, options = {}) {
       errors.push(`${slug}.md: 未解消placeholder候補 "${placeholder[0]}"`);
     }
 
-    if (options.requireSourcesNumbered && /^\d{2}_/.test(slug)) {
+    if (options.requireSourcesNumbered && isNumberedContentChapter(slug)) {
       const sourceBlock = content.split("### Sources")[1] || "";
       if (!/https?:\/\//.test(sourceBlock)) {
         errors.push(`${slug}.md: numbered chapter に Sources URL がない`);
@@ -139,12 +143,27 @@ function selfTest() {
   write("config.yaml", validConfig);
   write("01_intro.md", validIntro);
   write("part1_topic.md", validPart);
+  write("99_afterword.md", "# Afterword\n\nNo sources required.\n");
 
   const cases = [];
   const expect = (name, fn, match) => {
     const errors = fn();
     cases.push({ name, ok: match(errors), errors });
   };
+
+  expect(
+    "reserved 99 chapter does not require sources",
+    () => {
+      write(
+        "config.yaml",
+        validConfig.replace("  - part1_topic", "  - part1_topic\n  - 99_afterword"),
+      );
+      return validateBook(book, { requireSourcesNumbered: true });
+    },
+    (errors) => errors.length === 0,
+  );
+
+  write("config.yaml", validConfig);
 
   expect(
     "valid book",
@@ -238,4 +257,4 @@ function main() {
 
 if (require.main === module) main();
 
-module.exports = { parseChapters, hasBalancedFences, validateBook };
+module.exports = { parseChapters, hasBalancedFences, isNumberedContentChapter, validateBook };
