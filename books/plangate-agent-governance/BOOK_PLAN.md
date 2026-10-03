@@ -437,6 +437,39 @@
 - NEXT: Loop 3でExecution中のStop / Continue / Escalate policyを統合する
 
 
+### Part IV Draft Loop 3 — Continue / Stop / Escalate policy
+
+#### 検討
+
+- Execution中の判断をContinue / Stop / Escalateの3分類へ統合する
+- Hookは機械判定可能なStop、VerificationはContinue条件の更新、Authority PolicyはEscalate先の決定として責務を分ける
+- Verification FAILを即Humanにせず、Planが有効ならAI repairを継続できることを明示する
+- 第3部のre-plan triggerと第4部のruntime decisionを接続する
+
+#### Review
+
+- Engineer: 実装中に「続ける / 止める / 戻す」を判断する実用的なPolicyとして持ち帰れる
+- EM / Tech Lead: Human involvementをEscalateされた意味的変更へ集中させる設計になった
+- Technical: Core ContractのStop rules、root cause repair、scope deviation stopと整合
+- Editorial: 10=Stop、11=Continue Evidence、12=Escalate Authorityという役割が明確
+
+#### 対応
+
+- Part IV導入へContinue / Stop / Escalate表を追加
+- 10章にHookが担当するStop条件の境界を追加
+- 11章にVerification PASS/FAILからContinue/Re-planへ分岐する説明を追加
+- 12章にExecution Policy表と具体例を追加
+- Part IIIのre-plan triggerとの接続を明記
+
+#### Post Review
+
+- PASS: 第4部全体が一つのExecution Policyとして読める
+- PASS: Hook / Verification / Authorityの責務重複が解消
+- PASS: AIの自律性を保ちつつHuman Judgmentへ戻る条件が明確
+- PASS: 第4部（10〜12章）は本文初稿として次Partへ進める状態
+- REMAINING: 公開前にhook wiring / Codex parity / ai-loop V2 taxonomyの現行release差分を再監査する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
