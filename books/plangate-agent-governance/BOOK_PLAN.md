@@ -308,6 +308,37 @@
 - NEXT: Loop 2で重複削減・用語境界・Approval章の情報階層を調整する
 
 
+### Part III Draft Loop 2 — De-duplication / terminology / approval hierarchy
+
+#### 検討
+
+- 07章から既存Bookと重なるPlan/todo/test-casesのHow-toを削り、Governance上の役割だけ残す
+- Cheapest Useful Verificationを公式用語のように見せず、本書内ラベルとして定義する
+- 09章はC-3例外一覧を主役にせず、Review != Execution Authorityを先に置く
+- 現行のrisk-based Authorityは実装例として扱い、変動しうる個別条件を本質化しない
+
+#### Review
+
+- Reader: 「良いPlanを書く章」ではなく「Planを判断対象にする章」として差別化できた
+- Editorial: 08章の造語感を抑え、原則→例→trade-offの順序が明確
+- Technical: C-1/C-2=Review、C-3=Authorityという責務境界が前面に出た
+
+#### 対応
+
+- 07章のtodo/test-cases説明を最小化し既存Bookへ委譲
+- 08章でCheapest Useful Verificationのclaim boundaryを明示
+- 09章をReview / Authorityの比較表とrisk-based Authority Policy中心に再構成
+
+#### Post Review
+
+- PASS: 既存Bookとの重複を十分に削減
+- PASS: 独自ラベルとPlanGate公式用語の境界が明確
+- PASS: Approval章の中心主張が例外仕様に埋もれなくなった
+- ISSUE: 第3部全体で「止まる」説明が強く、Gateが速度を落とす印象が残る
+- ISSUE: Approval Boundaryへ戻る条件を、読者が自分の環境へ持ち帰れる判定軸としてまとめたい
+- NEXT: Loop 3で「止めるためではなく安全に任せるため」の意味と、re-plan triggerを整理する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
