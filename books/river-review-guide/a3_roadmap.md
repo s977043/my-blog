@@ -11,7 +11,7 @@ River Reviewは継続的に変化しています。本書では状態を混同�
 
 ## 本稿のverification snapshot
 
-2026年10月3日に次を再照合しました。
+2026年10月4日に次を再照合しました。
 
 - River Review main: `60f55e75d6eaead1956c6945afc53f57acd64dd9`
 - Latest Release: `v1.124.5`（2026年9月25日）
