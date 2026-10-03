@@ -48,6 +48,7 @@ jobs:
           npm run test:note-finalize
           npm run test:note-thesis-snapshot
           npm run test:zenn-image-format
+          npm run test:zenn-book-structure
           npm run test:note-setext
           npm run test:queue-drift
           npm run test:orphan-docs
@@ -93,6 +94,58 @@ jobs:
       # 未実行になった実例）。個々の検査の合否判定は変えていない。
       - name: Check Zenn content
         run: npm run check
+
+      # Zenn CLI の実レンダリング経路を最低限 smoke test する。
+      # 見た目の良し悪しは人間の preview review に残し、ここでは
+      # server 起動 / Book route / Book title の3点だけを自動検証する。
+      - name: Smoke test River Review Book preview
+        run: |
+          set -euo pipefail
+          ./node_modules/.bin/zenn preview --no-watch --port 8000 > /tmp/zenn-preview.log 2>&1 &
+          preview_pid=$!
+
+          cleanup_preview() {
+            kill "$preview_pid" 2>/dev/null || true
+            wait "$preview_pid" 2>/dev/null || true
+          }
+          trap cleanup_preview EXIT
+
+          ok=0
+          for _ in $(seq 1 30); do
+            if curl --fail --silent --show-error               http://127.0.0.1:8000/books/river-review-guide               --output /tmp/river-review-book.html; then
+              ok=1
+              break
+            fi
+            sleep 1
+          done
+
+          if [ "$ok" -ne 1 ]; then
+            cat /tmp/zenn-preview.log
+            exit 1
+          fi
+
+          test -s /tmp/river-review-book.html
+
+          CHROME_PATH="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_PATH"
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends fonts-noto-cjk
+          fc-cache -f
+          npm install --no-save --package-lock=false --ignore-scripts playwright-core@1.63.0
+          CHROME_PATH="$CHROME_PATH" ZENN_PREVIEW_URL="http://127.0.0.1:8000" \
+            node scripts/check-zenn-book-browser.mjs
+
+          cleanup_preview
+          trap - EXIT
+
+      - name: Upload River Review Book browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: river-review-book-browser-evidence
+          path: artifacts/zenn-book-browser
+          if-no-files-found: warn
+          retention-days: 7
 
       # publish-readiness ゲートの fixture self-test（hermetic・git 不要）。
       # 新設 check スクリプトの初版バグ対策（#393/#417 の再発防止）として常時実行する。
