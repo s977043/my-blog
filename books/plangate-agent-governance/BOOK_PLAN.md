@@ -769,6 +769,39 @@
 - REMAINING: 付録 / おわりにの本文化、全Book横断の用語・version・source監査を行う
 
 
+### Appendix/Closing Loop 1 — Reference usability / central-claim closure
+
+#### 検討
+
+- A1は本文再説明ではなく、略号と混同しやすい対概念を引けるreferenceにする
+- A2は失敗名の羅列ではなく、症状 / なぜ危険 / 戻り方でtroubleshooting化する
+- Afterwordは古いLevel 1表記を削除し、Book Central Claimへ戻る
+- introduction / BOOK_PLANに残る旧Level 1〜5を現行Phase 0〜3 / plugin-only Level 0へ整合する
+
+#### Review
+
+- Reader: 本文読了後、C-X / V-X / Mode / Phase / MERGE_READY等を単独で引ける
+- Editorial: A2が本文の縮約ではなく「困ったときに戻る」付録になった
+- Technical: current Glossary / mode-classification / responsibility classesと大枠整合
+- Closing: おわりにが機能紹介ではなく「信頼しなくても任せられる環境」という中心主張へ収束
+
+#### 対応
+
+- A1を全文ドラフト化
+- A2を18個のpitfall + recoveryへ展開
+- 99_afterwordを全面改稿
+- 00_introductionの段階導入表記を更新
+- BOOK_PLANのPart VII / DoDに残る旧Level体系を更新
+
+#### Post Review
+
+- PASS: Draft placeholderを実用referenceへ置換
+- ISSUE: A1に公式用語と本書独自用語が同居するため、一目で区別できる表示が欲しい
+- ISSUE: A2が18項目あり長いため、failure class別の索引があると使いやすい
+- ISSUE: Afterwordは良いが、18章と「最初は小さく」の説明が一部重複する
+- NEXT: Loop 2でofficial/book label、pitfall index、closingの重複削減を行う
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
@@ -1065,17 +1098,20 @@ Focus:
 
 ## Part VII — 導入する
 
-### 17 Level 1から段階導入する
+### 17 Phase 0から段階導入する
 
 Goal:
 全部入りを要求しない。
 
-Levels:
-1 plan approval
-2 + handoff
-3 + hooks/validate
-4 + metrics/outcome review
-5 + eval/timeline
+Current adoption path:
+- plugin-only Level 0
+- Phase 0: ultra-lightで導入確認
+- Phase 1: Plan
+- Phase 2: Approval Boundary
+- Phase 3: strict / external review / metrics
+
+Book principle:
+観測したfailureに応じて必要なBoundaryだけ強化し、不要ならSimplify / Removeする。
 
 ### 18 1タスクを最後まで回す
 
@@ -1121,5 +1157,5 @@ C-X / V-X / WF-X / EH-X / Mode / Hardening Override / MERGE_READY。
 - [ ] Verification / Review / Judgment の責務が混ざっていない
 - [ ] Autonomy / Authority の境界が明記されている
 - [ ] Context / Handoff / MERGE_READY が後付け付録ではなく本編に入っている
-- [ ] Level 1 から始められる
+- [ ] plugin-only Level 0 / Phase 0から段階導入できる
 - [ ] PlanGate を使わない方がよいケースも本文か付録で明記する
