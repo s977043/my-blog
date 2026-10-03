@@ -3,6 +3,7 @@
 > 内部編集用。Zennのchaptersには含めない。
 >
 > Verification snapshot: River Review `60f55e75d6eaead1956c6945afc53f57acd64dd9` / Latest Release `v1.124.5`（2026-09-25）
+> Reverified: 2026-10-04 — main / Latest Releaseともdriftなし
 
 ## 目的
 
