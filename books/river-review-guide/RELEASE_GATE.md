@@ -4,11 +4,11 @@
 
 ## Current status
 
-**RELEASE_READY / PUBLISH CHANGE PENDING**
+**PUBLISH_FLIPPED / CI VERIFICATION PENDING**
 
 Evaluated: 2026-10-04
 
-本文・構成・source traceability、repository checks、全45章browser render、mobile / desktop visual review、Bookトップmetadata、cover表示まで公開前Gateを完了した。技術的なblocking gateは0件。`published: true` は公開意思決定を明確にするため、独立した次変更として残す。
+本文・構成・source traceability、repository checks、全45章browser render、mobile / desktop visual review、Bookトップmetadata、cover表示まで公開前Gateを完了した。技術的なblocking gateは0件。公開意思決定として `published: true` へ独立フリップした。公開状態を確定する前に、この変更を含むCIとPR最終レビューを再実施する。
 
 ## Evidence already satisfied
 
