@@ -716,3 +716,29 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: 代表Source 7/7が現在も取得可能
 - BLOCKED: `npm run preview` とrenderer目視、全33章最終通読が未完了
 - DECISION: PR #750はDraft、`published: false` を維持
+
+
+### Preview Loop 1 — Automate the minimum Zenn render path
+
+#### 検討
+- `list:books` は構造認識までで、実際にpreview serverがBook routeをrenderできることは証明しない
+- visual reviewを完全自動化する前に、server起動 / Book route / title renderをsmoke testへ移す
+- CSS見た目・mobile幅・表の可読性はHuman Previewに残す
+
+#### Review
+- repositoryは `zenn-cli 0.5.4` を使用
+- `zenn preview` はport指定とno-watch起動が可能
+- 既存CIにはpreview serverを起動するstepがない
+- 新規dependencyを追加せず、既存Node/Zenn CLI + curlだけで検証可能
+
+#### 対応
+- CIに `Smoke test River Review Book preview` stepを追加
+- `zenn preview --no-watch --port 8000` をbackground起動
+- `/books/river-review-guide` がHTTP成功するまで最大30秒poll
+- HTMLにBook titleが含まれることを確認
+- process cleanupをtrapで保証
+
+#### Post Review
+- PENDING: PR CI上で実route / titleがPASSするか確認
+- SAFETY: visual qualityはこのsmoke testではPASS扱いにしない
+- NEXT: CI結果をReviewし、必要ならroute / render assumptionsを修正する

@@ -95,6 +95,32 @@ jobs:
       - name: Check Zenn content
         run: npm run check
 
+      # Zenn CLI の実レンダリング経路を最低限 smoke test する。
+      # 見た目の良し悪しは人間の preview review に残し、ここでは
+      # server 起動 / Book route / Book title の3点だけを自動検証する。
+      - name: Smoke test River Review Book preview
+        run: |
+          set -euo pipefail
+          npm run preview -- --no-watch --port 8000 > /tmp/zenn-preview.log 2>&1 &
+          preview_pid=$!
+          trap 'kill "$preview_pid" 2>/dev/null || true' EXIT
+
+          ok=0
+          for _ in $(seq 1 30); do
+            if curl --fail --silent --show-error               http://127.0.0.1:8000/books/river-review-guide               --output /tmp/river-review-book.html; then
+              ok=1
+              break
+            fi
+            sleep 1
+          done
+
+          if [ "$ok" -ne 1 ]; then
+            cat /tmp/zenn-preview.log
+            exit 1
+          fi
+
+          grep -F 'AIエージェント時代のレビューを設計する' /tmp/river-review-book.html >/dev/null
+
       # publish-readiness ゲートの fixture self-test（hermetic・git 不要）。
       # 新設 check スクリプトの初版バグ対策（#393/#417 の再発防止）として常時実行する。
       - name: Publish readiness self-test
