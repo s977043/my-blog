@@ -1028,6 +1028,38 @@
 - NEXT: Loop 3で静的render-riskを再計測し、CIまで閉じる
 
 
+### Visual/Render Review Loop 3 — TOC density / final static render risk
+
+#### 検討
+
+- Loop 1/2後に全29公開fileを再計測する
+- H1 / fence / Draft / table column count / chapter length / H2 densityを確認する
+- 本文を削らず、Zenn TOCへ出す見出し粒度だけ調整する
+
+#### Review
+
+- 全29 files: H1=1 / fence balanced / Draftなし
+- table width: 最大3列。Loop 1前の多列tableを圧縮済み
+- 最長chapter: 16章 約10.8k chars
+- 16章: H2 20個でTOC densityが突出
+- その他chapter: H2 18以下、章内bridge / Part mapあり
+
+#### 対応
+
+- 16章の4 False Green patternをH3へ変更
+- Evaluation Trust BoundaryをH2のumbrellaにし、詳細4節をH3へ整理
+- Candidate / PromotionをH2 umbrellaにまとめ、Create Last / PromotionをH3へ整理
+- Regression suite maintenanceを改善loop配下の詳細へ降格
+
+#### Post Review
+
+- PASS: 内容を削らずTOCの視覚密度を低減
+- PASS: table / code block / heading structureにblocking render-riskなし
+- PASS: browser previewなしでも静的に確認できるZenn render-riskは解消
+- LIMITATION: 実ブラウザpixel-level確認は、この環境のbrowser CLI不在とcontainer network制限により未実施
+- NEXT: repository CI successを確認し、visual-review 3-loopをcloseする
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
