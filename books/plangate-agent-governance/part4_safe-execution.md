@@ -19,3 +19,14 @@ Gateの目的はAIを止め続けることではありません。
 **止まるべき場所を明確にすることで、その間を自律化しやすくする。**
 
 この部では、承認後のExecutionをその観点から見ます。
+
+
+この部を読むときは、Execution中の判断を次の3つに分けて考えます。
+
+| 判定 | 意味 |
+| --- | --- |
+| Continue | 承認された境界内。Evidenceを更新しながら自律継続 |
+| Stop | 決定論的な不変条件に違反。Hook / Gateで停止 |
+| Escalate | Scope / Risk / Authorityが変わる。人間または上位Judgmentへ戻す |
+
+この3分類が、Hook / Verification / Authorityを一本につなぐ軸です。
