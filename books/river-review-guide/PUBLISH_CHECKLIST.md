@@ -13,7 +13,7 @@
 
 ## 2. Claim / source verification
 
-Verification date: 2026-10-03
+Verification date: 2026-10-04
 
 - [x] River Review main snapshot: `60f55e75d6eaead1956c6945afc53f57acd64dd9`
 - [x] Latest Release: `v1.124.5`（2026-09-25）
@@ -46,6 +46,8 @@ Verification date: 2026-10-03
 
 このrepositoryの既存scriptを使う。
 
+- [x] `test:zenn-book-structure` self-test 6/6 PASS
+- [ ] `npm run check:river-review-book` をbranch現物で実行
 - [ ] `npm run list:books`
 - [ ] `npm run check`
 - [ ] internal link / title / markdown hygieneの失敗を解消する
@@ -64,9 +66,9 @@ Verification date: 2026-10-03
 
 ## 6. Publish decision
 
-- [ ] verification snapshot以降のRiver Review main差分を再確認
-- [ ] `SOURCE_MAP.md` の影響章を使って変更sourceを再監査
-- [ ] Latest Releaseが変わっていないか再確認
+- [x] verification snapshot以降のRiver Review main差分を再確認（2026-10-04: driftなし）
+- [x] `SOURCE_MAP.md` の影響章を確認（source driftなしのため追加再監査なし）
+- [x] Latest Releaseが変わっていないか再確認（v1.124.5）
 - [ ] `published: false` を変更する前にpreview結果を確認
 - [ ] 公開後に誤りが見つかった場合の修正導線を確保
 
