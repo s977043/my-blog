@@ -151,6 +151,28 @@ PlanGateでは、実行順はtodo、検証条件はtest-casesへ分けます。
 
 具体的なPlan / todo / test-casesの作り方は、既存の `plangate-guide` 側で扱います。
 
+## 境界があると、実装中の確認を減らせる
+
+PlanでScope、Non-goals、Acceptance Criteriaが決まっていれば、AIはその内側で毎回人間へ確認しなくても進めやすくなります。
+
+たとえば、
+
+~~~text
+承認範囲
+- query parameter追加
+- validation追加
+- pagination併用テスト
+
+要再判断
+- DB schema変更
+- 認可仕様変更
+- public API contract変更
+~~~
+
+のように境界が見えていれば、前者の細かな実装判断は委譲し、後者に触れたときだけ戻せます。
+
+Planの価値は、制約を増やすことではなく、**確認が必要な場所を減らすこと**にもあります。
+
 ## PlanはApprovalの入力になる
 
 ここがこの章の中心です。
