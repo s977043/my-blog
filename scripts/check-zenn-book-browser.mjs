@@ -281,6 +281,30 @@ async function main() {
     }
     report.book.chapterCount = includedChapterItems;
     report.book.excludedMarkdownCount = excludedChapterItems;
+
+    const validationErrors = await bookUiPage
+      .locator(".book-header__validation-errors")
+      .count();
+    if (validationErrors !== 0) {
+      const validationText = await bookUiPage
+        .locator(".book-header__validation-errors")
+        .innerText();
+      throw new Error(`book top validation error: ${validationText}`);
+    }
+
+    const cover = await bookUiPage
+      .locator(".book-header__cover-img")
+      .evaluate((img) => ({
+        src: img.getAttribute("src") || "",
+        complete: img.complete,
+        naturalWidth: img.naturalWidth,
+        naturalHeight: img.naturalHeight,
+      }));
+    if (!cover.complete || cover.naturalWidth === 0 || cover.naturalHeight === 0) {
+      throw new Error(`book cover failed to load: ${JSON.stringify(cover)}`);
+    }
+    report.book.cover = cover;
+
     await bookUiPage.screenshot({
       path: path.join(artifactDir, "desktop-book-top.png"),
       fullPage: true,
