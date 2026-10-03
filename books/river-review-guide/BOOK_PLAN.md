@@ -1068,3 +1068,27 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 #### Post Review
 - PENDING: publish flipを含むPR CI
 - PENDING: Zenn list / browser Gateがpublished=trueでも継続PASSすること
+
+
+### Publish Loop 2 — Verify published=true in CI
+
+#### Review
+- `published: true` を含むHEADのworkflow: SUCCESS
+- Zenn content check: PASS
+- Browser preview / cover validation: PASS
+- Dependency review: PASS
+- PR #750: mergeable=true
+- mainとの差分: aheadのみ / behind=0
+- unresolved review thread: 0
+- River Review main: `60f55e75d6eaead1956c6945afc53f57acd64dd9`
+- Latest Release: `v1.124.5`
+- source snapshot drift: なし
+
+#### 対応
+- Release Gateを `PUBLISH_CONFIG_VERIFIED / FINAL PR REVIEW` へ更新
+- PRをDraftからReady for Reviewへ進める
+
+#### Post Review
+- PASS: publish flipによるZenn構造・browser表示・coverへの回帰なし
+- PASS: merge前のsource freshnessを維持
+- NEXT: Publish Loop 3で最終HEADのCI / diff / PR状態を確認しmerge判断する
