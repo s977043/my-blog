@@ -999,6 +999,35 @@
 - NEXT: Loop 2でPart dividerと章末bridgeの視認性をレビューする
 
 
+### Visual/Render Review Loop 2 — Part navigation / chapter bridges
+
+#### 検討
+
+- Part dividerの情報密度と役割を比較する
+- 18本文章の末尾に次章へのbridgeがあるか確認する
+- 導入用語をLevel / Phaseへ過度に寄せず、Bookの概念語へ戻す
+
+#### Review
+
+- 18/18本文章: 次章または付録へのbridgeあり
+- Part I / III / IV / V / VI / VII: 部の問い・地図が明確
+- Part II: 2文のみで、04 / 05 / 06の章責務が目次上から見えにくい
+- 16章末: 「必要なLevel」が17章で整理したLevel / Phaseの二軸とやや衝突
+
+#### 対応
+
+- Part IIへFlow / Architecture / Stateの3章マップを追加
+- 16章末を「必要なBoundaryと運用範囲から段階導入」へ修正
+
+#### Post Review
+
+- PASS: 全7 Partで「この部で何を理解するか」が見える
+- PASS: 全18章のtransitionが連続
+- PASS: Level / Phaseの用語差が章間bridgeへ漏れなくなった
+- ISSUE: 最終render-riskとして表の列数、長章ナビ、config/CIを再確認する
+- NEXT: Loop 3で静的render-riskを再計測し、CIまで閉じる
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
