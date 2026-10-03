@@ -1,19 +1,25 @@
-# PlanGateをGovernance Harnessとして考える
+# PlanGateは「Plugin」よりGovernance Harnessとして見る
 
-> Draft. Plugin / Workflow / Framework という単語だけでは捉えにくいPlanGateの責務を整理する。
+> Draft. 配布形態ではなく、PlanGateがどの責務を組み合わせているかを整理する。
+
+## Pluginだけでは説明できない
+
+Claude Code / Codexへ導入する入口はPluginでも、設計対象はPlugin APIそのものではありません。
 
 ## Harnessとは何を設計するのか
 
-## Workflow
+## Workflow: 仕事の順序
 
-## Skill
+## Skill: 再利用可能な能力と判断手順
 
-## Agent
+## Agent: 役割を持つ実行者
 
-## Gate
+## Gate: 次へ進んでよい条件
 
-## Artifact
+## Artifact: 状態と判断材料の正本
 
-## Hook
+## Hook: 境界を機械的に強制する層
 
 ## 自律性ではなく境界を設計する
+
+この分類は役割を分けるためのPlanGate側の設計整理であり、業界共通の分類として一般化しない。
