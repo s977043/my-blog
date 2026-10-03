@@ -413,6 +413,28 @@ Sources:
 - https://github.com/s977043/PlanGate/blob/main/docs/plugin-only-adoption.md
 - https://github.com/s977043/PlanGate/blob/main/docs/plangate.md
 
+## この1周で確認したかったこと
+
+このBookで一貫して扱ってきたのは、AIを信用できる存在へ変える方法ではありません。
+
+1タスクを回したとき、
+
+- Planが会話の外にある
+- 判断を変える前提はEvidenceで確認できる
+- Approval対象が明確
+- Boundary内はAIが自律的に進められる
+- 完了はFresh Evidenceで確認できる
+- Boundaryを越えるとEscalateできる
+- 最終Authorityの所在が明確
+
+なら、AIの自己申告を無条件に信じなくても仕事を任せられます。
+
+逆に、モデルがどれだけ高性能でも、これらが曖昧なら、人間は途中経過を監視し続けることになります。
+
+> **信頼できるAgentを作るのではなく、信頼しなくても任せられる環境を作る。**
+
+ここが、このBookの出発点であり到達点です。
+
 ## この章で持ち帰ること
 
 最初のゴールは、PlanGateを完全導入することではありません。
