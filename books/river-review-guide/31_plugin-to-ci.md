@@ -19,7 +19,7 @@ River Reviewには複数の導入経路があります。
 
 です。
 
-Plugin経路では、AIエージェントがSkillを直接適用し、project ruleは .river/rules.md を使います。
+Plugin経路では、AIエージェントがSkillを直接適用し、project ruleは `.river/rules.md` を使います。
 
 一方CLI / Action runnerではrepository configを読みます。
 
@@ -45,17 +45,45 @@ blocking gate
 
 有用性とノイズが分かってから、criticalなど限定された条件をGateへ昇格します。
 
+## Gateを強くする条件を先に決める
+
+blockingへ進む前に、少なくとも次を確認します。
+
+| 観点 | 確認すること |
+| --- | --- |
+| Signal quality | Useful FindingとFalse Positiveを区別できる |
+| Coverage | 必要なreviewが未実行のまま「問題なし」にならない |
+| Ownership | 誰がSkill / Ruleを保守するか決まっている |
+| Escape hatch | 誤判定時のoverride / rollback手順がある |
+| Human boundary | blockingにしてはいけないHuman Judgment領域を分離している |
+
+固定の「false positive 5%以下」のような万能値は置きません。
+
+チームの変更頻度・Risk・レビューコストをbaselineにして、**comment-only時の観測結果より明らかに運用可能だと判断できてから**強くします。
+
+## rollback条件も持つ
+
+Gateを強くした後でも、次の状態なら一段戻します。
+
+- 同じ誤検知によるoverrideが繰り返される
+- 担当者不在でSkillが保守されない
+- Review Coverage不足が頻発する
+- 実装速度より待ち時間の増加が大きい
+- Human-ownedな判断を誤って自動blockしている
+
+~~~text
+blocking
+   ↓ quality degrades
+warn / comment-only
+   ↓ improve
+blocking again
+~~~
+
+Gateの強さは不可逆な成熟度ではありません。
+
 ## なぜcomment-onlyから始めるのか
 
-Gateを早く強くすると、次のどちらかになります。
-
-### False Positiveが多い
-
-開発者が解除作業に追われ、レビュー機構そのものを嫌う。
-
-### ルールを緩くする
-
-止まりすぎるため、結局ほとんど何も検出しない設定になる。
+Gateを早く強くすると、false positiveで解除作業に追われるか、止まりすぎるためルールを弱くして形骸化しやすくなります。
 
 先にobserveすることで、
 
@@ -84,7 +112,7 @@ CI / GitHub
 
 River Reviewは「CIへ入れてblockingにして完成」ではありません。
 
-**低摩擦な場所で価値を確認し、Evidenceがある観点だけ共有Gateへ昇格する**のが安全です。
+**低摩擦な場所で価値を確認し、Evidenceがある観点だけ共有Gateへ昇格し、必要なら戻せるようにする**のが安全です。
 
 次章では、Gate化しても残すべきHuman Review境界を決めます。
 

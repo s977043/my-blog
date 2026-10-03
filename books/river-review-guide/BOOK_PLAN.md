@@ -406,3 +406,29 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: 第3部で英語ラベルを覚える前に責務を理解できる
 - PASS: 既存の正式用語は変更していない
 - NEXT: Reader Loop 2でTech Lead / EM視点から、導入判断に必要なDecision Surfaceを強化する
+
+
+### Reader Loop 2 — Tech Lead / EM adoption decisions
+
+#### 検討
+- Tech Lead / EMは「機能があるか」より、導入対象をどう選び、いつGateを強くし、誰にAuthorityを残すかを判断したい
+- 第29〜32章には要素は揃っているが、判断基準が文章へ分散している
+- 導入を進める条件だけでなく、進めない条件・戻す条件も必要
+
+#### Review
+- Tech Lead: 最初のSkill候補を比較できる軸が欲しい
+- EM: comment-onlyからblockingへ上げる際の出口条件が欲しい
+- Governance: Risk tierとReview VerdictだけでなくAuthority Ownerを明示したい
+- Operations: false positiveやownership不明の状態でGateを強くしない方針が必要
+
+#### 対応
+- 29章へFirst Skill選定マトリクスを追加
+- 31章へGate昇格条件とrollback条件を追加
+- 32章へRisk × Review × Authorityの運用マトリクスを追加
+- 数値閾値は万能値として固定せず、チームでbaselineを置く方式にした
+
+#### Post Review
+- PASS: 「何を導入するか」だけでなく「いつ強くするか」を判断できる
+- PASS: Human AuthorityをRisk tierと接続できた
+- PASS: 導入を後戻り可能にし、false positiveが多い状態でblockingへ進みにくくした
+- NEXT: Reader Loop 3で公開編集者視点から、33章の一次情報traceabilityとメンテナンス性を仕上げる

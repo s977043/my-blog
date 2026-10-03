@@ -25,6 +25,22 @@
 
 この分類はRiver Reviewの固定enumそのものではなく、本書で導入判断を整理するための見方です。
 
+## RiskとAuthorityを一緒に決める
+
+運用では、FindingのseverityだけでAuthorityを決めない方が安全です。
+
+同じmajor Findingでも、変更domainによって責任の置き場所が違うからです。
+
+| Risk tier | Reviewの役割 | Authority |
+| --- | --- | --- |
+| Field | 定型チェック・既知patternを確認 | policy条件内なら自律継続、事後監査 |
+| Hill | 意味的整合・Evidence不足を整理 | callerが継続可能だが、観測期限や人確認を設定 |
+| Cliff | Risk検出・Evidence整理・policy照合 | **Human Approval Required** |
+
+たとえばdocs変更のmajor Findingと、payment flowのmajor Findingを同じ自動処理にしません。
+
+**severityは問題の重さ、Authorityは誰が決めるか**です。
+
 ## VerdictとAuthorityを分ける
 
 River ReviewがFindingやdecisionを返しても、それはAuthorityではありません。
@@ -123,7 +139,7 @@ AIレビューが増えるほど、こうした判断へ人のAttentionを残す
 
 Human-in-the-loopは、すべての出力を人が読むことではありません。
 
-**責任を伴う判断のAuthorityを明示し、そこへ人間を配置すること**です。
+**RiskとAuthorityを分け、責任を伴う判断のOwnerを明示すること**です。
 
 最後の章では、この境界も含めてレビューシステム自体を継続的に改善します。
 
