@@ -4,11 +4,11 @@
 
 ## Current status
 
-**PUBLISH_FLIPPED / CI VERIFICATION PENDING**
+**PUBLISH_CONFIG_VERIFIED / FINAL PR REVIEW**
 
 Evaluated: 2026-10-04
 
-本文・構成・source traceability、repository checks、全45章browser render、mobile / desktop visual review、Bookトップmetadata、cover表示まで公開前Gateを完了した。技術的なblocking gateは0件。公開意思決定として `published: true` へ独立フリップした。公開状態を確定する前に、この変更を含むCIとPR最終レビューを再実施する。
+本文・構成・source traceability、repository checks、全45章browser render、mobile / desktop visual review、Bookトップmetadata、cover表示まで公開前Gateを完了した。公開意思決定として `published: true` へ独立フリップし、その変更を含むCI・Zenn browser Gate・cover validation・Dependency reviewがSUCCESS。残る手順はPR最終レビューとmergeのみ。
 
 ## Evidence already satisfied
 
