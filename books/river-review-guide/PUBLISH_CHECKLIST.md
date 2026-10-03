@@ -66,7 +66,7 @@ Verification date: 2026-10-04
 
 ## 6. Publish decision
 
-- [ ] `books/river-review-guide/cover.png` または `cover.jpg` を追加し、Zenn Previewのcover validation warningを解消
+- [x] `books/river-review-guide/cover.png` を追加し、Zenn Previewのcover validation warningを解消（500×700）
 
 - [x] verification snapshot以降のRiver Review main差分を再確認（2026-10-04: driftなし）
 - [x] `SOURCE_MAP.md` の影響章を確認（source driftなしのため追加再監査なし）

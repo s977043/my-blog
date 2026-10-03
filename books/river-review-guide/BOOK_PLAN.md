@@ -1016,3 +1016,32 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 
 #### Post Review
 - PENDING: latest PR CIでvalidation=0 / cover load PASSを確認
+
+
+### Cover Loop 3 — Preview verification and release readiness
+
+#### 検討
+- cover fileの存在だけではなく、Zenn BookHeaderがvalidation errorなしでloadすることを最終Evidenceにする
+- 公開フリップはcover対応と同じcommitに混ぜない
+
+#### Review
+- cover-only commit CI: SUCCESS
+- cover browser contractを追加したlatest CI: SUCCESS
+- Book top screenshotでcoverを目視
+- browser report:
+  - cover naturalWidth: 500
+  - cover naturalHeight: 700
+  - failures: 0
+  - BookHeader validation errors: 0
+- mobile 45章 / desktop代表7章のbrowser checksも継続PASS
+
+#### 対応
+- Publish Checklistのcover blockerを完了
+- Release Gateを `RELEASE_READY / PUBLISH CHANGE PENDING` へ更新
+- READER_QAへcover実表示Evidenceを記録
+- `published: false` は維持
+
+#### Post Review
+- PASS: content / source / CI / browser / visual / coverの全公開前Gate
+- OPEN BLOCKER: 0
+- DECISION: Bookはrelease-ready。公開フリップだけを独立した次操作として残す

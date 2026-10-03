@@ -4,11 +4,11 @@
 
 ## Current status
 
-**VISUAL_REVIEW_PASSED / COVER BLOCKED**
+**RELEASE_READY / PUBLISH CHANGE PENDING**
 
 Evaluated: 2026-10-04
 
-本文・構成・source traceability、repository checks、Zenn preview server、全45章browser render、代表章のmobile / desktop visual review、Bookトップのtitle / summary / topics / chapter一覧確認まで完了した。ただしBook cover assetが未配置でZenn Preview validation warningが残るため `published: true` へは進めない。
+本文・構成・source traceability、repository checks、全45章browser render、mobile / desktop visual review、Bookトップmetadata、cover表示まで公開前Gateを完了した。技術的なblocking gateは0件。`published: true` は公開意思決定を明確にするため、独立した次変更として残す。
 
 ## Evidence already satisfied
 
@@ -30,6 +30,8 @@ Evaluated: 2026-10-04
 - [x] `npm run list:books`: River Review Book認識
 - [x] PR #750 current reviewed HEAD: Content checks / Dependency review SUCCESS
 - [x] Part 1〜7 representative Source links: 7 / 7 accessible
+- [x] Book cover: 500×700 / browser natural size 500×700 / validation error 0
+- [x] Browser report: failures 0
 
 ## Blocking gates
 
@@ -43,7 +45,7 @@ Evaluated: 2026-10-04
 6. [x] 33章 + 付録 + おわりにの最終通読
 7. [x] 外部GitHub Source linkのspot check — 7/7取得成功
 8. [x] Bookトップ title / summary / topics / included chapters=45 をactual Preview routeで確認
-9. [ ] Book coverを追加し、Preview validation warningを0件にする
+9. [x] Book coverを追加し、Preview validation warningを0件にする — 500×700 / browser load PASS
 
 ## Release state machine
 

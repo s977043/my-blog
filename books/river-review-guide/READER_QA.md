@@ -126,3 +126,19 @@ Zenn CLI公式route `/books/river-review-guide` をdesktopで実表示した。
 > 本のカバー画像（cover.pngもしくはcover.jpg）を `/books/river-review-guide` に配置してください
 
 したがって本文visualはPASSだが、Release Readyではない。
+
+
+## Cover visual review
+
+2026-10-04、最終Book coverをZenn Previewのactual Book topで確認した。
+
+- asset: `books/river-review-guide/cover.png`
+- source size: 500×700
+- browser natural size: 500×700
+- Zenn BookHeader validation error: 0
+- cover missing warning: 解消
+- River Review brand color / river motif: 既存social previewと整合
+- 日本語title: clippingなし
+- Bookトップ上の縮小表示: 主titleを識別可能
+
+初稿では日本語title 1行目が右端でclipしたため不採用。3行構成へ変更したv2を採用した。
