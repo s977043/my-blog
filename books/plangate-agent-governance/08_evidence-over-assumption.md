@@ -1,16 +1,22 @@
-# 推測よりEvidenceを取りに行く
+# 推測でPlanを埋めず、Evidenceを取りに行く
 
-> Draft. 未確認の前提をCheap Verificationで解消する。
+> Draft. 「よく考える」より、安く確認できる事実は確認するという実行原則を扱う。
 
 ## きれいなPlanと正しいPlanは違う
 
 ## Cheapest Useful Verification
+
+次の意思決定に必要な証拠を、十分な範囲で最小コストで取りに行く。
 
 ## 件数は数える
 
 ## コードは読む
 
 ## テスト・ログ・APIで確認する
+
+## Evidenceにもコストがある
+
+何でも最大限に調査するのではなく、次の判断を変えうるUnknownへ絞る。
 
 ## 前提が崩れたらPlanへ戻る
 
