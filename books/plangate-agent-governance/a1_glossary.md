@@ -171,17 +171,24 @@ Modeは**タスクriskの軸**です。
 
 ## Phase — 導入成熟度 [Official]
 
-現行の段階導入ガイドでは、plugin-only Level 0とPhase 0〜3があります。
+現行ドキュメントには、READMEのLevel 1〜5、staged-adoption-guideのPhase 0〜3、plugin-only-adoptionのLevel 0が併存しています。
+
+本書では、
 
 ~~~text
-Phase
-= project / teamがどこまでPlanGateを導入したか
+Level 1〜5
+= 採用する機能範囲の見取り図
+
+Phase 0〜3
+= 導入・習熟のロードマップ
 
 Mode
 = 今回のtaskをどの強度で扱うか
 ~~~
 
-Phase 3のチームでも、軽いtaskは軽いModeで扱います。
+として読み分けます。
+
+Phase 3まで導入していても、軽いtaskは軽いModeで扱います。
 
 ## Hardening Override [Official]
 
