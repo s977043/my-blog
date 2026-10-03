@@ -215,6 +215,28 @@ Human
 
 Authorityの委譲も、明示的なBoundaryの中で行います。
 
+## Continue / Stop / EscalateをPolicyにする
+
+AutonomyとAuthorityを実運用へ落とすなら、Agentに「いい感じに判断して」ではなく、少なくとも次の3分類を持たせます。
+
+| 判定 | 典型条件 | 次の行動 |
+| --- | --- | --- |
+| Continue | 承認scope内、必要Evidenceあり、risk不変 | AIが継続 |
+| Stop | Iron Law / mechanical guard違反 | 即停止、迂回しない |
+| Escalate | Scope / Acceptance / Risk / Architecture / Authorityの意味が変わる | Re-plan / Human Judgment |
+
+たとえば、
+
+- lint FAILで原因が明確、Plan内repair可能 → **Continue**
+- C-3未承認なのにproduction code編集 → **Stop**
+- schema変更が新たに必要 → **Escalate**
+- Review repair後にtest未実行 → **Continueではなく再Verification**
+- protected policy変更が必要 → **Escalate**
+
+です。
+
+このPolicyがあると、人間は「毎回判断する人」ではなく、**Escalateされた意味的変更を判断する人**になれます。
+
 ## 最終判断を残す理由
 
 最終判断に人間を残すのは、人間がAIより常に正しいからではありません。
@@ -248,6 +270,8 @@ AI駆動開発で目指したいのは、
 これがAutonomyとAuthorityを分ける意味です。
 
 これで第4部の流れがつながりました。
+
+第3部で「何を承認したか」を固定し、第4部で「承認後にどう進み、どこで止まり、どこで戻すか」を固定しました。
 
 ~~~text
 Hook / Enforcement
