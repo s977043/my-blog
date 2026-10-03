@@ -932,6 +932,43 @@
 - NEXT: Loop 3でpublication artifact / CI / rendering-riskを検証する
 
 
+### Publication Review Loop 3 — Zenn structure / CI / PR readiness
+
+#### 検討
+
+- config.yamlのchaptersと実ファイルが1:1で一致するか確認する
+- 全公開MarkdownでH1数 / code fence / Draft placeholderを機械確認する
+- repository CIがBook追加を含むcontent checksを通過するか確認する
+- PR metadataが「scaffold」段階のまま残っていないか確認する
+
+#### Review
+
+- config chapters: 29 entries
+- publishable Markdown: 29 files + BOOK_PLAN.md
+- config missing chapter: 0
+- config外の公開Markdown: 0
+- 全29章: H1=1 / code fence整合 / Draft placeholderなし
+- PR変更範囲: books/plangate-agent-governance/ 配下のみ
+- CI: completed / success
+- CI内容: list:books / internal-links / title / content harness等を含む npm run check が実行対象
+- PR title/body: scaffold時点の説明が残っており現在状態と不一致
+
+#### 対応
+
+- PR titleを完成したBook追加を表す名称へ更新
+- PR bodyを7部18章 + 付録 + source baseline + 3-loop final reviewの現在状態へ更新
+- Draft PR / published:falseは維持し、公開操作は行わない
+
+#### Post Review
+
+- PASS: configとchapter実体が一致
+- PASS: Markdown構造にblocking issueなし
+- PASS: repository CI success
+- PASS: 既存plangate-guideへの変更なし
+- PASS: 公開前3-loop review完了
+- REMAINING: 実ブラウザ上のZenn visual previewは未実施。公開判断前に必要ならpreviewでレイアウトのみ最終確認する
+
+
 ## Positioning
 
 既存の `books/plangate-guide/` は残す。
