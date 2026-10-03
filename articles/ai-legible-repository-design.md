@@ -324,3 +324,4 @@ A. プロンプトの冒頭で「まず `AGENTS.md` を読み、関連する局�
 - [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow)
 - [AI駆動開発の2層ガード設計：PlanGateとRiver Reviewで実装前後を守る](https://zenn.dev/minewo/articles/ai-dev-guardrail-plangate-river-reviewer)
 - [Claude CodeからCodex Appへ移行する実践ガイド](/articles/claude-code-to-codex-app-migration)
+- [推測で書いた学びが次の罠になった — AGENT_LEARNINGS.md の運用設計](/articles/agent-learnings-md-operation)
