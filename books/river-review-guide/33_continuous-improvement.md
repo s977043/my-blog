@@ -28,7 +28,7 @@ Feedbackをログに残すだけでは、次のレビューは変わりません
 そこで分類します。
 
 ~~~text
-Useful repeated finding
+Useful repeated Finding
   → Skill / Rule
 
 False positive

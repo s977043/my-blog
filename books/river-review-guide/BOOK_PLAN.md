@@ -459,3 +459,28 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: 本文のSourcesと内部maintenance mapの責務を分離できた
 - PASS: 公開後の改訂コストを下げる構造になった
 - REMAINING: Zenn CLIによる `npm run check` / `npm run preview` と全章目視は未実行
+
+
+### Final Edit Loop 1 — Canonical terminology
+
+#### 検討
+- 最終編集では内容追加より、同じ概念が同じ表記で読めることを優先する
+- 本文中のConcept labelと、schema / path / code identifierを分ける
+- Skill / Artifact / Evidence / Finding / Verdict / Review Coverage / Human Judgment / Callerをcanonical notationとして固定する
+
+#### Review
+- 全33章を対象に lowercase `finding` / `artifact` / `skill` の出現位置を監査
+- 大半はSource URL / file pathで、変更すべき本文揺れは限定的だった
+- `repo-owned` や `repository` は一般表現として現状維持が妥当
+
+#### 対応
+- STYLE.mdへCanonical notationルールを追加
+- 03章の `skill` を `Skill` へ統一
+- 30章の `private skill` を `private Skill` へ統一
+- 33章の図中 `finding` を `Finding` へ統一
+- schema / source pathは変更しない
+
+#### Post Review
+- PASS: 概念名とコード識別子の表記境界が明確になった
+- PASS: 一括置換を避け、Source URLやschema名を壊していない
+- NEXT: Final Edit Loop 2で中盤章の冗長表現と章間遷移を圧縮する

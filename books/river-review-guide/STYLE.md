@@ -91,3 +91,27 @@ version依存の主張は、可能な限り公開前のverification snapshotへ�
 - ImplementedとStableを同義にしない
 - Experimental / opt-in / observe-onlyを本文で必要に応じて明示する
 - 公開・改訂前にLatest Releaseとsnapshot以降の差分を再確認する
+
+
+## Canonical notation
+
+本文中でRiver Reviewの概念名として使う場合は、次の表記を優先する。
+
+- Skill
+- Artifact / Review Artifact
+- Evidence
+- Finding
+- Verdict
+- Review Coverage
+- Human Judgment
+- Caller
+- Riverbed Memory
+
+ただし、schema field / CLI argument / file path / source title / code block内の識別子は公式表記をそのまま使う。
+
+例:
+- prose: 「FindingをReview Artifactへ保存する」
+- schema: `findings[]`
+- source path: `artifact-input-contract.md`
+
+一般名詞としてのrepository / context / reviewは無理に大文字化しない。

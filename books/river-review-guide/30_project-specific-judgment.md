@@ -90,7 +90,7 @@ Project RuleはLLM Contextへ入る可能性があります。
 
 ## Private Skill
 
-チーム固有の複雑な観点はprivate skillとして持つ選択もあります。
+チーム固有の複雑な観点はprivate Skillとして持つ選択もあります。
 
 ここでも目的はRiver Reviewへ依存を増やすことではなく、
 

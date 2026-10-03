@@ -14,7 +14,7 @@ AIレビューを使い始めるとモデル性能が気になります。しか
 
 ## River Reviewはrepo-ownedに寄せる
 
-River Reviewはレビュー基準を **versioned / repo-owned なskill** として扱います。
+River Reviewはレビュー基準を **versioned / repo-owned なSkill** として扱います。
 
 ~~~text
 Repository
