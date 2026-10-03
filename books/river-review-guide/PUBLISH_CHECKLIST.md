@@ -46,9 +46,9 @@ Verification date: 2026-10-04
 
 このrepositoryの既存scriptを使う。
 
-- [x] `test:zenn-book-structure` self-test 6/6 PASS
+- [x] `test:zenn-book-structure` self-test 6/6 PASS（初回CI）
 - [ ] `npm run check:river-review-book` をbranch現物で実行
-- [ ] `npm run list:books`
+- [x] `npm run list:books`（PR #750 初回CIでPASS）
 - [ ] `npm run check`
 - [ ] internal link / title / markdown hygieneの失敗を解消する
 
