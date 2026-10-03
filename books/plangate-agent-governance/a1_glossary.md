@@ -8,7 +8,22 @@ Sources:
 - https://github.com/s977043/PlanGate/blob/main/docs/pages/reference/glossary.md
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/core-contract.md
 
-## まず覚える7つ
+## この付録の読み方
+
+用語には2種類あります。
+
+| 種別 | 意味 |
+| --- | --- |
+| **Official** | 現行PlanGateの公開ドキュメントで定義されている用語・略号 |
+| **Book model** | 本書で複数概念を整理するために置いた説明モデル |
+
+たとえばC-X / V-X / WF-X / Mode / Hardening Override / MERGE_READYはOfficialです。
+
+一方、Continue / Stop / Escalate、False Greenの4分類、Cheapest Useful VerificationはBook modelです。
+
+**Book modelをPlanGate公式仕様や業界標準用語として引用しない**ようにしてください。
+
+## まず覚える7つ — Book core concepts
 
 ### Artifact — 成果物
 
@@ -82,7 +97,7 @@ Autonomy != Authority
 
 AIへ実装やrepairを広く任せても、最終Authorityまで同じ範囲へ渡す必要はありません。
 
-## C-X — Approval / Control Boundary
+## C-X — Approval / Control Boundary [Official]
 
 C-Xは主に承認・判断境界です。
 
@@ -96,7 +111,7 @@ C-Xは主に承認・判断境界です。
 
 個別条件は変わりうるため、本書では番号より「ReviewとApprovalを分ける」ことを重視しています。
 
-## V-X — Verification Phase
+## V-X — Verification Phase [Official]
 
 | 略号 | 現行の主な役割 |
 | --- | --- |
@@ -107,7 +122,7 @@ C-Xは主に承認・判断境界です。
 
 すべてのModeで全部実行するわけではありません。
 
-## WF-X — Workflow Phase
+## WF-X — Workflow Phase [Official]
 
 | 略号 | 名称 |
 | --- | --- |
@@ -119,7 +134,7 @@ C-Xは主に承認・判断境界です。
 
 本書では番号そのものより、Requirement → Plan → Execution → Verification → Handoff という責務の流れを使っています。
 
-## EH-X — Enforcement Hook
+## EH-X — Enforcement Hook [Official]
 
 EH-XはPlanGateのHook識別子です。
 
@@ -140,7 +155,7 @@ Hook
 = 条件を実行時に検査する手段の一つ
 ~~~
 
-## Mode — タスクごとの運用強度
+## Mode — タスクごとの運用強度 [Official]
 
 現行PlanGateは5段階です。
 
@@ -154,7 +169,7 @@ Hook
 
 Modeは**タスクriskの軸**です。
 
-## Phase — 導入成熟度
+## Phase — 導入成熟度 [Official]
 
 現行の段階導入ガイドでは、plugin-only Level 0とPhase 0〜3があります。
 
@@ -168,7 +183,7 @@ Mode
 
 Phase 3のチームでも、軽いtaskは軽いModeで扱います。
 
-## Hardening Override
+## Hardening Override [Official]
 
 AIが自分の統制機構を直接変更して自己承認しないための、Human-ownedな保護対象群です。
 
@@ -216,7 +231,7 @@ EvidenceやReviewが「何に対するものか」を結びつけることです
 
 本書では、長時間・複数Agentで特に重要な横断原則として扱いました。
 
-## Continue / Stop / Escalate
+## Continue / Stop / Escalate [Book model]
 
 本書でExecution中の判断を整理するために使う3分類です。
 
@@ -228,7 +243,7 @@ EvidenceやReviewが「何に対するものか」を結びつけることです
 
 これはPlanGate公式の単一taxonomy名ではなく、本書で複数のruntime判断を整理するためのモデルです。
 
-## MERGE_READY
+## MERGE_READY [Official]
 
 ai-loop DeliveryにおけるAI側の正常終端です。
 
@@ -238,7 +253,7 @@ MERGE_READY != MERGED
 
 AIはCI / review repair / Evidence準備まで進めても、merge Authorityは別に扱います。
 
-## Human-owned / AI-owned / CI-owned / Workflow-owned
+## Human-owned / AI-owned / CI-owned / Workflow-owned [Official]
 
 現行PlanGateには責務4分類があります。
 
@@ -251,7 +266,7 @@ AIはCI / review repair / Evidence準備まで進めても、merge Authorityは�
 
 重要なのは、人間が全部作業することではなく、**最終Authorityの所在を明示すること**です。
 
-## False Green
+## False Green [Book model]
 
 本書で使った整理です。
 
@@ -261,7 +276,7 @@ AIはCI / review repair / Evidence準備まで進めても、merge Authorityは�
 
 PlanGate公式Glossaryの用語ではありません。
 
-## Cheapest Useful Verification
+## Cheapest Useful Verification [Book model]
 
 本書内で使った実践ラベルです。
 
