@@ -32,9 +32,9 @@ MERGE_READY
 
 PR作成後にCI / review / repairを収束させる工程を、Deliveryの一部として扱います。
 
-現在のmain / v8.23.0候補では、ai-loop V2の最初のvertical sliceとしてowner-backed Delivery runtimeが導入されています。
+current mainでは、ai-loop V2の最初のvertical sliceとしてowner-backed Delivery runtimeが導入されています。
 
-Changelog上ではまだv8.23.0はTBDなので、本章ではこの設計を「現在mainにある進行中のV2実装」として扱います。
+2026年10月3日時点でGitHub ReleasesのLatestはv8.22.0です。mainのREADMEはv8.23.0をLatestと記載していますが、生成済みChangelogページはv8.23.0をTBDのまま残しています。そのため本章では、このV2実装を **current mainにある未リリース差分** として扱います。
 
 Source:
 - https://github.com/s977043/PlanGate/blob/main/docs/changelog.md
