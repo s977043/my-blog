@@ -1,9 +1,122 @@
 # Findingが0件でも、レビュー完了とは限らない
 
-River ReviewのReview Coverageは、**指摘件数とレビュー実行の完遂性を別の事実として扱う**ための仕組みです。
+AIレビューで最も分かりにくい失敗の1つが、**何も指摘されなかったように見える失敗**です。
 
-たとえばReviewerがtimeoutし、結果としてFindingが0件になった場合、それを「問題なし」と扱うべきではありません。
+たとえばsecurity reviewerが2つのdiff chunkを担当したとします。
 
-現行のReview Coverage Contractでは、reviewer role × diff chunkをReview Unitとして扱い、全体状態を `complete` / `partial` / `not_executed` などで表現します。
+~~~text
+security-scanner
+  chunk A → completed / 0 findings
+  chunk B → timeout
+~~~
 
-重要なのは、Review Coverageが現在 **Experimental** であることです。machine-readableな実行面へ出力されますが、Gate連携は段階的に扱われています。
+最終的なFinding一覧だけを見ると、0件に見える可能性があります。
+
+しかし事実は、
+
+> 問題が無かった
+
+ではなく、
+
+> 一部をレビューできなかった
+
+です。
+
+## Review Coverageが解決する問い
+
+River ReviewではIssue #2212から、Review Coverageをfirst-classな契約として扱う設計が進みました。
+
+現在の最小単位は、
+
+~~~text
+reviewer role × diff chunk
+~~~
+
+です。
+
+各Review Unitに対し、completed / failed / timed_out といった状態を持たせます。
+
+全体では次の状態を導出します。
+
+| status | 意味 |
+| --- | --- |
+| complete | required unitがすべて完了 |
+| partial | required unitの一部だけ完了 |
+| not_executed | required unitが1つも完了していない |
+
+Finding件数はCoverage判定に使いません。
+
+0 findingsでもcompleteになれますし、0 findingsのままpartialにもなれます。
+
+## なぜこの契約が必要になったのか
+
+Issue #2212で整理された具体Gapは、reviewer role単位の集約だけではpartial executionを十分表現できなかったことでした。
+
+たとえば、
+
+~~~text
+role: security-scanner
+chunk A → success
+chunk B → timeout
+
+aggregated role status → fulfilled
+~~~
+
+のような状態です。
+
+1つ成功していればrole全体がfulfilledに見えても、実際にはreview対象の一部が未実行です。
+
+この差をGateやcallerが判断できるようにするのがReview Coverageです。
+
+## CoverageはFinding Qualityとは別
+
+ここは重要です。
+
+Review Coverageがcompleteでも、Findingが正しいとは限りません。
+
+逆にFinding Qualityが高くても、一部review unitが未実行ならCoverageはpartialです。
+
+River Reviewのcontractでは次を分離します。
+
+- Skill routing coverage
+- Review execution coverage
+- Context coverage
+- Finding quality
+- Reviewer independence
+
+「coverage」という言葉で全部をまとめません。
+
+## 現在はExperimental
+
+2026年10月3日時点で、Review Coverageは **Experimental** です。
+
+machine-readableなsurfaceへ出力されますが、Stable Contractではありません。
+
+Gate連携も opt-in です。
+
+本書で重要なのは設定値を覚えることではなく、
+
+> **0 findings と review complete を別の事実にする**
+
+という設計原則です。
+
+## Loop Convergenceにも効く
+
+自己修正loopでは、blocking findingが0件になると「収束した」と判断したくなります。
+
+しかし最新runがpartial / not_executedなら、その0件は収束Evidenceとして弱いです。
+
+現行のLoop Convergence Contractでは、不完全なCoverageを持つrunのCONVERGED signalをそのまま採用しない方向へ接続されています。
+
+つまりCoverageは、レビュー画面の表示だけでなく、**自律ループを止めるEvidence**にも影響します。
+
+## この章で持ち帰ること
+
+AIレビューでは、Findingの内容だけでなく、**予定したレビュー仕事が実際に完了したか**を追跡する必要があります。
+
+次章では、完了したReview Unitが出したFindingについて、機械で確認できる部分をVerifierへ分離します。
+
+### Sources
+
+- [Review Coverage Contract](https://github.com/s977043/river-review/blob/main/docs/development/review-coverage-contract.md)
+- [Issue #2212](https://github.com/s977043/river-review/issues/2212)
