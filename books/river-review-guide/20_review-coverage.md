@@ -66,15 +66,13 @@ aggregated role status → fulfilled
 
 1つ成功していればrole全体がfulfilledに見えても、実際にはreview対象の一部が未実行です。
 
-この差をGateやcallerが判断できるようにするのがReview Coverageです。
+この差をcallerが判断できるようにするのがReview Coverageです。
 
 ## CoverageはFinding Qualityとは別
 
-ここは重要です。
-
 Review Coverageがcompleteでも、Findingが正しいとは限りません。
 
-逆にFinding Qualityが高くても、一部review unitが未実行ならCoverageはpartialです。
+逆にFinding Qualityが高くても、一部Review Unitが未実行ならCoverageはpartialです。
 
 River Reviewのcontractでは次を分離します。
 
@@ -88,27 +86,41 @@ River Reviewのcontractでは次を分離します。
 
 ## 現在はExperimental
 
-2026年10月3日時点で、Review Coverageは **Experimental** です。
+2026年10月3日のverification snapshotでは、Review Coverageは **Experimental** です。
 
-machine-readableなsurfaceへ出力されますが、Stable Contractではありません。
+machine-readableなreview execution surfaceへ出力されますが、Stable Contractではありません。
 
-Gate連携も opt-in です。
+ここで適用先を分けて理解する必要があります。
 
-本書で重要なのは設定値を覚えることではなく、
+### saved-runの収束判定
+
+`river runs diff` 側では、最新runのCoverageが `partial` / `not_executed` の場合、`CONVERGED` を `NO_SIGNAL` へ降格するqualificationが既定で入ります。
+
+つまり、未完了reviewを「問題なしで収束」と扱いにくくします。
+
+### Gateへの強制反映
+
+一方、Gate自体をCoverage不足で `NO_GO` に倒すのはopt-inです。
+
+current contractでは `RIVER_GATE_COVERAGE=1` を有効にした場合に、Coverage不足をGate判断へ反映します。
+
+この非対称は意図されています。
+
+~~~text
+Coverage observed
+  ↓
+saved-run convergence qualification: default
+
+Coverage blocks gate
+  ↓
+opt-in
+~~~
+
+本書で重要なのは設定名より、
 
 > **0 findings と review complete を別の事実にする**
 
 という設計原則です。
-
-## Loop Convergenceにも効く
-
-自己修正loopでは、blocking findingが0件になると「収束した」と判断したくなります。
-
-しかし最新runがpartial / not_executedなら、その0件は収束Evidenceとして弱いです。
-
-現行のLoop Convergence Contractでは、不完全なCoverageを持つrunのCONVERGED signalをそのまま採用しない方向へ接続されています。
-
-つまりCoverageは、レビュー画面の表示だけでなく、**自律ループを止めるEvidence**にも影響します。
 
 ## この章で持ち帰ること
 
@@ -119,4 +131,5 @@ AIレビューでは、Findingの内容だけでなく、**予定したレビュ
 ### Sources
 
 - [Review Coverage Contract](https://github.com/s977043/river-review/blob/main/docs/development/review-coverage-contract.md)
+- [Stable Interfaces](https://github.com/s977043/river-review/blob/main/pages/reference/stable-interfaces.md)
 - [Issue #2212](https://github.com/s977043/river-review/issues/2212)

@@ -320,3 +320,35 @@ BookはRiver Review公開リポジトリを一次情報とする。主要章の�
 - PASS: 23 / 24 / 27 / 32章に「後で読む理由」が生まれた
 - PASS: Bookの総章数を変えずに重複感を削減できた
 - NEXT: Polish Loop 2でcurrent mainと全重要主張を再照合し、古い・曖昧な表現を修正する
+
+
+### Polish Loop 2 — Re-verify current implementation state
+
+#### 検討
+- current mainが動く前提で、公開時に再現可能な検証snapshotを残す
+- ImplementedとStableを同義にしない
+- Review Coverageの「saved-run convergenceでは既定で効く / Gate強制はopt-in」という非対称を明示する
+- LLM未実行runも収束Evidenceとして扱わない現行contractを反映する
+- Progressive Disclosureのimplemented / proto / plannedを維持する
+
+#### Review
+- Current main: `60f55e75d6eaead1956c6945afc53f57acd64dd9` を再照合
+- Latest Release: `v1.124.5`（2026-09-25）を再確認
+- Review Coverage: Experimental。Gate integrationは `RIVER_GATE_COVERAGE=1` でopt-in
+- Loop Convergence: saved-run diffではpartial / not_executedのCONVERGEDをNO_SIGNALへ降格。LLM未実行runも同様に扱う
+- Riverbed Memory v1: 実装済み。ただしStable Interfaces上の関連schemaはExperimental
+- Progressive Disclosure: metadata summaryはproto、metadata専用loaderとStage 2/3完全分離は未完了
+
+#### 対応
+- 00章に検証snapshot SHAを追加
+- 20章にGateとsaved-run convergenceの非対称を明記
+- 24章に「Implemented != Stable」を追加
+- 28章にLayer 1 / Layer 2 / caller policyの境界とllmNotExecutedを追加
+- 付録Cへverification snapshotとinterface stabilityの注意を追加
+
+#### Post Review
+- PASS: 時制のある主張を特定commitへ固定できた
+- PASS: 「実装済み」を「安定API」と誤読しにくくなった
+- PASS: Review Coverageがどこで既定適用され、どこでopt-inかを区別できた
+- PASS: self-correction loopの停止Evidenceが現行contractと一致した
+- NEXT: Polish Loop 3でZenn読者としての可読性・Part導線・公開前チェックリストを仕上げる

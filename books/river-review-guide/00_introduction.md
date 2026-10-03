@@ -62,14 +62,24 @@ Human Judgment
 
 River Reviewの具体仕様は、**2026年10月3日時点の公開リポジトリ current main** を一次情報として確認して記述します。
 
-同日時点でGitHub ReleasesのLatestは **v1.124.5（2026年9月25日公開）** です。本書ではrelease済み機能だけでなくcurrent main上のExperimentalな契約も扱うため、次の状態を区別します。
+公開前レビューで再現できるよう、本稿の仕様確認snapshotは次です。
 
-- **Implemented** — current mainで実装を確認できる
+- River Review main: `60f55e75d6eaead1956c6945afc53f57acd64dd9`
+- Latest Release: **v1.124.5**（2026年9月25日公開）
+
+本書ではrelease済み機能だけでなくcurrent main上のExperimentalな契約も扱うため、次の状態を区別します。
+
+- **Implemented** — snapshotのcurrent mainで実装を確認できる
 - **Experimental** — 実装は存在するがStable Contractではない、またはobserve-only / opt-in
 - **Planned / Direction** — 設計・roadmap上の予定や長期方向
+
+> **ImplementedはStableと同義ではありません。** 実行コードが存在していても、外部interfaceとしてはExperimentalなものがあります。
+
+River Reviewのmainは今後も変わります。公開・改訂時には、このsnapshot以降の差分とLatest Releaseを再確認します。
 
 ### Sources
 
 - [River Review README](https://github.com/s977043/river-review/blob/main/README.md)
 - [River Review 設計思想](https://github.com/s977043/river-review/blob/main/docs/philosophy.md)
+- [Stable Interfaces](https://github.com/s977043/river-review/blob/main/pages/reference/stable-interfaces.md)
 - [River Review Releases](https://github.com/s977043/river-review/releases)

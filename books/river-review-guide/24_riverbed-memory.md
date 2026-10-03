@@ -37,11 +37,9 @@ Judgment Memory
   = what should change future judgment
 ~~~
 
-この違いが重要です。
+## Riverbed Memory v1は実装済み
 
-## Riverbed Memory v1はImplemented
-
-2026年10月3日時点でRiverbed Memory v1は実装済みです。
+2026年10月3日のverification snapshotでは、Riverbed Memory v1の実装を確認できます。
 
 リポジトリ内では、概念的に次の形で保存されます。
 
@@ -54,6 +52,24 @@ Judgment Memory
 各entryはschemaに従い、id / type / content / metadata / statusなどを持ちます。
 
 レビュー時にはphaseや関連fileで絞り込み、必要なMemoryだけをContextへ入れます。
+
+### 実装済みとStableは別
+
+ここは状態表記で注意が必要です。
+
+Riverbed Memory v1のruntime実装は存在しますが、Stable InterfacesではRiverbed Memory Entryなど関連する外部schemaの一部が **Experimental** と分類されています。
+
+したがって、
+
+~~~text
+Implemented
+  ≠
+Stable public contract
+~~~
+
+です。
+
+利用時には、version更新でschemaやsurfaceが変わり得る前提を持ちます。
 
 ## MemoryにもLifecycleがある
 
@@ -77,9 +93,7 @@ decision-v2
 
 のように、新しい判断で古い判断を置き換えられます。
 
-expiresAtを持つentryなら、期限を過ぎたものをarchiveする経路もあります。
-
-これは重要です。
+`expiresAt` を持つentryなら、期限を過ぎたものをarchiveする経路もあります。
 
 Memoryを増やすだけでは、古い判断がContextを汚染します。
 
@@ -99,15 +113,11 @@ Memory unavailable
   → stateless review
 ~~~
 
-段階導入しやすい理由の1つです。
-
 ## 外部DBはまだv2
 
 Postgres / Redis / vector storeのような外部Memory backendは、現行docsではv2の将来計画です。
 
 current v1と混同してはいけません。
-
-本書でも「semantic memoryをすでに提供している」とは書きません。
 
 ## この章で持ち帰ること
 
@@ -121,4 +131,5 @@ current v1と混同してはいけません。
 
 - [Riverbed Memory](https://github.com/s977043/river-review/blob/main/pages/explanation/riverbed-memory.md)
 - [Riverbed Storage](https://github.com/s977043/river-review/blob/main/pages/reference/riverbed-storage.md)
+- [Stable Interfaces](https://github.com/s977043/river-review/blob/main/pages/reference/stable-interfaces.md)
 - [Issue #474](https://github.com/s977043/river-review/issues/474)

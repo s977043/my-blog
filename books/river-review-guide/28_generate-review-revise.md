@@ -19,20 +19,11 @@ Revise
 
 River Reviewはloop全体のorchestratorではありません。
 
-返すのは、
-
-- Finding
-- decision
-- reviewCoverage
-- suggestedLoopSignal
-- run diff
-- oscillation情報
-
-などの判断材料です。
+返すのはFinding、decision、Review Coverage、suggestedLoopSignal、run diff、oscillation情報などの**判定材料**です。
 
 反復・停止・エスカレーションを実行するのはcallerです。
 
-## suggestedLoopSignal
+## Layer 1: 単一runからのsignal
 
 現行のLoop Convergence Contractでは、単一runから次のようなsignalを導出できます。
 
@@ -43,27 +34,35 @@ River Reviewはloop全体のorchestratorではありません。
 | CONVERGED | blocking Findingがなく収束候補 |
 | ESCALATE_HUMAN | 人間判断が必要 |
 
-signalの導出自体は決定論的です。
+ただし、これは**提案signal**です。
 
-## CONVERGEDだけで止めないケース
+外部Policyや実行Authorityを置き換えません。
 
-Review Coverageがpartial / not_executedなら、blocking Findingが0件でも「レビュー完遂後の0件」とは言えません。
+## Layer 2: 保存runで収束Evidenceを検証する
 
-そのためsaved run比較では、不完全CoverageのCONVERGEDをそのまま停止根拠にしない設計があります。
+saved runを比較すると、単一runだけでは分からない情報を使えます。
 
-ここで第5部の話がつながります。
+特に現在のcontractでは、最新runのReview Coverageが `partial` / `not_executed` の場合、`CONVERGED` を `NO_SIGNAL` へ降格します。
+
+さらに、LLMを一度も実行していないsaved runは `llmNotExecuted: true` として扱われ、同じく収束Evidenceとして弱められます。
 
 ~~~text
-0 findings
+0 blocking findings
   +
-complete review
+complete semantic review
   → convergence evidence
 
-0 findings
+0 blocking findings
   +
-partial review
-  → insufficient evidence
+partial review / LLM not executed
+  → not enough evidence to stop
 ~~~
+
+このqualificationはsaved-run diff側で既定です。
+
+一方、Review ArtifactのGate自体をCoverage不足やLLM未実行で止めるかは、別のopt-in policyです。
+
+**Loop signalとGateは同じsurfaceではありません。**
 
 ## 振動も止める理由になる
 
@@ -83,11 +82,11 @@ Aが戻る
 
 run historyを比較し、Findingが消えて再出現するpatternを検出できれば、無限修正よりHuman Escalationを選べます。
 
-## Layer 3はcallerが持つ
+ただし、不完全なrunでFindingが一時的に消えただけなら、本当の振動とは限りません。現行contractではCoverageもこの判定に使います。
 
-River Reviewが意図的に出さない停止条件もあります。
+## Layer 3: callerが持つ停止Policy
 
-たとえば、
+River Reviewが意図的に所有しない停止条件があります。
 
 - max iterations
 - cost budget
@@ -95,9 +94,9 @@ River Reviewが意図的に出さない停止条件もあります。
 - team policy
 - mandatory HITL label
 
-です。
+これらはcallerが持つ外部Policyです。
 
-これらは外部Policyなのでcallerが持ちます。
+特に、不完全なreviewが続く環境では `CONVERGED` に到達しない可能性があります。そのためcallerは **STOP_MAX_ITERATIONSのような上限側の停止条件を必ず併用**する必要があります。
 
 ~~~text
 River Review
@@ -107,17 +106,16 @@ Caller
   = execution policy + authority
 ~~~
 
-この境界を崩さないことが重要です。
-
 ## この章で持ち帰ること
 
 自己修正loopを安全にするには、「何回まで」だけでなく、**どのEvidenceなら収束とみなせるか**を設計します。
 
-River Reviewはその材料を返しますが、最終的なLoop Authorityはcaller側に残します。
+River ReviewはReview StageのEvidenceを返しますが、最終的なLoop Authorityはcaller側に残します。
 
 次の第7部では、この仕組みをチームへどう段階導入するかを扱います。
 
 ### Sources
 
 - [Loop Convergence Contract](https://github.com/s977043/river-review/blob/main/pages/reference/loop-convergence-contract.md)
+- [Review Coverage Contract](https://github.com/s977043/river-review/blob/main/docs/development/review-coverage-contract.md)
 - [Generate Review Revise Loop](https://github.com/s977043/river-review/blob/main/docs/ai/generate-review-revise-loop.md)
