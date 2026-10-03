@@ -69,6 +69,46 @@ Reviewerが読むのは、
 
 です。
 
+## Review Packageを契約にする
+
+独立Reviewerへ渡す情報を、その場の会話で決めない方が安定します。
+
+最小のReview Packageは、たとえば次のようにできます。
+
+### 渡す
+
+- task intent / Requirement
+- approved PlanとScope
+- Acceptance Criteria
+- 対象diff / commit identity
+- Verification Evidence
+- relevant project rules
+- 既知のrisk / unresolved item
+
+### 原則として渡さない
+
+- Builderのraw chat transcript
+- hidden reasoning
+- supersededな設計案の長い履歴
+- Builder自身の「問題ない」という結論
+- 期待するreview verdict
+
+materialな設計理由が必要なら、会話ではなくdecision-log / ADR / Planへ反映して渡します。
+
+~~~text
+Builderの説明
+→ Reviewerへの説得材料
+
+ではなく
+
+Artifact + Diff + Evidence
+→ Reviewerの観測材料
+~~~
+
+にします。
+
+この契約があると、modelを変えるかどうかに依存せず、review inputの独立性を管理できます。
+
 ## ReviewerはBuilderと違う問いを持つ
 
 役割分離も必要です。
@@ -224,6 +264,18 @@ Independent reviewの強さもriskに応じて変えます。
 > **独立性は最大化するものではなく、誤判断コストに見合う強さで設計する。**
 
 という考え方です。
+
+## 独立性をチェックする5問
+
+独立Reviewを設計するときは、次の5問で確認できます。
+
+1. **Role** — Builderと別の問いを持っているか
+2. **Context** — Builderのraw reasoningをそのまま継承していないか
+3. **Evidence** — Reviewer自身がdiff / test / sourceへ辿れるか
+4. **Authority** — ReviewerのPASSが最終Authorityへ自動変換されていないか
+5. **Failure** — unavailable / inconclusiveをgreenとして扱っていないか
+
+すべてを別modelにすることより、この5つを分離する方が先です。
 
 ## この章で持ち帰ること
 
