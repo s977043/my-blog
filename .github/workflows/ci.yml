@@ -152,25 +152,32 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
-      # release/zenn 宛 PR のみ: base との差分から変更された published:true Book を抽出し、
-      # 任意Book向けbrowser checkerで公開対象のrenderを自動検証する。draft / removed Book は対象外。
-      - name: Browser check changed published Zenn Books (release/zenn PRs only)
+      # release/zenn 宛 PR のみ: base との差分から変更された published:true Book を抽出する。
+      # draft / removed Book はbrowser対象外。検出結果は後続stepへ明示的に渡す。
+      - name: Detect changed published Zenn Books
+        id: changed_zenn_books
         if: github.event_name == 'pull_request' && github.base_ref == 'release/zenn'
         run: |
           set -euo pipefail
           git fetch origin "${{ github.base_ref }}"
 
-          mapfile -t changed_books < <(
-            BASE_REF="origin/${{ github.base_ref }}" npm run --silent list:changed-zenn-books
-          )
+          BASE_REF="origin/${{ github.base_ref }}" npm run --silent list:changed-zenn-books \
+            > /tmp/changed-zenn-books.txt
 
-          if [ "${#changed_books[@]}" -eq 0 ]; then
-            echo "[zenn-book-browser] no changed Books"
-            exit 0
+          if [ -s /tmp/changed-zenn-books.txt ]; then
+            echo "has_books=true" >> "$GITHUB_OUTPUT"
+            echo "[zenn-book-browser] changed published Books:"
+            sed 's/^/  - /' /tmp/changed-zenn-books.txt
+          else
+            echo "has_books=false" >> "$GITHUB_OUTPUT"
+            echo "[zenn-book-browser] no changed published Books"
           fi
 
-          printf '[zenn-book-browser] changed Books (%s):\n' "${#changed_books[@]}"
-          printf '  - %s\n' "${changed_books[@]}"
+      - name: Browser check changed published Zenn Books
+        if: github.event_name == 'pull_request' && github.base_ref == 'release/zenn' && steps.changed_zenn_books.outputs.has_books == 'true'
+        run: |
+          set -euo pipefail
+          mapfile -t changed_books < /tmp/changed-zenn-books.txt
 
           ./node_modules/.bin/zenn preview --no-watch --port 8000 > /tmp/zenn-preview-books.log 2>&1 &
           preview_pid=$!
@@ -198,26 +205,26 @@ jobs:
           CHROME_PATH="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           test -n "$CHROME_PATH"
 
-          # River Review smoke stepでも入るが、このstep単体の前提も明示する。
           npm install --no-save --package-lock=false --ignore-scripts playwright-core@1.63.0
 
           for book in "${changed_books[@]}"; do
             CHROME_PATH="$CHROME_PATH" ZENN_PREVIEW_URL="http://127.0.0.1:8000" \
-              npm run check:zenn-book-browser -- --book "$book"
+              npm run check:zenn-book-browser -- \
+                --book "$book" \
+                --artifact-dir "artifacts/release-zenn-book-browser/$book"
           done
 
           cleanup_preview
           trap - EXIT
 
       - name: Upload changed Zenn Book browser evidence
-        if: always() && github.event_name == 'pull_request' && github.base_ref == 'release/zenn'
+        if: always() && github.event_name == 'pull_request' && github.base_ref == 'release/zenn' && steps.changed_zenn_books.outputs.has_books == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: changed-zenn-book-browser-evidence
-          path: artifacts/zenn-book-browser
-          if-no-files-found: warn
+          path: artifacts/release-zenn-book-browser
+          if-no-files-found: error
           retention-days: 7
-
 
       # publish-readiness ゲートの fixture self-test（hermetic・git 不要）。
       # 新設 check スクリプトの初版バグ対策（#393/#417 の再発防止）として常時実行する。
