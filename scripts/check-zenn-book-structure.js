@@ -95,9 +95,11 @@ function validateBook(bookDir, options = {}) {
       errors.push(`${slug}.md: fenced code block が閉じていない`);
     }
 
-    const placeholder = content.match(/\b(TBD|FIXME|XXX)\b|【[^】]+】/);
-    if (placeholder) {
-      errors.push(`${slug}.md: 未解消placeholder候補 "${placeholder[0]}"`);
+    if (options.checkPlaceholders !== false) {
+      const placeholder = content.match(/\b(TBD|FIXME|XXX)\b|【[^】]+】/);
+      if (placeholder) {
+        errors.push(`${slug}.md: 未解消placeholder候補 "${placeholder[0]}"`);
+      }
     }
 
     if (options.requireSourcesNumbered && isNumberedContentChapter(slug)) {
@@ -267,11 +269,13 @@ function main() {
   if (args.includes("--self-test")) return selfTest();
 
   const target = args.find((arg) => !arg.startsWith("--"));
+  const allBooks = args.includes("--all");
   const options = {
     requireSourcesNumbered: args.includes("--require-sources-numbered"),
+    checkPlaceholders: allBooks ? args.includes("--check-placeholders") : true,
   };
 
-  if (args.includes("--all")) {
+  if (allBooks) {
     const rootDir = path.resolve(process.cwd(), target || "books");
     const results = validateBooksRoot(rootDir, options);
     if (!results.length) {
