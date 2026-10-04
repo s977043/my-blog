@@ -44,11 +44,16 @@ npm run new:zenn-book -- sample-book \
 
 ## 検証
 
-
 構造チェック:
 
 ~~~bash
 node scripts/check-zenn-book-structure.js books/{{BOOK_SLUG}}
+~~~
+
+Book全体:
+
+~~~bash
+npm run check:zenn-books
 ~~~
 
 repository全体:
