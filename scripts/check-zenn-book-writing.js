@@ -216,6 +216,8 @@ function validate(files) {
     'npm run check:river-review-book-browser',
     'npm run --silent list:changed-zenn-books',
     'changed-zenn-book-browser-evidence',
+    'artifacts/release-zenn-book-browser',
+    'steps.changed_zenn_books.outputs.has_books',
     'github.base_ref == \'release/zenn\'',
     'npm run check',
   ])
@@ -305,6 +307,14 @@ function selfTest() {
   }
   if (!validate(missingReleasePreviewGate).some((e) => e.includes('CI workflow missing token'))) {
     throw new Error('missing release preview artifact wiring was not rejected')
+  }
+
+  const missingReleasePreviewCondition = {
+    ...base,
+    [PATHS.ciWorkflow]: base[PATHS.ciWorkflow].replace('steps.changed_zenn_books.outputs.has_books', ''),
+  }
+  if (!validate(missingReleasePreviewCondition).some((e) => e.includes('CI workflow missing token'))) {
+    throw new Error('missing release preview condition was not rejected')
   }
 
   console.log('[test:zenn-book-writing-contract] PASS')
