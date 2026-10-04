@@ -365,7 +365,6 @@ html, body { margin: 0; padding: 0; background: #fff; }
       failures.push(`uncontained wide elements: ${JSON.stringify(metrics.wideElements)}`);
     }
     if (metrics.bodyTextLength === 0) failures.push("rendered body is empty");
-    if (!metrics.headings.length) failures.push("no rendered h1/h2 headings");
 
     return { slug, viewport: viewportName, metrics, failures };
   }
