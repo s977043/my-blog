@@ -30,7 +30,20 @@ Publish Checklist
 Human publish decision
 ~~~
 
+## 生成前の確認
+
+~~~bash
+npm run new:zenn-book -- sample-book \
+  --title "Sample Book" \
+  --summary "Summary" \
+  --topics "AI,開発" \
+  --dry-run
+~~~
+
+`--dry-run` は作成予定ファイルだけを表示し、書き込みを行わない。
+
 ## 検証
+
 
 構造チェック:
 
