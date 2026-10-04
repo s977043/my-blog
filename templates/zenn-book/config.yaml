@@ -1,0 +1,9 @@
+title: {{BOOK_TITLE_YAML}}
+summary: {{BOOK_SUMMARY_YAML}}
+topics: {{TOPICS_JSON}}
+published: false
+price: 0
+chapters:
+  - 00_introduction
+  - 01_first-chapter
+  - 99_afterword
