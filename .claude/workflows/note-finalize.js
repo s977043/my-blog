@@ -356,6 +356,8 @@ const language = await agent(
 あなたは日本語記事のLanguage / Humanize Gate担当です。
 次をReadしてください。
 - .claude/skills/article-humanizer-ja/SKILL.md
+- .claude/skills/article-humanizer-ja/references/protected-content.md
+- .claude/skills/article-humanizer-ja/references/style-patterns.md
 - ${ARTICLE}
 
 ${CONTRACT}
