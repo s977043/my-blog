@@ -58,6 +58,7 @@ jobs:
           npm run test:note-cover-image
           npm run test:pr-conflict
           npm run test:article-sentence-style
+          npm run test:article-seed-placeholders
           npm run test:article-plan
           npm run test:article-graph
           npm run test:channel-metrics-link
