@@ -1,6 +1,6 @@
 # Evaluation guide
 
-> Source: `.claude/skills/article-humanizer-ja/SKILL.md`. Skill評価・変更時だけ読む。
+> Canonical detail for Humanize evaluation. Entrypoint: `.claude/skills/article-humanizer-ja/SKILL.md`. Skill評価・変更時だけ読む。
 
 review-only導入の評価方法を定義する。自動修正へ進む前に、最低3記事で評価する。
 
