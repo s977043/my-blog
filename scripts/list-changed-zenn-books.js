@@ -171,6 +171,7 @@ function selfTest() {
 
     fs.mkdirSync(path.join(gitTmp, "books", "book-a"), { recursive: true });
     fs.mkdirSync(path.join(gitTmp, "books", "book-b"), { recursive: true });
+    fs.mkdirSync(path.join(gitTmp, "books", "book-c"), { recursive: true });
     fs.mkdirSync(path.join(gitTmp, "articles"), { recursive: true });
     fs.writeFileSync(
       path.join(gitTmp, "books", "book-a", "config.yaml"),
@@ -182,6 +183,11 @@ function selfTest() {
       "title: b\npublished: true\n",
     );
     fs.writeFileSync(path.join(gitTmp, "books", "book-b", "01.md"), "# B\n");
+    fs.writeFileSync(
+      path.join(gitTmp, "books", "book-c", "config.yaml"),
+      "title: c\npublished: false\n",
+    );
+    fs.writeFileSync(path.join(gitTmp, "books", "book-c", "01.md"), "# C\n");
     fs.writeFileSync(path.join(gitTmp, "articles", "x.md"), "# X\n");
     git("add", ".");
     git("commit", "-q", "-m", "base");
@@ -189,6 +195,7 @@ function selfTest() {
 
     fs.writeFileSync(path.join(gitTmp, "books", "book-a", "01.md"), "# A2\n");
     fs.rmSync(path.join(gitTmp, "books", "book-b"), { recursive: true, force: true });
+    fs.writeFileSync(path.join(gitTmp, "books", "book-c", "01.md"), "# C2\n");
     fs.writeFileSync(path.join(gitTmp, "articles", "x.md"), "# X2\n");
     git("add", "-A");
     git("commit", "-q", "-m", "change");
@@ -196,6 +203,9 @@ function selfTest() {
     const changed = listChangedBooks(base, gitTmp);
     if (JSON.stringify(changed.published) !== JSON.stringify(["book-a"])) {
       throw new Error(`git fixture published failed: ${JSON.stringify(changed)}`);
+    }
+    if (JSON.stringify(changed.draft) !== JSON.stringify(["book-c"])) {
+      throw new Error(`git fixture draft failed: ${JSON.stringify(changed)}`);
     }
     if (JSON.stringify(changed.removed) !== JSON.stringify(["book-b"])) {
       throw new Error(`git fixture removed failed: ${JSON.stringify(changed)}`);
