@@ -58,6 +58,8 @@ npm run check
 - code block / text diagram
 - Part divider
 - external link spot check
+- Book → Zenn article linkが公開URLで解決すること
+- cover image / cover warning
 - navigation
 
 browser verificationが実行できない場合は `UNVERIFIED` とし、静的QAで代替したことを明示する。
