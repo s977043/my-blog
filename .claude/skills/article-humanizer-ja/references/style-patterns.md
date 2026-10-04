@@ -1,6 +1,6 @@
 # Style patterns
 
-> Source: `.claude/skills/article-humanizer-ja/SKILL.md`. Humanizeレビュー実行時に必ず読む。
+> Canonical detail for style patterns. Entrypoint: `.claude/skills/article-humanizer-ja/SKILL.md`. Humanizeレビュー実行時に必ず読む。
 
 `article-humanizer-ja` で利用する検出パターン。外部実装をそのままコピーせず、技術記事運用向けに再構成している。
 
