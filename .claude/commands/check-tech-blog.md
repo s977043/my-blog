@@ -34,9 +34,9 @@ idea: AIに実装させる前にPlanレビューを入れたら手戻りが減�
 4. `.claude/skills/tech-blog-writing/SKILL.md` を読む
 5. `.claude/skills/tech-blog-writing/references/editorial-principles.md` を読む
 6. `$ARGUMENTS` が実在する許可パスなら既存記事モード、そうでなければ記事ネタモードと判定する
-7. 記事ネタモードでは `.claude/skills/tech-blog-writing/references/idea-mode.md` と `references/output-contract.md` を読み、中心主張、一次経験、根拠、読者課題、推奨媒体、記事タイプを確認する
+7. 記事ネタモードでは `.claude/skills/tech-blog-writing/references/idea-mode.md` と `.claude/skills/tech-blog-writing/references/output-contract.md` を読み、中心主張、一次経験、根拠、読者課題、推奨媒体、記事タイプを確認する
 8. `READY` の記事案では Article Plan（Reader Problem / Central Claim / Evidence / Channel / Outline / Out of Scope）までを提案し、長文本文は生成しない
-9. 既存記事モードでは `.claude/skills/tech-blog-writing/references/existing-article-mode.md` と `references/output-contract.md` を読み、Reader / Experience / Evidence / Scope / Subtraction / Channel の6ゲートを確認する
+9. 既存記事モードでは `.claude/skills/tech-blog-writing/references/existing-article-mode.md` と `.claude/skills/tech-blog-writing/references/output-contract.md` を読み、Reader / Experience / Evidence / Scope / Subtraction / Channel の6ゲートを確認する
 10. Skillの出力形式に従って結果を返す
 11. 記事本文、Seed metadata、レビュー成果物、設定ファイルを変更していないことを確認する
 
