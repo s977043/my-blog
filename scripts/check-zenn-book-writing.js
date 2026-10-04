@@ -16,6 +16,7 @@ const PATHS = {
   generator: 'scripts/create-zenn-book.js',
   structureCheck: 'scripts/check-zenn-book-structure.js',
   browserCheck: 'scripts/check-zenn-book-browser.mjs',
+  changedBooks: 'scripts/list-changed-zenn-books.js',
   routing: '.claude/evals/article-skill-routing.json',
   packageJson: 'package.json',
   ciWorkflow: '.github/workflows/ci.yml',
@@ -45,6 +46,7 @@ function validate(files) {
   const generator = files[PATHS.generator]
   const structureCheck = files[PATHS.structureCheck]
   const browserCheck = files[PATHS.browserCheck]
+  const changedBooks = files[PATHS.changedBooks]
   const ciWorkflow = files[PATHS.ciWorkflow]
 
   requireTokens(errors, 'skill', skill, [
@@ -84,6 +86,8 @@ function validate(files) {
     'cover image',
     'Book → Zenn article link',
     'npm run check:zenn-book-browser',
+    'list:changed-zenn-books',
+    'changed-zenn-book-browser-evidence',
     'playwright-core@1.63.0',
   ])
 
@@ -150,6 +154,17 @@ function validate(files) {
     '--self-test',
   ])
 
+  requireTokens(errors, 'changed Books detector', changedBooks, [
+    '--base',
+    'BASE_REF',
+    'extractBookSlugs',
+    'publishedState',
+    'classifyBooks',
+    'git',
+    'diff',
+    '--self-test',
+  ])
+
   let routing
   try {
     routing = JSON.parse(files[PATHS.routing])
@@ -182,6 +197,8 @@ function validate(files) {
       'check:zenn-book-browser',
       'check:river-review-book-browser',
       'test:zenn-book-browser',
+      'list:changed-zenn-books',
+      'test:changed-zenn-books',
     ]) {
       if (!pkg.scripts?.[script]) errors.push(`package scripts missing: ${script}`)
     }
@@ -195,7 +212,13 @@ function validate(files) {
     'npm run test:zenn-book-template',
     'npm run test:zenn-book-writing-contract',
     'npm run test:zenn-book-browser',
+    'npm run test:changed-zenn-books',
     'npm run check:river-review-book-browser',
+    'npm run --silent list:changed-zenn-books',
+    'changed-zenn-book-browser-evidence',
+    'artifacts/release-zenn-book-browser',
+    'steps.changed_zenn_books.outputs.has_books',
+    'github.base_ref == \'release/zenn\'',
     'npm run check',
   ])
 
@@ -268,6 +291,30 @@ function selfTest() {
   }
   if (!validate(missingBrowserCi).some((e) => e.includes('CI workflow missing token'))) {
     throw new Error('missing browser CI wiring was not rejected')
+  }
+
+  const missingChangedBooksScript = {
+    ...base,
+    [PATHS.packageJson]: base[PATHS.packageJson].replace('"list:changed-zenn-books"', '"removed:changed-zenn-books"'),
+  }
+  if (!validate(missingChangedBooksScript).some((e) => e.includes('package scripts missing: list:changed-zenn-books'))) {
+    throw new Error('missing changed-book script was not rejected')
+  }
+
+  const missingReleasePreviewGate = {
+    ...base,
+    [PATHS.ciWorkflow]: base[PATHS.ciWorkflow].replace('changed-zenn-book-browser-evidence', ''),
+  }
+  if (!validate(missingReleasePreviewGate).some((e) => e.includes('CI workflow missing token'))) {
+    throw new Error('missing release preview artifact wiring was not rejected')
+  }
+
+  const missingReleasePreviewCondition = {
+    ...base,
+    [PATHS.ciWorkflow]: base[PATHS.ciWorkflow].replaceAll('steps.changed_zenn_books.outputs.has_books', ''),
+  }
+  if (!validate(missingReleasePreviewCondition).some((e) => e.includes('CI workflow missing token'))) {
+    throw new Error('missing release preview condition was not rejected')
   }
 
   console.log('[test:zenn-book-writing-contract] PASS')

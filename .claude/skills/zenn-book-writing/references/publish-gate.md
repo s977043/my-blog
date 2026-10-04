@@ -77,6 +77,8 @@ browser checkerはmobile 390pxで全章、desktopで最大7章を均等抽出し
 
 browser verificationが実行できない場合は `UNVERIFIED` とし、静的QAで代替したことを明示する。
 
+`release/zenn` 宛PRでは、CIがbaseとの差分から変更されたpublished:true Bookを抽出し、各Bookへ同じbrowser checkerを自動実行する。対象検出は `list:changed-zenn-books`、証跡は `changed-zenn-book-browser-evidence` artifactへ保存する。
+
 ## Gate 6 — Publish Authority
 
 - `published: false` はHuman publish decisionまで維持

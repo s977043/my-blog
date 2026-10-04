@@ -92,7 +92,9 @@
     "check:zenn-book-writing-contract": "node scripts/check-zenn-book-writing.js",
     "test:zenn-book-writing-contract": "node scripts/check-zenn-book-writing.js --self-test",
     "check:zenn-book-browser": "node scripts/check-zenn-book-browser.mjs",
-    "test:zenn-book-browser": "node scripts/check-zenn-book-browser.mjs --self-test"
+    "test:zenn-book-browser": "node scripts/check-zenn-book-browser.mjs --self-test",
+    "list:changed-zenn-books": "node scripts/list-changed-zenn-books.js",
+    "test:changed-zenn-books": "node scripts/list-changed-zenn-books.js --self-test"
   },
   "dependencies": {
     "zenn-cli": "^0.5.4"

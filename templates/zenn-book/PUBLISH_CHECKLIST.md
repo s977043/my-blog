@@ -59,6 +59,7 @@ npm run check:zenn-book-browser -- --book {{BOOK_SLUG}}
 
 - [ ] Browser checker PASS
 - [ ] `artifacts/zenn-book-browser/{{BOOK_SLUG}}/report.json` とscreenshotを確認
+- [ ] `release/zenn` PRではCIの `changed-zenn-book-browser-evidence` artifactも確認
 - [ ] Book topのtitle / summary / topicsを確認
 - [ ] cover imageを追加する場合は `cover.png` / `cover.jpg` を配置し、preview warningがない
 - [ ] chapter順を確認
