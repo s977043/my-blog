@@ -32,12 +32,13 @@ idea: AIに実装させる前にPlanレビューを入れたら手戻りが減�
 2. `docs/article-lifecycle-contract.md` を読む
 3. `docs/content-channel-strategy.md` を読む
 4. `.claude/skills/tech-blog-writing/SKILL.md` を読む
-5. `$ARGUMENTS` が実在する許可パスなら既存記事モード、そうでなければ記事ネタモードで実行する
-6. 記事ネタモードでは、中心主張、一次経験、根拠、読者課題、推奨媒体、記事タイプを確認し、Lifecycle上の現在地と初稿前に残す `Draft Article Plan`（仮のArticle Plan）を明示する
-7. `READY` の記事案では Article Plan（Reader Problem / Central Claim / Evidence / Channel / Outline / Out of Scope）までを提案し、長文本文は生成しない
-8. 既存記事モードでは、Reader / Experience / Evidence / Scope / Subtraction / Channel の6ゲートを確認し、次に委譲する既存Review / Final Gateを明示する
-9. Skillの出力形式に従って結果を返す
-10. 記事本文、Seed metadata、レビュー成果物、設定ファイルを変更していないことを確認する
+5. `.claude/skills/tech-blog-writing/references/editorial-principles.md` を読む
+6. `$ARGUMENTS` が実在する許可パスなら既存記事モード、そうでなければ記事ネタモードと判定する
+7. 記事ネタモードでは `.claude/skills/tech-blog-writing/references/idea-mode.md` と `references/output-contract.md` を読み、中心主張、一次経験、根拠、読者課題、推奨媒体、記事タイプを確認する
+8. `READY` の記事案では Article Plan（Reader Problem / Central Claim / Evidence / Channel / Outline / Out of Scope）までを提案し、長文本文は生成しない
+9. 既存記事モードでは `.claude/skills/tech-blog-writing/references/existing-article-mode.md` と `references/output-contract.md` を読み、Reader / Experience / Evidence / Scope / Subtraction / Channel の6ゲートを確認する
+10. Skillの出力形式に従って結果を返す
+11. 記事本文、Seed metadata、レビュー成果物、設定ファイルを変更していないことを確認する
 
 ## 必須ルール
 
