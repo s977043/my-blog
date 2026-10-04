@@ -58,7 +58,7 @@ Signal / Experience
 
 **Plan Approval（Human）** は局所ゲートであり、Lifecycle stateではない。独立した必須工程でもない。中心主張や書かない範囲の変更を採用する前に著者の判断を得る（この判断を Plan Approval としてよい）。承認されたPlanは見出しを `## Approved Article Plan: <channel>/<slug>` に変更する。Planの記録とPR作成時の確認は「4. Article Planの記録・PR作成ゲート」を正とする。Lifecycleの `APPROVED` は公開承認だけを意味する。
 
-**Author Input Gate（Human）** も局所ゲートであり、Lifecycle stateではない。Seedに `<!-- AUTHOR_INPUT_REQUIRED: ... -->` が残っている場合、その一次体験・会話・実測値はAIが推測で補完してはいけない。未解決マーカーがあるSeedは記事ネタ判定を `NEEDS_INPUT` とし、`PLANNED → DRAFTED` へ進めない。著者本人が事実を提供するか、「今回の記事ではその情報を使わない」と判断して対象マーカーを解消した後に再判定する。AIは中心主張を縮小する案を提案してよいが、マーカーを独断で削除してGateを通過させない。
+**Author Input Gate（Human）** も局所ゲートであり、Lifecycle stateではない。Seedに `<!-- AUTHOR_INPUT_REQUIRED: ... -->` が残っている場合、その一次体験・会話・実測値はAIが推測で補完してはいけない。未解決マーカーがあるSeedは記事ネタ判定を `NEEDS_INPUT` とし、`PROMOTED` で止めて `PLANNED` へ遷移させず、Draftも作らない。著者本人が事実を提供するか、「今回の記事ではその情報を使わない」と判断して対象マーカーを解消した後に再判定する。AIは中心主張を縮小する案を提案してよいが、マーカーを独断で削除してGateを通過させない。
 
 次は自律実行してよい。
 
