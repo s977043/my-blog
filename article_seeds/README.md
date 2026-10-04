@@ -44,7 +44,7 @@ markerの削除は、著者本人から事実が提供された場合、また�
 
 将来の検証や観測は通常のチェックボックス（`- [ ]`）で残してよい。著者入力待ちと実験タスクを混同しない。
 
-記事化判断・構成設計へ進めるときは `.claude/skills/tech-blog-writing/SKILL.md` を入口にする。このSkillは `CAPTURED → TRIAGED → PROMOTED → PLANNED` の上流整理と、初稿前の `Draft Article Plan` 記録までを担当し、本文生成・媒体別Review・Final Gate・公開処理は既存フローへ委譲する。
+記事化判断・構成設計へ進めるときは `.claude/skills/tech-blog-writing/SKILL.md` を入口にする。このSkillは `CAPTURED → TRIAGED → PROMOTED` の上流整理を行い、未解決の `AUTHOR_INPUT_REQUIRED` があれば `PROMOTED` で止める。Author Input Gateを解消できたSeedだけ `Draft Article Plan` を記録して `PLANNED` へ進め、本文生成・媒体別Review・Final Gate・公開処理は既存フローへ委譲する。
 
 初稿作成前に、`Draft Article Plan`（仮のArticle Plan）を本文末尾へ `## Draft Article Plan: <channel>/<slug>` として追記する。追記先は、テーマ別サブディレクトリ（`article_seeds/<theme>/`）の対応するSeedとする。対応するSeedが無い場合は、下記の置き場所の規則に従って `TEMPLATE.md` から作る。Plan Approval後は同じPlanの見出しを `## Approved Article Plan: <channel>/<slug>` に変更する。複数媒体へ派生する場合はPlanを分け、上書きしない。初期Seedには空のPlanを置かない。
 
