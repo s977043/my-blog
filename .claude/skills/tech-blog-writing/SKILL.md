@@ -81,9 +81,9 @@ PROMOTED
   ↓
 AUTHOR_INPUT_REQUIRED?
   ├─ yes → NEEDS_INPUT（LifecycleはPROMOTEDのまま）
-  └─ no  → PLANNED
+  └─ no  → Draft Article Planを記録
               ↓
-          Draft Article Planを記録
+           PLANNED
               ↓
           DRAFTED以降は既存Writer / Review / Final Gateへ委譲
 ```
