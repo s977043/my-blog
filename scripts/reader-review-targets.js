@@ -346,7 +346,7 @@ function extractIzanamiBody(html) {
 }
 
 function extractIzanamiArticleBody(html) {
-  const re = /<script\b[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gi;
+  const re = /<script\b(?=[^>]*\btype\s*=\s*["']application\/ld\+json["'])[^>]*>([\s\S]*?)<\/script>/gi;
   let m;
   while ((m = re.exec(html))) {
     let parsed;
@@ -355,8 +355,12 @@ function extractIzanamiArticleBody(html) {
     } catch {
       continue;
     }
-    for (const j of [].concat(parsed)) {
-      if (j && typeof j.articleBody === "string" && j.articleBody.trim()) return j.articleBody.trim();
+    const roots = Array.isArray(parsed) ? parsed : [parsed];
+    for (const root of roots) {
+      const nodes = [root, ...(Array.isArray(root?.["@graph"]) ? root["@graph"] : [])];
+      for (const node of nodes) {
+        if (node && typeof node.articleBody === "string" && node.articleBody.trim()) return node.articleBody.trim();
+      }
     }
   }
   return null;
@@ -812,6 +816,16 @@ async function selfTest() {
     "JSON-LD が無ければ markdown-post を使い、クライアント描画で欠けた位置に印を残す",
     izanamiBodyText(iznBailout).text,
     "本文\n\n[クライアント描画の要素（コードブロックなど）: 取得できず。原稿で確認]",
+  );
+  eq(
+    "JSON-LD の type が single quote でも articleBody を取得する",
+    extractIzanamiArticleBody("<script type='application/ld+json'>{\"articleBody\":\"single quote\"}</script>"),
+    "single quote",
+  );
+  eq(
+    "JSON-LD の @graph 内にある articleBody を取得する",
+    extractIzanamiArticleBody('<script data-x="1" type="application/ld+json">{"@graph":[{"@type":"Organization"},{"@type":"TechArticle","articleBody":"graph body"}]}</script>'),
+    "graph body",
   );
   eq(
     "壊れた JSON-LD や articleBody の無い JSON-LD は読み飛ばす",
