@@ -341,7 +341,7 @@ ${CONTRACT}
 重要: このWorkflow phaseは、上記のcustom Agent定義をReadしてレビュー契約を参照しますが、そのfrontmatterに書かれたWebFetch等のツール権限を継承するわけではありません。
 このphaseで実際に一次情報へアクセスできる能力がある場合だけprimarySourceAccess=available/partialとして検証してください。アクセスできない場合はprimarySourceAccess=unavailableとし、中心主張に関係するofficial_factを推測でverifiedにせず unverified=true にしてください。
 
-記事の中心主張に実質的に関係する専門領域だけを検出し、最大3つの専門家ペルソナを選択してください。
+記事の中心主張に実質的に関係する専門領域だけを検出し、必要最小限（最大3つ）の専門家ペルソナを選択してください。単一の専門領域を1人で十分に確認できるなら1人にし、枠を埋めるために3人へ増やさないでください。
 重要な外部依存主張は official_fact / team_practice / author_interpretation / unverified の境界を確認してください。
 findingsは blocking 指摘を優先し、最大5件。件数合わせはしません。
 passedは must/high 相当の未解決指摘がない場合のみtrue。
@@ -420,6 +420,7 @@ ${CONTRACT}
 - 初見読者が前提不足で止まらない
 - noteのスマホ可読性・JTFスタイルに大きな問題がない
 - 同じ主張・用語説明・結論の重複が公開品質を下げていない
+- 字数・文字数を推測で書かない。段落が長いという指摘は、数値を出さずに該当箇所と読解上の問題を説明する。実測値が別のdeterministic checkから与えられている場合だけ、その値を引用してよい
 
 findingsはmust/highを優先して最大5件。
 記事の主題・論理構造にmust/high相当の問題が残る場合のみ requiresThesisLoop=true としてください。
