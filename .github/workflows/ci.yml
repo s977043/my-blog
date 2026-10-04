@@ -51,6 +51,7 @@ jobs:
           npm run test:zenn-book-structure
           npm run test:zenn-book-template
           npm run test:zenn-book-writing-contract
+          npm run test:zenn-book-browser
           npm run test:note-setext
           npm run test:queue-drift
           npm run test:orphan-docs
@@ -136,7 +137,7 @@ jobs:
           fc-cache -f
           npm install --no-save --package-lock=false --ignore-scripts playwright-core@1.63.0
           CHROME_PATH="$CHROME_PATH" ZENN_PREVIEW_URL="http://127.0.0.1:8000" \
-            node scripts/check-zenn-book-browser.mjs
+            npm run check:river-review-book-browser
 
           cleanup_preview
           trap - EXIT

@@ -8,7 +8,7 @@
     "list:books": "zenn list:books",
     "check:river-review-book": "node scripts/check-zenn-book-structure.js books/river-review-guide --require-sources-numbered",
     "test:zenn-book-structure": "node scripts/check-zenn-book-structure.js --self-test",
-    "check:river-review-book-browser": "node scripts/check-zenn-book-browser.mjs",
+    "check:river-review-book-browser": "node scripts/check-zenn-book-browser.mjs --book river-review-guide",
     "new:qiita": "qiita new --root Qiita",
     "pull:qiita": "qiita pull --root Qiita",
     "publish:qiita": "bash scripts/publish-qiita.sh",
@@ -90,7 +90,9 @@
     "test:zenn-book-template": "node scripts/create-zenn-book.js --self-test",
     "check:zenn-books": "node scripts/check-zenn-book-structure.js --all books",
     "check:zenn-book-writing-contract": "node scripts/check-zenn-book-writing.js",
-    "test:zenn-book-writing-contract": "node scripts/check-zenn-book-writing.js --self-test"
+    "test:zenn-book-writing-contract": "node scripts/check-zenn-book-writing.js --self-test",
+    "check:zenn-book-browser": "node scripts/check-zenn-book-browser.mjs",
+    "test:zenn-book-browser": "node scripts/check-zenn-book-browser.mjs --self-test"
   },
   "dependencies": {
     "zenn-cli": "^0.5.4"

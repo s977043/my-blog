@@ -50,7 +50,20 @@ npm run check
 
 ## Gate 5 — Preview
 
-`npm run preview` を使い、少なくとも次を確認する。
+`npm run preview` と汎用browser checkerを使う。
+
+~~~bash
+npm install --no-save --package-lock=false --ignore-scripts playwright-core@1.63.0
+CHROME_PATH="$(command -v google-chrome || command -v chromium || command -v chromium-browser)" \
+ZENN_PREVIEW_URL="http://127.0.0.1:8000" \
+npm run check:zenn-book-browser -- --book <slug>
+~~~
+
+`playwright-core` はbrowser preview時だけ一時installし、package dependencyへ常設しない。
+
+browser checkerはmobile 390pxで全章、desktopで最大7章を均等抽出して検査し、`artifacts/zenn-book-browser/<slug>/` へreport / screenshotを残す。
+
+少なくとも次を確認する。
 
 - Book top
 - chapter order

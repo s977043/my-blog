@@ -48,6 +48,17 @@ npm run check
 
 ## 5. Zenn preview
 
+~~~bash
+npm install --no-save --package-lock=false --ignore-scripts playwright-core@1.63.0
+npm run preview
+# 別terminal:
+CHROME_PATH="$(command -v google-chrome || command -v chromium || command -v chromium-browser)" \
+ZENN_PREVIEW_URL="http://127.0.0.1:8000" \
+npm run check:zenn-book-browser -- --book {{BOOK_SLUG}}
+~~~
+
+- [ ] Browser checker PASS
+- [ ] `artifacts/zenn-book-browser/{{BOOK_SLUG}}/report.json` とscreenshotを確認
 - [ ] Book topのtitle / summary / topicsを確認
 - [ ] cover imageを追加する場合は `cover.png` / `cover.jpg` を配置し、preview warningがない
 - [ ] chapter順を確認

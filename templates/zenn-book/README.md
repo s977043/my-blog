@@ -56,6 +56,19 @@ Book全体:
 npm run check:zenn-books
 ~~~
 
+Browser preview（初回はCIと同じ一時依存を入れ、`npm run preview` を別terminalで起動）:
+
+~~~bash
+npm install --no-save --package-lock=false --ignore-scripts playwright-core@1.63.0
+CHROME_PATH="$(command -v google-chrome || command -v chromium || command -v chromium-browser)" \
+ZENN_PREVIEW_URL="http://127.0.0.1:8000" \
+npm run check:zenn-book-browser -- --book {{BOOK_SLUG}}
+~~~
+
+- mobile 390pxでは全章を検査する
+- desktopは章全体から最大7章を均等抽出して検査・screenshot保存する
+- 証跡は `artifacts/zenn-book-browser/{{BOOK_SLUG}}/` に保存する
+
 repository全体:
 
 ~~~bash
