@@ -105,3 +105,5 @@ River Reviewは、差分だけでなく、レビューの実行状況や関連�
 - [GateとReview Coverageの適用条件](https://github.com/s977043/river-review/blob/main/pages/reference/loop-convergence-contract.md)
 - [AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計](https://zenn.dev/minewo/articles/river-review-judgment-placement)
 - [River Review v0.30→v0.33：Improvement Loop と applyTo Scoping 整備の半月](https://zenn.dev/minewo/articles/river-reviewer-v033-improvement-loop)
+- [AIレビューを開発フローにどう組み込む？任せる範囲と責任者の決め方](https://izanami.dev/post/a168c992-159d-4b2c-9e7c-32ea98080174)
+- [AIレビューの指摘が多すぎて読まれないとき、どこで絞り、どこから読むか](https://izanami.dev/post/dc72ca9e-b731-4b39-8aa2-ba8e7bcfc0d4)
