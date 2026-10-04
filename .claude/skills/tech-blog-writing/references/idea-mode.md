@@ -55,6 +55,8 @@
 - `NEEDS_INPUT`: 記事価値はあるが、著者の経験・証拠・条件が不足している
 - `PARK`: 現時点では一般論または範囲が広すぎる。作業や検証を先に行う
 
+Seedに未解決の `AUTHOR_INPUT_REQUIRED` が1件でも残っている場合は `NEEDS_INPUT` とする。著者本人が一次情報を提供するか、その情報を今回の記事では使わないと判断してマーカーを解消するまで `READY` にしない。AIは不足情報の質問や中心主張を縮小する案を出してよいが、マーカーを独断で削除しない。
+
 ここでの `READY` は **記事ネタモード内のローカル判定**であり、`docs/article-lifecycle-contract.md` の Lifecycle state `READY`（既存Final Gate通過）とは別物。ローカル `READY` を理由に公開準備完了へ遷移させない。
 
 判定観点:
@@ -81,7 +83,7 @@
 
 #### A-4. Draft Article Planを作る
 
-`READY` の記事案は、本文を書く前に次を決め、A-5 の書式で1つの `Draft Article Plan` に記録する（`npm run check:article-plan` は A-5 の書式を読む）。
+`READY` かつ未解決の `AUTHOR_INPUT_REQUIRED` がない記事案は、本文を書く前に次を決め、A-5 の書式で1つの `Draft Article Plan` に記録する（`npm run check:article-plan` は A-5 の書式を読む）。
 
 - Reader Problem（`reader_problem`）: 誰の、どの問題を扱うか
 - Central Claim（`central_claim`）: この記事で最も伝える1文
@@ -97,7 +99,7 @@
 
 #### A-5. Draft Article PlanをSeedへ残し、Draftへ引き渡す
 
-本文生成前に、別台帳は作らず、元Seed本文へ `## Draft Article Plan: <channel>/<slug>` を追記する。追記先のSeedの探し方は `article_seeds/README.md` に従う。Seedの新規作成と `Draft Article Plan` の追記は書き込み可能なセッションで行い、`/check-tech-blog` のような review-only 実行では行わない（Planが見つからない場合の報告書式は `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」を正とする）。Plan Approval の扱いは `docs/article-lifecycle-contract.md` の「3. Human Gate」を正とする。frontmatterへ複雑な計画構造を追加しない。1つのSeedから複数媒体・複数記事へ派生する場合は、派生記事ごとに別Planとして追記し、既存Planを上書きしない。
+本文生成前に、未解決の `AUTHOR_INPUT_REQUIRED` が0件であることを確認する。残っていれば `NEEDS_INPUT` へ戻し、Draftを作らない。Gate解消後に、別台帳は作らず、元Seed本文へ `## Draft Article Plan: <channel>/<slug>` を追記する。追記先のSeedの探し方は `article_seeds/README.md` に従う。Seedの新規作成と `Draft Article Plan` の追記は書き込み可能なセッションで行い、`/check-tech-blog` のような review-only 実行では行わない（Planが見つからない場合の報告書式は `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」を正とする）。Plan Approval の扱いは `docs/article-lifecycle-contract.md` の「3. Human Gate」を正とする。frontmatterへ複雑な計画構造を追加しない。1つのSeedから複数媒体・複数記事へ派生する場合は、派生記事ごとに別Planとして追記し、既存Planを上書きしない。
 
 最低限、次を残す。
 
