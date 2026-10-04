@@ -18,11 +18,13 @@ argument-hint: <article-path>
 
 1. `AGENTS.md` を読む
 2. `.claude/skills/article-humanizer-ja/SKILL.md` を読む
-3. `$1` が許可された記事パスで、実在するMarkdownファイルか確認する
-4. 記事の主張・強調点・文体・章構造を抽出する
-5. 保護領域を除外して、3層のパターンを走査する
-6. Skillの出力スキーマで結果を返す
-7. 記事本文・レビュー成果物・設定ファイルを変更していないことを確認する
+3. `.claude/skills/article-humanizer-ja/references/protected-content.md` を読む
+4. `.claude/skills/article-humanizer-ja/references/style-patterns.md` を読む
+5. `$1` が許可された記事パスで、実在するMarkdownファイルか確認する
+6. 記事の主張・強調点・文体・章構造を抽出する
+7. 保護領域を除外して、3層のパターンを走査する
+8. Skillの出力スキーマで結果を返す
+9. 記事本文・レビュー成果物・設定ファイルを変更していないことを確認する
 
 ## 必須ルール
 
