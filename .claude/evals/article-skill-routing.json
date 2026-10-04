@@ -2,6 +2,7 @@
   "version": 1,
   "purpose": "Evaluate semantic routing from user intent to article-production Skills. Frontmatter description remains the routing source of truth.",
   "candidateSkills": [
+    ".claude/skills/tech-blog-writing/SKILL.md",
     ".claude/skills/article-humanizer-ja/SKILL.md",
     ".claude/skills/note-thesis-review-loop/SKILL.md",
     ".claude/skills/note-article-review/SKILL.md",
@@ -9,6 +10,33 @@
     ".claude/skills/article-visual-review/SKILL.md"
   ],
   "cases": [
+    {
+      "id": "tech-blog-01",
+      "userPrompt": "作業ログとPRから記事ネタを抽出して、一次経験を整理し、Zennとnoteのどちらに向くか決めたい",
+      "expectedSkill": "tech-blog-writing",
+      "forbiddenSkills": [
+        "note-article-review",
+        "article-humanizer-ja"
+      ]
+    },
+    {
+      "id": "tech-blog-02",
+      "userPrompt": "この技術記事案を長文にする前に、Reader Problem・中心主張・Evidence・Out of ScopeをDraft Article Planに整理したい",
+      "expectedSkill": "tech-blog-writing",
+      "forbiddenSkills": [
+        "note-thesis-review-loop",
+        "article-review-apply"
+      ]
+    },
+    {
+      "id": "tech-blog-03",
+      "userPrompt": "既存の技術記事が一次経験と根拠を備えているか上流品質を確認して、次に使うレビューを決めたい",
+      "expectedSkill": "tech-blog-writing",
+      "forbiddenSkills": [
+        "article-humanizer-ja",
+        "article-visual-review"
+      ]
+    },
     {
       "id": "thesis-01",
       "userPrompt": "この記事を、主張がぶれないように複数ペルソナでレビュー→改善→再レビューを3ループして",
@@ -128,7 +156,8 @@
         "note-thesis-review-loop",
         "note-article-review",
         "article-domain-review",
-        "article-visual-review"
+        "article-visual-review",
+        "tech-blog-writing"
       ]
     },
     {
@@ -140,7 +169,8 @@
         "note-thesis-review-loop",
         "note-article-review",
         "article-domain-review",
-        "article-visual-review"
+        "article-visual-review",
+        "tech-blog-writing"
       ]
     },
     {
@@ -150,7 +180,8 @@
       "forbiddenSkills": [
         "note-thesis-review-loop",
         "article-domain-review",
-        "article-visual-review"
+        "article-visual-review",
+        "tech-blog-writing"
       ]
     },
     {
@@ -160,7 +191,8 @@
       "forbiddenSkills": [
         "note-thesis-review-loop",
         "article-domain-review",
-        "article-visual-review"
+        "article-visual-review",
+        "tech-blog-writing"
       ]
     },
     {
@@ -172,7 +204,8 @@
         "note-thesis-review-loop",
         "note-article-review",
         "article-domain-review",
-        "article-visual-review"
+        "article-visual-review",
+        "tech-blog-writing"
       ]
     }
   ]
