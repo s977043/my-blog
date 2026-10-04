@@ -85,8 +85,6 @@ function validate(files) {
     'Book → Zenn article link',
     'npm run check:zenn-book-browser',
     'playwright-core@1.63.0',
-    'playwright-core@1.63.0',
-    'playwright-core@1.63.0',
   ])
 
   requireTokens(errors, 'template config', templateConfig, [
@@ -104,6 +102,7 @@ function validate(files) {
     'cover.png',
     'repository相対パス',
     'npm run check:zenn-book-browser',
+    'playwright-core@1.63.0',
   ])
 
   requireTokens(errors, 'template plan', templatePlan, [
@@ -124,6 +123,7 @@ function validate(files) {
     'cover image',
     'repositoryファイル相対パス',
     'npm run check:zenn-book-browser',
+    'playwright-core@1.63.0',
   ])
 
   requireTokens(errors, 'generator', generator, [
