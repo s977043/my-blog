@@ -12,6 +12,32 @@ function skillNameFromPath(p) {
   return m ? m[1] : null
 }
 
+function frontMatterValue(markdown, key) {
+  const match = String(markdown).match(/^---\r?\n([\s\S]*?)\r?\n---/)
+  if (!match) return null
+  const line = match[1].split(/\r?\n/).find((row) => row.startsWith(`${key}:`))
+  if (!line) return null
+  return line.slice(key.length + 1).trim().replace(/^["']|["']$/g, '')
+}
+
+function validateCandidateFiles(data, files) {
+  const errors = []
+  for (const file of data.candidateSkills || []) {
+    const expectedName = skillNameFromPath(file)
+    if (!(file in files)) {
+      errors.push(`missing candidate skill file: ${file}`)
+      continue
+    }
+    const actualName = frontMatterValue(files[file], 'name')
+    const description = frontMatterValue(files[file], 'description')
+    if (actualName !== expectedName) {
+      errors.push(`${file}: frontmatter name must be ${expectedName}, found ${actualName || '(missing)'}`)
+    }
+    if (!description) errors.push(`${file}: frontmatter description is required for semantic routing`)
+  }
+  return errors
+}
+
 function validate(data, command) {
   const errors = []
   if (!data || data.version !== 1) errors.push('fixture version must be 1')
@@ -42,7 +68,11 @@ function validate(data, command) {
     if (!item.userPrompt || typeof item.userPrompt !== 'string') errors.push(`${item.id}: userPrompt is required`)
     if (prompts.has(item.userPrompt)) errors.push(`${item.id}: duplicate userPrompt`)
     prompts.add(item.userPrompt)
+    const forbiddenSkills = Array.isArray(item.forbiddenSkills) ? item.forbiddenSkills : []
     if (!Array.isArray(item.forbiddenSkills)) errors.push(`${item.id}: forbiddenSkills must be an array`)
+    if (!Object.prototype.hasOwnProperty.call(item, 'expectedSkill')) {
+      errors.push(`${item.id}: expectedSkill must be present (skill name or null)`)
+    }
 
     if (item.expectedSkill == null) {
       negativeCount += 1
@@ -50,12 +80,12 @@ function validate(data, command) {
       errors.push(`${item.id}: unknown expectedSkill ${item.expectedSkill}`)
     } else {
       positiveCounts.set(item.expectedSkill, positiveCounts.get(item.expectedSkill) + 1)
-      if (item.forbiddenSkills.includes(item.expectedSkill)) {
+      if (forbiddenSkills.includes(item.expectedSkill)) {
         errors.push(`${item.id}: expectedSkill must not be forbidden`)
       }
     }
 
-    for (const forbidden of item.forbiddenSkills || []) {
+    for (const forbidden of forbiddenSkills) {
       if (!names.includes(forbidden)) errors.push(`${item.id}: unknown forbidden skill ${forbidden}`)
     }
   }
@@ -107,8 +137,14 @@ function selfTest() {
     ],
   }
   const command = `${FIXTURE} frontmatter fresh reviewer expectedSkillをReviewerへ見せない none UNVERIFIED`
+  const candidateFiles = Object.fromEntries(
+    base.candidateSkills.map((file) => {
+      const name = skillNameFromPath(file)
+      return [file, `---\nname: ${name}\ndescription: route ${name}\n---\n`]
+    })
+  )
 
-  const valid = validate(base, command)
+  const valid = [...validate(base, command), ...validateCandidateFiles(base, candidateFiles)]
   if (valid.length) throw new Error(`valid fixture failed: ${valid.join('; ')}`)
 
   const tooFew = JSON.parse(JSON.stringify(base))
@@ -128,6 +164,17 @@ function selfTest() {
     throw new Error('unknown expectedSkill was not rejected')
   }
 
+  const malformedForbidden = JSON.parse(JSON.stringify(base))
+  malformedForbidden.cases[0].forbiddenSkills = 'not-an-array'
+  if (!validate(malformedForbidden, command).some((e) => e.includes('forbiddenSkills must be an array'))) {
+    throw new Error('malformed forbiddenSkills was not rejected safely')
+  }
+
+  const missingDescription = { ...candidateFiles, [base.candidateSkills[0]]: '---\nname: a\n---\n' }
+  if (!validateCandidateFiles(base, missingDescription).some((e) => e.includes('frontmatter description is required'))) {
+    throw new Error('missing candidate description was not rejected')
+  }
+
   console.log('[test:article-skill-routing-eval] PASS')
 }
 
@@ -138,7 +185,12 @@ function main() {
   }
   const fixture = readJson(FIXTURE)
   const command = fs.readFileSync(path.join(ROOT, COMMAND), 'utf8')
-  const errors = validate(fixture, command)
+  const candidateFiles = {}
+  for (const file of fixture.candidateSkills || []) {
+    const absolute = path.join(ROOT, file)
+    if (fs.existsSync(absolute)) candidateFiles[file] = fs.readFileSync(absolute, 'utf8')
+  }
+  const errors = [...validate(fixture, command), ...validateCandidateFiles(fixture, candidateFiles)]
   if (errors.length) {
     console.error('[check:article-skill-routing-eval] FAIL')
     for (const error of errors) console.error(`- ${error}`)
@@ -148,4 +200,4 @@ function main() {
 }
 
 if (require.main === module) main()
-module.exports = { skillNameFromPath, validate }
+module.exports = { skillNameFromPath, frontMatterValue, validateCandidateFiles, validate }
