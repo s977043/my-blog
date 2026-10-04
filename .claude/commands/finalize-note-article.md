@@ -136,7 +136,7 @@ Scrum Master / Agile Coach等はAI上の専門家ペルソナであり、実在�
 
 ## Language Review
 
-`.claude/skills/article-humanizer-ja/SKILL.md` の S15 / S16 / S17 とTerminology Contractを使う。
+`.claude/skills/article-humanizer-ja/SKILL.md` の契約と `.claude/skills/article-humanizer-ja/references/style-patterns.md` の S15 / S16 / S17・Terminology Contractを使う。
 
 - 英語名詞の局所密集
 - 日英併記の反復
