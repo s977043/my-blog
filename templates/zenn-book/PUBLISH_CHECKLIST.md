@@ -34,11 +34,13 @@ Verification date:
 
 ~~~bash
 node scripts/check-zenn-book-structure.js books/{{BOOK_SLUG}}
+npm run check:zenn-books
 npm run list:books
 npm run check
 ~~~
 
-- [ ] Book structure check PASS
+- [ ] 対象Book structure check PASS
+- [ ] `npm run check:zenn-books` PASS
 - [ ] `npm run list:books` で認識
 - [ ] `npm run check` PASS
 - [ ] internal link / title / markdown hygieneにblocking failureなし
