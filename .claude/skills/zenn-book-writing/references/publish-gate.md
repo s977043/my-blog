@@ -41,6 +41,7 @@ currentな主題なら、公開直前に再確認する。
 ## Gate 4 — Repository
 
 ~~~bash
+npm run check:zenn-books
 npm run list:books
 npm run check
 ~~~
