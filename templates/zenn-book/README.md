@@ -64,6 +64,14 @@ npm run check
 
 公開前は `PUBLISH_CHECKLIST.md` を使う。
 
+### Cover
+
+generatorはcover imageを自動生成しない。Bookの公開デザインを決めた段階で `cover.png` または `cover.jpg` を追加し、Zenn Previewで検証する。
+
+### BookからZenn記事へのリンク
+
+Book chapterから `articles/*.md` のrepository相対パスを直接リンクしない。公開サイトで解決するZenn URLを使い、Previewまたは公開URLで確認する。記事同士の内部リンク規約とは別の境界として扱う。
+
 ## 重要
 
 - `BOOK_PLAN.md`, `SOURCE_MAP.md`, `EDITORIAL_QA.md`, `PUBLISH_CHECKLIST.md` は内部編集用。必要なものだけ残してよい
