@@ -59,10 +59,33 @@ function extractBookSlugs(paths) {
   return [...slugs].sort();
 }
 
-function filterExistingBooks(slugs, rootDir = ROOT) {
-  return slugs.filter((slug) =>
-    fs.existsSync(path.join(rootDir, "books", slug, "config.yaml")),
-  );
+function publishedState(config) {
+  for (const rawLine of String(config).split(/\r?\n/)) {
+    const line = rawLine.trim();
+    const match = line.match(/^published:\s*["']?(true|false)["']?\s*(?:#.*)?$/i);
+    if (match) return match[1].toLowerCase() === "true";
+  }
+  return null;
+}
+
+function classifyBooks(slugs, rootDir = ROOT) {
+  const published = [];
+  const draft = [];
+  const removed = [];
+
+  for (const slug of slugs) {
+    const configPath = path.join(rootDir, "books", slug, "config.yaml");
+    if (!fs.existsSync(configPath)) {
+      removed.push(slug);
+      continue;
+    }
+
+    const state = publishedState(fs.readFileSync(configPath, "utf8"));
+    if (state === true) published.push(slug);
+    else draft.push(slug);
+  }
+
+  return { published, draft, removed };
 }
 
 function changedPaths(baseRef, cwd = ROOT) {
@@ -87,10 +110,9 @@ function changedPaths(baseRef, cwd = ROOT) {
 function listChangedBooks(baseRef, rootDir = ROOT) {
   const paths = changedPaths(baseRef, rootDir);
   const discovered = extractBookSlugs(paths);
-  const existing = filterExistingBooks(discovered, rootDir);
-  const removed = discovered.filter((slug) => !existing.includes(slug));
+  const classified = classifyBooks(discovered, rootDir);
 
-  return { paths, discovered, existing, removed };
+  return { paths, discovered, ...classified };
 }
 
 function selfTest() {
@@ -110,10 +132,24 @@ function selfTest() {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "changed-zenn-books-"));
   try {
     fs.mkdirSync(path.join(tmp, "books", "book-a"), { recursive: true });
-    fs.writeFileSync(path.join(tmp, "books", "book-a", "config.yaml"), "title: a\n");
-    const existing = filterExistingBooks(["book-a", "book-b"], tmp);
-    if (JSON.stringify(existing) !== JSON.stringify(["book-a"])) {
-      throw new Error(`filterExistingBooks failed: ${JSON.stringify(existing)}`);
+    fs.mkdirSync(path.join(tmp, "books", "book-b"), { recursive: true });
+    fs.writeFileSync(
+      path.join(tmp, "books", "book-a", "config.yaml"),
+      "title: a\npublished: true\n",
+    );
+    fs.writeFileSync(
+      path.join(tmp, "books", "book-b", "config.yaml"),
+      "title: b\npublished: false\n",
+    );
+    const classified = classifyBooks(["book-a", "book-b", "book-c"], tmp);
+    if (JSON.stringify(classified.published) !== JSON.stringify(["book-a"])) {
+      throw new Error(`published classification failed: ${JSON.stringify(classified)}`);
+    }
+    if (JSON.stringify(classified.draft) !== JSON.stringify(["book-b"])) {
+      throw new Error(`draft classification failed: ${JSON.stringify(classified)}`);
+    }
+    if (JSON.stringify(classified.removed) !== JSON.stringify(["book-c"])) {
+      throw new Error(`removed classification failed: ${JSON.stringify(classified)}`);
     }
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
@@ -136,9 +172,15 @@ function selfTest() {
     fs.mkdirSync(path.join(gitTmp, "books", "book-a"), { recursive: true });
     fs.mkdirSync(path.join(gitTmp, "books", "book-b"), { recursive: true });
     fs.mkdirSync(path.join(gitTmp, "articles"), { recursive: true });
-    fs.writeFileSync(path.join(gitTmp, "books", "book-a", "config.yaml"), "title: a\n");
+    fs.writeFileSync(
+      path.join(gitTmp, "books", "book-a", "config.yaml"),
+      "title: a\npublished: true\n",
+    );
     fs.writeFileSync(path.join(gitTmp, "books", "book-a", "01.md"), "# A\n");
-    fs.writeFileSync(path.join(gitTmp, "books", "book-b", "config.yaml"), "title: b\n");
+    fs.writeFileSync(
+      path.join(gitTmp, "books", "book-b", "config.yaml"),
+      "title: b\npublished: true\n",
+    );
     fs.writeFileSync(path.join(gitTmp, "books", "book-b", "01.md"), "# B\n");
     fs.writeFileSync(path.join(gitTmp, "articles", "x.md"), "# X\n");
     git("add", ".");
@@ -152,8 +194,8 @@ function selfTest() {
     git("commit", "-q", "-m", "change");
 
     const changed = listChangedBooks(base, gitTmp);
-    if (JSON.stringify(changed.existing) !== JSON.stringify(["book-a"])) {
-      throw new Error(`git fixture existing failed: ${JSON.stringify(changed)}`);
+    if (JSON.stringify(changed.published) !== JSON.stringify(["book-a"])) {
+      throw new Error(`git fixture published failed: ${JSON.stringify(changed)}`);
     }
     if (JSON.stringify(changed.removed) !== JSON.stringify(["book-b"])) {
       throw new Error(`git fixture removed failed: ${JSON.stringify(changed)}`);
@@ -190,8 +232,11 @@ function main() {
     }
 
     const result = listChangedBooks(args.base);
-    for (const slug of result.existing) {
+    for (const slug of result.published) {
       console.log(slug);
+    }
+    for (const slug of result.draft) {
+      console.error(`${LABEL} skip unpublished book: ${slug}`);
     }
     for (const slug of result.removed) {
       console.error(`${LABEL} skip removed book: ${slug}`);
@@ -208,7 +253,8 @@ module.exports = {
   parseArgs,
   isValidBookSlug,
   extractBookSlugs,
-  filterExistingBooks,
+  publishedState,
+  classifyBooks,
   changedPaths,
   listChangedBooks,
 };
