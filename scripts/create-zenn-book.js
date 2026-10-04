@@ -135,6 +135,7 @@ function selfTest() {
       "EDITORIAL_QA.md",
       "PUBLISH_CHECKLIST.md",
       "00_introduction.md",
+      "part1_topic.md",
       "01_first-chapter.md",
       "99_afterword.md",
     ];
@@ -156,6 +157,37 @@ function selfTest() {
     );
     if (check.status !== 0) {
       throw new Error(`structure checker failed:\n${check.stdout}\n${check.stderr}`);
+    }
+
+    const dryRunDir = path.join(tmp, "dry-run-book");
+    createBook({
+      slug: "dry-run-book",
+      title: "Dry Run",
+      summary: "No files should be written",
+      topics: ["test"],
+      outDir: dryRunDir,
+      dryRun: true,
+      date: "2026-01-01",
+    });
+    if (fs.existsSync(dryRunDir)) {
+      throw new Error("dry-run created files");
+    }
+
+    let existingBlocked = false;
+    try {
+      createBook({
+        slug: "sample-book",
+        title: "Duplicate",
+        summary: "Must fail",
+        topics: ["test"],
+        outDir,
+        date: "2026-01-01",
+      });
+    } catch (error) {
+      existingBlocked = /target already exists/.test(error.message);
+    }
+    if (!existingBlocked) {
+      throw new Error("existing target was not blocked");
     }
 
     console.log("[new:zenn-book] self-test PASS");
