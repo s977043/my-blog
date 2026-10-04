@@ -311,7 +311,7 @@ function selfTest() {
 
   const missingReleasePreviewCondition = {
     ...base,
-    [PATHS.ciWorkflow]: base[PATHS.ciWorkflow].replace('steps.changed_zenn_books.outputs.has_books', ''),
+    [PATHS.ciWorkflow]: base[PATHS.ciWorkflow].replaceAll('steps.changed_zenn_books.outputs.has_books', ''),
   }
   if (!validate(missingReleasePreviewCondition).some((e) => e.includes('CI workflow missing token'))) {
     throw new Error('missing release preview condition was not rejected')
