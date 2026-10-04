@@ -1,6 +1,6 @@
 # Review loop personas
 
-> Source: `.claude/skills/note-thesis-review-loop/SKILL.md`. 3ループを実行するときに読む。
+> Canonical detail for Loop 1-3 review roles. Entrypoint: `.claude/skills/note-thesis-review-loop/SKILL.md`. 3ループを実行するときに読む。
 
 3周とも同じ観点でレビューしない。
 
