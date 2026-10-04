@@ -7,7 +7,7 @@ const ROOT = path.resolve(__dirname, '..')
 const SEEDS_DIR = path.join(ROOT, 'article_seeds')
 
 const GENERIC_TODO_PATTERNS = [
-  /^\s*>\s*TODO:\s*(.+)$/gim,
+  /^\s*>\s*TODO:\s*(.*)$/gim,
   /<!--\s*TODO:\s*([\s\S]*?)-->/gi,
 ]
 const AUTHOR_INPUT_PATTERN = /<!--\s*AUTHOR_INPUT_REQUIRED:\s*([\s\S]*?)-->/gi
@@ -72,6 +72,11 @@ function selfTest() {
   const commentTodo = validateText('<!-- TODO: 実際の会話を追記する -->')
   if (!commentTodo.some((e) => e.includes('generic TODO'))) {
     throw new Error('comment TODO was not rejected')
+  }
+
+  const emptyQuoteTodo = validateText('> TODO:')
+  if (!emptyQuoteTodo.some((e) => e.includes('generic TODO'))) {
+    throw new Error('empty blockquote TODO was not rejected')
   }
 
   const empty = validateText('<!-- AUTHOR_INPUT_REQUIRED:   -->')
