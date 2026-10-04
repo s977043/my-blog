@@ -1,6 +1,6 @@
 # Protected content
 
-> Source: `.claude/skills/article-humanizer-ja/SKILL.md`. Humanizeレビュー実行時に必ず読む。
+> Canonical detail for protected content. Entrypoint: `.claude/skills/article-humanizer-ja/SKILL.md`. Humanizeレビュー実行時に必ず読む。
 
 Humanizeレビューでは、以下を保護領域として扱う。review-only段階では本文を編集しないが、修正案も保護領域の直接変更を避ける。
 
