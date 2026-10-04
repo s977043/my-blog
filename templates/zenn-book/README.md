@@ -56,9 +56,10 @@ Book全体:
 npm run check:zenn-books
 ~~~
 
-Browser preview（`npm run preview` を別terminalで起動し、Chrome pathを指定）:
+Browser preview（初回はCIと同じ一時依存を入れ、`npm run preview` を別terminalで起動）:
 
 ~~~bash
+npm install --no-save --package-lock=false --ignore-scripts playwright-core@1.63.0
 CHROME_PATH="$(command -v google-chrome || command -v chromium || command -v chromium-browser)" \
 ZENN_PREVIEW_URL="http://127.0.0.1:8000" \
 npm run check:zenn-book-browser -- --book {{BOOK_SLUG}}
