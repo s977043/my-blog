@@ -7,7 +7,7 @@ const LABEL = "[check:zenn-book-browser]";
 
 function parseArgs(argv) {
   const args = {
-    book: process.env.ZENN_BOOK_SLUG || "river-review-guide",
+    book: process.env.ZENN_BOOK_SLUG || "",
     artifactDir: process.env.ZENN_BOOK_ARTIFACT_DIR || "",
     representativeCount: Number(process.env.ZENN_BOOK_REPRESENTATIVE_COUNT || 7),
     selfTest: false,
@@ -33,7 +33,10 @@ function parseArgs(argv) {
     throw new Error(`unknown argument: ${token}`);
   }
 
-  validateBookSlug(args.book);
+  if (!args.selfTest && !args.book) {
+    throw new Error("--book is required (or set ZENN_BOOK_SLUG)");
+  }
+  if (args.book) validateBookSlug(args.book);
   if (!Number.isInteger(args.representativeCount) || args.representativeCount < 1) {
     throw new Error("--representative-count must be a positive integer");
   }
@@ -142,6 +145,14 @@ function selfTest() {
     invalidSlugRejected = true;
   }
   if (!invalidSlugRejected) throw new Error("invalid book slug was not rejected");
+
+  let missingBookRejected = false;
+  try {
+    parseArgs([]);
+  } catch {
+    missingBookRejected = true;
+  }
+  if (!missingBookRejected) throw new Error("missing --book was not rejected");
 
   const parsedArgs = parseArgs([
     "--book",
