@@ -152,9 +152,9 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
-      # release/zenn 宛 PR のみ: base との差分から変更Bookを抽出し、
-      # 任意Book向けbrowser checkerで公開対象のrenderを自動検証する。
-      - name: Browser check changed Zenn Books (release/zenn PRs only)
+      # release/zenn 宛 PR のみ: base との差分から変更された published:true Book を抽出し、
+      # 任意Book向けbrowser checkerで公開対象のrenderを自動検証する。draft / removed Book は対象外。
+      - name: Browser check changed published Zenn Books (release/zenn PRs only)
         if: github.event_name == 'pull_request' && github.base_ref == 'release/zenn'
         run: |
           set -euo pipefail
