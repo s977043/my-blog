@@ -13,6 +13,7 @@ my-blog/
 ├── articles_izanami/       izanami記事のローカル管理     → articles_izanami/README.md
 ├── talks/                  登壇資料・Speaker Notes       → talks/README.md
 ├── books/                  Zennの本（chaptersを含む）
+├── templates/              再利用テンプレート（Zenn Book等）
 ├── images/                 Zenn記事用画像（<slug>/ごと）
 ├── reviews/
 │   ├── zenn/               Zenn記事のレビュー成果物
@@ -52,8 +53,12 @@ my-blog/
 - プレビュー: `npm run preview`
 - 記事一覧: `npm run list:articles`
 - 本一覧: `npm run list:books`
+- Book構造チェック: `npm run check:zenn-books`
+- 新規Book: `npm run new:zenn-book -- <slug> --title "..." --summary "..." --topics "AI,開発"`
+- Bookテンプレート: `templates/zenn-book/`
+- Book作成Skill: `.claude/skills/zenn-book-writing/SKILL.md`
 
-ZennはGitHub連携で公開されるため、`main`へのpushがそのまま反映になる。
+Zennのdeploy対象は `release/zenn` ブランチ。通常の執筆・レビューは `main` で行い、公開判断後に `release/zenn` へ反映する。詳細は `AGENTS.md` のZenn公開フローを正本とする。
 
 参考: [Zenn CLI guide](https://zenn.dev/zenn/articles/zenn-cli-guide)
 

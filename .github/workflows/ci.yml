@@ -49,6 +49,8 @@ jobs:
           npm run test:note-thesis-snapshot
           npm run test:zenn-image-format
           npm run test:zenn-book-structure
+          npm run test:zenn-book-template
+          npm run test:zenn-book-writing-contract
           npm run test:note-setext
           npm run test:queue-drift
           npm run test:orphan-docs
