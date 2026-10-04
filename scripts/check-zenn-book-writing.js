@@ -17,6 +17,7 @@ const PATHS = {
   structureCheck: 'scripts/check-zenn-book-structure.js',
   routing: '.claude/evals/article-skill-routing.json',
   packageJson: 'package.json',
+  ciWorkflow: '.github/workflows/ci.yml',
 }
 
 function requireTokens(errors, label, text, tokens) {
@@ -42,6 +43,7 @@ function validate(files) {
   const templatePublish = files[PATHS.templatePublish]
   const generator = files[PATHS.generator]
   const structureCheck = files[PATHS.structureCheck]
+  const ciWorkflow = files[PATHS.ciWorkflow]
 
   requireTokens(errors, 'skill', skill, [
     'references/book-contract.md',
@@ -158,6 +160,7 @@ function validate(files) {
       'test:zenn-book-template',
       'check:zenn-books',
       'check:zenn-book-writing-contract',
+      'test:zenn-book-writing-contract',
     ]) {
       if (!pkg.scripts?.[script]) errors.push(`package scripts missing: ${script}`)
     }
@@ -165,6 +168,13 @@ function validate(files) {
       errors.push('aggregate check missing check:zenn-book-writing-contract')
     }
   }
+
+  requireTokens(errors, 'CI workflow', ciWorkflow, [
+    'npm run test:zenn-book-structure',
+    'npm run test:zenn-book-template',
+    'npm run test:zenn-book-writing-contract',
+    'npm run check',
+  ])
 
   return errors
 }
@@ -211,6 +221,14 @@ function selfTest() {
   const missingScript = { ...base, [PATHS.packageJson]: JSON.stringify(pkg) }
   if (!validate(missingScript).some((e) => e.includes('package scripts missing: check:zenn-books'))) {
     throw new Error('missing package script was not rejected')
+  }
+
+  const missingCiWiring = {
+    ...base,
+    [PATHS.ciWorkflow]: base[PATHS.ciWorkflow].replace('npm run test:zenn-book-writing-contract', ''),
+  }
+  if (!validate(missingCiWiring).some((e) => e.includes('CI workflow missing token'))) {
+    throw new Error('missing CI self-test wiring was not rejected')
   }
 
   console.log('[test:zenn-book-writing-contract] PASS')
