@@ -130,6 +130,7 @@ function selfTest() {
 
     const required = [
       "config.yaml",
+      "README.md",
       "BOOK_PLAN.md",
       "SOURCE_MAP.md",
       "EDITORIAL_QA.md",
@@ -148,7 +149,14 @@ function selfTest() {
     const config = fs.readFileSync(path.join(outDir, "config.yaml"), "utf8");
     if (!config.includes('title: "Sample Book"')) throw new Error("title replacement failed");
     if (!config.includes("published: false")) throw new Error("published must default to false");
-    if (/{{[A-Z0-9_]+}}/.test(config)) throw new Error("unresolved token in config");
+
+    for (const file of files) {
+      const generated = fs.readFileSync(path.join(outDir, file), "utf8");
+      const unresolved = generated.match(/{{[A-Z0-9_]+}}/);
+      if (unresolved) {
+        throw new Error(`unresolved token in ${file}: ${unresolved[0]}`);
+      }
+    }
 
     const check = spawnSync(
       process.execPath,
