@@ -2,17 +2,49 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { chromium } from "playwright-core";
 
-const baseUrl = process.env.ZENN_PREVIEW_URL || "http://127.0.0.1:8000";
-const chromePath = process.env.CHROME_PATH;
-const artifactDir = path.resolve("artifacts/zenn-book-browser");
-const configPath = path.resolve("books/river-review-guide/config.yaml");
-const bookSlug = "river-review-guide";
+const LABEL = "[check:zenn-book-browser]";
 
-if (!chromePath) {
-  console.error("[check:zenn-book-browser] CHROME_PATH is required");
-  process.exit(1);
+function parseArgs(argv) {
+  const args = {
+    book: process.env.ZENN_BOOK_SLUG || "river-review-guide",
+    artifactDir: process.env.ZENN_BOOK_ARTIFACT_DIR || "",
+    representativeCount: Number(process.env.ZENN_BOOK_REPRESENTATIVE_COUNT || 7),
+    selfTest: false,
+  };
+
+  for (let i = 0; i < argv.length; i += 1) {
+    const token = argv[i];
+    if (token === "--self-test") {
+      args.selfTest = true;
+      continue;
+    }
+    if (token === "--book" || token === "--artifact-dir" || token === "--representative-count") {
+      const value = argv[i + 1];
+      if (!value || value.startsWith("--")) {
+        throw new Error(`${token} requires a value`);
+      }
+      if (token === "--book") args.book = value;
+      if (token === "--artifact-dir") args.artifactDir = value;
+      if (token === "--representative-count") args.representativeCount = Number(value);
+      i += 1;
+      continue;
+    }
+    throw new Error(`unknown argument: ${token}`);
+  }
+
+  validateBookSlug(args.book);
+  if (!Number.isInteger(args.representativeCount) || args.representativeCount < 1) {
+    throw new Error("--representative-count must be a positive integer");
+  }
+
+  return args;
+}
+
+function validateBookSlug(slug) {
+  if (!/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(String(slug))) {
+    throw new Error(`invalid book slug: ${slug}`);
+  }
 }
 
 function parseChapters(config) {
@@ -38,6 +70,26 @@ function parseChapters(config) {
   return chapters;
 }
 
+function selectRepresentativeChapters(chapters, maxCount = 7) {
+  if (!Array.isArray(chapters) || chapters.length === 0) return [];
+  if (chapters.length <= maxCount) return [...chapters];
+  if (maxCount === 1) return [chapters[0]];
+
+  const selected = [];
+  const seen = new Set();
+  for (let i = 0; i < maxCount; i += 1) {
+    const index = Math.round((i * (chapters.length - 1)) / (maxCount - 1));
+    const slug = chapters[index];
+    if (!seen.has(slug)) {
+      seen.add(slug);
+      selected.push(slug);
+    }
+  }
+
+  if (!seen.has(chapters.at(-1))) selected.push(chapters.at(-1));
+  return selected.slice(0, maxCount);
+}
+
 function findBodyHtml(value, seen = new Set()) {
   if (!value || typeof value !== "object" || seen.has(value)) return null;
   seen.add(value);
@@ -52,65 +104,166 @@ function findBodyHtml(value, seen = new Set()) {
   return null;
 }
 
-async function fetchBookMeta() {
-  const apiUrl = `${baseUrl}/api/books/${bookSlug}`;
-  const response = await fetch(apiUrl);
-  if (!response.ok) {
-    throw new Error(`book meta: preview API HTTP ${response.status} at ${apiUrl}`);
+function selfTest() {
+  const sampleConfig = [
+    'title: "Sample"',
+    'summary: "Summary"',
+    'chapters:',
+    '  - 00_intro',
+    '  - part1_topic',
+    '  - 01_body',
+    'published: false',
+  ].join("\n");
+
+  const parsed = parseChapters(sampleConfig);
+  if (JSON.stringify(parsed) !== JSON.stringify(["00_intro", "part1_topic", "01_body"])) {
+    throw new Error(`parseChapters failed: ${JSON.stringify(parsed)}`);
   }
 
-  const payload = await response.json();
-  const book = payload?.book;
-  if (!book) throw new Error("book meta not found in preview API payload");
-  if (!book.title || !book.summary) {
-    throw new Error(`book meta missing title/summary: ${JSON.stringify(book)}`);
-  }
-  if (!Array.isArray(book.topics) || book.topics.length === 0) {
-    throw new Error(`book meta topics missing: ${JSON.stringify(book.topics)}`);
-  }
-
-  return { apiUrl, book };
-}
-
-async function fetchRenderedChapter(slug) {
-  const apiUrl = `${baseUrl}/api/books/${bookSlug}/chapters/${slug}.md`;
-  const response = await fetch(apiUrl);
-  if (!response.ok) {
-    throw new Error(`${slug}: preview API HTTP ${response.status} at ${apiUrl}`);
+  const ten = Array.from({ length: 10 }, (_, index) => `chapter-${index}`);
+  const representative = selectRepresentativeChapters(ten, 4);
+  if (
+    representative.length !== 4 ||
+    representative[0] !== "chapter-0" ||
+    representative.at(-1) !== "chapter-9"
+  ) {
+    throw new Error(`representative selection failed: ${JSON.stringify(representative)}`);
   }
 
-  const payload = await response.json();
-  const bodyHtml = findBodyHtml(payload);
-  if (!bodyHtml) {
-    throw new Error(
-      `${slug}: bodyHtml not found in preview API payload keys=${Object.keys(payload).join(",")}`,
-    );
+  const short = selectRepresentativeChapters(["a", "b", "c"], 7);
+  if (JSON.stringify(short) !== JSON.stringify(["a", "b", "c"])) {
+    throw new Error(`short representative selection failed: ${JSON.stringify(short)}`);
   }
 
-  return { apiUrl, bodyHtml };
-}
-
-async function loadPreviewStyles(browser) {
-  const page = await browser.newPage();
+  let invalidSlugRejected = false;
   try {
-    await page.goto(baseUrl, { waitUntil: "domcontentloaded", timeout: 30_000 });
-    const hrefs = await page.evaluate(() =>
-      [...document.querySelectorAll('link[rel="stylesheet"]')]
-        .map((link) => link.href)
-        .filter(Boolean),
+    validateBookSlug("../bad");
+  } catch {
+    invalidSlugRejected = true;
+  }
+  if (!invalidSlugRejected) throw new Error("invalid book slug was not rejected");
+
+  const parsedArgs = parseArgs([
+    "--book",
+    "sample-book",
+    "--artifact-dir",
+    "tmp/evidence",
+    "--representative-count",
+    "5",
+  ]);
+  if (
+    parsedArgs.book !== "sample-book" ||
+    parsedArgs.artifactDir !== "tmp/evidence" ||
+    parsedArgs.representativeCount !== 5
+  ) {
+    throw new Error(`argument parsing failed: ${JSON.stringify(parsedArgs)}`);
+  }
+
+  console.log(`${LABEL} self-test PASS`);
+}
+
+async function loadChromium() {
+  try {
+    const mod = await import("playwright-core");
+    return mod.chromium;
+  } catch (error) {
+    throw new Error(
+      `playwright-core is required for browser verification: ${error?.message || error}`,
     );
-    return [...new Set(hrefs)];
-  } finally {
-    await page.close();
   }
 }
 
-function standaloneHtml(bodyHtml, stylesheetHrefs) {
-  const links = stylesheetHrefs
-    .map((href) => `<link rel="stylesheet" href="${href}">`)
-    .join("\n");
+async function runBrowserCheck(options) {
+  const baseUrl = process.env.ZENN_PREVIEW_URL || "http://127.0.0.1:8000";
+  const chromePath = process.env.CHROME_PATH;
+  if (!chromePath) throw new Error("CHROME_PATH is required");
 
-  return `<!doctype html>
+  const bookSlug = options.book;
+  const configPath = path.resolve("books", bookSlug, "config.yaml");
+  const artifactDir = path.resolve(
+    options.artifactDir || path.join("artifacts", "zenn-book-browser", bookSlug),
+  );
+
+  if (!fs.existsSync(configPath)) {
+    throw new Error(`config.yaml not found for book: ${bookSlug}`);
+  }
+
+  const config = fs.readFileSync(configPath, "utf8");
+  const chapters = parseChapters(config);
+  if (!chapters.length) throw new Error("No chapters found in config.yaml");
+  const representative = selectRepresentativeChapters(
+    chapters,
+    options.representativeCount,
+  );
+
+  fs.mkdirSync(artifactDir, { recursive: true });
+
+  async function fetchBookMeta() {
+    const apiUrl = `${baseUrl}/api/books/${bookSlug}`;
+    const response = await fetch(apiUrl);
+    if (!response.ok) {
+      throw new Error(`book meta: preview API HTTP ${response.status} at ${apiUrl}`);
+    }
+
+    const payload = await response.json();
+    const book = payload?.book;
+    if (!book) throw new Error("book meta not found in preview API payload");
+    if (!book.title || !book.summary) {
+      throw new Error(`book meta missing title/summary: ${JSON.stringify(book)}`);
+    }
+    if (!Array.isArray(book.topics) || book.topics.length === 0) {
+      throw new Error(`book meta topics missing: ${JSON.stringify(book.topics)}`);
+    }
+
+    return { apiUrl, book };
+  }
+
+  async function fetchRenderedChapter(slug) {
+    const apiUrl = `${baseUrl}/api/books/${bookSlug}/chapters/${slug}.md`;
+    const response = await fetch(apiUrl);
+    if (!response.ok) {
+      throw new Error(`${slug}: preview API HTTP ${response.status} at ${apiUrl}`);
+    }
+
+    const payload = await response.json();
+    const bodyHtml = findBodyHtml(payload);
+    if (!bodyHtml) {
+      throw new Error(
+        `${slug}: bodyHtml not found in preview API payload keys=${Object.keys(payload).join(",")}`,
+      );
+    }
+
+    return { apiUrl, bodyHtml };
+  }
+
+  const chromium = await loadChromium();
+  const browser = await chromium.launch({
+    executablePath: chromePath,
+    headless: true,
+    args: ["--no-sandbox", "--disable-dev-shm-usage"],
+  });
+
+  async function loadPreviewStyles() {
+    const page = await browser.newPage();
+    try {
+      await page.goto(baseUrl, { waitUntil: "domcontentloaded", timeout: 30_000 });
+      const hrefs = await page.evaluate(() =>
+        [...document.querySelectorAll('link[rel="stylesheet"]')]
+          .map((link) => link.href)
+          .filter(Boolean),
+      );
+      return [...new Set(hrefs)];
+    } finally {
+      await page.close();
+    }
+  }
+
+  function standaloneHtml(bodyHtml, stylesheetHrefs) {
+    const links = stylesheetHrefs
+      .map((href) => `<link rel="stylesheet" href="${href}">`)
+      .join("\n");
+
+    return `<!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
@@ -129,110 +282,99 @@ html, body { margin: 0; padding: 0; background: #fff; }
 </main>
 </body>
 </html>`;
-}
+  }
 
-async function inspectRenderedPage(page, html, slug, viewportName) {
-  await page.setContent(html, { waitUntil: "networkidle", timeout: 30_000 });
-  await page.waitForFunction(
-    () => document.querySelector(".znc")?.innerText.trim().length > 0,
-    null,
-    { timeout: 10_000 },
-  );
-
-  const metrics = await page.evaluate(() => {
-    const root = document.querySelector(".preview-shell");
-    const article = document.querySelector(".znc");
-    const viewportWidth = window.innerWidth;
-
-    const brokenImages = [...document.images]
-      .filter((img) => img.complete && img.naturalWidth === 0)
-      .map((img) => img.getAttribute("src") || "");
-
-    const wideElements = [...article.querySelectorAll("table, pre, code, svg")]
-      .map((el) => {
-        const rect = el.getBoundingClientRect();
-        const style = getComputedStyle(el);
-        const parentStyle = el.parentElement ? getComputedStyle(el.parentElement) : null;
-        const locallyScrollable =
-          ["auto", "scroll"].includes(style.overflowX) ||
-          ["auto", "scroll"].includes(parentStyle?.overflowX || "");
-
-        return {
-          tag: el.tagName.toLowerCase(),
-          width: Math.round(rect.width),
-          right: Math.round(rect.right),
-          locallyScrollable,
-          text: (el.textContent || "").trim().slice(0, 80),
-        };
-      })
-      .filter((item) => item.right > viewportWidth + 2 && !item.locallyScrollable);
-
-    const headings = [...article.querySelectorAll("h1, h2")]
-      .map((el) => (el.textContent || "").trim())
-      .filter(Boolean)
-      .slice(0, 8);
-
-    return {
-      viewportWidth,
-      shellClientWidth: root.clientWidth,
-      shellScrollWidth: root.scrollWidth,
-      articleClientWidth: article.clientWidth,
-      articleScrollWidth: article.scrollWidth,
-      contentOverflow:
-        root.scrollWidth > root.clientWidth + 2 ||
-        article.scrollWidth > article.clientWidth + 2,
-      brokenImages,
-      wideElements,
-      bodyTextLength: article.innerText.trim().length,
-      headings,
-    };
-  });
-
-  const failures = [];
-  if (metrics.contentOverflow) {
-    failures.push(
-      `content overflow shell=${metrics.shellScrollWidth}/${metrics.shellClientWidth} article=${metrics.articleScrollWidth}/${metrics.articleClientWidth}`,
+  async function inspectRenderedPage(page, html, slug, viewportName) {
+    await page.setContent(html, { waitUntil: "networkidle", timeout: 30_000 });
+    await page.waitForFunction(
+      () => document.querySelector(".znc")?.innerText.trim().length > 0,
+      null,
+      { timeout: 10_000 },
     );
-  }
-  if (metrics.brokenImages.length) {
-    failures.push(`broken images: ${metrics.brokenImages.join(", ")}`);
-  }
-  if (metrics.wideElements.length) {
-    failures.push(`uncontained wide elements: ${JSON.stringify(metrics.wideElements)}`);
-  }
-  if (metrics.bodyTextLength < 100) {
-    failures.push(`body text too short: ${metrics.bodyTextLength}`);
-  }
-  if (!metrics.headings.length) {
-    failures.push("no rendered h1/h2 headings");
-  }
 
-  return { slug, viewport: viewportName, metrics, failures };
-}
+    const metrics = await page.evaluate(() => {
+      const root = document.querySelector(".preview-shell");
+      const article = document.querySelector(".znc");
+      const viewportWidth = window.innerWidth;
 
-async function main() {
-  fs.mkdirSync(artifactDir, { recursive: true });
+      const brokenImages = [...document.images]
+        .filter((img) => img.complete && img.naturalWidth === 0)
+        .map((img) => img.getAttribute("src") || "");
 
-  const config = fs.readFileSync(configPath, "utf8");
-  const chapters = parseChapters(config);
-  if (!chapters.length) throw new Error("No chapters found in config.yaml");
+      const wideElements = [...article.querySelectorAll("table, pre, code, svg")]
+        .map((el) => {
+          const rect = el.getBoundingClientRect();
+          const style = getComputedStyle(el);
+          const parentStyle = el.parentElement ? getComputedStyle(el.parentElement) : null;
+          const locallyScrollable =
+            ["auto", "scroll"].includes(style.overflowX) ||
+            ["auto", "scroll"].includes(parentStyle?.overflowX || "");
 
-  const browser = await chromium.launch({
-    executablePath: chromePath,
-    headless: true,
-    args: ["--no-sandbox", "--disable-dev-shm-usage"],
-  });
+          return {
+            tag: el.tagName.toLowerCase(),
+            width: Math.round(rect.width),
+            right: Math.round(rect.right),
+            locallyScrollable,
+            text: (el.textContent || "").trim().slice(0, 80),
+          };
+        })
+        .filter((item) => item.right > viewportWidth + 2 && !item.locallyScrollable);
+
+      const headings = [...article.querySelectorAll("h1, h2")]
+        .map((el) => (el.textContent || "").trim())
+        .filter(Boolean)
+        .slice(0, 8);
+
+      return {
+        viewportWidth,
+        shellClientWidth: root.clientWidth,
+        shellScrollWidth: root.scrollWidth,
+        articleClientWidth: article.clientWidth,
+        articleScrollWidth: article.scrollWidth,
+        contentOverflow:
+          root.scrollWidth > root.clientWidth + 2 ||
+          article.scrollWidth > article.clientWidth + 2,
+        brokenImages,
+        wideElements,
+        bodyTextLength: article.innerText.trim().length,
+        headings,
+      };
+    });
+
+    const failures = [];
+    if (metrics.contentOverflow) {
+      failures.push(
+        `content overflow shell=${metrics.shellScrollWidth}/${metrics.shellClientWidth} article=${metrics.articleScrollWidth}/${metrics.articleClientWidth}`,
+      );
+    }
+    if (metrics.brokenImages.length) {
+      failures.push(`broken images: ${metrics.brokenImages.join(", ")}`);
+    }
+    if (metrics.wideElements.length) {
+      failures.push(`uncontained wide elements: ${JSON.stringify(metrics.wideElements)}`);
+    }
+    if (metrics.bodyTextLength < 100) {
+      failures.push(`body text too short: ${metrics.bodyTextLength}`);
+    }
+    if (!metrics.headings.length) failures.push("no rendered h1/h2 headings");
+
+    return { slug, viewport: viewportName, metrics, failures };
+  }
 
   const report = {
     generatedAt: new Date().toISOString(),
     baseUrl,
+    bookSlug,
+    configPath: path.relative(process.cwd(), configPath),
+    artifactDir: path.relative(process.cwd(), artifactDir),
     chapters: chapters.length,
+    representative,
     renderer: "zenn-preview-api + preview stylesheets",
     results: [],
   };
 
   try {
-    const stylesheetHrefs = await loadPreviewStyles(browser);
+    const stylesheetHrefs = await loadPreviewStyles();
     report.stylesheetHrefs = stylesheetHrefs;
 
     const { apiUrl: bookApiUrl, book } = await fetchBookMeta();
@@ -255,6 +397,7 @@ async function main() {
     if (!bookUiResponse || !bookUiResponse.ok()) {
       throw new Error(`book top HTTP ${bookUiResponse?.status() ?? "NO_RESPONSE"}`);
     }
+
     await bookUiPage.getByText(book.title, { exact: false }).first().waitFor({ timeout: 10_000 });
     const bookTopText = await bookUiPage.locator("body").innerText();
     if (!bookTopText.includes(book.summary)) {
@@ -265,6 +408,7 @@ async function main() {
         throw new Error(`book top does not render topic: ${topic}`);
       }
     }
+
     const includedChapterItems = await bookUiPage
       .locator(".book-show__chapters")
       .first()
@@ -282,9 +426,7 @@ async function main() {
     report.book.chapterCount = includedChapterItems;
     report.book.excludedMarkdownCount = excludedChapterItems;
 
-    const validationErrors = await bookUiPage
-      .locator(".book-header__validation-errors")
-      .count();
+    const validationErrors = await bookUiPage.locator(".book-header__validation-errors").count();
     if (validationErrors !== 0) {
       const validationText = await bookUiPage
         .locator(".book-header__validation-errors")
@@ -292,18 +434,24 @@ async function main() {
       throw new Error(`book top validation error: ${validationText}`);
     }
 
-    const cover = await bookUiPage
-      .locator(".book-header__cover-img")
-      .evaluate((img) => ({
-        src: img.getAttribute("src") || "",
-        complete: img.complete,
-        naturalWidth: img.naturalWidth,
-        naturalHeight: img.naturalHeight,
-      }));
-    if (!cover.complete || cover.naturalWidth === 0 || cover.naturalHeight === 0) {
-      throw new Error(`book cover failed to load: ${JSON.stringify(cover)}`);
+    const coverCount = await bookUiPage.locator(".book-header__cover-img").count();
+    if (coverCount > 0) {
+      const cover = await bookUiPage
+        .locator(".book-header__cover-img")
+        .first()
+        .evaluate((img) => ({
+          src: img.getAttribute("src") || "",
+          complete: img.complete,
+          naturalWidth: img.naturalWidth,
+          naturalHeight: img.naturalHeight,
+        }));
+      if (!cover.complete || cover.naturalWidth === 0 || cover.naturalHeight === 0) {
+        throw new Error(`book cover failed to load: ${JSON.stringify(cover)}`);
+      }
+      report.book.cover = cover;
+    } else {
+      report.book.cover = null;
     }
-    report.book.cover = cover;
 
     await bookUiPage.screenshot({
       path: path.join(artifactDir, "desktop-book-top.png"),
@@ -330,21 +478,9 @@ async function main() {
       report.results.push(result);
 
       if (result.failures.length) {
-        console.error(
-          `[check:zenn-book-browser] FAIL ${slug} mobile: ${result.failures.join(" | ")}`,
-        );
+        console.error(`${LABEL} FAIL ${slug} mobile: ${result.failures.join(" | ")}`);
       }
     }
-
-    const representative = [
-      "00_introduction",
-      "06_review-the-development-flow",
-      "13_human-judgment",
-      "21_generation-and-verification",
-      "29_start-with-one-skill",
-      "32_human-review-boundary",
-      "a3_roadmap",
-    ];
 
     for (const slug of representative) {
       const { bodyHtml } = rendered.get(slug);
@@ -390,18 +526,29 @@ async function main() {
   );
 
   if (failures.length) {
-    console.error(`[check:zenn-book-browser] FAILED: ${failures.length} issue(s)`);
+    console.error(`${LABEL} FAILED: ${failures.length} issue(s)`);
     for (const failure of failures) console.error(`  - ${failure}`);
     process.exit(1);
   }
 
   console.log(
-    `[check:zenn-book-browser] OK: book top + ${chapters.length} mobile rendered chapters + 7 desktop chapters`,
+    `${LABEL} OK: ${bookSlug} / book top + ${chapters.length} mobile chapters + ${representative.length} desktop representative chapters`,
   );
 }
 
+async function main() {
+  const options = parseArgs(process.argv.slice(2));
+  if (options.selfTest) {
+    selfTest();
+    return;
+  }
+  await runBrowserCheck(options);
+}
+
 main().catch((error) => {
-  console.error("[check:zenn-book-browser] ERROR");
+  console.error(`${LABEL} ERROR`);
   console.error(error?.stack || error);
   process.exit(1);
 });
+
+export { parseArgs, parseChapters, selectRepresentativeChapters, validateBookSlug };
