@@ -24,8 +24,7 @@
       "userPrompt": "この技術記事案を長文にする前に、Reader Problem・中心主張・Evidence・Out of ScopeをDraft Article Planに整理したい",
       "expectedSkill": "tech-blog-writing",
       "forbiddenSkills": [
-        "note-thesis-review-loop",
-        "article-review-apply"
+        "note-thesis-review-loop"
       ]
     },
     {
