@@ -86,9 +86,11 @@ function validateBook(bookDir, options = {}) {
     }
 
     const content = fs.readFileSync(file, "utf8");
-    const h1Count = (content.match(/^#\s+.+$/gm) || []).length;
-    if (h1Count !== 1) {
-      errors.push(`${slug}.md: H1 は1つ必要（実際 ${h1Count}）`);
+    if (options.checkH1 !== false) {
+      const h1Count = (content.match(/^#\s+.+$/gm) || []).length;
+      if (h1Count !== 1) {
+        errors.push(`${slug}.md: H1 は1つ必要（実際 ${h1Count}）`);
+      }
     }
 
     if (!hasBalancedFences(content)) {
@@ -124,10 +126,16 @@ function findBookDirs(rootDir) {
 }
 
 function validateBooksRoot(rootDir, options = {}) {
-  return findBookDirs(rootDir).map((bookDir) => ({
-    bookDir,
-    errors: validateBook(bookDir, options),
-  }));
+  return findBookDirs(rootDir).map((bookDir) => {
+    const bookOptions = { ...options };
+    if (options.modernH1ByBookPlan) {
+      bookOptions.checkH1 = fs.existsSync(path.join(bookDir, "BOOK_PLAN.md"));
+    }
+    return {
+      bookDir,
+      errors: validateBook(bookDir, bookOptions),
+    };
+  });
 }
 
 function selfTest() {
@@ -273,6 +281,7 @@ function main() {
   const options = {
     requireSourcesNumbered: args.includes("--require-sources-numbered"),
     checkPlaceholders: allBooks ? args.includes("--check-placeholders") : true,
+    modernH1ByBookPlan: allBooks,
   };
 
   if (allBooks) {
