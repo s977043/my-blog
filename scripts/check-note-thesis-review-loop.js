@@ -25,6 +25,17 @@ function requireTokens(errors, label, text, tokens) {
 const DECLARED_LOOPS = [1, 2, 3, 4, 5]
 const LOOP_PHASE_KINDS = ['Review', 'Improve', 'Recheck']
 
+const PERSONA_CONTRACT = [
+  ['thesis-guardian', 'Thesis Guardian'],
+  ['logic-editor', 'Logic Editor'],
+  ['skeptical-senior-engineer', 'Skeptical Senior Engineer'],
+  ['coding-agent-practitioner', 'Coding Agent Practitioner'],
+  ['product-manager', 'Product Manager'],
+  ['engineering-manager', 'Engineering Manager / CTO'],
+  ['note-editor', 'note Editor'],
+  ['first-time-reader', 'First-time Reader'],
+]
+
 function validateLoopContract(errors, workflow) {
   for (const number of DECLARED_LOOPS) {
     if (!workflow.includes(`number: ${number},`)) {
@@ -48,6 +59,14 @@ function validateLoopContract(errors, workflow) {
 
 function validate(workflow, snapshot, skill, loopReference, gateReference) {
   const errors = []
+  for (const [slug, displayName] of PERSONA_CONTRACT) {
+    if (!workflow.includes(`['${slug}',`)) {
+      errors.push(`workflow missing persona role: ${slug}`)
+    }
+    if (!loopReference.includes(`**${displayName}**`)) {
+      errors.push(`loop reference missing persona role: ${displayName}`)
+    }
+  }
   requireTokens(errors, 'workflow', workflow, [
     "{ title: 'Snapshot' }",
     "phase('Snapshot')",
@@ -127,6 +146,7 @@ function selfTest() {
     'ALLOWED_LOOP_COUNTS args.loops NOTE_STYLE_RULES',
     loopFixture,
     'for (const config of ACTIVE_LOOP_CONFIGS) {',
+    "['thesis-guardian', ['logic-editor', ['skeptical-senior-engineer', ['coding-agent-practitioner', ['product-manager', ['engineering-manager', ['note-editor', ['first-time-reader',",
   ].join('\n')
   const snapshot = [
     "captureSnapshot compareSnapshot articleSha256 git(['branch', '--show-current'] git(['rev-parse', 'HEAD']",
@@ -134,7 +154,7 @@ function selfTest() {
   ].join('\n')
 
   const skill = 'Article Contract 独立Thesis Gate references/loop-personas.md references/thesis-gate.md'
-  const loopReference = 'Loop 1 Loop 2 Loop 3 Thesis Guardian First-time Reader'
+  const loopReference = 'Loop 1 Loop 2 Loop 3 **Thesis Guardian** **Logic Editor** **Skeptical Senior Engineer** **Coding Agent Practitioner** **Product Manager** **Engineering Manager / CTO** **note Editor** **First-time Reader**'
   const gateReference = 'Thesis Gate Topicが変わっていない Claimの方向と強さが維持されている 具体例の扱い 外部情報・引用'
 
   const valid = validate(workflow, snapshot, skill, loopReference, gateReference)
@@ -164,6 +184,11 @@ function selfTest() {
 
   const noLoopsArg = validate(workflow.replace('args.loops', ''), snapshot, skill, loopReference, gateReference)
   if (!noLoopsArg.some((item) => item.includes('args.loops'))) throw new Error('missing args.loops was not rejected')
+
+  const missingPersona = validate(workflow.replace("['logic-editor',", ''), snapshot, skill, loopReference, gateReference)
+  if (!missingPersona.some((item) => item.includes('workflow missing persona role: logic-editor'))) {
+    throw new Error('workflow/reference persona drift was not rejected')
+  }
 
   const missingLoopRef = validate(workflow, snapshot, skill.replace('references/loop-personas.md', ''), loopReference, gateReference)
   if (!missingLoopRef.some((item) => item.includes('references/loop-personas.md'))) {
