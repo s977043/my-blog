@@ -83,6 +83,7 @@ function validate(files) {
     'published: false',
     'cover image',
     'Book → Zenn article link',
+    'npm run check:zenn-book-browser',
   ])
 
   requireTokens(errors, 'template config', templateConfig, [
@@ -99,6 +100,7 @@ function validate(files) {
     '--dry-run',
     'cover.png',
     'repository相対パス',
+    'npm run check:zenn-book-browser',
   ])
 
   requireTokens(errors, 'template plan', templatePlan, [
@@ -118,6 +120,7 @@ function validate(files) {
     'published: false',
     'cover image',
     'repositoryファイル相対パス',
+    'npm run check:zenn-book-browser',
   ])
 
   requireTokens(errors, 'generator', generator, [
