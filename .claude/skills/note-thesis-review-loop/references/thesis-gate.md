@@ -1,6 +1,6 @@
 # Thesis Gate and evidence policy
 
-> Source: `.claude/skills/note-thesis-review-loop/SKILL.md`. Improve後の独立Gateと指摘採否で読む。
+> Canonical detail for Thesis Gate / evidence policy. Entrypoint: `.claude/skills/note-thesis-review-loop/SKILL.md`. Improve後の独立Gateと指摘採否で読む。
 
 ## Thesis Gate
 
