@@ -3,6 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
+const os = require("os");
 
 const ROOT = path.resolve(__dirname, "..");
 const LABEL = "[list:changed-zenn-books]";
@@ -106,7 +107,7 @@ function selfTest() {
     throw new Error(`extractBookSlugs failed: ${JSON.stringify(slugs)}`);
   }
 
-  const tmp = fs.mkdtempSync(path.join(require("os").tmpdir(), "changed-zenn-books-"));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "changed-zenn-books-"));
   try {
     fs.mkdirSync(path.join(tmp, "books", "book-a"), { recursive: true });
     fs.writeFileSync(path.join(tmp, "books", "book-a", "config.yaml"), "title: a\n");
@@ -116,6 +117,52 @@ function selfTest() {
     }
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
+  }
+
+  const gitTmp = fs.mkdtempSync(path.join(os.tmpdir(), "changed-zenn-books-git-"));
+  try {
+    const git = (...args) => {
+      const result = spawnSync("git", args, { cwd: gitTmp, encoding: "utf8" });
+      if (result.status !== 0) {
+        throw new Error(`git ${args.join(" ")} failed: ${result.stderr || result.stdout}`);
+      }
+      return result.stdout.trim();
+    };
+
+    git("init", "-q", "-b", "main");
+    git("config", "user.email", "test@example.com");
+    git("config", "user.name", "fixture");
+
+    fs.mkdirSync(path.join(gitTmp, "books", "book-a"), { recursive: true });
+    fs.mkdirSync(path.join(gitTmp, "books", "book-b"), { recursive: true });
+    fs.mkdirSync(path.join(gitTmp, "articles"), { recursive: true });
+    fs.writeFileSync(path.join(gitTmp, "books", "book-a", "config.yaml"), "title: a\n");
+    fs.writeFileSync(path.join(gitTmp, "books", "book-a", "01.md"), "# A\n");
+    fs.writeFileSync(path.join(gitTmp, "books", "book-b", "config.yaml"), "title: b\n");
+    fs.writeFileSync(path.join(gitTmp, "books", "book-b", "01.md"), "# B\n");
+    fs.writeFileSync(path.join(gitTmp, "articles", "x.md"), "# X\n");
+    git("add", ".");
+    git("commit", "-q", "-m", "base");
+    const base = git("rev-parse", "HEAD");
+
+    fs.writeFileSync(path.join(gitTmp, "books", "book-a", "01.md"), "# A2\n");
+    fs.rmSync(path.join(gitTmp, "books", "book-b"), { recursive: true, force: true });
+    fs.writeFileSync(path.join(gitTmp, "articles", "x.md"), "# X2\n");
+    git("add", "-A");
+    git("commit", "-q", "-m", "change");
+
+    const changed = listChangedBooks(base, gitTmp);
+    if (JSON.stringify(changed.existing) !== JSON.stringify(["book-a"])) {
+      throw new Error(`git fixture existing failed: ${JSON.stringify(changed)}`);
+    }
+    if (JSON.stringify(changed.removed) !== JSON.stringify(["book-b"])) {
+      throw new Error(`git fixture removed failed: ${JSON.stringify(changed)}`);
+    }
+    if (changed.discovered.includes("x")) {
+      throw new Error(`article path leaked into Book detection: ${JSON.stringify(changed)}`);
+    }
+  } finally {
+    fs.rmSync(gitTmp, { recursive: true, force: true });
   }
 
   let missingBaseRejected = false;
