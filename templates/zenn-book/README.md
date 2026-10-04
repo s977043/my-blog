@@ -68,7 +68,7 @@ npm run check:zenn-book-browser -- --book {{BOOK_SLUG}}
 - mobile 390pxでは全章を検査する
 - desktopは章全体から最大7章を均等抽出して検査・screenshot保存する
 - 証跡は `artifacts/zenn-book-browser/{{BOOK_SLUG}}/` に保存する
-- `release/zenn` PRでは変更BookをCIが自動検出し、同じbrowser checkを再実行する
+- `release/zenn` PRでは変更されたpublished:true BookをCIが自動検出し、同じbrowser checkを再実行する
 
 repository全体:
 
