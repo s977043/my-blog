@@ -79,15 +79,18 @@ TRIAGED
   ↓
 PROMOTED
   ↓
-PLANNED
-  ↓
-Draft Article Planを記録
-  ↓
-DRAFTED以降は既存Writer / Review / Final Gateへ委譲
+AUTHOR_INPUT_REQUIRED?
+  ├─ yes → NEEDS_INPUT（LifecycleはPROMOTEDのまま）
+  └─ no  → Draft Article Planを記録
+              ↓
+           PLANNED
+              ↓
+          DRAFTED以降は既存Writer / Review / Final Gateへ委譲
 ```
 
 - Seedのprovenanceと状態定義は `docs/article-lifecycle-contract.md` を正とする
 - `PROMOTED` へ進める場合は、外部Signalの出典と `evidence_status` を明示する
+- 未解決の `AUTHOR_INPUT_REQUIRED` がある場合は記事ネタ判定を `NEEDS_INPUT` とし、Lifecycleは `PROMOTED` のまま止める。AIがmarkerを独断で削除して `PLANNED` へ進めない
 - `PLANNED` は「読者課題・中心主張・根拠・媒体・構成・書かない範囲」の仮案が揃った状態とする
 - 本文生成へ進む前に `Draft Article Plan`（仮のArticle Plan）をSeedへ記録する
 - Plan Approval（Human）は独立した必須工程ではない。中心主張や書かない範囲の変更を採用する前に著者の判断を得る（この判断を Plan Approval としてよい）

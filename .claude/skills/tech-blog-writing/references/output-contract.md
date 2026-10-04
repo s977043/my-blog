@@ -36,8 +36,9 @@ READY | NEEDS_INPUT | PARK
 必要最小限の見出し
 
 ## 著者確認が必要
-- 未解決の AUTHOR_INPUT_REQUIRED:
-- 追加で必要な質問・不足事項:
+- 既存の AUTHOR_INPUT_REQUIRED:
+- 追加提案する AUTHOR_INPUT_REQUIRED:
+- その他の質問・不足事項:
 ```
 
 `AUTHOR_INPUT_REQUIRED` が残っている場合は判定を `NEEDS_INPUT` とし、Draft Article Plan / Draftへ進めない。

@@ -26,23 +26,51 @@ function lineNumber(text, index) {
   return text.slice(0, index).split(/\r?\n/).length
 }
 
+function maskFencedBlocks(text) {
+  let inFence = false
+  return String(text)
+    .split(/\r?\n/)
+    .map((line) => {
+      if (/^\s*(```|~~~)/.test(line)) {
+        inFence = !inFence
+        return ''
+      }
+      return inFence ? '' : line
+    })
+    .join('\n')
+}
+
+function normalizeAuthorInput(detail) {
+  return String(detail || '').trim().replace(/\s+/g, ' ')
+}
+
 function validateText(text, label = '<fixture>') {
   const errors = []
+  const visible = maskFencedBlocks(text)
+
   for (const pattern of GENERIC_TODO_PATTERNS) {
     pattern.lastIndex = 0
     let match
-    while ((match = pattern.exec(text))) {
-      errors.push(`${label}:${lineNumber(text, match.index)} generic TODO in article_seeds; use AUTHOR_INPUT_REQUIRED for author-only evidence or a concrete experiment checkbox for future work`)
+    while ((match = pattern.exec(visible))) {
+      errors.push(`${label}:${lineNumber(visible, match.index)} generic TODO in article_seeds; use AUTHOR_INPUT_REQUIRED for author-only evidence or a concrete experiment checkbox for future work`)
     }
   }
 
+  const seenAuthorInputs = new Map()
   AUTHOR_INPUT_PATTERN.lastIndex = 0
   let match
-  while ((match = AUTHOR_INPUT_PATTERN.exec(text))) {
-    const detail = String(match[1] || '').trim()
+  while ((match = AUTHOR_INPUT_PATTERN.exec(visible))) {
+    const detail = normalizeAuthorInput(match[1])
+    const line = lineNumber(visible, match.index)
     if (!detail) {
-      errors.push(`${label}:${lineNumber(text, match.index)} AUTHOR_INPUT_REQUIRED must describe the missing first-party evidence`)
+      errors.push(`${label}:${line} AUTHOR_INPUT_REQUIRED must describe the missing first-party evidence`)
+      continue
     }
+    if (seenAuthorInputs.has(detail)) {
+      errors.push(`${label}:${line} duplicate AUTHOR_INPUT_REQUIRED; same evidence request already appears at line ${seenAuthorInputs.get(detail)}`)
+      continue
+    }
+    seenAuthorInputs.set(detail, line)
   }
 
   return errors
@@ -82,6 +110,24 @@ function selfTest() {
   const empty = validateText('<!-- AUTHOR_INPUT_REQUIRED:   -->')
   if (!empty.some((e) => e.includes('must describe'))) {
     throw new Error('empty AUTHOR_INPUT_REQUIRED was not rejected')
+  }
+
+  const duplicate = validateText([
+    '<!-- AUTHOR_INPUT_REQUIRED: 実際の失敗例を1件 -->',
+    '<!-- AUTHOR_INPUT_REQUIRED:   実際の失敗例を1件   -->',
+  ].join('\n'))
+  if (!duplicate.some((e) => e.includes('duplicate AUTHOR_INPUT_REQUIRED'))) {
+    throw new Error('duplicate AUTHOR_INPUT_REQUIRED was not rejected')
+  }
+
+  const fencedExamples = validateText([
+    '```md',
+    '> TODO: example only',
+    '<!-- AUTHOR_INPUT_REQUIRED: example only -->',
+    '```',
+  ].join('\n'))
+  if (fencedExamples.length) {
+    throw new Error(`fenced examples must be ignored: ${fencedExamples.join('; ')}`)
   }
 
   console.log('[test:article-seed-placeholders] PASS')
