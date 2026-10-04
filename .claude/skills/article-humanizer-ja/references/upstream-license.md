@@ -1,6 +1,6 @@
 # Upstream and license
 
-> Source: `.claude/skills/article-humanizer-ja/SKILL.md`. provenance / license確認時だけ読む。
+> Canonical detail for upstream provenance / license. Entrypoint: `.claude/skills/article-humanizer-ja/SKILL.md`. provenance / license確認時だけ読む。
 
 このSkillは、以下の公開リポジトリで整理された3層構造と日本語向けパターンを調査材料としている。
 
