@@ -251,10 +251,39 @@ function selfTest() {
     fs.writeFileSync(path.join(target, "part1_topic.md"), validPart);
   }
 
+  fs.writeFileSync(path.join(bookA, "BOOK_PLAN.md"), "# Plan\n");
+
   expect(
     "validate all books root",
-    () => validateBooksRoot(booksRoot).flatMap((result) => result.errors),
+    () =>
+      validateBooksRoot(booksRoot, {
+        modernH1ByBookPlan: true,
+        checkPlaceholders: false,
+      }).flatMap((result) => result.errors),
     (errors) => errors.length === 0 && findBookDirs(booksRoot).length === 2,
+  );
+
+  fs.writeFileSync(path.join(bookA, "01_intro.md"), validIntro.replace("# Intro", "Intro"));
+  expect(
+    "modern book requires H1",
+    () =>
+      validateBooksRoot(booksRoot, {
+        modernH1ByBookPlan: true,
+        checkPlaceholders: false,
+      }).flatMap((result) => result.errors),
+    (errors) => errors.some((e) => e.includes("H1 は1つ必要")),
+  );
+  fs.writeFileSync(path.join(bookA, "01_intro.md"), validIntro);
+
+  fs.writeFileSync(path.join(bookB, "01_intro.md"), validIntro.replace("# Intro", "Intro"));
+  expect(
+    "legacy book may omit H1 in all-book check",
+    () =>
+      validateBooksRoot(booksRoot, {
+        modernH1ByBookPlan: true,
+        checkPlaceholders: false,
+      }).flatMap((result) => result.errors),
+    (errors) => errors.length === 0,
   );
 
   fs.rmSync(root, { recursive: true, force: true });
