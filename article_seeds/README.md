@@ -28,6 +28,18 @@
 
 本文では観測事実と解釈・仮説を混ぜない。
 
+### 著者入力待ち
+
+一次体験・会話・実測値など、AIが推測で補完してはいけない材料が不足している場合は、genericな `TODO:` ではなく次の形式で残す。
+
+```md
+<!-- AUTHOR_INPUT_REQUIRED: 不足している一次情報。AIは推測で補完しない。 -->
+```
+
+このマーカーは「AIの未完了タスク」ではなく **Human Gate** を表す。著者本人から事実が提供されたときだけ置換し、存在しない経験・数字・会話を生成して埋めない。
+
+将来の検証や観測は通常のチェックボックス（`- [ ]`）で残してよい。著者入力待ちと実験タスクを混同しない。
+
 記事化判断・構成設計へ進めるときは `.claude/skills/tech-blog-writing/SKILL.md` を入口にする。このSkillは `CAPTURED → TRIAGED → PROMOTED → PLANNED` の上流整理と、初稿前の `Draft Article Plan` 記録までを担当し、本文生成・媒体別Review・Final Gate・公開処理は既存フローへ委譲する。
 
 初稿作成前に、`Draft Article Plan`（仮のArticle Plan）を本文末尾へ `## Draft Article Plan: <channel>/<slug>` として追記する。追記先は、テーマ別サブディレクトリ（`article_seeds/<theme>/`）の対応するSeedとする。対応するSeedが無い場合は、下記の置き場所の規則に従って `TEMPLATE.md` から作る。Plan Approval後は同じPlanの見出しを `## Approved Article Plan: <channel>/<slug>` に変更する。複数媒体へ派生する場合はPlanを分け、上書きしない。初期Seedには空のPlanを置かない。
