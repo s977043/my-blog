@@ -296,7 +296,11 @@ AGENT_LEARNINGS.md の更新条件を満たすか確認
   ↓
 Editorial Learning Approval (Human)
   ↓
-必要なら canonical guide / Skill / deterministic check へ昇格
+再現可能なら failing fixture / eval case を先に追加
+  ↓
+canonical guide / Skill / deterministic check を最小変更
+  ↓
+同じ fixture / eval で再検証してから昇格
 ```
 
 - 採否と理由の記録は既存 Review / Applier の成果物を再利用し、専用DBを増やさない
@@ -305,4 +309,7 @@ Editorial Learning Approval (Human)
 - Proposalは「どの規則へ昇格するか」を示すだけで、Skill / Guide / CIを自動更新しない
 - Editorial Learning Approvalは公開承認のLifecycle state `APPROVED` とは別の局所判断であり、状態遷移を発生させない
 - 安定した機械判定が可能なものだけ deterministic check 候補にする。意味判断を要するものは Skill / Guide に残す
+- 再現可能な失敗は、修正前に failing fixture / eval case として残す。routing のような意味判断は semantic eval、構造・禁止操作・形式は deterministic check に分ける
+- fixture に合わせて規則を過学習させない。既知ケースを直した後は、実運用の新しい失敗または held-out case で境界を再確認する
+- 一度きりで再現できない編集上の好みまで fixture 化しない
 - 却下されたレビュー指摘も、同型の誤提案が繰り返される場合は「禁止・境界ルール」のProposal候補になりうる

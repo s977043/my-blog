@@ -1,6 +1,6 @@
 ---
 name: note-article-review
-description: note.com記事（articles_note/<state>/<slug>.md、<state>は new/drafts/published）のレビュー成果物を生成し、編集可能な状態では指摘を反映するワークフロー。drafts は読み取り専用ミラーのためレビューのみ行う。
+description: note.com記事（articles_note/<state>/<slug>.md、<state>は new/drafts/published）の通常レビュー成果物を生成し、編集可能な状態では指摘を反映するワークフロー。主題保護型の反復3/5ループは note-thesis-review-loop を使う。drafts は読み取り専用ミラーのためレビューのみ行う。
 ---
 
 # note-article-review

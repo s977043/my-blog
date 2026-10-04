@@ -123,7 +123,7 @@ Render未確認なら clipping / actual font / real margin は `UNVERIFIED`。
 
 ## Humanize
 
-`.claude/skills/article-humanizer-ja/SKILL.md` のStyle patternsを次へ限定して参照する。
+`.claude/skills/article-humanizer-ja/references/style-patterns.md` のStyle patternsを次へ限定して参照する。
 
 - Speaker Notesの不自然なAI定型表現
 - スライド見出しの均一すぎる文型

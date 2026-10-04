@@ -6,6 +6,9 @@ const path = require('path')
 const ROOT = path.resolve(__dirname, '..')
 const WORKFLOW = '.claude/workflows/note-thesis-review-loop.js'
 const SNAPSHOT = 'scripts/check-note-thesis-snapshot.js'
+const SKILL = '.claude/skills/note-thesis-review-loop/SKILL.md'
+const LOOP_REFERENCE = '.claude/skills/note-thesis-review-loop/references/loop-personas.md'
+const GATE_REFERENCE = '.claude/skills/note-thesis-review-loop/references/thesis-gate.md'
 
 function requireTokens(errors, label, text, tokens) {
   for (const token of tokens) {
@@ -21,6 +24,17 @@ function requireTokens(errors, label, text, tokens) {
 //   4. どのループも phase 名をハードコードしないこと（= ガード付き共通本体を必ず通る）
 const DECLARED_LOOPS = [1, 2, 3, 4, 5]
 const LOOP_PHASE_KINDS = ['Review', 'Improve', 'Recheck']
+
+const PERSONA_CONTRACT = [
+  ['thesis-guardian', 'Thesis Guardian'],
+  ['logic-editor', 'Logic Editor'],
+  ['skeptical-senior-engineer', 'Skeptical Senior Engineer'],
+  ['coding-agent-practitioner', 'Coding Agent Practitioner'],
+  ['product-manager', 'Product Manager'],
+  ['engineering-manager', 'Engineering Manager / CTO'],
+  ['note-editor', 'note Editor'],
+  ['first-time-reader', 'First-time Reader'],
+]
 
 function validateLoopContract(errors, workflow) {
   for (const number of DECLARED_LOOPS) {
@@ -43,8 +57,16 @@ function validateLoopContract(errors, workflow) {
   }
 }
 
-function validate(workflow, snapshot) {
+function validate(workflow, snapshot, skill, loopReference, gateReference) {
   const errors = []
+  for (const [slug, displayName] of PERSONA_CONTRACT) {
+    if (!workflow.includes(`['${slug}',`)) {
+      errors.push(`workflow missing persona role: ${slug}`)
+    }
+    if (!loopReference.includes(`**${displayName}**`)) {
+      errors.push(`loop reference missing persona role: ${displayName}`)
+    }
+  }
   requireTokens(errors, 'workflow', workflow, [
     "{ title: 'Snapshot' }",
     "phase('Snapshot')",
@@ -62,6 +84,26 @@ function validate(workflow, snapshot) {
     'NOTE_STYLE_RULES',
   ])
   validateLoopContract(errors, workflow)
+  requireTokens(errors, 'skill', skill, [
+    'references/loop-personas.md',
+    'references/thesis-gate.md',
+    'Article Contract',
+    '独立Thesis Gate',
+  ])
+  requireTokens(errors, 'loop reference', loopReference, [
+    'Loop 1',
+    'Loop 2',
+    'Loop 3',
+    'Thesis Guardian',
+    'First-time Reader',
+  ])
+  requireTokens(errors, 'gate reference', gateReference, [
+    'Thesis Gate',
+    'Topicが変わっていない',
+    'Claimの方向と強さが維持されている',
+    '具体例の扱い',
+    '外部情報・引用',
+  ])
   requireTokens(errors, 'snapshot helper', snapshot, [
     'captureSnapshot',
     'compareSnapshot',
@@ -104,39 +146,59 @@ function selfTest() {
     'ALLOWED_LOOP_COUNTS args.loops NOTE_STYLE_RULES',
     loopFixture,
     'for (const config of ACTIVE_LOOP_CONFIGS) {',
+    "['thesis-guardian', ['logic-editor', ['skeptical-senior-engineer', ['coding-agent-practitioner', ['product-manager', ['engineering-manager', ['note-editor', ['first-time-reader',",
   ].join('\n')
   const snapshot = [
     "captureSnapshot compareSnapshot articleSha256 git(['branch', '--show-current'] git(['rev-parse', 'HEAD']",
     'ABORT: article snapshot changed --self-test',
   ].join('\n')
 
-  const valid = validate(workflow, snapshot)
+  const skill = 'Article Contract 独立Thesis Gate references/loop-personas.md references/thesis-gate.md'
+  const loopReference = 'Loop 1 Loop 2 Loop 3 **Thesis Guardian** **Logic Editor** **Skeptical Senior Engineer** **Coding Agent Practitioner** **Product Manager** **Engineering Manager / CTO** **note Editor** **First-time Reader**'
+  const gateReference = 'Thesis Gate Topicが変わっていない Claimの方向と強さが維持されている 具体例の扱い 外部情報・引用'
+
+  const valid = validate(workflow, snapshot, skill, loopReference, gateReference)
   if (valid.length) throw new Error(`valid fixture failed: ${valid.join('; ')}`)
 
-  const noVerify = validate(workflow.replace('check-note-thesis-snapshot.js verify', ''), snapshot)
+  const noVerify = validate(workflow.replace('check-note-thesis-snapshot.js verify', ''), snapshot, skill, loopReference, gateReference)
   if (!noVerify.some((item) => item.includes('verify'))) throw new Error('missing verify was not rejected')
 
-  const writeGit = validate(`${workflow}\ngit checkout main`, snapshot)
+  const writeGit = validate(`${workflow}\ngit checkout main`, snapshot, skill, loopReference, gateReference)
   if (!writeGit.some((item) => item.includes('git checkout'))) throw new Error('git write operation was not rejected')
 
-  const noLoop5 = validate(workflow.replace("{ title: 'Loop5-Recheck' }", ''), snapshot)
+  const noLoop5 = validate(workflow.replace("{ title: 'Loop5-Recheck' }", ''), snapshot, skill, loopReference, gateReference)
   if (!noLoop5.some((item) => item.includes('Loop5-Recheck'))) throw new Error('missing Loop5 phase was not rejected')
 
-  const noLoop4Config = validate(workflow.replace('number: 4,', ''), snapshot)
+  const noLoop4Config = validate(workflow.replace('number: 4,', ''), snapshot, skill, loopReference, gateReference)
   if (!noLoop4Config.some((item) => item.includes('number: 4'))) throw new Error('missing Loop4 config was not rejected')
 
-  const hardcodedPhase = validate(`${workflow}\nphase('Loop4-Review')`, snapshot)
+  const hardcodedPhase = validate(`${workflow}\nphase('Loop4-Review')`, snapshot, skill, loopReference, gateReference)
   if (!hardcodedPhase.some((item) => item.includes('hardcode'))) {
     throw new Error('hardcoded Loop4 phase (bypassing the shared guarded body) was not rejected')
   }
 
-  const forkedBody = validate(`${workflow}\nfor (const config of ACTIVE_LOOP_CONFIGS) {`, snapshot)
+  const forkedBody = validate(`${workflow}\nfor (const config of ACTIVE_LOOP_CONFIGS) {`, snapshot, skill, loopReference, gateReference)
   if (!forkedBody.some((item) => item.includes('exactly one shared body'))) {
     throw new Error('duplicated loop body was not rejected')
   }
 
-  const noLoopsArg = validate(workflow.replace('args.loops', ''), snapshot)
+  const noLoopsArg = validate(workflow.replace('args.loops', ''), snapshot, skill, loopReference, gateReference)
   if (!noLoopsArg.some((item) => item.includes('args.loops'))) throw new Error('missing args.loops was not rejected')
+
+  const missingPersona = validate(workflow.replace("['logic-editor',", ''), snapshot, skill, loopReference, gateReference)
+  if (!missingPersona.some((item) => item.includes('workflow missing persona role: logic-editor'))) {
+    throw new Error('workflow/reference persona drift was not rejected')
+  }
+
+  const missingLoopRef = validate(workflow, snapshot, skill.replace('references/loop-personas.md', ''), loopReference, gateReference)
+  if (!missingLoopRef.some((item) => item.includes('references/loop-personas.md'))) {
+    throw new Error('missing loop reference link was not rejected')
+  }
+
+  const incompleteGateRef = validate(workflow, snapshot, skill, loopReference, gateReference.replace('Claimの方向と強さが維持されている', ''))
+  if (!incompleteGateRef.some((item) => item.includes('Claimの方向と強さが維持されている'))) {
+    throw new Error('incomplete thesis gate reference was not rejected')
+  }
 
   console.log('[test:note-thesis-review-loop] PASS')
 }
@@ -146,7 +208,13 @@ function main() {
     selfTest()
     return
   }
-  const errors = validate(read(WORKFLOW), read(SNAPSHOT))
+  const errors = validate(
+    read(WORKFLOW),
+    read(SNAPSHOT),
+    read(SKILL),
+    read(LOOP_REFERENCE),
+    read(GATE_REFERENCE)
+  )
   if (errors.length) {
     console.error('[check:note-thesis-review-loop] FAIL')
     for (const error of errors) console.error(`- ${error}`)
