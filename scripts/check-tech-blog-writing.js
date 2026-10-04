@@ -123,7 +123,7 @@ function validate(files) {
   requireTokens(errors, 'lifecycle contract', lifecycle, [
     'Author Input Gate（Human）',
     'AUTHOR_INPUT_REQUIRED',
-    'PLANNED → DRAFTED',
+    'PROMOTED` で止めて `PLANNED` へ遷移させず',
     'AIは中心主張を縮小する案を提案してよい',
   ])
 
@@ -181,7 +181,7 @@ function selfTest() {
   ].join('\n')
   base[PATHS.existing] = '### Mode B: 既存記事を確認する Reader Gate Experience Gate Evidence Gate Scope Gate Subtraction Gate Channel Gate /humanize-review /review-article /review-note-article'
   base[PATHS.output] = '### 記事ネタモード # Tech Blog Idea Check READY | NEEDS_INPUT | PARK 未解決の AUTHOR_INPUT_REQUIRED Draft Article Plan / Draftへ進めない ### 既存記事モード # Tech Blog Check PASS | NEEDS_REVISION | BLOCKED'
-  base[PATHS.lifecycle] = 'Author Input Gate（Human） AUTHOR_INPUT_REQUIRED PLANNED → DRAFTED AIは中心主張を縮小する案を提案してよい'
+  base[PATHS.lifecycle] = 'Author Input Gate（Human） AUTHOR_INPUT_REQUIRED PROMOTED` で止めて `PLANNED` へ遷移させず AIは中心主張を縮小する案を提案してよい'
   base[PATHS.command] = `${PATHS.skill} ${PATHS.editorial} ${PATHS.idea} ${PATHS.existing} ${PATHS.output} 実在する許可パスなら既存記事モード 長文本文は生成しない 記事本文、Seed metadata、レビュー成果物、設定ファイルを変更していない`
   base[PATHS.articlePlanCheck] = `tech-blog-writing references/idea-mode.md A-5 ${PLAN_TEMPLATE_TEXTS.join(' ')}`
 
