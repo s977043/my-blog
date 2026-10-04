@@ -181,6 +181,8 @@ Part dividerはタイトルだけにしない。
 
 ### Book固有の公開面を確認する
 
+- `npm run check:zenn-book-browser -- --book <slug>` で任意Bookのrenderを検証できる
+- mobileは全章、desktopは代表章を検証し、book slugごとに証跡を残す
 - coverはgeneratorで自動生成せず、公開デザイン決定後に追加してPreviewする
 - Bookから既存Zenn記事へリンクするときは、repositoryファイル相対パスではなく公開サイトで解決するURLを確認する
 - 記事向け内部リンク規約をBookへ機械適用しない
