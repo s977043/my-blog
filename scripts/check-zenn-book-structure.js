@@ -111,6 +111,23 @@ function validateBook(bookDir, options = {}) {
   return errors;
 }
 
+function findBookDirs(rootDir) {
+  if (!fs.existsSync(rootDir)) return [];
+  return fs
+    .readdirSync(rootDir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => path.join(rootDir, entry.name))
+    .filter((dir) => fs.existsSync(path.join(dir, "config.yaml")))
+    .sort();
+}
+
+function validateBooksRoot(rootDir, options = {}) {
+  return findBookDirs(rootDir).map((bookDir) => ({
+    bookDir,
+    errors: validateBook(bookDir, options),
+  }));
+}
+
 function selfTest() {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "zenn-book-check-"));
   const book = path.join(root, "book");
@@ -213,6 +230,23 @@ function selfTest() {
     (errors) => errors.some((e) => e.includes("Sources URL")),
   );
 
+  const booksRoot = path.join(root, "books");
+  const bookA = path.join(booksRoot, "book-a");
+  const bookB = path.join(booksRoot, "book-b");
+  fs.mkdirSync(bookA, { recursive: true });
+  fs.mkdirSync(bookB, { recursive: true });
+  for (const target of [bookA, bookB]) {
+    fs.writeFileSync(path.join(target, "config.yaml"), validConfig);
+    fs.writeFileSync(path.join(target, "01_intro.md"), validIntro);
+    fs.writeFileSync(path.join(target, "part1_topic.md"), validPart);
+  }
+
+  expect(
+    "validate all books root",
+    () => validateBooksRoot(booksRoot).flatMap((result) => result.errors),
+    (errors) => errors.length === 0 && findBookDirs(booksRoot).length === 2,
+  );
+
   fs.rmSync(root, { recursive: true, force: true });
 
   const failed = cases.filter((c) => !c.ok);
@@ -233,28 +267,61 @@ function main() {
   if (args.includes("--self-test")) return selfTest();
 
   const target = args.find((arg) => !arg.startsWith("--"));
+  const options = {
+    requireSourcesNumbered: args.includes("--require-sources-numbered"),
+  };
+
+  if (args.includes("--all")) {
+    const rootDir = path.resolve(process.cwd(), target || "books");
+    const results = validateBooksRoot(rootDir, options);
+    if (!results.length) {
+      console.error(LABEL + " FAIL: config.yaml を持つBookがない: " + rootDir);
+      process.exit(1);
+    }
+
+    const failed = results.filter((result) => result.errors.length);
+    for (const result of results) {
+      const relative = path.relative(process.cwd(), result.bookDir);
+      if (!result.errors.length) {
+        const config = fs.readFileSync(path.join(result.bookDir, "config.yaml"), "utf8");
+        console.log(LABEL + " OK: " + relative + " / " + parseChapters(config).length + " chapters");
+        continue;
+      }
+      console.error(LABEL + " FAIL: " + relative + " / " + result.errors.length + " 件");
+      for (const error of result.errors) console.error("  - " + error);
+    }
+
+    if (failed.length) process.exit(1);
+    console.log(LABEL + " ALL OK: " + results.length + " books");
+    return;
+  }
+
   if (!target) {
-    console.error(`${LABEL} FAIL: book directory を指定してください`);
+    console.error(LABEL + " FAIL: book directory を指定してください");
     process.exit(1);
   }
 
   const bookDir = path.resolve(process.cwd(), target);
-  const errors = validateBook(bookDir, {
-    requireSourcesNumbered: args.includes("--require-sources-numbered"),
-  });
+  const errors = validateBook(bookDir, options);
 
   if (errors.length) {
-    console.error(`${LABEL} FAIL: ${errors.length} 件`);
-    for (const error of errors) console.error(`  - ${error}`);
+    console.error(LABEL + " FAIL: " + errors.length + " 件");
+    for (const error of errors) console.error("  - " + error);
     process.exit(1);
   }
 
   const chapterCount = parseChapters(
     fs.readFileSync(path.join(bookDir, "config.yaml"), "utf8"),
   ).length;
-  console.log(`${LABEL} OK: ${target} / ${chapterCount} chapters`);
+  console.log(LABEL + " OK: " + target + " / " + chapterCount + " chapters");
 }
-
 if (require.main === module) main();
 
-module.exports = { parseChapters, hasBalancedFences, isNumberedContentChapter, validateBook };
+module.exports = {
+  parseChapters,
+  hasBalancedFences,
+  isNumberedContentChapter,
+  validateBook,
+  findBookDirs,
+  validateBooksRoot,
+};
