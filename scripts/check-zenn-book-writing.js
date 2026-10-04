@@ -195,7 +195,7 @@ function selfTest() {
 
   const missingRef = {
     ...base,
-    [PATHS.skill]: base[PATHS.skill].replace('references/book-contract.md', ''),
+    [PATHS.skill]: base[PATHS.skill].replaceAll('references/book-contract.md', ''),
   }
   if (!validate(missingRef).some((e) => e.includes('references/book-contract.md'))) {
     throw new Error('missing skill reference was not rejected')
