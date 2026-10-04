@@ -84,6 +84,9 @@ function validate(files) {
     'cover image',
     'Book → Zenn article link',
     'npm run check:zenn-book-browser',
+    'playwright-core@1.63.0',
+    'playwright-core@1.63.0',
+    'playwright-core@1.63.0',
   ])
 
   requireTokens(errors, 'template config', templateConfig, [
