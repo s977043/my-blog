@@ -44,10 +44,12 @@ npm run check
 - [ ] `npm run list:books` で認識
 - [ ] `npm run check` PASS
 - [ ] internal link / title / markdown hygieneにblocking failureなし
+- [ ] Bookから既存Zenn記事へリンクする場合、公開サイトで解決するURLになっている（repositoryファイル相対パスを使っていない）
 
 ## 5. Zenn preview
 
 - [ ] Book topのtitle / summary / topicsを確認
+- [ ] cover imageを追加する場合は `cover.png` / `cover.jpg` を配置し、preview warningがない
 - [ ] chapter順を確認
 - [ ] mobile幅でtable / code block / diagramを確認
 - [ ] external source linkをspot check
