@@ -46,7 +46,7 @@ const CHANNEL_DIRS = [
  */
 const PLACEHOLDER =
   /^(?:(?:未確認|未定|確認予定|tbd|todo)(?=$|[\s（(、。,.:：/])|-$|\.{3}$|$|（[^）]*記入[^）]*）)/i;
-/** tech-blog-writing SKILL.md A-5 の見本文言。書き換えずに残したものは記録に数えない */
+/** tech-blog-writing references/idea-mode.md A-5 の見本文言。書き換えずに残したものは記録に数えない */
 const TEMPLATE_TEXTS = [
   "実体験なら誰が何を観測したか",
   "外部事実なら確認した内容と参照先",
