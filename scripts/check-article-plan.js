@@ -19,8 +19,9 @@
  * ■ 判定
  *   article_seeds/ 配下に `## (Draft|Approved) Article Plan: <channel>/<slug>` がちょうど1件あり、
  *   その節に reader_problem / central_claim / out_of_scope と、Evidence Boundary の
- *   Observed か Verified の記録があること（ラベルに括弧付きの補足を付けてもよい）。空欄・「未確認」「確認予定」などで始まる値・
- *   SKILL.md の見本文言、コードブロックと HTML コメントの中身は記録に数えない。
+ *   Observed か Verified の記録があること（ラベルに括弧付きの補足を付けてもよい）。
+ *   対応Seedに未解決の AUTHOR_INPUT_REQUIRED が残っていないこと。
+ *   空欄・「未確認」「確認予定」などで始まる値・SKILL.md の見本文言、コードブロックと HTML コメントの中身は記録に数えない。
  */
 
 const fs = require("fs");
@@ -54,6 +55,7 @@ const TEMPLATE_TEXTS = [
 ];
 const FORMAT_HINT =
   "期待する書式: `- reader_problem: …` / `- central_claim: …` / `- out_of_scope: …` と、`### Evidence Boundary` 配下の `- Observed: …` または `- Verified: …`（`- Observed（補足）: …` のような括弧付きも可）";
+const AUTHOR_INPUT_RE = /<!--\s*AUTHOR_INPUT_REQUIRED:\s*([\s\S]*?)-->/gi;
 
 function git(root, args) {
   try {
@@ -226,6 +228,29 @@ function listSeedFiles(root) {
  * コードブロックと HTML コメントの中は見本なので、見出しとしても記録としても数えない。
  * コメントは行番号を保つため改行だけ残して消す。
  */
+function extractAuthorInputs(text) {
+  let inFence = false;
+  const outsideFences = text
+    .split(/\r?\n/)
+    .map((line) => {
+      if (/^\s*(```|~~~)/.test(line)) {
+        inFence = !inFence;
+        return "";
+      }
+      return inFence ? "" : line;
+    })
+    .join("\n");
+
+  const inputs = [];
+  AUTHOR_INPUT_RE.lastIndex = 0;
+  let match;
+  while ((match = AUTHOR_INPUT_RE.exec(outsideFences))) {
+    const detail = String(match[1] || "").trim().replace(/\s+/g, " ");
+    if (detail) inputs.push(detail);
+  }
+  return inputs;
+}
+
 function extractPlans(text) {
   const plans = [];
   let current = null;
@@ -300,9 +325,11 @@ function missingFields(body) {
 function indexPlans(root) {
   const index = new Map();
   listSeedFiles(root).forEach((rel) => {
-    extractPlans(fs.readFileSync(path.join(root, rel), "utf8")).forEach((p) => {
+    const text = fs.readFileSync(path.join(root, rel), "utf8");
+    const authorInputs = extractAuthorInputs(text);
+    extractPlans(text).forEach((p) => {
       if (!index.has(p.key)) index.set(p.key, []);
-      index.get(p.key).push({ ...p, file: rel });
+      index.get(p.key).push({ ...p, file: rel, authorInputs });
     });
   });
   return index;
@@ -334,6 +361,10 @@ function evaluate(root, env = {}) {
     } else if (found.length > 1) {
       errors.push(`${a.rel}: Plan が ${found.length} 件ある: ${found.map((p) => `${p.file}:${p.line}`).join(", ")}`);
     } else {
+      if (found[0].authorInputs.length) {
+        const details = found[0].authorInputs.slice(0, 3).join(" / ");
+        errors.push(`${a.rel}: ${found[0].file} の Author Input Gate が未解決: ${details}。著者入力を得るか、著者判断で不要と確定して AUTHOR_INPUT_REQUIRED を解消するまでPR作成へ進まない`);
+      }
       const missing = missingFields(found[0].body);
       if (missing.length) {
         errors.push(`${a.rel}: ${found[0].file}:${found[0].line} の Plan に記録が無い: ${missing.join(", ")}\n    ${FORMAT_HINT}`);
@@ -433,6 +464,31 @@ function selfTest() {
     const ok = evaluate(tmp);
     eq("導入日以降の追加記事を対象にする", keys(ok).sort(), ["izanami/izanami-ok", "note/PRONI-note-ok", "qiita/qiita-ok", "zenn/zenn-ok"]);
     eq("Plan が揃っていれば合格", ok.errors, []);
+
+    // 不合格: 対応Seedに Author Input Gate が残っている
+    write("articles/author-input.md", "x\n");
+    write(
+      "article_seeds/author-input.md",
+      "# Author input\n\n<!-- AUTHOR_INPUT_REQUIRED: 実際の失敗例を1件。AIは推測で補完しない。 -->\n" +
+        plan("zenn/author-input"),
+    );
+    const authorInputBlocked = evaluate(tmp).errors.join("\n");
+    eq("AUTHOR_INPUT_REQUIRED が残るSeedはPR作成を止める", /Author Input Gate が未解決/.test(authorInputBlocked), true);
+    write("article_seeds/author-input.md", "# Author input\n\n" + plan("zenn/author-input"));
+    eq("AUTHOR_INPUT_REQUIRED 解消後は同じPlanで通る", /Author Input Gate が未解決/.test(evaluate(tmp).errors.join("\n")), false);
+    fs.unlinkSync(path.join(tmp, "articles/author-input.md"));
+    fs.unlinkSync(path.join(tmp, "article_seeds/author-input.md"));
+
+    // 見本の AUTHOR_INPUT_REQUIRED はGateに数えない
+    write("articles/author-input-fenced.md", "x\n");
+    write(
+      "article_seeds/author-input-fenced.md",
+      "# Sample\n\n\`\`\`md\n<!-- AUTHOR_INPUT_REQUIRED: 見本 -->\n\`\`\`\n" +
+        plan("zenn/author-input-fenced"),
+    );
+    eq("コードブロック内の AUTHOR_INPUT_REQUIRED はGateに数えない", /Author Input Gate が未解決/.test(evaluate(tmp).errors.join("\n")), false);
+    fs.unlinkSync(path.join(tmp, "articles/author-input-fenced.md"));
+    fs.unlinkSync(path.join(tmp, "article_seeds/author-input-fenced.md"));
 
     // 不合格: Plan 無し（未追跡の原稿も対象）
     write("articles/no-plan.md", "x\n");
