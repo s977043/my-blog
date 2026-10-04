@@ -83,6 +83,7 @@ Bookの目的に合わない段階は削ってよい。章数やPart数を固定
 | Chapter | Reader question | Responsibility | Evidence |
 | --- | --- | --- | --- |
 | 00 | なぜ読むのか | Introduction | Book Contract |
+| Part 1 | この部で何を理解するのか | Reader navigation | Reader Journey |
 | 01 | 最初に理解すべきことは何か | First chapter | Primary source / example |
 | 99 | 何を持ち帰るか | Afterword | Central Claim |
 
