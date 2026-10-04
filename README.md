@@ -53,6 +53,7 @@ my-blog/
 - プレビュー: `npm run preview`
 - 記事一覧: `npm run list:articles`
 - 本一覧: `npm run list:books`
+- Book構造チェック: `npm run check:zenn-books`
 - 新規Book: `npm run new:zenn-book -- <slug> --title "..." --summary "..." --topics "AI,開発"`
 - Bookテンプレート: `templates/zenn-book/`
 - Book作成Skill: `.claude/skills/zenn-book-writing/SKILL.md`
