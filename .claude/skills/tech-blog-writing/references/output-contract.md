@@ -38,9 +38,9 @@ READY | NEEDS_INPUT | PARK
 ## 著者確認が必要
 - 未解決の AUTHOR_INPUT_REQUIRED:
 - 追加で必要な質問・不足事項:
-
-AUTHOR_INPUT_REQUIRED が残っている場合は判定を NEEDS_INPUT とし、Draft Article Plan / Draftへ進めない。
 ```
+
+`AUTHOR_INPUT_REQUIRED` が残っている場合は判定を `NEEDS_INPUT` とし、Draft Article Plan / Draftへ進めない。
 
 ### 既存記事モード
 
