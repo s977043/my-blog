@@ -415,3 +415,4 @@ Humanizeレビューの検出ロジックは、実際に根拠の薄い数値を
 
 - [AIエージェントを勝手に成長させない — 記録・棚卸し・機械化・剪定の自己改善ループ](https://zenn.dev/minewo/articles/ai-agent-self-improvement-loop-design)
 - [AIにマージさせない。PRをMERGE_READYまで運ぶ状態機械の設計](https://zenn.dev/minewo/articles/ai-merge-ready-state-machine)
+- [AIエージェントの並列運用、PRリードタイムだけでは在庫の増加が見えない](/articles/agent-utilization-vs-flow-efficiency)
