@@ -15,6 +15,7 @@ const PATHS = {
   templatePublish: 'templates/zenn-book/PUBLISH_CHECKLIST.md',
   generator: 'scripts/create-zenn-book.js',
   structureCheck: 'scripts/check-zenn-book-structure.js',
+  browserCheck: 'scripts/check-zenn-book-browser.mjs',
   routing: '.claude/evals/article-skill-routing.json',
   packageJson: 'package.json',
   ciWorkflow: '.github/workflows/ci.yml',
@@ -43,6 +44,7 @@ function validate(files) {
   const templatePublish = files[PATHS.templatePublish]
   const generator = files[PATHS.generator]
   const structureCheck = files[PATHS.structureCheck]
+  const browserCheck = files[PATHS.browserCheck]
   const ciWorkflow = files[PATHS.ciWorkflow]
 
   requireTokens(errors, 'skill', skill, [
@@ -132,6 +134,16 @@ function validate(files) {
     'checkPlaceholders',
   ])
 
+  requireTokens(errors, 'browser checker', browserCheck, [
+    '--book',
+    'selectRepresentativeChapters',
+    'mobile-390',
+    'desktop-1440',
+    'artifacts',
+    'zenn-book-browser',
+    '--self-test',
+  ])
+
   let routing
   try {
     routing = JSON.parse(files[PATHS.routing])
@@ -161,6 +173,9 @@ function validate(files) {
       'check:zenn-books',
       'check:zenn-book-writing-contract',
       'test:zenn-book-writing-contract',
+      'check:zenn-book-browser',
+      'check:river-review-book-browser',
+      'test:zenn-book-browser',
     ]) {
       if (!pkg.scripts?.[script]) errors.push(`package scripts missing: ${script}`)
     }
@@ -173,6 +188,8 @@ function validate(files) {
     'npm run test:zenn-book-structure',
     'npm run test:zenn-book-template',
     'npm run test:zenn-book-writing-contract',
+    'npm run test:zenn-book-browser',
+    'npm run check:river-review-book-browser',
     'npm run check',
   ])
 
@@ -229,6 +246,22 @@ function selfTest() {
   }
   if (!validate(missingCiWiring).some((e) => e.includes('CI workflow missing token'))) {
     throw new Error('missing CI self-test wiring was not rejected')
+  }
+
+  const missingBrowserScript = {
+    ...base,
+    [PATHS.packageJson]: base[PATHS.packageJson].replace('"check:zenn-book-browser"', '"removed:zenn-book-browser"'),
+  }
+  if (!validate(missingBrowserScript).some((e) => e.includes('package scripts missing: check:zenn-book-browser'))) {
+    throw new Error('missing browser script was not rejected')
+  }
+
+  const missingBrowserCi = {
+    ...base,
+    [PATHS.ciWorkflow]: base[PATHS.ciWorkflow].replace('npm run test:zenn-book-browser', ''),
+  }
+  if (!validate(missingBrowserCi).some((e) => e.includes('CI workflow missing token'))) {
+    throw new Error('missing browser CI wiring was not rejected')
   }
 
   console.log('[test:zenn-book-writing-contract] PASS')
