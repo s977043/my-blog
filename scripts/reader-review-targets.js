@@ -22,7 +22,11 @@
 //     （`/api/books/<slug>/chapters/<slug>` は 404。viewer ページの HTML は本文を含まない）
 //   - Qiita: https://qiita.com/api/v2/items/<id> の `body`（Markdown）。無認証 60 req/h
 //   - note: https://note.com/api/v3/notes/<key> の `data.body`（HTML。非公式 API）
-//   - izanami: 公開ページ HTML の `markdown-post` クラスの div（サーバーレンダリング済み）
+//   - izanami: 公開ページ HTML の JSON-LD（`application/ld+json`）の `articleBody`（公開本文の Markdown）。
+//     `markdown-post` クラスの div はコードブロックがクライアント描画（next/dynamic）で、サーバーの HTML には
+//     中身が無い（2026-10-02 に ai-review-responsibility で確認）。JSON-LD が無いときだけ div を使い、
+//     欠けた位置に印を残す
+//   - Zenn の body_html はコードの言語指定を含まない（shiki で描画済み）。言語は原稿で確かめる
 //   取得に失敗した、または抽出本文が短すぎる（MIN_LIVE_CHARS 未満）場合は、リポジトリの原稿で代用し、
 //   `origin: "repo"` と理由を manifest に残す。レポートにはその旨を書く（公開版と差がありうるため）。
 //
@@ -262,6 +266,16 @@ function stripTags(s) {
   return s.replace(/<[^>]+>/g, "");
 }
 
+// 表のタグ間の空白を詰め、見出し行（th だけの最初の行、または thead）の直後に Markdown の区切り行を差し込む。
+function normalizeTable(html) {
+  const table = html.replace(/\s*(<\/?(?:thead|tbody|tr|th|td)\b[^>]*>)\s*/gi, "$1");
+  const head = table.match(/<thead\b[^>]*>[\s\S]*?<\/thead>/i) || table.match(/<tr\b[^>]*>[\s\S]*?<\/tr>/i);
+  if (!head || /<td\b/i.test(head[0])) return table;
+  const cols = (head[0].match(/<th\b/gi) || []).length;
+  if (!cols) return table;
+  return table.replace(head[0], () => `${head[0]}<tr>${"<td>---</td>".repeat(cols)}</tr>`);
+}
+
 // レビュー用に構造（見出し・段落・リスト・コード・リンク先・画像 alt）を残したテキストへ落とす。
 function htmlToText(html) {
   let s = html
@@ -297,6 +311,7 @@ function htmlToText(html) {
       return `${inner.replace(/<li\b[^>]*>/gi, () => `\n${++n}. `)}\n\n`;
     })
     .replace(/<li\b[^>]*>/gi, "\n- ")
+    .replace(/<table\b[^>]*>[\s\S]*?<\/table>/gi, normalizeTable)
     .replace(/<tr\b[^>]*>/gi, "\n| ")
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<\/(p|div|ul|ol|table|blockquote|figure|section|aside|details|summary)>/gi, "\n\n")
@@ -328,6 +343,41 @@ function extractIzanamiBody(html) {
   const m = html.match(/<div\b[^>]*class="[^"]*\bmarkdown-post\b[^"]*"[^>]*>/);
   if (!m) return null;
   return extractBalancedDiv(html, m.index);
+}
+
+function extractIzanamiArticleBody(html) {
+  const re = /<script\b(?=[^>]*\btype\s*=\s*["']application\/ld\+json["'])[^>]*>([\s\S]*?)<\/script>/gi;
+  let m;
+  while ((m = re.exec(html))) {
+    let parsed;
+    try {
+      parsed = JSON.parse(m[1]);
+    } catch {
+      continue;
+    }
+    const roots = Array.isArray(parsed) ? parsed : [parsed];
+    for (const root of roots) {
+      const nodes = [root, ...(Array.isArray(root?.["@graph"]) ? root["@graph"] : [])];
+      for (const node of nodes) {
+        if (node && typeof node.articleBody === "string" && node.articleBody.trim()) return node.articleBody.trim();
+      }
+    }
+  }
+  return null;
+}
+
+const CLIENT_RENDERED_MARK = "<p>[クライアント描画の要素（コードブロックなど）: 取得できず。原稿で確認]</p>";
+
+function izanamiBodyText(html) {
+  const md = extractIzanamiArticleBody(html);
+  if (md) return { method: "izanami page json-ld articleBody (markdown)", text: md };
+  const body = extractIzanamiBody(html);
+  return {
+    method: "izanami page html .markdown-post（コードブロックが欠けることがある）",
+    text: body
+      ? htmlToText(body.replace(/<template\b[^>]*BAILOUT_TO_CLIENT_SIDE_RENDERING[^>]*>[\s\S]*?<\/template>/gi, CLIENT_RENDERED_MARK))
+      : "",
+  };
 }
 
 function charCount(text) {
@@ -376,9 +426,7 @@ async function fetchLive(t, fetchImpl) {
       return { method: "note api/v3/notes data.body", text: htmlToText((j.data && j.data.body) || "") };
     }
     case "izanami": {
-      const h = await get(t.url, "html");
-      const body = extractIzanamiBody(h);
-      return { method: "izanami page html .markdown-post", text: body ? htmlToText(body) : "" };
+      return izanamiBodyText(await get(t.url, "html"));
     }
     default:
       throw new Error(`unknown kind ${t.kind}`);
@@ -713,9 +761,21 @@ async function selfTest() {
     "1. 一\n2. 二\n\n- 点",
   );
   eq(
-    "表の行は | 区切りで 1 行にする",
+    "表の行は | 区切りで 1 行にし、th だけの最初の行の後に区切り行を入れる",
     htmlToText("<table><tr><th>軸</th><th>例</th></tr><tr><td>A</td><td>B</td></tr></table>"),
-    "| 軸 | 例 |\n| A | B |",
+    "| 軸 | 例 |\n| --- | --- |\n| A | B |",
+  );
+  eq(
+    "thead がある表（Zenn の body_html の形）も区切り行を入れる",
+    htmlToText(
+      '<table data-line="1">\n<thead>\n<tr>\n<th>軸</th>\n<th>例</th>\n<th>注</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>A</td>\n<td><strong>B</strong></td>\n<td>C</td>\n</tr>\n</tbody>\n</table>',
+    ),
+    "| 軸 | 例 | 注 |\n| --- | --- | --- |\n| A | **B** | C |",
+  );
+  eq(
+    "見出し行の無い表には区切り行を足さない",
+    htmlToText("<table><tr><td>A</td><td>B</td></tr></table>"),
+    "| A | B |",
   );
   eq(
     "強調とインラインコードを Markdown 記法で残す",
@@ -738,6 +798,40 @@ async function selfTest() {
     '<div class="nav">メニュー</div><div class="max-w-[100%] overflow-hidden markdown-post"><p>本文</p><div class="x"><p>入れ子</p></div></div><div class="footer">フッター</div>';
   eq("markdown-post の div を入れ子込みで取り出す", htmlToText(extractIzanamiBody(izn)), "本文\n\n入れ子");
   eq("markdown-post が無ければ null", extractIzanamiBody("<div>x</div>"), null);
+  const iznLd = `<script id="json-ld-article" type="application/ld+json">${JSON.stringify({
+    "@type": "TechArticle",
+    articleBody: "本文\n\n```text\n契約: 例\n```\n\n| 軸 | 例 |\n| --- | --- |",
+  })}</script>`;
+  const iznBailout =
+    '<div class="markdown-post"><p>本文</p><div><!--$!--><template data-dgst="BAILOUT_TO_CLIENT_SIDE_RENDERING"></template><!--/$--></div></div>';
+  eq(
+    "izanami は JSON-LD の articleBody（Markdown）を優先し、コードブロックと表の区切り行を残す",
+    izanamiBodyText(iznLd + iznBailout),
+    {
+      method: "izanami page json-ld articleBody (markdown)",
+      text: "本文\n\n```text\n契約: 例\n```\n\n| 軸 | 例 |\n| --- | --- |",
+    },
+  );
+  eq(
+    "JSON-LD が無ければ markdown-post を使い、クライアント描画で欠けた位置に印を残す",
+    izanamiBodyText(iznBailout).text,
+    "本文\n\n[クライアント描画の要素（コードブロックなど）: 取得できず。原稿で確認]",
+  );
+  eq(
+    "JSON-LD の type が single quote でも articleBody を取得する",
+    extractIzanamiArticleBody("<script type='application/ld+json'>{\"articleBody\":\"single quote\"}</script>"),
+    "single quote",
+  );
+  eq(
+    "JSON-LD の @graph 内にある articleBody を取得する",
+    extractIzanamiArticleBody('<script data-x="1" type="application/ld+json">{"@graph":[{"@type":"Organization"},{"@type":"TechArticle","articleBody":"graph body"}]}</script>'),
+    "graph body",
+  );
+  eq(
+    "壊れた JSON-LD や articleBody の無い JSON-LD は読み飛ばす",
+    extractIzanamiArticleBody('<script type="application/ld+json">{</script><script type="application/ld+json">{"@type":"Organization"}</script>'),
+    null,
+  );
 
   // 6) 本文取得のフォールバック（ネットワークを使わない）
   const zennAlpha = targets.find((x) => x.key === "alpha");
