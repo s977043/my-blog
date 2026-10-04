@@ -179,6 +179,12 @@ Part dividerはタイトルだけにしない。
 
 本文量だけでなく、H2数、横長table、diagram幅、章内navigationを見る。
 
+### Book固有の公開面を確認する
+
+- coverはgeneratorで自動生成せず、公開デザイン決定後に追加してPreviewする
+- Bookから既存Zenn記事へリンクするときは、repositoryファイル相対パスではなく公開サイトで解決するURLを確認する
+- 記事向け内部リンク規約をBookへ機械適用しない
+
 ## ガードレール
 
 - Book作成を理由に `published: true` へ切り替えない
