@@ -102,6 +102,7 @@
     "zenn-cli": "^0.5.4"
   },
   "devDependencies": {
-    "@qiita/qiita-cli": "^1.10.0"
+    "@qiita/qiita-cli": "^1.10.0",
+    "js-yaml": "^4.3.2"
   }
 }

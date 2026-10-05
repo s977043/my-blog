@@ -1,4 +1,6 @@
-# Contextを会話からArtifactへ移す
+---
+title: "Contextを会話からArtifactへ移す"
+---
 
 長時間AIエージェントを使っていると、会話履歴は便利です。
 

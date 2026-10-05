@@ -1,4 +1,6 @@
-# Greenを疑う — EvalとFalse Green
+---
+title: "Greenを疑う — EvalとFalse Green"
+---
 
 GuardやEvalを入れると、画面にはgreenが増えます。
 

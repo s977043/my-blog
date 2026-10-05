@@ -1,4 +1,6 @@
-# おわりに
+---
+title: "おわりに"
+---
 
 このBookのCentral Claimへ戻ります。
 

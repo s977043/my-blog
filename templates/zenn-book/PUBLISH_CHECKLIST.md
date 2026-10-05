@@ -23,7 +23,7 @@ Verification date:
 
 ## 3. Editorial review
 
-- [ ] 全公開章でH1が1つ
+- [ ] 全公開章の先頭にFrontMatterのtitleがある（本文にH1は置かない。titleが見出しになる）
 - [ ] code fence不整合がない
 - [ ] 未執筆placeholderがない
 - [ ] 用語ゆれ・略号初出を確認

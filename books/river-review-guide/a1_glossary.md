@@ -1,4 +1,6 @@
-# 付録A River Review用語集
+---
+title: "付録A River Review用語集"
+---
 
 ## まず押さえる5語
 

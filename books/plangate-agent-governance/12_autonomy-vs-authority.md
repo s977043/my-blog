@@ -1,4 +1,6 @@
-# 自律性と判断権限を分ける — Autonomy != Authority
+---
+title: "自律性と判断権限を分ける — Autonomy != Authority"
+---
 
 AIエージェントが、
 
