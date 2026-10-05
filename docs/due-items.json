@@ -35,6 +35,34 @@
       "what": "izanami 3 本目（指摘が多すぎるときの絞り方）の公開後約30日の観測（2026-10-29 頃）",
       "source": "articles_izanami/README.md §3本目",
       "done": false
+    },
+    {
+      "id": "note-read-loop-week1",
+      "due": "2026-10-12T21:00:00+09:00",
+      "what": "note の読む→反応ループ 1 週目の計測（ダッシュボード 7 日間・フォロワー・お返し）と、翌週の候補記事の用意",
+      "source": "docs/experiments/2026-10-note-reading-loop.md（EXP-NOTE-READ-202610、2026-10-05 著者決定）",
+      "done": false
+    },
+    {
+      "id": "note-read-loop-week2",
+      "due": "2026-10-19T21:00:00+09:00",
+      "what": "note の読む→反応ループ 2 週目の計測（ダッシュボード 7 日間・フォロワー・お返し）と、翌週の候補記事の用意",
+      "source": "docs/experiments/2026-10-note-reading-loop.md（EXP-NOTE-READ-202610、2026-10-05 著者決定）",
+      "done": false
+    },
+    {
+      "id": "note-read-loop-week3",
+      "due": "2026-10-26T21:00:00+09:00",
+      "what": "note の読む→反応ループ 3 週目の計測（ダッシュボード 7 日間・フォロワー・お返し）と、翌週の候補記事の用意",
+      "source": "docs/experiments/2026-10-note-reading-loop.md（EXP-NOTE-READ-202610、2026-10-05 著者決定）",
+      "done": false
+    },
+    {
+      "id": "note-read-loop-week4",
+      "due": "2026-11-02T21:00:00+09:00",
+      "what": "note の読む→反応ループ 4 週目（最終判定）の計測（ダッシュボード 7 日間・フォロワー・お返し）と、翌週の候補記事の用意",
+      "source": "docs/experiments/2026-10-note-reading-loop.md（EXP-NOTE-READ-202610、2026-10-05 著者決定）",
+      "done": false
     }
   ]
 }
