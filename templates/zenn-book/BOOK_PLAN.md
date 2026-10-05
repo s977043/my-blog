@@ -144,7 +144,7 @@ Bookの目的に合わない段階は削ってよい。章数やPart数を固定
 
 ### Editorial
 
-- [ ] 各公開MarkdownのH1は1つ
+- [ ] 各公開Markdownの先頭にFrontMatterのtitleがある（本文にH1は置かない。titleが見出しになる）
 - [ ] fenced code blockが閉じている
 - [ ] 未執筆placeholderが残っていない
 - [ ] Part / chapterのbridgeが成立している

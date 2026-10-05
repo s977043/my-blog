@@ -3,6 +3,7 @@
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
+const yaml = require("js-yaml");
 
 const LABEL = "[check:zenn-book-structure]";
 
@@ -50,6 +51,55 @@ function hasBalancedFences(content) {
   return open === null;
 }
 
+function countH1OutsideFences(content) {
+  let open = null;
+  let count = 0;
+
+  for (const line of String(content).split(/\r?\n/)) {
+    const m = line.match(/^\s*((?:\x60|~){3,})/);
+    if (m) {
+      const marker = m[1][0];
+      const length = m[1].length;
+      if (!open) open = { marker, length };
+      else if (open.marker === marker && length >= open.length) open = null;
+      continue;
+    }
+    if (!open && /^#\s+.+$/.test(line)) count++;
+  }
+
+  return count;
+}
+
+// Zenn の Book チャプターは先頭の FrontMatter に title が必須。
+// 戻り値は { error } か { title, body }（title は検証前の生の値）。
+function parseChapterFrontMatter(content) {
+  const lines = String(content).replace(/^﻿/, "").split(/\r?\n/);
+  if (lines[0] !== "---") {
+    if (/^---\s+$/.test(lines[0])) return { error: "FrontMatter の開始行 `---` の末尾に空白がある" };
+    return { error: "先頭に FrontMatter（---）がない" };
+  }
+  const end = lines.indexOf("---", 1);
+  if (end === -1) {
+    if (lines.slice(1).some((line) => /^---\s+$/.test(line))) {
+      return { error: "FrontMatter の終了行 `---` の末尾に空白がある" };
+    }
+    return { error: "FrontMatter が閉じていない（終了行の `---` がない）" };
+  }
+
+  let data;
+  try {
+    data = yaml.load(lines.slice(1, end).join("\n"));
+  } catch (error) {
+    return { error: `FrontMatter の YAML を解析できない: ${error.reason || error.message}` };
+  }
+  const title = data && typeof data === "object" ? data.title : undefined;
+  return { title, body: lines.slice(end + 1).join("\n") };
+}
+
+function hasChapterTitle(frontMatter) {
+  return typeof frontMatter.title === "string" && frontMatter.title.trim() !== "";
+}
+
 function isNumberedContentChapter(slug) {
   return /^\d{2}_/.test(slug) && !/^(?:00|99)_/.test(slug);
 }
@@ -86,10 +136,20 @@ function validateBook(bookDir, options = {}) {
     }
 
     const content = fs.readFileSync(file, "utf8");
-    if (options.checkH1 !== false) {
-      const h1Count = (content.match(/^#\s+.+$/gm) || []).length;
-      if (h1Count !== 1) {
-        errors.push(`${slug}.md: H1 は1つ必要（実際 ${h1Count}）`);
+    const frontMatter = parseChapterFrontMatter(content);
+    const hasTitle = !frontMatter.error && hasChapterTitle(frontMatter);
+    if (frontMatter.error) {
+      errors.push(`${slug}.md: ${frontMatter.error}`);
+    } else if (!hasTitle) {
+      errors.push(`${slug}.md: FrontMatter に空でない title がない`);
+    }
+
+    if (options.checkH1 !== false && hasTitle) {
+      const bodyH1Count = countH1OutsideFences(frontMatter.body);
+      if (bodyH1Count > 0) {
+        errors.push(
+          `${slug}.md: 本文に H1 を置かない（FrontMatter の title が見出しになる。本文の H1: ${bodyH1Count}）`,
+        );
       }
     }
 
@@ -154,7 +214,9 @@ function selfTest() {
     "",
   ].join("\n");
   const validIntro = [
-    "# Intro",
+    "---",
+    'title: "Intro"',
+    "---",
     "",
     "~~~text",
     "hello",
@@ -165,12 +227,14 @@ function selfTest() {
     "- [Source](https://example.com/source)",
     "",
   ].join("\n");
-  const validPart = "# Part\n\nNavigation.\n";
+  const validPart = '---\ntitle: "Part"\n---\n\nNavigation.\n';
+  const introWithoutTitle = validIntro.replace('title: "Intro"', "free: true");
+  const introWithBodyH1 = validIntro.replace("---\n\n~~~", "---\n\n# Intro\n\n~~~");
 
   write("config.yaml", validConfig);
   write("01_intro.md", validIntro);
   write("part1_topic.md", validPart);
-  write("99_afterword.md", "# Afterword\n\nNo sources required.\n");
+  write("99_afterword.md", '---\ntitle: "Afterword"\n---\n\nNo sources required.\n');
 
   const cases = [];
   const expect = (name, fn, match) => {
@@ -216,16 +280,16 @@ function selfTest() {
   );
 
   write("config.yaml", validConfig);
-  write("01_intro.md", validIntro.replace("# Intro", "Intro"));
+  write("01_intro.md", introWithBodyH1);
   expect(
-    "missing H1",
+    "body H1 alongside title",
     () => validateBook(book, { requireSourcesNumbered: true }),
-    (errors) => errors.some((e) => e.includes("H1 は1つ必要")),
+    (errors) => errors.some((e) => e.includes("本文に H1 を置かない")),
   );
 
   write(
     "01_intro.md",
-    "# Intro\n\n~~~text\nunclosed\n\n### Sources\n\n- https://example.com\n",
+    '---\ntitle: "Intro"\n---\n\n~~~text\nunclosed\n\n### Sources\n\n- https://example.com\n',
   );
   expect(
     "unbalanced fence",
@@ -233,12 +297,98 @@ function selfTest() {
     (errors) => errors.some((e) => e.includes("fenced code block")),
   );
 
-  write("01_intro.md", "# Intro\n\nNo sources.\n");
+  write("01_intro.md", '---\ntitle: "Intro"\n---\n\nNo sources.\n');
   expect(
     "numbered chapter source",
     () => validateBook(book, { requireSourcesNumbered: true }),
     (errors) => errors.some((e) => e.includes("Sources URL")),
   );
+
+  write("01_intro.md", validIntro.replace('---\ntitle: "Intro"\n---', "# Intro"));
+  expect(
+    "chapter without FrontMatter",
+    () => validateBook(book, { requireSourcesNumbered: true }),
+    (errors) => errors.some((e) => e.includes("先頭に FrontMatter")),
+  );
+
+  write("01_intro.md", introWithoutTitle);
+  expect(
+    "FrontMatter without title",
+    () => validateBook(book, { requireSourcesNumbered: true }),
+    (errors) => errors.some((e) => e.includes("空でない title")),
+  );
+
+  write("01_intro.md", validIntro.replace('title: "Intro"', 'title: ""'));
+  expect(
+    "FrontMatter with empty title",
+    () => validateBook(book, { requireSourcesNumbered: true }),
+    (errors) => errors.some((e) => e.includes("空でない title")),
+  );
+
+  write("01_intro.md", validIntro.replace('title: "Intro"', 'title: "Intro"\nfree: true'));
+  expect(
+    "FrontMatter with title and free",
+    () => validateBook(book, { requireSourcesNumbered: true }),
+    (errors) => errors.length === 0,
+  );
+
+  const frontMatterCases = [
+    ["FrontMatter after BOM", "﻿" + validIntro, (e) => e.length === 0],
+    [
+      "unclosed FrontMatter",
+      validIntro.replace('title: "Intro"\n---', 'title: "Intro"'),
+      (e) => e.some((m) => m.includes("閉じていない（")),
+    ],
+    [
+      "opening delimiter with trailing space",
+      validIntro.replace(/^---\n/, "--- \n"),
+      (e) => e.some((m) => m.includes("開始行 `---` の末尾に空白")),
+    ],
+    [
+      "closing delimiter with trailing space",
+      validIntro.replace('"Intro"\n---', '"Intro"\n--- '),
+      (e) => e.some((m) => m.includes("終了行 `---` の末尾に空白")),
+    ],
+    [
+      "unquoted title containing colon",
+      validIntro.replace('title: "Intro"', "title: 付録A1: 用語"),
+      (e) => e.some((m) => m.includes("YAML を解析できない")),
+    ],
+    [
+      "unterminated quoted title",
+      validIntro.replace('title: "Intro"', 'title: "A'),
+      (e) => e.some((m) => m.includes("YAML を解析できない")),
+    ],
+    [
+      "null title",
+      validIntro.replace('title: "Intro"', "title: ~"),
+      (e) => e.some((m) => m.includes("空でない title")),
+    ],
+    [
+      "comment-only title",
+      validIntro.replace('title: "Intro"', "title: # x"),
+      (e) => e.some((m) => m.includes("空でない title")),
+    ],
+    [
+      "missing title reports a single error",
+      introWithoutTitle,
+      (e) => e.length === 1 && e[0].includes("空でない title"),
+    ],
+    [
+      "broken YAML reports a single error",
+      validIntro.replace('title: "Intro"', 'title: "A'),
+      (e) => e.length === 1 && e[0].includes("YAML を解析できない"),
+    ],
+    [
+      "H1-like lines inside code fences are not body H1",
+      validIntro.replace("~~~text\nhello\n~~~", "~~~bash\n# comment\n~~~\n\n```sh\n# comment\n```"),
+      (e) => e.length === 0,
+    ],
+  ];
+  for (const [name, content, match] of frontMatterCases) {
+    write("01_intro.md", content);
+    expect(name, () => validateBook(book, { requireSourcesNumbered: true }), match);
+  }
 
   const booksRoot = path.join(root, "books");
   const bookA = path.join(booksRoot, "book-a");
@@ -263,21 +413,21 @@ function selfTest() {
     (errors) => errors.length === 0 && findBookDirs(booksRoot).length === 2,
   );
 
-  fs.writeFileSync(path.join(bookA, "01_intro.md"), validIntro.replace("# Intro", "Intro"));
+  fs.writeFileSync(path.join(bookA, "01_intro.md"), introWithBodyH1);
   expect(
-    "modern book requires H1",
+    "modern book forbids body H1",
     () =>
       validateBooksRoot(booksRoot, {
         modernH1ByBookPlan: true,
         checkPlaceholders: false,
       }).flatMap((result) => result.errors),
-    (errors) => errors.some((e) => e.includes("H1 は1つ必要")),
+    (errors) => errors.some((e) => e.includes("本文に H1 を置かない")),
   );
   fs.writeFileSync(path.join(bookA, "01_intro.md"), validIntro);
 
-  fs.writeFileSync(path.join(bookB, "01_intro.md"), validIntro.replace("# Intro", "Intro"));
+  fs.writeFileSync(path.join(bookB, "01_intro.md"), introWithBodyH1);
   expect(
-    "legacy book may omit H1 in all-book check",
+    "legacy book may keep body H1 in all-book check",
     () =>
       validateBooksRoot(booksRoot, {
         modernH1ByBookPlan: true,

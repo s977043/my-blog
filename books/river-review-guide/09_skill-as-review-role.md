@@ -1,4 +1,6 @@
-# Skillをレビュー職務として設計する
+---
+title: "Skillをレビュー職務として設計する"
+---
 
 River ReviewのSkillは、単なるPrompt断片ではありません。
 

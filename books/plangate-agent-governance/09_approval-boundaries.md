@@ -1,4 +1,6 @@
-# Review済みと「実行してよい」を分ける — Approval Boundary
+---
+title: "Review済みと「実行してよい」を分ける — Approval Boundary"
+---
 
 Planを作り、Evidenceを集め、Reviewで問題を減らしました。
 

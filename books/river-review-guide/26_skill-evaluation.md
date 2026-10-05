@@ -1,4 +1,6 @@
-# Skillにもテストが必要になる
+---
+title: "Skillにもテストが必要になる"
+---
 
 Review Judgment as Codeの「as Code」は、判断基準をGitへ置くことだけではありません。
 

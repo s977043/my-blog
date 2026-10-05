@@ -1,4 +1,6 @@
-# Skills・Gates・Riverbedの3つの役割
+---
+title: "Skills・Gates・Riverbedの3つの役割"
+---
 
 River Reviewのコアモデルは、判断を1つの巨大な仕組みへ押し込まず、**定義・実行・記憶**へ分けます。
 

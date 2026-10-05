@@ -8,7 +8,7 @@ Draft完成とPublish Readyを分ける。
 
 - config chapterと実ファイルが一致
 - duplicateがない
-- H1が各1つ
+- 各章の先頭にFrontMatterのtitleがある（本文にH1は置かない。titleが見出しになる）
 - fenceが閉じる
 - unresolved placeholderがない
 
