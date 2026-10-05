@@ -19,8 +19,9 @@
  * ■ 判定
  *   article_seeds/ 配下に `## (Draft|Approved) Article Plan: <channel>/<slug>` がちょうど1件あり、
  *   その節に reader_problem / central_claim / out_of_scope と、Evidence Boundary の
- *   Observed か Verified の記録があること。空欄・「未確認」「確認予定」などで始まる値・
- *   SKILL.md の見本文言、コードブロックと HTML コメントの中身は記録に数えない。
+ *   Observed か Verified の記録があること（ラベルに括弧付きの補足を付けてもよい）。
+ *   対応Seedに未解決の AUTHOR_INPUT_REQUIRED が残っていないこと。
+ *   空欄・「未確認」「確認予定」などで始まる値・SKILL.md の見本文言、コードブロックと HTML コメントの中身は記録に数えない。
  */
 
 const fs = require("fs");
@@ -46,14 +47,15 @@ const CHANNEL_DIRS = [
  */
 const PLACEHOLDER =
   /^(?:(?:未確認|未定|確認予定|tbd|todo)(?=$|[\s（(、。,.:：/])|-$|\.{3}$|$|（[^）]*記入[^）]*）)/i;
-/** tech-blog-writing SKILL.md A-5 の見本文言。書き換えずに残したものは記録に数えない */
+/** tech-blog-writing references/idea-mode.md A-5 の見本文言。書き換えずに残したものは記録に数えない */
 const TEMPLATE_TEXTS = [
   "実体験なら誰が何を観測したか",
   "外部事実なら確認した内容と参照先",
   "未確認の見立て。Observed / Verified の代わりにしない",
 ];
 const FORMAT_HINT =
-  "期待する書式: `- reader_problem: …` / `- central_claim: …` / `- out_of_scope: …` と、`### Evidence Boundary` 配下の `- Observed: …` または `- Verified: …`";
+  "期待する書式: `- reader_problem: …` / `- central_claim: …` / `- out_of_scope: …` と、`### Evidence Boundary` 配下の `- Observed: …` または `- Verified: …`（`- Observed（補足）: …` のような括弧付きも可）";
+const AUTHOR_INPUT_RE = /<!--\s*AUTHOR_INPUT_REQUIRED:\s*([\s\S]*?)-->/gi;
 
 function git(root, args) {
   try {
@@ -226,6 +228,29 @@ function listSeedFiles(root) {
  * コードブロックと HTML コメントの中は見本なので、見出しとしても記録としても数えない。
  * コメントは行番号を保つため改行だけ残して消す。
  */
+function extractAuthorInputs(text) {
+  let inFence = false;
+  const outsideFences = text
+    .split(/\r?\n/)
+    .map((line) => {
+      if (/^\s*(```|~~~)/.test(line)) {
+        inFence = !inFence;
+        return "";
+      }
+      return inFence ? "" : line;
+    })
+    .join("\n");
+
+  const inputs = [];
+  AUTHOR_INPUT_RE.lastIndex = 0;
+  let match;
+  while ((match = AUTHOR_INPUT_RE.exec(outsideFences))) {
+    const detail = String(match[1] || "").trim().replace(/\s+/g, " ");
+    if (detail) inputs.push(detail);
+  }
+  return inputs;
+}
+
 function extractPlans(text) {
   const plans = [];
   let current = null;
@@ -257,14 +282,20 @@ const isFilled = (v) => {
   return !PLACEHOLDER.test(s) && !TEMPLATE_TEXTS.some((t) => s.startsWith(t));
 };
 
-/** `- key: 値` または値が空で直後に字下げした続き行がある形を記録ありとみなす */
-function hasField(lines, key) {
-  const re = new RegExp(`^(\\s*)[-*]?\\s*${key}\\s*[:：]\\s*(.*)$`, "i");
+/**
+ * `- key: 値` または値が空で直後に字下げした続き行がある形を記録ありとみなす。
+ * annotated なら `- key（補足）: 値` / `- key (補足): 値` も受け付けるが、補足が空や
+ * 「未確認」「確認予定」などで始まるラベルは記録に数えない。
+ */
+function hasField(lines, key, { annotated = false } = {}) {
+  const note = annotated ? "(?:\\s*[（(](?<note>[^）)]*)[）)])?" : "";
+  const re = new RegExp(`^(?<indent>\\s*)[-*]?\\s*${key}${note}\\s*[:：]\\s*(?<value>.*)$`, "i");
   for (let i = 0; i < lines.length; i += 1) {
     const m = lines[i].match(re);
     if (!m) continue;
-    if (isFilled(m[2])) return true;
-    const indent = m[1].length;
+    if (m.groups.note !== undefined && PLACEHOLDER.test(m.groups.note.trim())) continue;
+    if (isFilled(m.groups.value)) return true;
+    const indent = m.groups.indent.length;
     for (let j = i + 1; j < lines.length; j += 1) {
       const l = lines[j];
       if (!l.trim()) continue;
@@ -285,7 +316,7 @@ function missingFields(body) {
     const end = body.findIndex((l, i) => i > start && /^###?\s/.test(l));
     evidence = body.slice(start + 1, end < 0 ? undefined : end);
   }
-  if (!hasField(evidence, "Observed") && !hasField(evidence, "Verified")) {
+  if (!hasField(evidence, "Observed", { annotated: true }) && !hasField(evidence, "Verified", { annotated: true })) {
     missing.push("Evidence Boundary（Observed / Verified）");
   }
   return missing;
@@ -294,9 +325,11 @@ function missingFields(body) {
 function indexPlans(root) {
   const index = new Map();
   listSeedFiles(root).forEach((rel) => {
-    extractPlans(fs.readFileSync(path.join(root, rel), "utf8")).forEach((p) => {
+    const text = fs.readFileSync(path.join(root, rel), "utf8");
+    const authorInputs = extractAuthorInputs(text);
+    extractPlans(text).forEach((p) => {
       if (!index.has(p.key)) index.set(p.key, []);
-      index.get(p.key).push({ ...p, file: rel });
+      index.get(p.key).push({ ...p, file: rel, authorInputs });
     });
   });
   return index;
@@ -328,6 +361,10 @@ function evaluate(root, env = {}) {
     } else if (found.length > 1) {
       errors.push(`${a.rel}: Plan が ${found.length} 件ある: ${found.map((p) => `${p.file}:${p.line}`).join(", ")}`);
     } else {
+      if (found[0].authorInputs.length) {
+        const details = found[0].authorInputs.slice(0, 3).join(" / ");
+        errors.push(`${a.rel}: ${found[0].file} の Author Input Gate が未解決: ${details}。著者入力を得るか、著者判断で不要と確定して AUTHOR_INPUT_REQUIRED を解消するまでPR作成へ進まない`);
+      }
       const missing = missingFields(found[0].body);
       if (missing.length) {
         errors.push(`${a.rel}: ${found[0].file}:${found[0].line} の Plan に記録が無い: ${missing.join(", ")}\n    ${FORMAT_HINT}`);
@@ -428,6 +465,31 @@ function selfTest() {
     eq("導入日以降の追加記事を対象にする", keys(ok).sort(), ["izanami/izanami-ok", "note/PRONI-note-ok", "qiita/qiita-ok", "zenn/zenn-ok"]);
     eq("Plan が揃っていれば合格", ok.errors, []);
 
+    // 不合格: 対応Seedに Author Input Gate が残っている
+    write("articles/author-input.md", "x\n");
+    write(
+      "article_seeds/author-input.md",
+      "# Author input\n\n<!-- AUTHOR_INPUT_REQUIRED: 実際の失敗例を1件。AIは推測で補完しない。 -->\n" +
+        plan("zenn/author-input"),
+    );
+    const authorInputBlocked = evaluate(tmp).errors.join("\n");
+    eq("AUTHOR_INPUT_REQUIRED が残るSeedはPR作成を止める", /Author Input Gate が未解決/.test(authorInputBlocked), true);
+    write("article_seeds/author-input.md", "# Author input\n\n" + plan("zenn/author-input"));
+    eq("AUTHOR_INPUT_REQUIRED 解消後は同じPlanで通る", /Author Input Gate が未解決/.test(evaluate(tmp).errors.join("\n")), false);
+    fs.unlinkSync(path.join(tmp, "articles/author-input.md"));
+    fs.unlinkSync(path.join(tmp, "article_seeds/author-input.md"));
+
+    // 見本の AUTHOR_INPUT_REQUIRED はGateに数えない
+    write("articles/author-input-fenced.md", "x\n");
+    write(
+      "article_seeds/author-input-fenced.md",
+      "# Sample\n\n\`\`\`md\n<!-- AUTHOR_INPUT_REQUIRED: 見本 -->\n\`\`\`\n" +
+        plan("zenn/author-input-fenced"),
+    );
+    eq("コードブロック内の AUTHOR_INPUT_REQUIRED はGateに数えない", /Author Input Gate が未解決/.test(evaluate(tmp).errors.join("\n")), false);
+    fs.unlinkSync(path.join(tmp, "articles/author-input-fenced.md"));
+    fs.unlinkSync(path.join(tmp, "article_seeds/author-input-fenced.md"));
+
     // 不合格: Plan 無し（未追跡の原稿も対象）
     write("articles/no-plan.md", "x\n");
     const noPlan = evaluate(tmp);
@@ -492,6 +554,20 @@ function selfTest() {
     eq("A-5 の見本文言のままは数えない", evidenceMissing(), true);
     withEvidence("- Observed: 未定義の挙動を筆者が再現した");
     eq("「未定義」で始まる実記録は通す", evidenceMissing(), false);
+
+    // 括弧付きラベル（全角・半角）は Evidence に数える。値と補足の未記入判定は弱めない
+    withEvidence("- Observed（2026-09 計測）: 筆者が CI の所要時間を計測した");
+    eq("全角括弧付きの Observed は数える", evidenceMissing(), false);
+    withEvidence("- Verified (公式): https://example.com の仕様を確認した");
+    eq("半角括弧付きの Verified は数える", evidenceMissing(), false);
+    withEvidence("- Observed（2026-09 計測）:\n  - 筆者が計測した");
+    eq("括弧付きラベルの続き行の値も数える", evidenceMissing(), false);
+    withEvidence("- Observed（2026-09 計測）: 確認予定\n- Verified (公式):");
+    eq("括弧付きラベルでも値が確認予定・空欄なら数えない", evidenceMissing(), true);
+    withEvidence("- Verified（未確認）: 公式ドキュメントを読む\n- Observed（）: 計測した");
+    eq("補足が未確認・空の括弧付きラベルは数えない", evidenceMissing(), true);
+    withEvidence("- Observed（2026-09 計測: 筆者が計測した");
+    eq("閉じていない括弧はラベルとして数えない", evidenceMissing(), true);
 
     // 新規記事の定義: ベースブランチに無い原稿は新規。リネームは移動元の追加日を引き継ぐ
     write("articles/backdated.md", "backdated\n");

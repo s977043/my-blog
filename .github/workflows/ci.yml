@@ -48,6 +48,11 @@ jobs:
           npm run test:note-finalize
           npm run test:note-thesis-snapshot
           npm run test:zenn-image-format
+          npm run test:zenn-book-structure
+          npm run test:zenn-book-template
+          npm run test:zenn-book-writing-contract
+          npm run test:zenn-book-browser
+          npm run test:changed-zenn-books
           npm run test:note-setext
           npm run test:queue-drift
           npm run test:orphan-docs
@@ -57,11 +62,13 @@ jobs:
           npm run test:note-cover-image
           npm run test:pr-conflict
           npm run test:article-sentence-style
+          npm run test:article-seed-placeholders
           npm run test:article-plan
           npm run test:article-graph
           npm run test:channel-metrics-link
           npm run test:note-wxr
           npm run test:reader-review-targets
+          npm run test:talk
 
       # check:pr-staleness の self-test。bash + 一時 git リポジトリを作るため
       # 他の self-test より重い（ローカル実測 6.0 秒 / exit 0）が、CI 全体の
@@ -92,6 +99,132 @@ jobs:
       # 未実行になった実例）。個々の検査の合否判定は変えていない。
       - name: Check Zenn content
         run: npm run check
+
+      # Zenn CLI の実レンダリング経路を最低限 smoke test する。
+      # 見た目の良し悪しは人間の preview review に残し、ここでは
+      # server 起動 / Book route / Book title の3点だけを自動検証する。
+      - name: Smoke test River Review Book preview
+        run: |
+          set -euo pipefail
+          ./node_modules/.bin/zenn preview --no-watch --port 8000 > /tmp/zenn-preview.log 2>&1 &
+          preview_pid=$!
+
+          cleanup_preview() {
+            kill "$preview_pid" 2>/dev/null || true
+            wait "$preview_pid" 2>/dev/null || true
+          }
+          trap cleanup_preview EXIT
+
+          ok=0
+          for _ in $(seq 1 30); do
+            if curl --fail --silent --show-error               http://127.0.0.1:8000/books/river-review-guide               --output /tmp/river-review-book.html; then
+              ok=1
+              break
+            fi
+            sleep 1
+          done
+
+          if [ "$ok" -ne 1 ]; then
+            cat /tmp/zenn-preview.log
+            exit 1
+          fi
+
+          test -s /tmp/river-review-book.html
+
+          CHROME_PATH="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_PATH"
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends fonts-noto-cjk
+          fc-cache -f
+          npm install --no-save --package-lock=false --ignore-scripts playwright-core@1.63.0
+          CHROME_PATH="$CHROME_PATH" ZENN_PREVIEW_URL="http://127.0.0.1:8000" \
+            npm run check:river-review-book-browser
+
+          cleanup_preview
+          trap - EXIT
+
+      - name: Upload River Review Book browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: river-review-book-browser-evidence
+          path: artifacts/zenn-book-browser
+          if-no-files-found: warn
+          retention-days: 7
+
+      # release/zenn 宛 PR のみ: base との差分から変更された published:true Book を抽出する。
+      # draft / removed Book はbrowser対象外。検出結果は後続stepへ明示的に渡す。
+      - name: Detect changed published Zenn Books
+        id: changed_zenn_books
+        if: github.event_name == 'pull_request' && github.base_ref == 'release/zenn'
+        run: |
+          set -euo pipefail
+          git fetch origin "${{ github.base_ref }}"
+
+          BASE_REF="origin/${{ github.base_ref }}" npm run --silent list:changed-zenn-books \
+            > /tmp/changed-zenn-books.txt
+
+          if [ -s /tmp/changed-zenn-books.txt ]; then
+            echo "has_books=true" >> "$GITHUB_OUTPUT"
+            echo "[zenn-book-browser] changed published Books:"
+            sed 's/^/  - /' /tmp/changed-zenn-books.txt
+          else
+            echo "has_books=false" >> "$GITHUB_OUTPUT"
+            echo "[zenn-book-browser] no changed published Books"
+          fi
+
+      - name: Browser check changed published Zenn Books
+        if: github.event_name == 'pull_request' && github.base_ref == 'release/zenn' && steps.changed_zenn_books.outputs.has_books == 'true'
+        run: |
+          set -euo pipefail
+          mapfile -t changed_books < /tmp/changed-zenn-books.txt
+
+          ./node_modules/.bin/zenn preview --no-watch --port 8000 > /tmp/zenn-preview-books.log 2>&1 &
+          preview_pid=$!
+
+          cleanup_preview() {
+            kill "$preview_pid" 2>/dev/null || true
+            wait "$preview_pid" 2>/dev/null || true
+          }
+          trap cleanup_preview EXIT
+
+          ok=0
+          for _ in $(seq 1 30); do
+            if curl --fail --silent --show-error http://127.0.0.1:8000/ --output /tmp/zenn-preview-books.html; then
+              ok=1
+              break
+            fi
+            sleep 1
+          done
+
+          if [ "$ok" -ne 1 ]; then
+            cat /tmp/zenn-preview-books.log
+            exit 1
+          fi
+
+          CHROME_PATH="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME_PATH"
+
+          npm install --no-save --package-lock=false --ignore-scripts playwright-core@1.63.0
+
+          for book in "${changed_books[@]}"; do
+            CHROME_PATH="$CHROME_PATH" ZENN_PREVIEW_URL="http://127.0.0.1:8000" \
+              npm run check:zenn-book-browser -- \
+                --book "$book" \
+                --artifact-dir "artifacts/release-zenn-book-browser/$book"
+          done
+
+          cleanup_preview
+          trap - EXIT
+
+      - name: Upload changed Zenn Book browser evidence
+        if: always() && github.event_name == 'pull_request' && github.base_ref == 'release/zenn' && steps.changed_zenn_books.outputs.has_books == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: changed-zenn-book-browser-evidence
+          path: artifacts/release-zenn-book-browser
+          if-no-files-found: error
+          retention-days: 7
 
       # publish-readiness ゲートの fixture self-test（hermetic・git 不要）。
       # 新設 check スクリプトの初版バグ対策（#393/#417 の再発防止）として常時実行する。

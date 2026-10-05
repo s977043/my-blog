@@ -1,6 +1,6 @@
 # my-blog
 
-Zenn・Qiita・noteの記事をこの1つのリポジトリで並行管理するモノレポ。
+Zenn・Qiita・noteの記事と登壇資料をこの1つのリポジトリで並行管理するモノレポ。
 レビュー生成と反映は`.claude/`のSkill / Agent / Slash Commandでワークフロー化してある。
 
 ## リポジトリ構成
@@ -11,7 +11,9 @@ my-blog/
 ├── Qiita/                  Qiita記事本体 (public/*.md)  → Qiita/README.md
 ├── articles_note/          note記事のローカル管理        → articles_note/README.md
 ├── articles_izanami/       izanami記事のローカル管理     → articles_izanami/README.md
+├── talks/                  登壇資料・Speaker Notes       → talks/README.md
 ├── books/                  Zennの本（chaptersを含む）
+├── templates/              再利用テンプレート（Zenn Book等）
 ├── images/                 Zenn記事用画像（<slug>/ごと）
 ├── reviews/
 │   ├── zenn/               Zenn記事のレビュー成果物
@@ -30,6 +32,7 @@ my-blog/
 - [`Qiita/README.md`](./Qiita/README.md) — Qiita記事の構成・`public/.remote/`の役割
 - [`articles_note/README.md`](./articles_note/README.md) — noteエクスポートとインポートの運用フロー
 - [`articles_izanami/README.md`](./articles_izanami/README.md) — izanami向け新規原稿と企画候補
+- [`talks/README.md`](./talks/README.md) — 登壇資料のTalk Contract / Visual Contract / Review・Render運用
 
 ## 共通ポジショニング
 
@@ -50,8 +53,12 @@ my-blog/
 - プレビュー: `npm run preview`
 - 記事一覧: `npm run list:articles`
 - 本一覧: `npm run list:books`
+- Book構造チェック: `npm run check:zenn-books`
+- 新規Book: `npm run new:zenn-book -- <slug> --title "..." --summary "..." --topics "AI,開発"`
+- Bookテンプレート: `templates/zenn-book/`
+- Book作成Skill: `.claude/skills/zenn-book-writing/SKILL.md`
 
-ZennはGitHub連携で公開されるため、`main`へのpushがそのまま反映になる。
+Zennのdeploy対象は `release/zenn` ブランチ。通常の執筆・レビューは `main` で行い、公開判断後に `release/zenn` へ反映する。詳細は `AGENTS.md` のZenn公開フローを正本とする。
 
 参考: [Zenn CLI guide](https://zenn.dev/zenn/articles/zenn-cli-guide)
 
@@ -98,6 +105,21 @@ Front Matterで次の2軸を使い分ける。
 - エクスポート原本: `articles_note/export/YYYY-MM-DD/*.zip`
 
 noteのインポートは**常に新規下書き作成**で、既存記事の上書きはできない。運用の詳細とスクリプト（`.claude/skills/note-export-import/scripts/`）は[`articles_note/README.md`](./articles_note/README.md)を参照。
+
+## 登壇資料
+
+登壇資料は記事の派生物に限定せず、テーマ・メモ・調査結果・Issue・既存記事のいずれからでも作成できる。
+
+- 成果物: `talks/<slug>/`
+- 内容の正本: `talks/<slug>/brief.md`（Talk Contract）
+- 共通デザイン原則: `talks/DESIGN.md`
+- 登壇固有の視覚契約: `talks/<slug>/design.md`（Visual Contract）
+- コマンド: `/talk-workflow <slug> [source-path]`
+- 詳細: [`talks/README.md`](./talks/README.md)
+
+中心原則は **1 slide = 1 attention target**。既存記事をsourceにする場合も逐語変換せず、中心主張・根拠・具体例を抽出して Spoken Story とVisual Contractへ再構成する。
+
+Source VerificationとRender Verificationを分離し、必要なRender / Rehearsalが未実施なら最終状態を `UNVERIFIED` として扱う。
 
 ## 記事レビューのワークフロー
 

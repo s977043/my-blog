@@ -202,6 +202,12 @@ function validate(files) {
     'drafts-readonly-mirror',
     'primarySourceAccess',
     "enum: ['available', 'partial', 'unavailable']",
+    // Operation log regression: reviewer selection must not mechanically fill all 3 slots.
+    '必要最小限（最大3つ）',
+    '枠を埋めるために3人へ増やさない',
+    // Operation log regression: byte length was previously reported as character count.
+    '字数・文字数を推測で書かない',
+    'deterministic checkから与えられている場合だけ',
     'custom Agent定義をRead',
     'findings:',
     'claims:',
@@ -296,7 +302,7 @@ function selfTest() {
     "{ title: 'Extract' } { title: 'DomainReview' } { title: 'LanguageReview' } { title: 'VisualReview' } { title: 'EditorialReview' } { title: 'FinalGate' }",
     "phase('Extract') phase('DomainReview') phase('LanguageReview') phase('VisualReview') phase('EditorialReview') phase('FinalGate')",
     "enum: ['available', 'partial', 'unavailable']",
-    'Terminology Contract READY NEEDS_CHANGES UNVERIFIED review-only requiresThesisLoop drafts-readonly-mirror primarySourceAccess custom Agent定義をRead findings: claims: images: addCandidates: --figure-inventory blockClassification visual-inspection-gap visual-self-contradiction',
+    'Terminology Contract READY NEEDS_CHANGES UNVERIFIED review-only requiresThesisLoop drafts-readonly-mirror primarySourceAccess custom Agent定義をRead findings: claims: images: addCandidates: --figure-inventory blockClassification visual-inspection-gap visual-self-contradiction 必要最小限（最大3つ） 枠を埋めるために3人へ増やさない 字数・文字数を推測で書かない deterministic checkから与えられている場合だけ',
     "required: ['applicable', 'images', 'addCandidates', 'scan', 'passed', 'unverified', 'summary']",
     'if (visual.unverified || visualReconciliation.unverified) {}',
     fs.readFileSync(path.join(ROOT, PATHS.workflow), 'utf8').slice(
@@ -361,6 +367,23 @@ function selfTest() {
   const brokenWorkflow = goodWorkflow.replace('\\`npm run x -- ${A}\\`', '`npm run x -- ${A}`')
   if (workflowParseError(brokenWorkflow) === null) {
     throw new Error('unescaped-backtick workflow fixture was not rejected')
+  }
+
+  const allFiles = base
+  const missingReviewerMinimum = {
+    ...allFiles,
+    [PATHS.workflow]: allFiles[PATHS.workflow].replace('必要最小限（最大3つ）', ''),
+  }
+  if (!validate(missingReviewerMinimum).some((e) => e.includes('必要最小限（最大3つ）'))) {
+    throw new Error('reviewer minimum-selection regression was not rejected')
+  }
+
+  const missingLengthGuard = {
+    ...allFiles,
+    [PATHS.workflow]: allFiles[PATHS.workflow].replace('字数・文字数を推測で書かない', ''),
+  }
+  if (!validate(missingLengthGuard).some((e) => e.includes('字数・文字数を推測で書かない'))) {
+    throw new Error('unmeasured character-count regression was not rejected')
   }
 
   // --- Issue #622: Visual Gate の unverified 判定 ---

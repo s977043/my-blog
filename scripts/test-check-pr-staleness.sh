@@ -24,7 +24,8 @@ run_check() { # $1=repo $2=branch → CHECK_STATUS / CHECK_OUT に格納
 
 assert() { # $1=ケース名 $2=期待exit $3=実exit $4=出力に含むべき文字列 $5=出力
   local name="$1" want="$2" got="$3" needle="$4" out="$5"
-  if [ "$got" = "$want" ] && echo "$out" | grep -q "$needle"; then
+  # echo | grep -q は pipefail 下で grep の早期終了が SIGPIPE(141) になり、一致しても偽になる
+  if [ "$got" = "$want" ] && grep -q -- "$needle" <<<"$out"; then
     echo "PASS: $name (exit=$got, '$needle' を検出)"
   else
     echo "FAIL: $name — 期待 exit=$want & 出力に '$needle' / 実際 exit=$got"
@@ -355,6 +356,40 @@ git -C "$R" add article.md && git -C "$R" commit -qm "add diagram (old working c
 git -C "$R" switch -q main
 run_check "$R" stale-append-rollback
 assert "case9 warn/exit0 (#404変種 append-only 巻き戻しをサイレント CLEAN にしない)" 0 "$CHECK_STATUS" "WARN" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
+# Case 10/11: 外部 I/O が返らなくても NET_TIMEOUT で打ち切って判定を返す
+#   （2026-10-01 #732: gh / fetch のどちらかで止まり、30 分の上限まで返らなかった）
+# ---------------------------------------------------------------------------
+assert_fast() { # $1=ケース名 $2=経過秒 $3=上限秒
+  if [ "$2" -le "$3" ]; then
+    echo "PASS: $1 (${2}s ≤ ${3}s)"
+  else
+    echo "FAIL: $1 — ${2}s かかった（上限 ${3}s）"
+    FAILURES=$((FAILURES + 1))
+  fi
+}
+
+FAKEBIN="$TMPDIR_ROOT/fakebin"; mkdir -p "$FAKEBIN"
+printf '#!/bin/sh\nsleep 60\n' >"$FAKEBIN/gh"; chmod +x "$FAKEBIN/gh"
+R="$TMPDIR_ROOT/case1"
+START=$SECONDS
+set +e
+CHECK_OUT=$(cd "$R" && PATH="$FAKEBIN:$PATH" NET_TIMEOUT=2 NO_FETCH=1 BASE_BRANCH=main bash "$SCRIPT" 123 2>&1)
+CHECK_STATUS=$?
+set -e
+assert "case10 warn (gh pr view が返らない)" 0 "$CHECK_STATUS" "打ち切り" "$CHECK_OUT"
+assert_fast "case10 gh を NET_TIMEOUT で打ち切る" $((SECONDS - START)) 10
+
+git -C "$R" config protocol.ext.allow always
+git -C "$R" remote add slow "ext::sh -c sleep% 60"
+START=$SECONDS
+set +e
+CHECK_OUT=$(cd "$R" && NET_TIMEOUT=2 REMOTE=slow BASE_BRANCH=main bash "$SCRIPT" feature-other 2>&1)
+CHECK_STATUS=$?
+set -e
+assert "case11 clean (fetch が返らなくてもローカル ref で判定)" 0 "$CHECK_STATUS" "CLEAN" "$CHECK_OUT"
+assert_fast "case11 fetch を NET_TIMEOUT で打ち切る" $((SECONDS - START)) 10
 
 echo "---"
 if [ "$FAILURES" -eq 0 ]; then
