@@ -51,6 +51,25 @@ function hasBalancedFences(content) {
   return open === null;
 }
 
+function countH1OutsideFences(content) {
+  let open = null;
+  let count = 0;
+
+  for (const line of String(content).split(/\r?\n/)) {
+    const m = line.match(/^\s*((?:\x60|~){3,})/);
+    if (m) {
+      const marker = m[1][0];
+      const length = m[1].length;
+      if (!open) open = { marker, length };
+      else if (open.marker === marker && length >= open.length) open = null;
+      continue;
+    }
+    if (!open && /^#\s+.+$/.test(line)) count++;
+  }
+
+  return count;
+}
+
 // Zenn の Book チャプターは先頭の FrontMatter に title が必須。
 // 戻り値は { error } か { title, body }（title は検証前の生の値）。
 function parseChapterFrontMatter(content) {
@@ -125,11 +144,12 @@ function validateBook(bookDir, options = {}) {
       errors.push(`${slug}.md: FrontMatter に空でない title がない`);
     }
 
-    if (options.checkH1 !== false) {
-      const body = frontMatter.error ? content : frontMatter.body;
-      const h1Count = (hasTitle ? 1 : 0) + (body.match(/^#\s+.+$/gm) || []).length;
-      if (h1Count !== 1) {
-        errors.push(`${slug}.md: H1 は1つ必要（FrontMatter の title を含めて実際 ${h1Count}）`);
+    if (options.checkH1 !== false && hasTitle) {
+      const bodyH1Count = countH1OutsideFences(frontMatter.body);
+      if (bodyH1Count > 0) {
+        errors.push(
+          `${slug}.md: 本文に H1 を置かない（FrontMatter の title が見出しになる。本文の H1: ${bodyH1Count}）`,
+        );
       }
     }
 
@@ -209,6 +229,7 @@ function selfTest() {
   ].join("\n");
   const validPart = '---\ntitle: "Part"\n---\n\nNavigation.\n';
   const introWithoutTitle = validIntro.replace('title: "Intro"', "free: true");
+  const introWithBodyH1 = validIntro.replace("---\n\n~~~", "---\n\n# Intro\n\n~~~");
 
   write("config.yaml", validConfig);
   write("01_intro.md", validIntro);
@@ -259,11 +280,11 @@ function selfTest() {
   );
 
   write("config.yaml", validConfig);
-  write("01_intro.md", introWithoutTitle);
+  write("01_intro.md", introWithBodyH1);
   expect(
-    "missing H1",
+    "body H1 alongside title",
     () => validateBook(book, { requireSourcesNumbered: true }),
-    (errors) => errors.some((e) => e.includes("H1 は1つ必要")),
+    (errors) => errors.some((e) => e.includes("本文に H1 を置かない")),
   );
 
   write(
@@ -348,6 +369,21 @@ function selfTest() {
       validIntro.replace('title: "Intro"', "title: # x"),
       (e) => e.some((m) => m.includes("空でない title")),
     ],
+    [
+      "missing title reports a single error",
+      introWithoutTitle,
+      (e) => e.length === 1 && e[0].includes("空でない title"),
+    ],
+    [
+      "broken YAML reports a single error",
+      validIntro.replace('title: "Intro"', 'title: "A'),
+      (e) => e.length === 1 && e[0].includes("YAML を解析できない"),
+    ],
+    [
+      "H1-like lines inside code fences are not body H1",
+      validIntro.replace("~~~text\nhello\n~~~", "~~~bash\n# comment\n~~~\n\n```sh\n# comment\n```"),
+      (e) => e.length === 0,
+    ],
   ];
   for (const [name, content, match] of frontMatterCases) {
     write("01_intro.md", content);
@@ -377,21 +413,21 @@ function selfTest() {
     (errors) => errors.length === 0 && findBookDirs(booksRoot).length === 2,
   );
 
-  fs.writeFileSync(path.join(bookA, "01_intro.md"), introWithoutTitle);
+  fs.writeFileSync(path.join(bookA, "01_intro.md"), introWithBodyH1);
   expect(
-    "modern book requires H1",
+    "modern book forbids body H1",
     () =>
       validateBooksRoot(booksRoot, {
         modernH1ByBookPlan: true,
         checkPlaceholders: false,
       }).flatMap((result) => result.errors),
-    (errors) => errors.some((e) => e.includes("H1 は1つ必要")),
+    (errors) => errors.some((e) => e.includes("本文に H1 を置かない")),
   );
   fs.writeFileSync(path.join(bookA, "01_intro.md"), validIntro);
 
-  fs.writeFileSync(path.join(bookB, "01_intro.md"), validIntro.replace("---\n\n~~~", "---\n\n# Intro\n\n~~~"));
+  fs.writeFileSync(path.join(bookB, "01_intro.md"), introWithBodyH1);
   expect(
-    "legacy book may omit H1 in all-book check",
+    "legacy book may keep body H1 in all-book check",
     () =>
       validateBooksRoot(booksRoot, {
         modernH1ByBookPlan: true,
