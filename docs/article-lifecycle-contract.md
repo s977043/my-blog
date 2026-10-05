@@ -58,6 +58,8 @@ Signal / Experience
 
 **Plan Approval（Human）** は局所ゲートであり、Lifecycle stateではない。独立した必須工程でもない。中心主張や書かない範囲の変更を採用する前に著者の判断を得る（この判断を Plan Approval としてよい）。承認されたPlanは見出しを `## Approved Article Plan: <channel>/<slug>` に変更する。Planの記録とPR作成時の確認は「4. Article Planの記録・PR作成ゲート」を正とする。Lifecycleの `APPROVED` は公開承認だけを意味する。
 
+**Author Input Gate（Human）** も局所ゲートであり、Lifecycle stateではない。Seedに `<!-- AUTHOR_INPUT_REQUIRED: ... -->` が残っている場合、その一次体験・会話・実測値はAIが推測で補完してはいけない。未解決マーカーがあるSeedは記事ネタ判定を `NEEDS_INPUT` とし、`PROMOTED` で止めて `PLANNED` へ遷移させず、Draftも作らない。著者本人が事実を提供するか、「今回の記事ではその情報を使わない」と判断して対象マーカーを解消した後に再判定する。AIは中心主張を縮小する案を提案してよいが、マーカーを独断で削除してGateを通過させない。
+
 次は自律実行してよい。
 
 - Signal / Seed の収集
@@ -100,7 +102,7 @@ Signal / Experience
 - **一次情報**: 主張を支える観測・確認事項と、その出所（`Evidence Boundary` の `Observed` / `Verified`）。実体験は誰が何を観測したか、外部事実は再確認できる参照先を残す。解釈・仮説は分ける
 - **書かない範囲**: 今回の主張に含めない論点（`out_of_scope`）
 
-初稿前は仮の内容や「未確認」を明記してよい。PR作成時には四つの記録が揃い、中心主張を支える観測・確認事項の出所が特定できていることを確認する。確認予定や仮説だけでは一次情報の項目を満たさない。PlanはPRの差分またはベースブランチから読める状態にする。レビュー反映（`/apply-review` 系）のPRで、Planが未マージのレビューPRにしかない場合は、そのレビューPRを先にマージする。不足があればPR作成を止め、追加調査または主張の縮小を行う。レビューではこのPlanを基準に主張のずれを確認する。主張や書かない範囲を変える場合は、採用前に著者の判断（Plan Approval）を得て、変更理由を同じPlanに残す。レビュー反映（`/apply-review` 系）ではPlanを編集せず、該当する指摘を保留して著者へ報告する。Planの更新は著者の判断後に別コミットで行う。
+初稿前は仮の内容や「未確認」を明記してよい。ただし、対応Seedに未解決の `AUTHOR_INPUT_REQUIRED` が残っている間はDraftへ進めず、PR作成ゲートも通さない。PR作成時には四つの記録が揃い、中心主張を支える観測・確認事項の出所が特定できていることを確認する。確認予定や仮説だけでは一次情報の項目を満たさない。PlanはPRの差分またはベースブランチから読める状態にする。レビュー反映（`/apply-review` 系）のPRで、Planが未マージのレビューPRにしかない場合は、そのレビューPRを先にマージする。不足があればPR作成を止め、追加調査または主張の縮小を行う。レビューではこのPlanを基準に主張のずれを確認する。主張や書かない範囲を変える場合は、採用前に著者の判断（Plan Approval）を得て、変更理由を同じPlanに残す。レビュー反映（`/apply-review` 系）ではPlanを編集せず、該当する指摘を保留して著者へ報告する。Planの更新は著者の判断後に別コミットで行う。
 
 記事・レビュー成果物のPR本文には `Plan: <SEED_PATH> (<channel>/<slug>)` の1行を書く。対象外なら `Plan: 対象外（ゲート導入前の原稿／改訂） (<channel>/<slug>)` と書く。
 
@@ -296,7 +298,11 @@ AGENT_LEARNINGS.md の更新条件を満たすか確認
   ↓
 Editorial Learning Approval (Human)
   ↓
-必要なら canonical guide / Skill / deterministic check へ昇格
+再現可能なら failing fixture / eval case を先に追加
+  ↓
+canonical guide / Skill / deterministic check を最小変更
+  ↓
+同じ fixture / eval で再検証してから昇格
 ```
 
 - 採否と理由の記録は既存 Review / Applier の成果物を再利用し、専用DBを増やさない
@@ -305,4 +311,7 @@ Editorial Learning Approval (Human)
 - Proposalは「どの規則へ昇格するか」を示すだけで、Skill / Guide / CIを自動更新しない
 - Editorial Learning Approvalは公開承認のLifecycle state `APPROVED` とは別の局所判断であり、状態遷移を発生させない
 - 安定した機械判定が可能なものだけ deterministic check 候補にする。意味判断を要するものは Skill / Guide に残す
+- 再現可能な失敗は、修正前に failing fixture / eval case として残す。routing のような意味判断は semantic eval、構造・禁止操作・形式は deterministic check に分ける
+- fixture に合わせて規則を過学習させない。既知ケースを直した後は、実運用の新しい失敗または held-out case で境界を再確認する
+- 一度きりで再現できない編集上の好みまで fixture 化しない
 - 却下されたレビュー指摘も、同型の誤提案が繰り返される場合は「禁止・境界ルール」のProposal候補になりうる

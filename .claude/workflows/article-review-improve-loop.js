@@ -233,7 +233,9 @@ ${HUMANIZE_GUARD}
 あなたは日本語技術記事のHumanizeレビュー担当です。次を順に Read してください。
 
 1. .claude/skills/article-humanizer-ja/SKILL.md
-2. 記事 ${ARTICLE}
+2. .claude/skills/article-humanizer-ja/references/protected-content.md
+3. .claude/skills/article-humanizer-ja/references/style-patterns.md
+4. 記事 ${ARTICLE}
 
 ${INV}
 

@@ -10,7 +10,7 @@
 
 - このリポジトリに OpenAI API の呼び出し、モデル設定、モデル選択 UI、またはモデルルーターは見つかっていない。
 - 作業の主な対象は Markdown の記事、編集・レビュー用の指示、記事の公開準備である。
-- `AGENTS.md` と `CLAUDE.md` はモデル名に依存しない共通規約・Claude Code 向け案内を担う。`.claude/skills/article-humanizer-ja/SKILL.md` には「GPT-5.6 Terra を言い換えない」という固有の用語ルールがある。
+- `AGENTS.md` と `CLAUDE.md` はモデル名に依存しない共通規約・Claude Code 向け案内を担う。`.claude/skills/article-humanizer-ja/references/protected-content.md` には「GPT-5.6 Terra を言い換えない」という固有の用語ルールがある。
 - 記事、レビュー、計測ログにある過去のモデル名や比較結果は履歴であり、移行対象ではない。
 
 ## 推奨モデルと役割

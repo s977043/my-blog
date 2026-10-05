@@ -7,7 +7,7 @@ tags:
   - マルチエージェント
   - ClaudeCode
 private: false
-updated_at: '2026-06-03T09:32:45+09:00'
+updated_at: '2026-10-02T19:05:02+09:00'
 id: 05934596111b9065465d
 organization_url_name: null
 slide: false
@@ -135,7 +135,7 @@ graph LR
 # requirements.md
 
 - 平日 = 月曜〜金曜（土日・祝日は除外）
-- アラーム時刻 = 07:00（ユーザー指定可能）
+- アラーム時刻 = 07:00（HH:MM 形式、ユーザー指定可能）
 - スヌーズ = 5 分間隔、最大 3 回まで
 ```
 
@@ -157,9 +157,9 @@ paths:
                   description: "平日のみ（月-金、祝日除外）"
                 alarm_time:
                   type: string
-                  pattern: '^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$'
-                  example: "07:00:00"
-                  description: "アラーム時刻（HH:MM:SS形式）"
+                  pattern: '^([01]\d|2[0-3]):[0-5]\d$'
+                  example: "07:00"
+                  description: "アラーム時刻（HH:MM形式）"
               required:
                 - weekday_only
                 - alarm_time
@@ -178,7 +178,7 @@ SDD で仕様を明確にしたら、次は**実装前にテストを書く**こ
 #### テストの種類
 
 - **受け入れテスト**（ユーザーが期待する動作を検証）
-- **インターフェーステスト**（エージェント間の仕様を保証）
+- **契約テスト**（エージェント間で共有するインターフェースの仕様を保証）
 
 #### 例：acceptance.alarm.md
 
@@ -277,7 +277,7 @@ E(Docs/Gemini): README に差分まとめ、既知の制約を記録
 
 ここで紹介するのが **Serena MCP** です。
 
-Serena は、オープンソースの MCP サーバで、LSP（Language Server Protocol）を用いてコードベースを**構造的に理解**し、検索・参照・編集を効率的に行えます。
+Serena は、オープンソースの MCP（Model Context Protocol）サーバで、LSP（Language Server Protocol）を用いてコードベースを**構造的に理解**し、検索・参照・編集を効率的に行えます。
 さらに `.serena/memories/` によって、エージェント間の会話や判断の履歴を記録し、人間が後からレビューしやすい環境を整えてくれます。
 
 - **SDD を補強**：仕様解釈のズレを減らす
@@ -285,6 +285,8 @@ Serena は、オープンソースの MCP サーバで、LSP（Language Server P
 - **ノンブロッキングを補完**：ログと履歴により、人間が安心して「止めずに任せる」ことができる
 
 Serena を導入することで、今回紹介した 3 原則がより確実に機能するようになります。
+
+導入手順は本記事では扱いません。公式リポジトリ [oraios/serena](https://github.com/oraios/serena) の README を参照してください。
 
 ## 実践的な効果と注意点
 

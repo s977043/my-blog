@@ -1,0 +1,247 @@
+{
+  "version": 1,
+  "purpose": "Evaluate semantic routing from user intent to article-production Skills. Frontmatter description remains the routing source of truth.",
+  "candidateSkills": [
+    ".claude/skills/tech-blog-writing/SKILL.md",
+    ".claude/skills/zenn-book-writing/SKILL.md",
+    ".claude/skills/article-humanizer-ja/SKILL.md",
+    ".claude/skills/note-thesis-review-loop/SKILL.md",
+    ".claude/skills/note-article-review/SKILL.md",
+    ".claude/skills/article-domain-review/SKILL.md",
+    ".claude/skills/article-visual-review/SKILL.md"
+  ],
+  "cases": [
+    {
+      "id": "tech-blog-01",
+      "userPrompt": "作業ログとPRから記事ネタを抽出して、一次経験を整理し、Zennとnoteのどちらに向くか決めたい",
+      "expectedSkill": "tech-blog-writing",
+      "forbiddenSkills": [
+        "note-article-review",
+        "article-humanizer-ja",
+        "zenn-book-writing"
+      ]
+    },
+    {
+      "id": "tech-blog-02",
+      "userPrompt": "この技術記事案を長文にする前に、Reader Problem・中心主張・Evidence・Out of ScopeをDraft Article Planに整理したい",
+      "expectedSkill": "tech-blog-writing",
+      "forbiddenSkills": [
+        "note-thesis-review-loop",
+        "zenn-book-writing"
+      ]
+    },
+    {
+      "id": "tech-blog-03",
+      "userPrompt": "既存の技術記事が一次経験と根拠を備えているか上流品質を確認して、次に使うレビューを決めたい",
+      "expectedSkill": "tech-blog-writing",
+      "forbiddenSkills": [
+        "article-humanizer-ja",
+        "article-visual-review",
+        "zenn-book-writing"
+      ]
+    },
+    {
+      "id": "zenn-book-01",
+      "userPrompt": "Zennで新しいBookを作りたい。読者課題と中心主張を決めて、章立てから設計したい",
+      "expectedSkill": "zenn-book-writing",
+      "forbiddenSkills": [
+        "tech-blog-writing",
+        "note-thesis-review-loop"
+      ]
+    },
+    {
+      "id": "zenn-book-02",
+      "userPrompt": "このZenn Book全体をレビューして、章の責務重複・Reader Journey・Evidenceの不足を改善したい",
+      "expectedSkill": "zenn-book-writing",
+      "forbiddenSkills": [
+        "tech-blog-writing",
+        "note-article-review"
+      ]
+    },
+    {
+      "id": "zenn-book-03",
+      "userPrompt": "Zenn Bookの公開前QAをしたい。configと章ファイル、source freshness、preview、publish checklistまで確認して",
+      "expectedSkill": "zenn-book-writing",
+      "forbiddenSkills": [
+        "tech-blog-writing",
+        "article-humanizer-ja"
+      ]
+    },
+    {
+      "id": "thesis-01",
+      "userPrompt": "この記事を、主張がぶれないように複数ペルソナでレビュー→改善→再レビューを3ループして",
+      "expectedSkill": "note-thesis-review-loop",
+      "forbiddenSkills": [
+        "article-humanizer-ja"
+      ]
+    },
+    {
+      "id": "thesis-02",
+      "userPrompt": "noteの考察記事を磨きたい。論点を増やさず、中心メッセージを守ったまま3周レビューして",
+      "expectedSkill": "note-thesis-review-loop",
+      "forbiddenSkills": [
+        "note-article-review"
+      ]
+    },
+    {
+      "id": "thesis-03",
+      "userPrompt": "改善を重ねると主題が薄くなるので、Thesis Gateを挟みながら記事を反復改善したい",
+      "expectedSkill": "note-thesis-review-loop",
+      "forbiddenSkills": []
+    },
+    {
+      "id": "humanizer-01",
+      "userPrompt": "この記事は内容を変えずに、AIっぽい定型表現や単調な語尾だけレビューして",
+      "expectedSkill": "article-humanizer-ja",
+      "forbiddenSkills": [
+        "note-thesis-review-loop"
+      ]
+    },
+    {
+      "id": "humanizer-02",
+      "userPrompt": "技術記事の日本語が機械的に見えないか確認したい。コードや数値は触らないで",
+      "expectedSkill": "article-humanizer-ja",
+      "forbiddenSkills": [
+        "article-domain-review"
+      ]
+    },
+    {
+      "id": "humanizer-03",
+      "userPrompt": "英語名詞の密集や日英併記の繰り返しを、本文を書き換えずにチェックして",
+      "expectedSkill": "article-humanizer-ja",
+      "forbiddenSkills": []
+    },
+    {
+      "id": "note-review-01",
+      "userPrompt": "このnote記事を公開前に、note編集者・ディレクター・想定読者の3視点で通常レビューして",
+      "expectedSkill": "note-article-review",
+      "forbiddenSkills": [
+        "note-thesis-review-loop"
+      ]
+    },
+    {
+      "id": "note-review-02",
+      "userPrompt": "noteの下書きについて、構成・読みやすさ・スマホ可読性・発見性を一通り確認して",
+      "expectedSkill": "note-article-review",
+      "forbiddenSkills": []
+    },
+    {
+      "id": "note-review-03",
+      "userPrompt": "3ループまでは要らないので、このnote記事の通常品質チェックだけお願い",
+      "expectedSkill": "note-article-review",
+      "forbiddenSkills": [
+        "note-thesis-review-loop"
+      ]
+    },
+    {
+      "id": "domain-01",
+      "userPrompt": "この記事のScrumの説明が公式ガイドと混ざっていないか、一次情報で事実境界をレビューして",
+      "expectedSkill": "article-domain-review",
+      "forbiddenSkills": [
+        "article-humanizer-ja"
+      ]
+    },
+    {
+      "id": "domain-02",
+      "userPrompt": "OSSの仕様と私の解釈を分けて、専門領域の主張だけファクトチェックして",
+      "expectedSkill": "article-domain-review",
+      "forbiddenSkills": []
+    },
+    {
+      "id": "domain-03",
+      "userPrompt": "チーム固有の運用を公式仕様のように書いていないか、専門家視点で確認して",
+      "expectedSkill": "article-domain-review",
+      "forbiddenSkills": [
+        "article-visual-review"
+      ]
+    },
+    {
+      "id": "visual-01",
+      "userPrompt": "記事中の図が本文の主張と合っているか、配置・冗長性・altも含めてレビューして",
+      "expectedSkill": "article-visual-review",
+      "forbiddenSkills": [
+        "article-domain-review"
+      ]
+    },
+    {
+      "id": "visual-02",
+      "userPrompt": "この技術記事の図をKEEP/UPDATE/REMOVE/ADDで判定して。本文は編集しないで",
+      "expectedSkill": "article-visual-review",
+      "forbiddenSkills": []
+    },
+    {
+      "id": "visual-03",
+      "userPrompt": "図解を追加すべき場所と、既存図の用語不整合がないか確認したい",
+      "expectedSkill": "article-visual-review",
+      "forbiddenSkills": [
+        "article-humanizer-ja"
+      ]
+    },
+    {
+      "id": "negative-01",
+      "userPrompt": "この日本語を英語に翻訳して",
+      "expectedSkill": null,
+      "forbiddenSkills": [
+        "article-humanizer-ja",
+        "note-thesis-review-loop",
+        "note-article-review",
+        "article-domain-review",
+        "article-visual-review",
+        "tech-blog-writing",
+        "zenn-book-writing"
+      ]
+    },
+    {
+      "id": "negative-02",
+      "userPrompt": "Next.jsのビルドエラーを直して",
+      "expectedSkill": null,
+      "forbiddenSkills": [
+        "article-humanizer-ja",
+        "note-thesis-review-loop",
+        "note-article-review",
+        "article-domain-review",
+        "article-visual-review",
+        "tech-blog-writing",
+        "zenn-book-writing"
+      ]
+    },
+    {
+      "id": "negative-03",
+      "userPrompt": "記事タイトル案を10個だけ出して",
+      "expectedSkill": null,
+      "forbiddenSkills": [
+        "note-thesis-review-loop",
+        "article-domain-review",
+        "article-visual-review",
+        "tech-blog-writing",
+        "zenn-book-writing"
+      ]
+    },
+    {
+      "id": "negative-04",
+      "userPrompt": "誤字を1か所だけ直して",
+      "expectedSkill": null,
+      "forbiddenSkills": [
+        "note-thesis-review-loop",
+        "article-domain-review",
+        "article-visual-review",
+        "tech-blog-writing",
+        "zenn-book-writing"
+      ]
+    },
+    {
+      "id": "negative-05",
+      "userPrompt": "Zennの公開状態を確認して",
+      "expectedSkill": null,
+      "forbiddenSkills": [
+        "article-humanizer-ja",
+        "note-thesis-review-loop",
+        "note-article-review",
+        "article-domain-review",
+        "article-visual-review",
+        "tech-blog-writing",
+        "zenn-book-writing"
+      ]
+    }
+  ]
+}

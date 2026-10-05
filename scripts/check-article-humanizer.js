@@ -6,6 +6,10 @@ const path = require('path')
 const ROOT = path.resolve(__dirname, '..')
 const PATHS = {
   skill: '.claude/skills/article-humanizer-ja/SKILL.md',
+  protectedContent: '.claude/skills/article-humanizer-ja/references/protected-content.md',
+  stylePatterns: '.claude/skills/article-humanizer-ja/references/style-patterns.md',
+  evaluationGuide: '.claude/skills/article-humanizer-ja/references/evaluation-guide.md',
+  upstreamLicense: '.claude/skills/article-humanizer-ja/references/upstream-license.md',
   command: '.claude/commands/humanize-review.md',
   workflow: '.claude/workflows/article-review-improve-loop.js',
   languageScript: 'scripts/check-article-language-density.js',
@@ -44,6 +48,10 @@ function validate(files) {
   if (errors.length) return errors
 
   const skill = files[PATHS.skill]
+  const protectedContent = files[PATHS.protectedContent]
+  const stylePatterns = files[PATHS.stylePatterns]
+  const evaluationGuide = files[PATHS.evaluationGuide]
+  const upstreamLicense = files[PATHS.upstreamLicense]
   const allowedTools = extractAllowedTools(skill)
   for (const tool of ['Edit', 'Write', 'Bash', 'AskUserQuestion']) {
     if (allowedTools.includes(tool)) errors.push(`review-only skill must not allow ${tool}`)
@@ -53,25 +61,35 @@ function validate(files) {
   }
   if (!skill.includes('review-only')) errors.push('SKILL.md must state review-only')
 
-  const patternIds = extractPatternIds(skill)
-  if (patternIds.length < 23) errors.push(`expected at least 23 patterns, found ${patternIds.length}`)
+  for (const ref of [PATHS.protectedContent, PATHS.stylePatterns, PATHS.evaluationGuide, PATHS.upstreamLicense]) {
+    if (!skill.includes(ref.replace('.claude/skills/article-humanizer-ja/', ''))) {
+      errors.push(`SKILL.md must reference progressive-disclosure file: ${ref}`)
+    }
+  }
+
+  const patternIds = extractPatternIds(stylePatterns)
+  if (patternIds.length < 23) errors.push(`expected at least 23 patterns in style-patterns.md, found ${patternIds.length}`)
   const duplicates = patternIds.filter((id, index) => patternIds.indexOf(id) !== index)
   if (duplicates.length) errors.push(`duplicate pattern IDs: ${[...new Set(duplicates)].join(', ')}`)
   for (const id of ['S15', 'S16', 'S17']) {
-    if (!patternIds.includes(id)) errors.push(`SKILL.md missing language-density pattern: ${id}`)
+    if (!patternIds.includes(id)) errors.push(`style-patterns.md missing language-density pattern: ${id}`)
   }
 
   for (const token of ['Front Matter', 'code', 'URL', '引用', '数値', 'バージョン', '筆者の実体験']) {
-    if (!skill.includes(token)) errors.push(`SKILL.md missing protected content: ${token}`)
+    if (!protectedContent.includes(token)) errors.push(`protected-content.md missing protected content: ${token}`)
   }
-  if (!skill.includes('4cc01cdd5aff4102888e9396c3ba16da99828f78')) {
-    errors.push('SKILL.md must pin the reviewed upstream commit')
+  if (!evaluationGuide.includes('A/B評価')) errors.push('evaluation-guide.md must preserve A/B evaluation guidance')
+  if (!upstreamLicense.includes('4cc01cdd5aff4102888e9396c3ba16da99828f78')) {
+    errors.push('upstream-license.md must pin the reviewed upstream commit')
   }
-  if (!skill.includes('MIT License')) errors.push('SKILL.md must include MIT attribution')
+  if (!upstreamLicense.includes('MIT License')) errors.push('upstream-license.md must include MIT attribution')
 
   const command = files[PATHS.command]
   if (!command.includes('.claude/skills/article-humanizer-ja/SKILL.md')) {
     errors.push('humanize-review command must reference the local skill')
+  }
+  for (const ref of [PATHS.protectedContent, PATHS.stylePatterns]) {
+    if (!command.includes(ref)) errors.push(`humanize-review command must load: ${ref}`)
   }
   if (!command.includes('記事本文は変更しない')) {
     errors.push('humanize-review command must explicitly prohibit article edits')
@@ -85,7 +103,7 @@ function validate(files) {
   if (humanizePhase >= 0 && verifyPhase >= 0 && humanizePhase > verifyPhase) {
     errors.push('Humanize phase must run before Verify')
   }
-  for (const token of ['HUMANIZE_SCHEMA', 'humanizePrompt', 'review-only', 'workflowVerified', "phase('Humanize')", "phase('Verify')", '.claude/skills/article-humanizer-ja/SKILL.md']) {
+  for (const token of ['HUMANIZE_SCHEMA', 'humanizePrompt', 'review-only', 'workflowVerified', "phase('Humanize')", "phase('Verify')", '.claude/skills/article-humanizer-ja/SKILL.md', PATHS.protectedContent, PATHS.stylePatterns]) {
     if (!workflow.includes(token)) errors.push(`workflow missing contract token: ${token}`)
   }
 
@@ -134,9 +152,13 @@ function selfTest() {
     ...Array.from({ length: 17 }, (_, i) => `| S${String(i + 1).padStart(2, '0')} | x | x | low |`),
     '| T01 | x | x | low |',
   ].join('\n')
-  base[PATHS.skill] = `---\nallowed-tools:\n  - Read\n  - Grep\n  - Glob\n---\nreview-only Front Matter code URL 引用 数値 バージョン 筆者の実体験 4cc01cdd5aff4102888e9396c3ba16da99828f78 MIT License\n${patternRows}`
-  base[PATHS.command] = '.claude/skills/article-humanizer-ja/SKILL.md 記事本文は変更しない'
-  base[PATHS.workflow] = "{ title: 'Humanize' } { title: 'Verify' } HUMANIZE_SCHEMA humanizePrompt review-only workflowVerified phase('Humanize') phase('Verify') .claude/skills/article-humanizer-ja/SKILL.md"
+  base[PATHS.skill] = `---\nallowed-tools:\n  - Read\n  - Grep\n  - Glob\n---\nreview-only references/protected-content.md references/style-patterns.md references/evaluation-guide.md references/upstream-license.md`
+  base[PATHS.protectedContent] = 'Front Matter code URL 引用 数値 バージョン 筆者の実体験'
+  base[PATHS.stylePatterns] = patternRows
+  base[PATHS.evaluationGuide] = 'A/B評価'
+  base[PATHS.upstreamLicense] = '4cc01cdd5aff4102888e9396c3ba16da99828f78 MIT License'
+  base[PATHS.command] = '.claude/skills/article-humanizer-ja/SKILL.md .claude/skills/article-humanizer-ja/references/protected-content.md .claude/skills/article-humanizer-ja/references/style-patterns.md 記事本文は変更しない'
+  base[PATHS.workflow] = "{ title: 'Humanize' } { title: 'Verify' } HUMANIZE_SCHEMA humanizePrompt review-only workflowVerified phase('Humanize') phase('Verify') .claude/skills/article-humanizer-ja/SKILL.md .claude/skills/article-humanizer-ja/references/protected-content.md .claude/skills/article-humanizer-ja/references/style-patterns.md"
   base[PATHS.languageScript] = 'analyzeMarkdown WARN only --self-test'
   base[PATHS.package] = JSON.stringify({ scripts: {
     'check:article-humanizer-contract': 'node scripts/check-article-humanizer.js',
@@ -155,12 +177,12 @@ function selfTest() {
     throw new Error('forbidden tool fixture was not rejected')
   }
 
-  const duplicate = { ...base, [PATHS.skill]: `${base[PATHS.skill]}\n| S15 | duplicate | x | low |` }
+  const duplicate = { ...base, [PATHS.stylePatterns]: `${base[PATHS.stylePatterns]}\n| S15 | duplicate | x | low |` }
   if (!validate(duplicate).some((error) => error.includes('duplicate pattern IDs'))) {
     throw new Error('duplicate pattern fixture was not rejected')
   }
 
-  const missingLanguagePattern = { ...base, [PATHS.skill]: base[PATHS.skill].replace('| S17 | x | x | low |', '') }
+  const missingLanguagePattern = { ...base, [PATHS.stylePatterns]: base[PATHS.stylePatterns].replace('| S17 | x | x | low |', '') }
   if (!validate(missingLanguagePattern).some((error) => error.includes('missing language-density pattern'))) {
     throw new Error('missing language-density pattern fixture was not rejected')
   }

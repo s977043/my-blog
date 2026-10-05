@@ -181,7 +181,9 @@
       "source_url": "",
       "source_ref": "https://teamtopologies.com/ai-success ; https://eirwin.github.io/agent-team-topologies/",
       "evidence_status": "observed",
-      "promoted_to": [],
+      "promoted_to": [
+        "articles/ai-agent-team-topology-judgment-escalation.md"
+      ],
       "article_type_candidates": [
         "experience",
         "insight",
@@ -207,6 +209,83 @@
       "evidence_status": "verified",
       "promoted_to": [],
       "article_type_candidates": [
+        "analysis",
+        "insight"
+      ],
+      "legacy": false
+    },
+    {
+      "id": "seed-20260929-river-review-core-design",
+      "path": "article_seeds/ai-driven-development/2026-09-29-river-review-core-design.md",
+      "title": "River Reviewのコア設計：AIレビューではなく、チームの判断を再現しやすい形で残す",
+      "date": "2026-09-29",
+      "status": "draft",
+      "topics": [
+        "ai-driven-development",
+        "river-review",
+        "code-review",
+        "context-management"
+      ],
+      "source": "mixed",
+      "source_url": "https://github.com/s977043/river-review",
+      "source_ref": "https://zenn.dev/tokium_dev/articles/ai-agent-usage-limit-long-sessions",
+      "evidence_status": "verified",
+      "promoted_to": [
+        "articles/river-review-core-design.md"
+      ],
+      "article_type_candidates": [
+        "analysis",
+        "insight"
+      ],
+      "legacy": false
+    },
+    {
+      "id": "seed-20260930-openspec-plangate-living-spec",
+      "path": "article_seeds/ai-driven-development/2026-09-30-openspec-plangate-living-spec.md",
+      "title": "AI駆動開発で「今の仕様」をどう残すか。OpenSpecのDelta Specから考えた",
+      "date": "2026-09-30",
+      "status": "draft",
+      "topics": [
+        "ai駆動開発",
+        "openspec",
+        "plangate",
+        "sdd"
+      ],
+      "source": "mixed",
+      "source_url": "https://openspec.dev/docs/schemas/spec-driven",
+      "source_ref": "https://github.com/s977043/PlanGate/tree/4995ad626825492914c6152c92f65849584dff60",
+      "evidence_status": "verified",
+      "promoted_to": [
+        "articles/openspec-plangate-living-spec.md"
+      ],
+      "article_type_candidates": [
+        "analysis",
+        "insight"
+      ],
+      "legacy": false
+    },
+    {
+      "id": "seed-20261001-agent-execution-policy-evidence",
+      "path": "article_seeds/ai-driven-development/2026-10-01-agent-execution-policy-evidence.md",
+      "title": "AIエージェントは「よく考える」より「証拠を取りに行く」で設計する",
+      "date": "2026-10-01",
+      "status": "published",
+      "topics": [
+        "ai-driven-development",
+        "agent-execution-policy",
+        "empirical-process",
+        "claude-code",
+        "codex"
+      ],
+      "source": "mixed",
+      "source_url": "https://developers.openai.com/api/docs/guides/latest-model",
+      "source_ref": "article_seeds/ai-driven-development/2026-09-26-agent-team-topology-audit.md",
+      "evidence_status": "verified",
+      "promoted_to": [
+        "https://x.com/mine_take/status/2105518834686026114"
+      ],
+      "article_type_candidates": [
+        "experience",
         "analysis",
         "insight"
       ],
@@ -354,6 +433,26 @@
       "from": "seed-20260923-content-closed-loop",
       "relation": "promoted_to",
       "to": "articles_note/new/content-closed-loop-note.md"
+    },
+    {
+      "from": "seed-20260926-agent-team-topology-audit",
+      "relation": "promoted_to",
+      "to": "articles/ai-agent-team-topology-judgment-escalation.md"
+    },
+    {
+      "from": "seed-20260929-river-review-core-design",
+      "relation": "promoted_to",
+      "to": "articles/river-review-core-design.md"
+    },
+    {
+      "from": "seed-20260930-openspec-plangate-living-spec",
+      "relation": "promoted_to",
+      "to": "articles/openspec-plangate-living-spec.md"
+    },
+    {
+      "from": "seed-20261001-agent-execution-policy-evidence",
+      "relation": "promoted_to",
+      "to": "https://x.com/mine_take/status/2105518834686026114"
     }
   ],
   "warnings": [
