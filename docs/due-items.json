@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "EXP-20261001-001-measure",
+      "due": "2026-10-04T07:02:00+09:00",
+      "what": "X の告知実験 EXP-20261001-001 の 72h 計測（期限から約 26 時間遅れて 2026-10-05 に取得済み。72h 値は取れなかった）",
+      "source": "X 告知実験 EXP-20261001-001（期限は carry-over.md にだけ記録されていた）",
+      "done": true
+    },
+    {
+      "id": "reader-review-2026-10-09",
+      "due": "2026-10-09T17:00:00+09:00",
+      "what": "/reader-review の次回ローカル実行（週次。クラウドの routine は無効化済み）",
+      "source": "2026-10-05 の振り返り（routine trig_01HhLm6SgRWMhdvBAjZUsZCE を無効化し、ローカル実行へ切り替え）",
+      "done": false
+    },
+    {
+      "id": "izanami-ai-review-coverage-observe",
+      "due": "2026-10-24T09:00:00+09:00",
+      "what": "izanami 1 本目（Review Coverage）の公開後約30日の観測（2026-10-24 頃）",
+      "source": "articles_izanami/README.md §初回試行案",
+      "done": false
+    },
+    {
+      "id": "izanami-ai-review-responsibility-observe",
+      "due": "2026-10-28T09:00:00+09:00",
+      "what": "izanami 2 本目（AIレビューの責務分担）の公開後約30日の観測（2026-10-28 頃）",
+      "source": "articles_izanami/README.md §2本目",
+      "done": false
+    },
+    {
+      "id": "izanami-ai-review-too-many-findings-observe",
+      "due": "2026-10-29T09:00:00+09:00",
+      "what": "izanami 3 本目（指摘が多すぎるときの絞り方）の公開後約30日の観測（2026-10-29 頃）",
+      "source": "articles_izanami/README.md §3本目",
+      "done": false
+    }
+  ]
+}
