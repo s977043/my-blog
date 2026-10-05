@@ -1,4 +1,6 @@
-# 第2部 PlanGateとは何か
+---
+title: "第2部 PlanGateとは何か"
+---
 
 ここからPlanGateの全体像を見ます。
 

@@ -1,4 +1,6 @@
-# Contextを増やせばレビューは良くなるのか
+---
+title: "Contextを増やせばレビューは良くなるのか"
+---
 
 repo-wide reviewではdiff外のContextを追加しました。
 

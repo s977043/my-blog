@@ -1,4 +1,6 @@
-# 第6部 Harness自体を改善する
+---
+title: "第6部 Harness自体を改善する"
+---
 
 ここまで、Plan / Gate / Hook / Evidence / Handoffを使ってAIへ仕事を任せる境界を作ってきました。
 

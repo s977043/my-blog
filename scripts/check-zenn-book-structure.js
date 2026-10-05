@@ -50,6 +50,21 @@ function hasBalancedFences(content) {
   return open === null;
 }
 
+// Zenn の Book チャプターは先頭の FrontMatter に title が必須。
+function parseChapterFrontMatter(content) {
+  const lines = String(content).split(/\r?\n/);
+  if (lines[0] !== "---") return null;
+  const end = lines.indexOf("---", 1);
+  if (end === -1) return null;
+
+  let title = "";
+  for (const line of lines.slice(1, end)) {
+    const m = line.match(/^title:\s*(.*)$/);
+    if (m) title = m[1].trim().replace(/^(["'])(.*)\1$/, "$2").trim();
+  }
+  return { title, body: lines.slice(end + 1).join("\n") };
+}
+
 function isNumberedContentChapter(slug) {
   return /^\d{2}_/.test(slug) && !/^(?:00|99)_/.test(slug);
 }
@@ -86,10 +101,19 @@ function validateBook(bookDir, options = {}) {
     }
 
     const content = fs.readFileSync(file, "utf8");
+    const frontMatter = parseChapterFrontMatter(content);
+    if (!frontMatter) {
+      errors.push(`${slug}.md: 先頭に FrontMatter（---）がない`);
+    } else if (!frontMatter.title) {
+      errors.push(`${slug}.md: FrontMatter に空でない title がない`);
+    }
+
     if (options.checkH1 !== false) {
-      const h1Count = (content.match(/^#\s+.+$/gm) || []).length;
+      const body = frontMatter ? frontMatter.body : content;
+      const h1Count =
+        (frontMatter && frontMatter.title ? 1 : 0) + (body.match(/^#\s+.+$/gm) || []).length;
       if (h1Count !== 1) {
-        errors.push(`${slug}.md: H1 は1つ必要（実際 ${h1Count}）`);
+        errors.push(`${slug}.md: H1 は1つ必要（FrontMatter の title を含めて実際 ${h1Count}）`);
       }
     }
 
@@ -154,7 +178,9 @@ function selfTest() {
     "",
   ].join("\n");
   const validIntro = [
-    "# Intro",
+    "---",
+    'title: "Intro"',
+    "---",
     "",
     "~~~text",
     "hello",
@@ -165,12 +191,13 @@ function selfTest() {
     "- [Source](https://example.com/source)",
     "",
   ].join("\n");
-  const validPart = "# Part\n\nNavigation.\n";
+  const validPart = '---\ntitle: "Part"\n---\n\nNavigation.\n';
+  const introWithoutTitle = validIntro.replace('title: "Intro"', "free: true");
 
   write("config.yaml", validConfig);
   write("01_intro.md", validIntro);
   write("part1_topic.md", validPart);
-  write("99_afterword.md", "# Afterword\n\nNo sources required.\n");
+  write("99_afterword.md", '---\ntitle: "Afterword"\n---\n\nNo sources required.\n');
 
   const cases = [];
   const expect = (name, fn, match) => {
@@ -216,7 +243,7 @@ function selfTest() {
   );
 
   write("config.yaml", validConfig);
-  write("01_intro.md", validIntro.replace("# Intro", "Intro"));
+  write("01_intro.md", introWithoutTitle);
   expect(
     "missing H1",
     () => validateBook(book, { requireSourcesNumbered: true }),
@@ -225,7 +252,7 @@ function selfTest() {
 
   write(
     "01_intro.md",
-    "# Intro\n\n~~~text\nunclosed\n\n### Sources\n\n- https://example.com\n",
+    '---\ntitle: "Intro"\n---\n\n~~~text\nunclosed\n\n### Sources\n\n- https://example.com\n',
   );
   expect(
     "unbalanced fence",
@@ -233,11 +260,39 @@ function selfTest() {
     (errors) => errors.some((e) => e.includes("fenced code block")),
   );
 
-  write("01_intro.md", "# Intro\n\nNo sources.\n");
+  write("01_intro.md", '---\ntitle: "Intro"\n---\n\nNo sources.\n');
   expect(
     "numbered chapter source",
     () => validateBook(book, { requireSourcesNumbered: true }),
     (errors) => errors.some((e) => e.includes("Sources URL")),
+  );
+
+  write("01_intro.md", validIntro.replace('---\ntitle: "Intro"\n---', "# Intro"));
+  expect(
+    "chapter without FrontMatter",
+    () => validateBook(book, { requireSourcesNumbered: true }),
+    (errors) => errors.some((e) => e.includes("先頭に FrontMatter")),
+  );
+
+  write("01_intro.md", introWithoutTitle);
+  expect(
+    "FrontMatter without title",
+    () => validateBook(book, { requireSourcesNumbered: true }),
+    (errors) => errors.some((e) => e.includes("空でない title")),
+  );
+
+  write("01_intro.md", validIntro.replace('title: "Intro"', 'title: ""'));
+  expect(
+    "FrontMatter with empty title",
+    () => validateBook(book, { requireSourcesNumbered: true }),
+    (errors) => errors.some((e) => e.includes("空でない title")),
+  );
+
+  write("01_intro.md", validIntro.replace('title: "Intro"', 'title: "Intro"\nfree: true'));
+  expect(
+    "FrontMatter with title and free",
+    () => validateBook(book, { requireSourcesNumbered: true }),
+    (errors) => errors.length === 0,
   );
 
   const booksRoot = path.join(root, "books");
@@ -263,7 +318,7 @@ function selfTest() {
     (errors) => errors.length === 0 && findBookDirs(booksRoot).length === 2,
   );
 
-  fs.writeFileSync(path.join(bookA, "01_intro.md"), validIntro.replace("# Intro", "Intro"));
+  fs.writeFileSync(path.join(bookA, "01_intro.md"), introWithoutTitle);
   expect(
     "modern book requires H1",
     () =>
@@ -275,7 +330,7 @@ function selfTest() {
   );
   fs.writeFileSync(path.join(bookA, "01_intro.md"), validIntro);
 
-  fs.writeFileSync(path.join(bookB, "01_intro.md"), validIntro.replace("# Intro", "Intro"));
+  fs.writeFileSync(path.join(bookB, "01_intro.md"), validIntro.replace("---\n\n~~~", "---\n\n# Intro\n\n~~~"));
   expect(
     "legacy book may omit H1 in all-book check",
     () =>

@@ -1,4 +1,6 @@
-# 全部入れない — 2つの導入軸を読み分ける
+---
+title: "全部入れない — 2つの導入軸を読み分ける"
+---
 
 PlanGateには、Workflow、Skill、Agent、Gate、Hook、Metrics、Evalなど多くの要素があります。
 
