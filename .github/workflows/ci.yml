@@ -68,6 +68,7 @@ jobs:
           npm run test:channel-metrics-link
           npm run test:note-wxr
           npm run test:reader-review-targets
+          npm run test:due
           npm run test:talk
 
       # check:pr-staleness の self-test。bash + 一時 git リポジトリを作るため
