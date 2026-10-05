@@ -11,7 +11,7 @@
 | Check | Result |
 | --- | --- |
 | Numbered chapters | 33 |
-| Exactly one H1 per chapter | 33 / 33 |
+| FrontMatter title present, no body H1 | 33 / 33 |
 | At least one `### Sources` URL | 33 / 33 |
 | Unbalanced fenced code blocks | 0 |
 | `TBD` / `FIXME` / `XXX` placeholders | 0 |

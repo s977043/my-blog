@@ -9,7 +9,7 @@
 | Check | Result |
 | --- | --- |
 | Configured chapters | not checked |
-| Exactly one H1 | not checked |
+| FrontMatter title present, no body H1 | not checked |
 | Balanced fenced code blocks | not checked |
 | Unresolved placeholders | not checked |
 | Internal link consistency | not checked |
