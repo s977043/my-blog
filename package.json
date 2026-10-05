@@ -78,6 +78,8 @@
     "test:note-wxr": "python3 .claude/skills/note-export-import/scripts/verify_wxr.py --self-test",
     "reader-review:targets": "node scripts/reader-review-targets.js",
     "test:reader-review-targets": "node scripts/reader-review-targets.js --self-test",
+    "check:due": "node scripts/check-due.js",
+    "test:due": "node scripts/check-due.js --self-test",
     "check:talk": "node scripts/check-talk.js",
     "test:talk": "node scripts/check-talk.js --self-test",
     "check:article-skill-routing-eval": "node scripts/check-article-skill-routing-eval.js",
