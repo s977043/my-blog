@@ -1,4 +1,6 @@
-# 第2部 River Reviewとは何か
+---
+title: "第2部 River Reviewとは何か"
+---
 
 ## この部で答える問い
 

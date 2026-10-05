@@ -1,4 +1,6 @@
-# PlanGateは「Plugin」よりGovernance Harnessとして見る
+---
+title: "PlanGateは「Plugin」よりGovernance Harnessとして見る"
+---
 
 PlanGateはClaude CodeやCodexから使えます。
 

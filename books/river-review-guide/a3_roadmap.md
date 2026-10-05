@@ -1,4 +1,6 @@
-# 付録C River Reviewの現在地とロードマップ
+---
+title: "付録C River Reviewの現在地とロードマップ"
+---
 
 River Reviewは継続的に変化しています。本書では状態を混同しないよう、次の区分で扱います。
 

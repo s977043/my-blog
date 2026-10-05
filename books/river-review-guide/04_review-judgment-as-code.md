@@ -1,4 +1,6 @@
-# Review Judgment as Code
+---
+title: "Review Judgment as Code"
+---
 
 River Reviewの中心概念が **Review Judgment as Code** です。
 

@@ -1,4 +1,6 @@
-# generate → review → reviseをどう収束させるか
+---
+title: "generate → review → reviseをどう収束させるか"
+---
 
 AIエージェントに修正まで任せると、次のループができます。
 

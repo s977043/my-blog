@@ -1,4 +1,6 @@
-# Pluginから始め、必要ならCIへ広げる
+---
+title: "Pluginから始め、必要ならCIへ広げる"
+---
 
 River Reviewには複数の導入経路があります。
 
