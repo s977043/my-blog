@@ -166,6 +166,7 @@ OSS としての「正しさ」は、機能の豊かさだけでなく、**利�
 
 ## 関連記事
 
+- 📕 [Zenn Book: AIエージェント時代のレビューを設計する — River Review 実践ガイド](https://zenn.dev/minewo/books/river-review-guide) - Plugin での導入から、Judgment Placement・Review Coverage・Memory・Evaluation までを全7部で体系化した実践ガイドです。
 - [プロンプトを磨くのをやめた：チームのレビュー知識を Agent Skills に変える River Review 体験（Qiita）](https://qiita.com/s977043/items/607d78c35745b17f9bc8)
 - [AI 駆動開発の 2 層ガード設計：PlanGate と River Review で実装前後を守る](https://zenn.dev/minewo/articles/ai-dev-guardrail-plangate-river-reviewer)
 - [AI エージェントを"投げっぱなし"にしない：Agent Skills と自由度の設計で実現する「評価駆動の開発エコシステム」](https://zenn.dev/minewo/articles/zenn-river-reviewer-architecture)
