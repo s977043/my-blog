@@ -25,18 +25,26 @@ River Reviewで改善対象になるのは、Promptだけではありません�
 - **Missed Issue** — 人間レビューでは見つかったがSkillは見逃した
 - **Repeated Human Judgment** — 人間が毎回同じ条件で同じ判断をしている
 
-それぞれ改善先が違います。
+それぞれ改善先が違います。運用で観測した結果は、次のように判断資産へ戻します。
 
 ~~~text
+Useful repeated Finding
+  → Skill / Rule
+
 False Positive
   → guard / negative fixture / suppression
 
 Missed Issue
-  → positive fixture / Skill update
+  → positive fixture / Skill update / new criterion
 
 Repeated Judgment
   → heuristic / deterministic promotion candidate
+
+Accepted risk
+  → Memory with expiry / resurface
 ~~~
+
+この変換がReview Judgment as Codeの運用です。
 
 ## Judgment Promotion
 

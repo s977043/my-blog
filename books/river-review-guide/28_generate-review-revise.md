@@ -60,9 +60,7 @@ partial review / LLM not executed
   → not enough evidence to stop
 ~~~
 
-このqualificationはsaved-run diff側で既定です。
-
-一方、Review ArtifactのGate自体をCoverage不足やLLM未実行で止めるかは、別のopt-inのポリシーです。Loop signalとGateは、同じsurfaceではありません。
+Coverageの使われ方は2つに分かれます。このqualificationは、保存した複数回の実行結果を比べる収束判定（saved-run diff）では既定で使われます。一方、Coverage不足やLLM未実行を理由にReview ArtifactのGate自体を止めるのは、明示的に有効化（opt-in）した場合だけです。Loop signalとGateは、同じsurfaceではありません。
 
 ## 振動も止める理由になる
 

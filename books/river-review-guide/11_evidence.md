@@ -27,23 +27,7 @@ locale追加のレビューで、AIが次のように言ったとします。
 
 Evidenceがあれば、Findingを再確認できます。
 
-## Verifierは「機械で確かめられる部分」を見る
-
-River ReviewのVerifierはLLMを呼ばず、rule-based checksを行います。
-
-現行実装では、Findingに対してたとえば次を確認します。
-
-- Evidenceが存在するか
-- FindingのphaseとSkillのphaseが整合するか
-- FindingのseverityがSkill宣言を超えていないか
-- Fix / Suggestionがactionableか
-- Evidence内のfile referenceがdiffに存在するか
-
-加えて、Findingの行が今回の追加行か既存行かを機械で判定し、メタデータとして付けます。この判定は却下には使いません。
-
-Verifierは「この設計判断が本当に正しいか」という意味判断まではしません。
-
-代わりに、**機械で確認できる前提をLLMの自己申告に任せない**ようにします。
+Evidenceの有無やfile referenceのように機械で確かめられる条件は、LLMの自己申告に任せずVerifierが検査します。その契約の一覧は第21章で扱います。
 
 ## Evidenceが無いときは断定を弱める
 
