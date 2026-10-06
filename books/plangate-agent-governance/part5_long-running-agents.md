@@ -57,7 +57,7 @@ PlanGateのai-loop V2でも、Graphはcoordination complexityが必要な場所�
 
 | 対象 | Identityの例 |
 | --- | --- |
-| Task / Intent | タスクid / context_ref |
+| Task / Intent | タスクID / context_ref |
 | Approved Plan | plan_hash |
 | Exact Context | snapshot_ref |
 | Implementation | commit SHA / PR head |

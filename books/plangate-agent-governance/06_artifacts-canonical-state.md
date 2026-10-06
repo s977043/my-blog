@@ -195,7 +195,7 @@ fresh session / fresh reviewer
 - rationale: decision-log / ADR
 - evidence: report / Review Artifact等への参照
 - session/tool handoff: local-exec-handoff
-- ワーカーpackage: context-packager / dispatch
+- ワーカー向けpackage: context-packager / dispatch
 - runtime state: RunState
 
 ここはv8.23時点の実装詳細です。読者が最初から名前を覚える必要はありません。

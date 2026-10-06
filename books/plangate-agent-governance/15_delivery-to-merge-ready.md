@@ -75,7 +75,7 @@ MERGE_READY
 
 途中で、
 
-> status filterには実はスキーマmigrationが必要
+> status filterには実はスキーマのmigrationが必要
 
 と分かったなら、修復を続けずRe-plan / Escalateへ戻ります。
 

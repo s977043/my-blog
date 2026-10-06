@@ -19,7 +19,7 @@ Hookは、承認した計画を守らせる手段の一つです。PlanGateの�
 
 ここで大事なのは、
 
-> Hookがあること** と **境界が実際に強制されていること
+> **Hookがあること** と **境界が実際に強制されていること**
 
 を同じにしないことです。
 
@@ -179,7 +179,7 @@ PlanGateの現行Hook documentationでは、強制を複数層に分けていま
 - Claude PreToolUse
 - CI
 - PlanGateのコマンドを経由する検査
-- GitHubブランチprotection等の外部設定
+- GitHubbranch protection等の外部設定
 - Codex側の実行環境との統合（現時点では未発火・未保証の統合対象）
 
 重要なのは、どの層も万能ではないことです。

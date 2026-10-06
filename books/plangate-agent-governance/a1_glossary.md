@@ -169,7 +169,7 @@ Hook
 | high-risk | 複数layer・高リスク |
 | critical | architecture・横断変更など |
 
-Modeは**タスクriskの軸**です。
+Modeは**タスクのリスクの軸**です。
 
 ## Level / Phase — 段階導入 [Official]
 
@@ -196,7 +196,7 @@ Phase 3まで導入していても、軽いタスクは軽いModeで扱います
 
 AIが自分の統制機構を直接変更して自己承認しないための、Human-ownedな保護対象群です。
 
-settings、rules、agents / commands、Hook scripts、PlanGateのコマンド、CI workflow、AGENTS.md、CLAUDE.mdなどが対象になります。
+settings、rules、agents / commands、Hook scripts、bin/plangate、CI workflow、AGENTS.md、CLAUDE.mdなどが対象になります。
 
 対象pathの正確な一覧はmode classification / Hook実装を正本としてください。
 
@@ -307,7 +307,7 @@ AIはCI / review修復 / Evidence準備まで進めても、merge Authorityは�
 | AI-owned | 実装・検証・PR準備など |
 | Human-owned | 重要な承認・merge・保護設定の適用など |
 | CI-owned | drift / contract検査など |
-| Workflow-owned | handoff / DoD / タスクstateなど |
+| Workflow-owned | handoff / DoD / タスクの状態など |
 
 重要なのは、人間が全部作業することではなく、**最終Authorityの所在を明示すること**です。
 

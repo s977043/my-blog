@@ -52,7 +52,7 @@ Reviewerが読むのは、
 - review package
 - diff
 - テスト / verification Evidence
-- 必要なプロジェクトrules
+- 必要なプロジェクトのルール
 
 です。
 
@@ -79,12 +79,12 @@ Reviewerが読むのは、
 
 ### 渡す
 
-- タスクintent / Requirement
+- タスクの意図 / Requirement
 - approved PlanとScope
 - Acceptance Criteria
 - 対象diff / commit identity
 - Verification Evidence
-- relevantプロジェクトrules
+- relevantプロジェクトのルール
 - 既知のrisk / 未解決の項目
 
 ### 原則として渡さない
@@ -299,15 +299,15 @@ PlanGateのReview Principlesでも、unavailableは理由、代替観点、未�
 
 逆に、
 
-- セキュリティboundary
+- セキュリティの境界
 - irreversible action
 - architecture変更
-- long-running修復loop
+- long-running修復のloop
 - Builderのassumptionを独立して疑いたい
 
 なら、Contextを切った別Reviewerの価値が上がります。
 
-> Agent topologyはタスクriskとcoordination complexityから決める。
+> Agent topologyはタスクのリスクとcoordination complexityから決める。
 
 という位置づけです。
 
