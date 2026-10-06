@@ -88,7 +88,7 @@ River Reviewのcontractでは次を分離します。
 
 ## 現在はExperimental
 
-2026年10月4日に再確認したverification snapshotでは、Review Coverageは **Experimental** です。
+2026年10月6日に再確認したverification snapshotでは、Review Coverageは **Experimental** です。
 
 machine-readableなreview execution surfaceへ出力されますが、Stable Contractではありません。
 

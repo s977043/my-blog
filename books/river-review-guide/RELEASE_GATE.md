@@ -21,8 +21,8 @@ Evaluated: 2026-10-04
 - [x] unresolved TBD / FIXME / XXX: 0
 - [x] Part 1〜7 navigationを整備
 - [x] `SOURCE_MAP.md` でreverse impact mapを作成
-- [x] River Review main snapshotを2026-10-04に再確認: `60f55e75d6eaead1956c6945afc53f57acd64dd9`
-- [x] Latest Releaseを2026-10-04に再確認: `v1.124.5`
+- [x] River Review main snapshotを2026-10-06に再確認: `a61dadfccdcf9ef154ebb23e354a7396a2123ff6`
+- [x] Latest Releaseを2026-10-06に再確認: `v1.126.0`
 - [x] Zenn Book structure checker self-test: 7 / 7 PASS
 - [x] Book checkerをaggregate `npm run check` とCI self-testへ配線
 - [x] `check:river-review-book`: 45 chapters PASS

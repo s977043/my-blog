@@ -2,8 +2,8 @@
 
 > 内部編集用。Zennのchaptersには含めない。
 >
-> Verification snapshot: River Review `60f55e75d6eaead1956c6945afc53f57acd64dd9` / Latest Release `v1.124.5`（2026-09-25）
-> Reverified: 2026-10-04 — main / Latest Releaseともdriftなし
+> Verification snapshot: River Review `a61dadfccdcf9ef154ebb23e354a7396a2123ff6` / Latest Release `v1.126.0`（2026-10-05）
+> Reverified: 2026-10-06 — 前回snapshot `60f55e7` から70 commits。本書が状態を述べる項目（Review Coverage / Riverbed / Loop Convergence / Progressive Disclosure / verify gate / Non-goal）とREADMEの差分を照合し、主張の変更なし
 
 ## 目的
 

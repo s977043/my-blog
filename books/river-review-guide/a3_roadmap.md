@@ -13,10 +13,10 @@ River Reviewは継続的に変化しています。本書では状態を混同�
 
 ## 本稿のverification snapshot
 
-2026年10月4日に次を再照合しました。
+2026年10月6日に次を再照合しました。
 
-- River Review main: `60f55e75d6eaead1956c6945afc53f57acd64dd9`
-- Latest Release: `v1.124.5`（2026年9月25日）
+- River Review main: `a61dadfccdcf9ef154ebb23e354a7396a2123ff6`
+- Latest Release: `v1.126.0`（2026年10月5日）
 - Review Coverage: Experimental
 - Riverbed Memory v1: runtime実装済み
 - Riverbed external datastore v2: Planned

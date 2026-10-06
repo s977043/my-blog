@@ -13,10 +13,10 @@
 
 ## 2. Claim / source verification
 
-Verification date: 2026-10-04
+Verification date: 2026-10-06
 
-- [x] River Review main snapshot: `60f55e75d6eaead1956c6945afc53f57acd64dd9`
-- [x] Latest Release: `v1.124.5`（2026-09-25）
+- [x] River Review main snapshot: `a61dadfccdcf9ef154ebb23e354a7396a2123ff6`
+- [x] Latest Release: `v1.126.0`（2026-10-05）
 - [x] Review Coverage = Experimental
 - [x] Riverbed Memory v1 = runtime implemented
 - [x] Riverbed関連の一部外部schema = Experimental
@@ -68,9 +68,9 @@ Verification date: 2026-10-04
 
 - [x] `books/river-review-guide/cover.png` を追加し、Zenn Previewのcover validation warningを解消（500×700）
 
-- [x] verification snapshot以降のRiver Review main差分を再確認（2026-10-04: driftなし）
+- [x] verification snapshot以降のRiver Review main差分を再確認（2026-10-06: `60f55e7..a61dadf` の70 commits。状態の主張とREADMEへの影響なし）
 - [x] `SOURCE_MAP.md` の影響章を確認（source driftなしのため追加再監査なし）
-- [x] Latest Releaseが変わっていないか再確認（v1.124.5）
+- [x] Latest Releaseを再確認（v1.124.5 → v1.126.0。snapshotを更新）
 - [x] `published: false` を変更する前にpreview結果を確認
 - [x] 公開後の修正導線を `Book修正 → follow-up PR → same CI / visual Gate → merge` として確保
 

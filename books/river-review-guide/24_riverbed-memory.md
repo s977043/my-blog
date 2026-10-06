@@ -41,7 +41,7 @@ Judgment Memory
 
 ## Riverbed Memory v1は実装済み
 
-2026年10月4日に再確認したverification snapshotでは、Riverbed Memory v1の実装を確認できます。
+2026年10月6日に再確認したverification snapshotでは、Riverbed Memory v1の実装を確認できます。
 
 リポジトリ内では、概念的に次の形で保存されます。
 
