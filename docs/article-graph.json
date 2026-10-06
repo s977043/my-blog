@@ -20,6 +20,8 @@
       "evidence_status": "",
       "promoted_to": [],
       "article_type_candidates": [],
+      "author_input_required_count": 0,
+      "blocked_by_author_input": false,
       "legacy": true
     },
     {
@@ -40,6 +42,8 @@
       "evidence_status": "",
       "promoted_to": [],
       "article_type_candidates": [],
+      "author_input_required_count": 2,
+      "blocked_by_author_input": true,
       "legacy": true
     },
     {
@@ -63,6 +67,8 @@
         "https://x.com/mine_take/status/2097800316070855017"
       ],
       "article_type_candidates": [],
+      "author_input_required_count": 2,
+      "blocked_by_author_input": true,
       "legacy": true
     },
     {
@@ -83,6 +89,8 @@
       "evidence_status": "",
       "promoted_to": [],
       "article_type_candidates": [],
+      "author_input_required_count": 1,
+      "blocked_by_author_input": true,
       "legacy": true
     },
     {
@@ -103,6 +111,8 @@
       "evidence_status": "",
       "promoted_to": [],
       "article_type_candidates": [],
+      "author_input_required_count": 1,
+      "blocked_by_author_input": true,
       "legacy": true
     },
     {
@@ -123,6 +133,8 @@
       "evidence_status": "",
       "promoted_to": [],
       "article_type_candidates": [],
+      "author_input_required_count": 1,
+      "blocked_by_author_input": true,
       "legacy": true
     },
     {
@@ -142,6 +154,8 @@
       "evidence_status": "",
       "promoted_to": [],
       "article_type_candidates": [],
+      "author_input_required_count": 1,
+      "blocked_by_author_input": true,
       "legacy": true
     },
     {
@@ -162,6 +176,8 @@
       "evidence_status": "",
       "promoted_to": [],
       "article_type_candidates": [],
+      "author_input_required_count": 0,
+      "blocked_by_author_input": false,
       "legacy": true
     },
     {
@@ -189,6 +205,8 @@
         "insight",
         "analysis"
       ],
+      "author_input_required_count": 0,
+      "blocked_by_author_input": false,
       "legacy": false
     },
     {
@@ -212,6 +230,8 @@
         "analysis",
         "insight"
       ],
+      "author_input_required_count": 0,
+      "blocked_by_author_input": false,
       "legacy": false
     },
     {
@@ -237,6 +257,8 @@
         "analysis",
         "insight"
       ],
+      "author_input_required_count": 0,
+      "blocked_by_author_input": false,
       "legacy": false
     },
     {
@@ -262,6 +284,8 @@
         "analysis",
         "insight"
       ],
+      "author_input_required_count": 0,
+      "blocked_by_author_input": false,
       "legacy": false
     },
     {
@@ -289,6 +313,8 @@
         "analysis",
         "insight"
       ],
+      "author_input_required_count": 0,
+      "blocked_by_author_input": false,
       "legacy": false
     },
     {
@@ -315,6 +341,8 @@
         "experience",
         "analysis"
       ],
+      "author_input_required_count": 0,
+      "blocked_by_author_input": false,
       "legacy": false
     },
     {
@@ -339,6 +367,8 @@
         "analysis",
         "insight"
       ],
+      "author_input_required_count": 0,
+      "blocked_by_author_input": false,
       "legacy": false
     },
     {
@@ -366,6 +396,8 @@
         "insight",
         "experience"
       ],
+      "author_input_required_count": 0,
+      "blocked_by_author_input": false,
       "legacy": false
     },
     {
@@ -391,6 +423,8 @@
         "tutorial",
         "insight"
       ],
+      "author_input_required_count": 0,
+      "blocked_by_author_input": false,
       "legacy": false
     },
     {
@@ -415,6 +449,8 @@
         "insight",
         "analysis"
       ],
+      "author_input_required_count": 0,
+      "blocked_by_author_input": false,
       "legacy": false
     }
   ],
