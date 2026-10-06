@@ -113,9 +113,7 @@ Verifier / Gateの改善では、単にcomponentが存在・発火しただけ�
 Source:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/harness-manifest.md
 
-### 持ち帰る原則
-
-> **存在確認を、動作確認の代わりにしない。**
+持ち帰る原則は「存在確認を、動作確認の代わりにしない。」です。
 
 「設定した」「登録した」「呼び出した」は、それぞれ別のClaimです。
 
@@ -123,7 +121,7 @@ Source:
 
 Coverage Greenには二つの形があります。
 
-### 検査同士は一致していた
+#### 検査同士は一致していた
 
 Issue #1173では、plugin配布allowlistが2箇所にありました。
 
@@ -154,7 +152,7 @@ A == reality
 Source:
 - https://github.com/s977043/PlanGate/issues/1173
 
-### 代表経路では動いていた
+#### 代表経路では動いていた
 
 Issue #1277では、Hardening Override Guardがrepository rootでは正しくBLOCKしていました。
 
@@ -173,9 +171,7 @@ root pathでPASS
 
 です。
 
-### 持ち帰る原則
-
-> **Evalの対象集合を明示する。**
+持ち帰る原則は「Evalの対象集合を明示する。」です。
 
 たとえば、
 
@@ -208,7 +204,7 @@ Source:
 
 ここで必要なのは、単にdangerous caseがBLOCKされるテストではありません。
 
-### Positive Control
+#### Positive Control
 
 本当に止めたい入力を止める。
 
@@ -217,7 +213,7 @@ git push --force-with-lease origin main
 → BLOCK
 ~~~
 
-### Negative Control
+#### Negative Control
 
 通したい入力を通す。
 
@@ -234,9 +230,7 @@ all dangerous blocked
 
 だけを見ると、全部BLOCKするGuardも高得点になります。
 
-### 持ち帰る原則
-
-> **検出力と誤検出率を同時に見る。**
+持ち帰る原則は「検出力と誤検出率を同時に見る。」です。
 
 安全系ではfail-closedが重要でも、false positiveが増えすぎると、利用者やAgentは迂回経路を作り始めます。
 
@@ -267,9 +261,7 @@ after
 
 この状態では「検査がPASSした」というEvidence自体の意味が弱くなります。
 
-### 持ち帰る原則
-
-> **Evalの副作用も脅威モデルに入れる。**
+持ち帰る原則は「Evalの副作用も脅威モデルに入れる。」です。
 
 read-onlyを期待する検査では、
 
@@ -339,13 +331,8 @@ Candidate自身の自己申告だけでは採用しない
 
 実運用でfailureを見つけたら、次の順にします。
 
-### Detect
-
-違和感や失敗を観測する。
-
-### Reproduce
-
-最小ケースへ落とし、
+1. **Detect**: 違和感や失敗を観測する
+2. **Reproduce**: 最小ケースへ落とし、次を固定する
 
 ~~~text
 input
@@ -354,15 +341,8 @@ actual
 target identity
 ~~~
 
-を固定します。
-
-### Fix
-
-fixtureだけを通すpatchではなく、failure classへ修正を当てます。
-
-### Regression Guard
-
-再現ケースを継続実行できるfixture / test / canaryへ残します。
+3. **Fix**: fixtureだけを通すpatchではなく、failure classへ修正を当てる
+4. **Regression Guard**: 再現ケースを継続実行できるfixture / test / canaryへ残す
 
 ここで重要なのが、**修正前の実装で本当にFAILすること**です。
 
@@ -469,8 +449,6 @@ Verifier Candidateを評価するなら、変更後Verifierの出力だけでな
 ### known fixtureだけに最適化しない
 
 公開されたregression fixtureだけを見てCandidateを改善すると、そのケースだけ通るpatchを作ることもできます。
-
-これはHarness改善でも同じです。
 
 ~~~text
 known-badを知る
@@ -603,9 +581,6 @@ Failure Evidence
 → Human-owned Production Promotion
 ~~~
 
-Source:
-- https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/ratchet-traceability.md
-
 Candidate生成やEvalを自動化しても、Production promotionまで同じ主体に渡しません。
 
 第12章の、
@@ -679,24 +654,7 @@ same-pattern recurrenceを測る
         └──────────────→ 次の改善
 ~~~
 
-これで、
-
-~~~text
-修正した
-→ testが通った
-→ 完了
-~~~
-
-ではなく、
-
-~~~text
-失敗から学ぶ
-→ 独立評価する
-→ 採用する
-→ 実運用で再観測する
-~~~
-
-までが一つのloopになります。
+失敗から学び、独立に評価し、採用し、実運用で再び観測するところまでが一つのloopです。
 
 ## この章で持ち帰ること
 

@@ -130,7 +130,7 @@ Dynamic Context Engine、Intent Context Package、Context Lifecycleは、この3
 
 current mainでは、Intent Context Package v1が導入されています。
 
-2026年10月3日時点では、GitHub ReleasesのLatestはv8.22.0です。一方、mainのREADMEはv8.23.0をLatestと表示し、生成済みChangelogページはv8.23.0をTBDのまま残しています。本書ではrelease状態を断定せず、ここで扱うv8.23系のContext機能を **current main上の未リリース差分** として扱います。
+版の扱いは「はじめに」の情報の基準日に従い、ここで扱うv8.23系のContext機能はmain上の未リリース差分として扱います。
 
 ここではContext identityを二つに分けています。
 
