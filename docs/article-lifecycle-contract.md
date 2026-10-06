@@ -221,10 +221,10 @@ v1 の Graph が扱うのは意図的に狭い。
 - provenance metadata
 - article type candidates
 - `promoted_to` edge
-- Author Input Gate の派生状態（`author_input_required_count` / `blocked_by_author_input`）
+- Author Input Gate の派生状態（`author_input_required_count` / `author_input_gate_open`）
 - legacy migration warning
 
-Author Input Gate の正本はSeed本文の `AUTHOR_INPUT_REQUIRED` markerであり、Graph側の値はread-only projection。Graphからmarkerを追加・削除しない。marker本文そのものはGraphへ複製せず、件数とブロック有無だけを投影する。
+Author Input Gate の正本はSeed本文の `AUTHOR_INPUT_REQUIRED` markerであり、Graph側の値はread-only projection。Graphからmarkerを追加・削除しない。marker本文そのものはGraphへ複製せず、件数と「未解決のAuthor Input Gateがあるか」だけを投影する。`author_input_gate_open` はSeed単位の派生状態であり、記事の公開状態やLifecycle stateそのものを表さない。
 
 Graph DB、Embedding DB、記事自動生成、記事ランキングは導入しない。
 
