@@ -38,6 +38,8 @@ River Review v1.126.0時点のREADMEでは、Claude Codeへの導入は次の3�
 
 手順はバージョンによって変わることがあります。試す前に、READMEの「river-review プラグインの導入」を確認してください。
 
+Pluginへ移行した経緯と、Claude CodeとCodexで手順をそろえた設計は、[テンプレコピーをやめた — River Review を Claude Code / Codex の Plugin にした話](/articles/river-review-plugin-migration) で書いています。
+
 ## 1つ実行してみる
 
 導入できたら、作業中の変更に対して次のコマンドを実行します。
