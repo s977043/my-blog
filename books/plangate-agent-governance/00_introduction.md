@@ -2,7 +2,7 @@
 title: "はじめに"
 ---
 
-この本は、PlanGateの機能一覧を説明するための本ではありません。
+本書は、PlanGateの機能一覧を説明するための本ではありません。
 
 中心に置く問いは一つです。
 
@@ -12,7 +12,7 @@ title: "はじめに"
 
 Artifact、Evidence、Approval Boundary、Verification、Human Judgment、Context、Handoff。これらをどう組み合わせると、AIへ任せる範囲を広げても判断と責任を失わずに済むのかを、PlanGateの実例から考えます。PlanGateがどう育ってきたかは、[PlanGate v3 から v8.6 までの設計変遷](/articles/plangate-design-evolution-v3-to-v8)にまとめています。
 
-## この本で扱うこと
+## 本書で扱うこと
 
 - なぜ実装速度より判断がボトルネックになるのか
 - Verification / Review / Judgmentをなぜ分けるのか
@@ -39,16 +39,16 @@ Artifact、Evidence、Approval Boundary、Verification、Human Judgment、Contex
 
 ## 情報の基準日
 
-PlanGateの具体仕様は、**2026年10月3日時点のcurrent main**を再確認して記述しています。
+PlanGateの具体仕様は、**2026年10月3日時点の現在のmain**を再確認して記述しています。
 
 release状態はGitHub Releasesを優先し、同日時点のLatest releaseは **v8.22.0** です。一方、mainのREADMEにはv8.23.0をLatestとする記述があり、生成済みChangelogページではv8.23.0がTBDのまま残っています。
 
-そのため本書では、v8.23系のContext / ai-loop V2機能を「current mainで確認できる実装」として扱い、release済みとは断定しません。
+そのため本書では、v8.23系のContext / ai-loop V2機能を「現在のmainで確認できる実装」として扱い、release済みとは断定しません。
 
 姉妹作はv8.22.0時点の公開情報を基準にしています。本書はそれより新しいmainを基準にしているため、細部の記述が異なることがあります。
 
 また、段階導入についてもREADMEのLevel 1〜5とstaged-adoption-guideのPhase 0〜3が併存しているため、用途を分けて説明します。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/releases/latest
 - https://github.com/s977043/PlanGate/blob/main/docs/changelog.md

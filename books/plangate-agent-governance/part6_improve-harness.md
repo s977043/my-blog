@@ -24,13 +24,13 @@ PlanGate自身でも、
 
 この部では、それらを材料に、
 
-~~~text
+```text
 Detect
 → Reproduce
 → Fix
 → Regression Guard
 → Evaluate
-~~~
+```
 
 というHarness改善ループを考えます。
 
@@ -41,7 +41,7 @@ Detect
 
 ## 改善のたびに新しいGuardを増やすわけではない
 
-failureを見つけるたびにSkill / Agent / Hook / testを1個ずつ足すと、Harness自体が複雑になります。
+失敗を見つけるたびにSkill / Agent / Hook / テストを1個ずつ足すと、Harness自体が複雑になります。
 
 改善では、
 
@@ -49,4 +49,4 @@ failureを見つけるたびにSkill / Agent / Hook / testを1個ずつ足すと
 
 ことも重要です。
 
-第6部では、failureを残すだけでなく、同じfailure classをまとめ、既存Verifierやinvariantへ吸収し、実運用で再発を観測するところまでを改善と考えます。
+第6部では、失敗を残すだけでなく、同じfailure classをまとめ、既存Verifierやinvariantへ吸収し、実運用で再発を観測するところまでを改善と考えます。

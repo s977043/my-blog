@@ -7,10 +7,10 @@ title: "第5部 長時間・複数Agentへ拡張する"
 しかし、
 
 - セッションが長くなる
-- model / runtime / workerを切り替える
+- モデル / runtime / ワーカーを切り替える
 - BuilderからReviewerへ渡す
 - 複数Agentで役割分担する
-- PR作成後もCI / review repairを続ける
+- PR作成後もCI / review修復を続ける
 
 ようになると、「同じ会話を持ち越す」だけでは状態管理が不安定になります。
 
@@ -45,7 +45,7 @@ PlanGateのai-loop V2でも、Graphはcoordination complexityが必要な場所�
 
 この部では「複数Agentを使うべき」とは置きません。
 
-> **責務を分離する価値が、coordination costを上回るときだけAgentを増やす。**
+> **責務を分離する価値が、調整コストを上回るときだけAgentを増やす。**
 
 を前提にします。
 
@@ -57,11 +57,11 @@ PlanGateのai-loop V2でも、Graphはcoordination complexityが必要な場所�
 
 | 対象 | Identityの例 |
 | --- | --- |
-| Task / Intent | task id / context_ref |
+| Task / Intent | タスクid / context_ref |
 | Approved Plan | plan_hash |
 | Exact Context | snapshot_ref |
 | Implementation | commit SHA / PR head |
-| Verification | 対象commit + command + timestamp |
+| Verification | 対象commit + コマンド + timestamp |
 | Review | 対象diff / commit + review artifact |
 
 Handoff、Review、Deliveryのどこでも、

@@ -6,7 +6,7 @@ Hookは、承認した計画を守らせる手段の一つです。PlanGateの�
 
 前章までで、PlanとApproval Boundaryを作りました。
 
-では、承認前やscope外の変更をしないように、
+では、承認前や範囲外の変更をしないように、
 
 > 承認されるまでコードを書かないでください。  
 > Planの範囲外は変更しないでください。
@@ -28,7 +28,7 @@ Hookは、承認した計画を守らせる手段の一つです。PlanGateの�
 PromptやRuleには役割があります。
 
 - なぜそのルールがあるのか
-- 何をscope外とするか
+- 何を範囲外とするか
 - どんな場合に止まるか
 - どのEvidenceを残すか
 
@@ -42,13 +42,13 @@ PromptやRuleには役割があります。
 
 第5章でも触れたとおり、
 
-~~~text
+```text
 Gate
 = 次へ進める条件
 
 Hook
 = その条件を実行時に検査する手段の一つ
-~~~
+```
 
 です。
 
@@ -59,7 +59,7 @@ PlanGateでは、たとえば次のような不変条件を実行時に検査し
 - 承認後にPlanが変わっていないか
 - forbidden_filesへ越境していないか
 - delegation時のcommit境界を破っていないか
-- protected branchで破壊的git操作をしていないか
+- protectedブランチで破壊的git操作をしていないか
 - approval tokenをAIが直接書いていないか
 
 目的は、「Agentにもっと注意させる」ことではありません。
@@ -78,11 +78,11 @@ PlanGateの公開ドキュメントには、Hook実装と実際の配線・発�
 
 つまり、
 
-~~~text
+```text
 Guard scriptが存在する
       ≠
 すべての書き込みを守る
-~~~
+```
 
 です。
 
@@ -105,7 +105,7 @@ Hardening Override対象のファイルは、通常のrepository root配下で�
 
 規範上は「変更禁止」でも、技術層の判定がそのpath表現を想定していなかったため、境界が空いていたわけです。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/issues/1277
 
 この事例から分かるのは、
@@ -118,9 +118,9 @@ Source:
 
 逆方向の失敗もあります。
 
-Issue #1326では、protected branch上の破壊的git操作を止めるEH-12が、実際には破壊的でないcommandまでblockしました。
+Issue #1326では、protectedブランチ上の破壊的git操作を止めるEH-12が、実際には破壊的でないコマンドまでblockしました。
 
-原因は、`git push` と `--force` や `+` が同じcommand segmentに属するかを見ず、文字列全体から独立に探していたことです。
+原因は、`git push` と `--force` や `+` が同じコマンドsegmentに属するかを見ず、文字列全体から独立に探していたことです。
 
 その結果、
 
@@ -130,20 +130,20 @@ Issue #1326では、protected branch上の破壊的git操作を止めるEH-12が
 
 などまで誤blockしました。
 
-実運用では5回tool callが止まり、回避のためにcommandを不自然に分割する摩擦が出ています。
+実運用では5回tool callが止まり、回避のためにコマンドを不自然に分割する摩擦が出ています。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/issues/1326
 
 Guardは強ければ強いほど良いわけではありません。
 
-~~~text
+```text
 False Negative
 → 本来止めるべき操作を通す
 
 False Positive
 → 安全な操作を止める
-~~~
+```
 
 両方を減らす必要があります。
 
@@ -166,8 +166,8 @@ False Positive
 
 例:
 
-- 安全なbranchへの通常push
-- 別commandの `--force`
+- 安全なブランチへの通常push
+- 別コマンドの `--force`
 - 実行されない文字列の中の `push --force`
 
 片方だけだと、「全部allow」も「全部block」もテスト成功に見えることがあります。
@@ -179,7 +179,7 @@ PlanGateの現行Hook documentationでは、強制を複数層に分けていま
 - Claude PreToolUse
 - CI
 - PlanGateのコマンドを経由する検査
-- GitHub branch protection等の外部設定
+- GitHubブランチprotection等の外部設定
 - Codex側の実行環境との統合（現時点では未発火・未保証の統合対象）
 
 重要なのは、どの層も万能ではないことです。
@@ -196,18 +196,18 @@ Claudeの `Edit|Write` matcherだけにあるGuardは、Bash経由では同じ�
 
 Codex側は、設定が書かれているだけでは配線済みと数えません。PlanGateの現行の文書では、Codex側のHook登録が0件で、一度も発火していなかったFalse Greenが記録されています。Hookを含むGovernanceの整え方は、[AIコーディングを「比較で改善」できる土台にする：PlanGate v8.6.0のMetrics v1とGovernance](/articles/plangate-v86-hook-enforcement)でも扱いました。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/hook-enforcement.md
 
 ## Enforcementの品質は「網羅率」だけでなく摩擦も見る
 
 実運用では、Guardが守る範囲だけでなく、開発フローへ与える摩擦も重要です。
 
-#1326のようにsafe commandを誤blockすると、Agentは不自然な迂回やcommand分割を始めます。
+#1326のようにsafeコマンドを誤blockすると、Agentは不自然な迂回やコマンド分割を始めます。
 
 その結果、
 
-~~~text
+```text
 強いGuard
 → 安全
 
@@ -218,7 +218,7 @@ Source:
 → 安全操作は通す
 → bypassしにくい
 → 失敗時に理由が分かる
-~~~
+```
 
 という設計が必要になります。
 
@@ -249,7 +249,7 @@ path、shell、matcher、worktree、runtime、配線によって壊れます。
 
 Execution中の3分類に戻ると、Hookの主な役割は **Stop** です。
 
-~~~text
+```text
 Continue
 → 承認scope内で通常実装
 
@@ -260,7 +260,7 @@ Stop
 Escalate
 → Hookだけでは決められない意味的変更
    例: 新しいsecurity risk、scope変更
-~~~
+```
 
 Hookへ任せるのは、機械的に判定できるStop条件です。
 

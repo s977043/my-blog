@@ -17,13 +17,13 @@ Sources:
 | 種別 | 意味 |
 | --- | --- |
 | **Official** | 現行PlanGateの公開ドキュメントで定義されている用語・略号 |
-| **Book model** | 本書で複数概念を整理するために置いた説明モデル |
+| **Bookモデル** | 本書で複数概念を整理するために置いた説明モデル |
 
 たとえばC-X / V-X / WF-X / Mode / Hardening Override / MERGE_READYはOfficialです。
 
-一方、Continue / Stop / Escalate、False Greenの4分類、Cheapest Useful VerificationはBook modelです。
+一方、Continue / Stop / Escalate、False Greenの4分類、Cheapest Useful VerificationはBookモデルです。
 
-**Book modelをPlanGate公式仕様や業界標準用語として引用しない**ようにしてください。
+**BookモデルをPlanGate公式仕様や業界標準用語として引用しない**ようにしてください。
 
 ## まず覚える7つ — Book core concepts
 
@@ -38,7 +38,7 @@ Sources:
 - test-cases
 - approval
 - review
-- current state
+- 現在の状態
 - handoff
 - PR
 
@@ -50,7 +50,7 @@ Artifactが存在すること自体は、その中の主張が正しい証拠で
 
 例:
 
-- test result
+- テストresult
 - lint result
 - repository search
 - runtime output
@@ -63,13 +63,13 @@ Artifactが存在すること自体は、その中の主張が正しい証拠で
 
 定義済みの条件を満たしたか確認する仕事です。
 
-~~~text
+```text
 Acceptance Criteria
 ↓
 test / check
 ↓
 PASS / FAIL
-~~~
+```
 
 ### Review — レビュー
 
@@ -81,9 +81,9 @@ Verificationと同じではありません。
 
 EvidenceとReview結果を見て、次へ進むか決める行為です。
 
-~~~text
+```text
 Verification != Review != Judgment
-~~~
+```
 
 ### Autonomy — 自律性
 
@@ -93,11 +93,11 @@ AIがどこまで人間の逐次確認なしに仕事を進められるか。
 
 誰がそのdecisionを行ってよいか。
 
-~~~text
+```text
 Autonomy != Authority
-~~~
+```
 
-AIへ実装やrepairを広く任せても、最終Authorityまで同じ範囲へ渡す必要はありません。
+AIへ実装や修復を広く任せても、最終Authorityまで同じ範囲へ渡す必要はありません。
 
 ## C-X — Approval / Control Boundary [Official]
 
@@ -108,7 +108,7 @@ C-Xは主に承認・判断境界です。
 | C-1 | Self Review。Planを作った側が構造的な抜けを確認 |
 | C-2 | External / Independent Review。別視点でPlanを確認 |
 | C-3 | Human Plan Approval。Executionへ渡すHuman-owned Authority boundary |
-| C-3' | ai-loopの限定AI裁定経路。eligible runだけ委譲 |
+| C-3' | ai-loopの限定AI裁定経路。対象となる実行だけ委譲 |
 | C-4 | PR Approval。最終受入はHuman-owned |
 
 個別条件は変わりうるため、本書では番号より「ReviewとApprovalを分ける」ことを重視しています。
@@ -149,13 +149,13 @@ EH-XはPlanGateのHook識別子です。
 
 Hook番号や構成は更新されうるため、現行仕様は本体Glossaryを参照してください。
 
-~~~text
+```text
 Gate
 = 次へ進める条件
 
 Hook
 = 条件を実行時に検査する手段の一つ
-~~~
+```
 
 ## Mode — タスクごとの運用強度 [Official]
 
@@ -177,7 +177,7 @@ Modeは**タスクriskの軸**です。
 
 本書では、
 
-~~~text
+```text
 Level 1〜5
 = 採用する機能範囲の見取り図
 
@@ -186,11 +186,11 @@ Phase 0〜3
 
 Mode
 = 今回のtaskをどの強度で扱うか
-~~~
+```
 
 として読み分けます。
 
-Phase 3まで導入していても、軽いtaskは軽いModeで扱います。
+Phase 3まで導入していても、軽いタスクは軽いModeで扱います。
 
 ## Hardening Override [Official]
 
@@ -204,11 +204,11 @@ settings、rules、agents / commands、Hook scripts、PlanGateのコマンド、
 
 現在判断している成果物に対する、直近の検証証拠です。
 
-~~~text
+```text
 commit A
 → test PASS
 → repairしてcommit B
-~~~
+```
 
 なら、AのPASSだけでBの完了を主張しません。
 
@@ -216,13 +216,13 @@ commit A
 
 会話を全部捨てることではありません。
 
-~~~text
+```text
 current stateをArtifactへcheckpoint
 ↓
 必要なArtifact / Evidenceを読み直す
 ↓
 新しいsession / reviewerを開始
-~~~
+```
 
 する考え方です。
 
@@ -240,7 +240,7 @@ EvidenceやReviewが「何に対するものか」を結びつけることです
 
 本書では、長時間・複数Agentで特に重要な横断原則として扱いました。
 
-## Continue / Stop / Escalate [Book model]
+## Continue / Stop / Escalate [Bookモデル]
 
 本書でExecution中の判断を整理するために使う3分類です。
 
@@ -256,11 +256,11 @@ EvidenceやReviewが「何に対するものか」を結びつけることです
 
 ai-loop DeliveryにおけるAI側の正常終端です。
 
-~~~text
+```text
 MERGE_READY != MERGED
-~~~
+```
 
-AIはCI / review repair / Evidence準備まで進めても、merge Authorityは別に扱います。
+AIはCI / review修復 / Evidence準備まで進めても、merge Authorityは別に扱います。
 
 ## Human-owned / AI-owned / CI-owned / Workflow-owned [Official]
 
@@ -271,11 +271,11 @@ AIはCI / review repair / Evidence準備まで進めても、merge Authorityは�
 | AI-owned | 実装・検証・PR準備など |
 | Human-owned | 重要な承認・merge・保護設定の適用など |
 | CI-owned | drift / contract検査など |
-| Workflow-owned | handoff / DoD / task stateなど |
+| Workflow-owned | handoff / DoD / タスクstateなど |
 
 重要なのは、人間が全部作業することではなく、**最終Authorityの所在を明示すること**です。
 
-## False Green [Book model]
+## False Green [Bookモデル]
 
 本書で使った整理です。
 
@@ -285,7 +285,7 @@ AIはCI / review repair / Evidence準備まで進めても、merge Authorityは�
 
 PlanGate公式Glossaryの用語ではありません。
 
-## Cheapest Useful Verification [Book model]
+## Cheapest Useful Verification [Bookモデル]
 
 本書内で使った実践ラベルです。
 

@@ -10,7 +10,7 @@ PlanGateを使うときに起きやすい誤解を、症状と戻り方でまと
 | --- | --- |
 | Plan / Approvalが重い・曖昧 | 1〜6 |
 | Hook / Verificationが信用できない | 7〜10 |
-| session / review / multi-agentが崩れる | 11〜13 |
+| セッション / review / multi-agentが崩れる | 11〜13 |
 | PR後のDeliveryが人間へ戻る | 14〜15 |
 | Harnessのgreenを信用できない | 16〜17 |
 | Governanceが増え続ける | 18 |
@@ -26,7 +26,7 @@ PlanGateを使うときに起きやすい誤解を、症状と戻り方でまと
 **戻り方**:
 - PhaseとModeを分ける
 - ultra-light / lightを使う
-- そのtaskで本当に必要なBoundaryだけ残す
+- そのタスクで本当に必要なBoundaryだけ残す
 
 > Gateが多いほど良いわけではない。
 
@@ -46,13 +46,13 @@ PlanGateを使うときに起きやすい誤解を、症状と戻り方でまと
 
 **戻り方**:
 
-~~~text
+```text
 C-1 / C-2
 = Review
 
 C-3
 = Approval Boundary
-~~~
+```
 
 低リスク自動承認を使う場合も、誰にどの条件でAuthorityを委譲したかをPolicyにします。
 
@@ -69,7 +69,7 @@ C-3
 
 ## 5. 前提が崩れてもそのまま進める
 
-**症状**: 承認時はschema変更なしだったが、実装中にmigrationが必要と分かっても続行する。
+**症状**: 承認時はスキーマ変更なしだったが、実装中にmigrationが必要と分かっても続行する。
 
 **なぜ危険か**: Approvalした対象の意味が変わっています。
 
@@ -85,7 +85,7 @@ C-3
 
 **戻り方**:
 - Out of ScopeをPlanへ書く
-- 別task / PBI候補として残す
+- 別タスク / PBI候補として残す
 - 今回必要ならRe-plan / Re-approvalする
 
 ## 7. Hookを入れただけで有効だと思う
@@ -102,33 +102,33 @@ C-3
 
 まで試します。
 
-~~~text
+```text
 exists != registered != fired != influenced decision
-~~~
+```
 
 ## 8. Guardを強くすれば安全だと思う
 
-**症状**: 少しでも怪しいcommandを全部blockする。
+**症状**: 少しでも怪しいコマンドを全部blockする。
 
 **なぜ危険か**: false positiveが増え、Agentや人間がGuardを迂回し始めます。
 
 **戻り方**:
 
-~~~text
+```text
 dangerous → block
 safe      → allow
-~~~
+```
 
-の両方をtestします。
+の両方をテストします。
 
 ## 9. 古いEvidenceで完了判定する
 
-**症状**: test PASS後にrepairし、そのまま以前のPASSを完了Evidenceとして使う。
+**症状**: テストPASS後に修復し、そのまま以前のPASSを完了Evidenceとして使う。
 
 **なぜ危険か**: Evidence対象と現在HEADがずれています。
 
 **戻り方**:
-- repair後に必要なVerificationを再実行
+- 修復後に必要なVerificationを再実行
 - commit / PR headとEvidenceをbind
 - stale Evidenceをgreenとして扱わない
 
@@ -140,7 +140,7 @@ safe      → allow
 
 **戻り方**:
 
-~~~text
+```text
 Verification
 = 決めた条件を満たしたか
 
@@ -149,13 +149,13 @@ Review
 
 Judgment
 = 次へ進めるか
-~~~
+```
 
 を分けます。
 
 ## 11. 会話履歴を正本にする
 
-**症状**: 「前のsessionで説明した」「上で決めた」が唯一の状態になる。
+**症状**: 「前のセッションで説明した」「上で決めた」が唯一の状態になる。
 
 **なぜ危険か**: 古い判断、捨てた案、最新stateが混ざります。
 
@@ -165,11 +165,11 @@ Judgment
 - Evidence
 - Handoff
 
-へmaterialな状態を出します。
+へ重要な状態を出します。
 
 ## 12. 別Agentを呼べば独立Reviewになると思う
 
-**症状**: 別modelへBuilderの会話を丸ごと渡して「独立レビュー」とする。
+**症状**: 別モデルへBuilderの会話を丸ごと渡して「独立レビュー」とする。
 
 **なぜ危険か**: Agentは別でもassumptionとcontextを共有しています。
 
@@ -177,23 +177,23 @@ Judgment
 
 ## 13. Multi-agentを増やしすぎる
 
-**症状**: 小さなtaskでもPlanner / Builder / Verifier / Reviewer / Orchestratorを全部別Agentにする。
+**症状**: 小さなタスクでもPlanner / Builder / Verifier / Reviewer / Orchestratorを全部別Agentにする。
 
-**なぜ危険か**: handoff、state sync、重複探索のcoordination costが増えます。
+**なぜ危険か**: handoff、state sync、重複探索の調整コストが増えます。
 
 **戻り方**:
 
-> responsibility separation benefit > coordination cost
+> responsibility separation benefit > 調整コスト
 
 のときだけAgentを増やします。まずownershipを分け、その後Agent topologyを決めます。
 
 ## 14. PRを作ったらDelivery完了だと思う
 
-**症状**: PR作成後のCI failure、review repair、conflictを人間が引き取る。
+**症状**: PR作成後のCI失敗、review修復、conflictを人間が引き取る。
 
 **なぜ危険か**: AIの自律性がcodingで止まり、Deliveryの待ち時間が人間へ戻ります。
 
-**戻り方**: 必要ならAI責務を PR_CREATED → CI / review repair → re-verification → MERGE_READY まで伸ばします。
+**戻り方**: 必要ならAI責務を PR_CREATED → CI / review修復 → re-verification → MERGE_READY まで伸ばします。
 
 ## 15. AIにmergeまで任せる
 
@@ -203,19 +203,19 @@ Judgment
 
 **戻り方**:
 
-~~~text
+```text
 MERGE_READY
 = AI側のDelivery終点
 
 MERGED
 = 別Authority
-~~~
+```
 
 現行PlanGateではC-4 / mergeはHuman-ownedです。
 
 ## 16. GreenならHarnessが正しいと思う
 
-**症状**: doctor / test / CIがgreenなのでGuardやpluginは正しく機能していると結論する。
+**症状**: doctor / テスト / CIがgreenなのでGuardやpluginは正しく機能していると結論する。
 
 **なぜ危険か**: 測っているProxyと、本当に知りたいClaimが違うかもしれません。
 

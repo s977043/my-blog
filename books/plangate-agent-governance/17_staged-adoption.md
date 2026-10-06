@@ -58,7 +58,7 @@ READMEのLevel 1〜5は、Plan approval → handoff → hooks/validate → metri
 
 重要なのはPhase番号を覚えることではありません。
 
-~~~text
+```text
 観点を使う
 ↓
 Planを残す
@@ -68,7 +68,7 @@ Approval Boundaryを置く
 必要な境界だけ機械強制する
 ↓
 運用データから改善する
-~~~
+```
 
 という順で、失敗コストに合わせてGovernanceを強くすることです。
 
@@ -80,25 +80,25 @@ Approval Boundaryを置く
 
 一方、Modeは**そのタスク自体に必要な運用強度**を表します。
 
-~~~text
+```text
 Phase
 = チーム / projectがPlanGateをどこまで導入しているか
 
 Mode
 = 今回のtaskにどれだけ重いGateが必要か
-~~~
+```
 
 したがって、
 
-> Phase 3まで導入したチームだから、すべてのtaskをcriticalで回す
+> Phase 3まで導入したチームだから、すべてのタスクをcriticalで回す
 
 という意味ではありません。
 
-導入が進んだあとも、軽いtaskは軽いModeで扱います。
+導入が進んだあとも、軽いタスクは軽いModeで扱います。
 
-逆に、導入初期でも高リスクtaskを軽く扱ってよいという意味でもありません。
+逆に、導入初期でも高リスクタスクを軽く扱ってよいという意味でもありません。
 
-**導入成熟度とtask riskを別軸で持つ**ことが、過剰なceremonyを避けるポイントです。
+**導入成熟度とタスクriskを別軸で持つ**ことが、過剰なceremonyを避けるポイントです。
 
 ## Phase 1 — Planを残す
 
@@ -115,7 +115,7 @@ Mode
 見るべきなのは、
 
 - Planが実装中の迷いを減らしたか
-- 曖昧なscopeに早く気づけたか
+- 曖昧な範囲に早く気づけたか
 - 実装中の確認待ちが減ったか
 
 です。
@@ -124,11 +124,11 @@ Mode
 
 Planだけでは、
 
-~~~text
+```text
 Planを書いた
 ↓
 そのまま実装
-~~~
+```
 
 となり、ReviewとAuthorityはまだ分かれません。
 
@@ -136,11 +136,11 @@ Planを書いた
 
 ここから、
 
-~~~text
+```text
 Planがある
 ≠
 Executionしてよい
-~~~
+```
 
 という境界を持ちます。
 
@@ -158,7 +158,7 @@ Phase 3では、Hook、外部Review、Metricsなどを本格運用できます�
 
 たとえば、
 
-- scope外変更が繰り返される
+- 範囲外変更が繰り返される
 - Review漏れが繰り返される
 - Handoff不備が複数人で問題になる
 - CI / Verificationの手作業がボトルネックになる
@@ -175,13 +175,13 @@ Phase 3では、Hook、外部Review、Metricsなどを本格運用できます�
 
 Hookをwarningで導入したあと、blockへ昇格すると開発フローが変わります。
 
-~~~text
+```text
 warning
 = 観測する
 
 block
 = Authorityをmechanical gateへ渡す
-~~~
+```
 
 からです。
 
@@ -195,14 +195,14 @@ False Positiveが多いGuardをいきなりblockへすると、迂回やbypass�
 
 | 観測 | 次に検討するもの |
 | --- | --- |
-| 実装前にscopeが膨らむ | Plan / Acceptance |
+| 実装前に範囲が膨らむ | Plan / Acceptance |
 | Planを書いても勝手に実装へ進む | Approval Boundary |
-| 未承認やscope外変更が繰り返される | Hookなどの機械的な強制 |
-| session切替で状態が失われる | Handoff / Current State |
+| 未承認や範囲外変更が繰り返される | Hookなどの機械的な強制 |
+| セッション切替で状態が失われる | Handoff / Current State |
 | Builderの盲点がReviewへ残る | Independent Review |
 | PR後のCI修正で人間が詰まる | Delivery loop |
 | Guardの効き方を信用できない | Eval / positive-negative controls |
-| 同じfailureが繰り返される | Regression / Ratchet |
+| 同じ失敗が繰り返される | Regression / Ratchet |
 
 つまり、
 
@@ -235,7 +235,7 @@ PlanGate自身も、すべてのAIコーディングへ向くとはしていま�
 
 たとえば、
 
-- 短時間で捨てるprototype
+- 短時間で捨てるプロトタイプ
 - Notebookでの探索
 - one-shot bug reproduction
 - millisecond単位のinline completion
@@ -249,11 +249,11 @@ PlanGate自身も、すべてのAIコーディングへ向くとはしていま�
 
 チーム規模や期間はコスト感を変える要因ですが、本質は、
 
-~~~text
+```text
 Boundaryを置く便益
 >
 Boundaryを維持するコスト
-~~~
+```
 
 かどうかです。
 
@@ -271,7 +271,7 @@ Boundaryを維持するコスト
 
 ### 本書で提案している判断原則
 
-- 機能一覧ではなく、観測したfailureから次の仕組みを足す
+- 機能一覧ではなく、観測した失敗から次の仕組みを足す
 - warning→blockをAuthority変更として扱う
 - 人数や期間の固定値より、Boundary便益と維持コストで判断する
 - PhaseとModeを別軸にする
@@ -286,7 +286,7 @@ Boundaryを維持するコスト
 
 本書では、
 
-~~~text
+```text
 Level 1〜5
 = 採用する機能範囲の見取り図
 
@@ -295,7 +295,7 @@ Phase 0〜3
 
 Mode
 = 個々のtask risk / 運用強度
-~~~
+```
 
 として読み分けます。
 
@@ -315,7 +315,7 @@ Governanceは、一度入れたら増やし続けるものではありません�
 
 | 判断 | いつ選ぶか |
 | --- | --- |
-| Keep | failureを抑え、摩擦も許容範囲 |
+| Keep | 失敗を抑え、摩擦も許容範囲 |
 | Strengthen | 同じ境界違反が繰り返される |
 | Simplify | 手作業やceremonyが便益より重い |
 | Remove | 既存CIやworkflowへ責務が移り、二重化した |
@@ -326,7 +326,7 @@ Governanceは、一度入れたら増やし続けるものではありません�
 
 重要なのは、
 
-> **導入量ではなく、責務の重複とfailure coverageを管理する。**
+> **導入量ではなく、責務の重複と失敗coverageを管理する。**
 
 ことです。
 
@@ -334,7 +334,7 @@ Governanceは、一度入れたら増やし続けるものではありません�
 
 段階導入の成功条件は、Phase 3へ到達することではありません。
 
-> **今のfailureに対して必要なBoundaryだけが働き、不要なceremonyを増やしていないこと。**
+> **今の失敗に対して必要なBoundaryだけが働き、不要なceremonyを増やしていないこと。**
 
 です。
 

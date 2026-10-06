@@ -14,7 +14,7 @@ AIエージェントと長く作業していると、会話には大量の情報
 
 この会話をそのまま「現在の状態」として扱うと、何が有効な決定なのか分かりにくくなります。
 
-current mainのContext Lifecycleでは、長時間セッションの状態を**会話履歴そのものではなく、現在有効なArtifactとEvidenceの参照で引き渡す**方針を明示しています。
+現在のmainのContext Lifecycleでは、長時間セッションの状態を**会話履歴そのものではなく、現在有効なArtifactとEvidenceの参照で引き渡す**方針を明示しています。
 
 ## 会話履歴は便利だが、正本には向かない
 
@@ -38,7 +38,7 @@ Builderの会話をReviewerへそのまま渡すと、「独立レビュー」�
 
 ### セッションへ依存する
 
-会話が唯一の状態だと、model / runtime / workerを変えたときの再開条件が曖昧になります。
+会話が唯一の状態だと、モデル / runtime / ワーカーを変えたときの再開条件が曖昧になります。
 
 そこで重要な状態を会話の外へ出します。
 
@@ -125,7 +125,7 @@ Handoffで渡したいのは、会話の全文ではありません。
 - 完了済みの仕事
 - 現在の仕事
 - blocker
-- next action
+- 次の行動
 - Planからの逸脱
 - 必要なEvidenceへの参照
 
@@ -143,7 +143,7 @@ Handoffで渡したいのは、会話の全文ではありません。
 
 会話だけに状態があると、次のAgentは長い履歴から、
 
-- schema変更はしないと決めた
+- スキーマ変更はしないと決めた
 - pagination併用を確認する必要がある
 - 実装は途中まで終わっている
 - 不正値ケースがまだ未検証
@@ -170,7 +170,7 @@ Handoff
 
 ## Fresh Contextは「全部忘れる」ことではない
 
-現行PlanGateでは、model / runtime / workerの変更、独立Reviewerの開始、worker handoffなどで、standard以上ではcheckpoint後にfresh contextから再開する方針があります。
+現行PlanGateでは、モデル / runtime / ワーカーの変更、独立Reviewerの開始、ワーカーhandoffなどで、standard以上ではcheckpoint後にfresh contextから再開する方針があります。
 
 ここでいうfresh contextは、状態を捨てることではありません。
 
@@ -195,7 +195,7 @@ fresh session / fresh reviewer
 - rationale: decision-log / ADR
 - evidence: report / Review Artifact等への参照
 - session/tool handoff: local-exec-handoff
-- worker package: context-packager / dispatch
+- ワーカーpackage: context-packager / dispatch
 - runtime state: RunState
 
 ここはv8.23時点の実装詳細です。読者が最初から名前を覚える必要はありません。
@@ -214,7 +214,7 @@ Artifactを増やせば安全になるわけではありません。
 
 へ重複して書けば、どれが最新か分からなくなります。
 
-Context Lifecycleの公開文書でも、新しいcheckpoint schemaやContext Manifest、RunStateを追加しないことを明示しています。
+Context Lifecycleの公開文書でも、新しいcheckpointスキーマやContext Manifest、RunStateを追加しないことを明示しています。
 
 既存の所有者を再利用し、必要な情報は参照でつなぎます。
 
@@ -240,22 +240,22 @@ PlanGate自身もModeや段階導入を持ち、軽い作業へ最大構成を�
 
 すべての会話を保存する必要はありません。
 
-現行Context Lifecycleでは、raw chat transcriptやhidden reasoningを実行状態として保存しない方針です。
+現行Context Lifecycleでは、生の会話ログや内部の推論を実行状態として保存しない方針です。
 
 残すべきなのは、
 
-- materialな事実
+- 重要な事実
 - 最終的な決定
-- failure
+- 失敗
 - blocker
-- current state
+- 現在の状態
 - Evidenceへの安定した参照
 
 です。
 
 探索途中の雑談や捨てた推論まで、次のAgentへ機械的に引き継ぐ必要はありません。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/context-lifecycle.md
 
 ## この章で持ち帰ること

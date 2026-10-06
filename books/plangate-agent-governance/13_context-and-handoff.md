@@ -24,13 +24,13 @@ title: "Contextを会話からArtifactへ移す"
 - supersededな設計案
 - 一時的な仮説
 - tool output
-- repair前の状態
+- 修復前の状態
 - すでに解消したblocker
 - Builder自身の推論
 
 これを次のAgentへ丸ごと渡すと、
 
-~~~text
+```text
 必要な現在状態
 +
 古い判断
@@ -38,7 +38,7 @@ title: "Contextを会話からArtifactへ移す"
 大量の探索ログ
 +
 作成者のバイアス
-~~~
+```
 
 を同時に引き継ぐことになります。
 
@@ -48,7 +48,7 @@ PlanGateのContext Lifecycleでは、これを避けるために、
 
 という方針を置いています。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/context-lifecycle.md
 
 ## Fresh Contextは「記憶を捨てる」ことではない
@@ -59,7 +59,7 @@ Fresh Contextという言葉だけを見ると、セッションをリセット�
 
 残すべき状態を先にArtifactへ出します。
 
-~~~text
+```text
 conversation / tool history
         ↓
 materialな決定をcanonical stateへ反映
@@ -71,7 +71,7 @@ Evidenceを安定した場所へ保存
 fresh session
         ↓
 必要なArtifactだけ再読込
-~~~
+```
 
 つまり、
 
@@ -84,18 +84,18 @@ fresh session
 現行Context Lifecycleでは、主に次を既存の正本へ戻します。
 
 - final executable Plan
-- current phase / completed work / current work
+- current phase / 終わった作業 / current work
 - blocker
-- next action
+- 次の行動
 - plan deviation
 - materialなdecision
-- test / review Evidenceへの参照
+- テスト / review Evidenceへの参照
 
 大事なのは、新しい巨大なcheckpoint fileを発明しないことです。
 
 PlanGateは既存の所有先を再利用します。
 
-~~~text
+```text
 Plan
 → canonical plan
 
@@ -110,7 +110,7 @@ Evidence
 
 Handoff
 → existing handoff surface
-~~~
+```
 
 ## Contextは3つの問いに圧縮できる
 
@@ -119,16 +119,16 @@ Handoff
 | 問い | 何を見るか |
 | --- | --- |
 | 何が固定された契約か | Requirement / approved Plan / Acceptance / Approval |
-| 今どこにいるか | Current State / blocker / next action / current Evidence |
+| 今どこにいるか | Current State / blocker / 次の行動 / current Evidence |
 | 次の主体へ何を渡すか | Handoff / Review Package / stable refs |
 
 Dynamic Context Engine、Intent Context Package、Context Lifecycleは、この3つの問いを別の角度から支える仕組みです。
 
-最初から各schema名を覚える必要はありません。
+最初から各スキーマ名を覚える必要はありません。
 
 ## Intent Context Packageは「意味」と「スナップショット」を分ける
 
-current mainでは、Intent Context Package v1が導入されています。
+現在のmainでは、Intent Context Package v1が導入されています。
 
 版の扱いは「はじめに」の情報の基準日に従い、ここで扱うv8.23系のContext機能はmain上の未リリース差分として扱います。
 
@@ -143,17 +143,17 @@ current mainでは、Intent Context Package v1が導入されています。
 
 しかし、それだけで「別の仕事」になったわけではありません。
 
-~~~text
+```text
 context_ref
 = この仕事が何を意味しているか
 
 snapshot_ref
 = その意味を、どの具体スナップショットで見たか
-~~~
+```
 
 と分けることで、semantic identityとaudit identityを混ぜないようにします。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/context-engine.md
 
 ## Contextには固定するものと動的に取るものがある
@@ -174,7 +174,7 @@ Dynamic Context Engineでも、Contextを二種類に分けています。
 - git status
 - diff
 - recent files
-- test failure
+- テスト失敗
 - repository structure
 - related history
 
@@ -190,10 +190,10 @@ Dynamic Context Engineでも、Contextを二種類に分けています。
 
 現行Context Lifecycleでは、standard以上で次のような場面をMUST triggerにしています。
 
-- worker / agent / model / runtimeの変更
+- ワーカー / agent / モデル / runtimeの変更
 - independent reviewerの開始
 - implementer → reviewerのhandoff
-- worker間handoff
+- ワーカー間handoff
 - 外部待ちやusage limitによる意図的中断
 
 一方、ultra-light / lightでは必須にしていません。
@@ -210,7 +210,7 @@ Handoffで状態を渡すとき、「最新Planです」「テスト済みです
 
 たとえば、
 
-~~~text
+```text
 Task
 → task id / context_ref
 
@@ -225,7 +225,7 @@ Implementation
 
 Evidence
 → どのcommitに対する実行結果か
-~~~
+```
 
 です。
 

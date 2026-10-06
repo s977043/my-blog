@@ -34,13 +34,13 @@ Iron Lawの一つに、
 
 ただし、手順2の変更後のコードに対する証拠ではありません。
 
-~~~text
+```text
 commit A
   ↓ test PASS
 commit B
   ↓
 「AでPASSしたからBもOK」
-~~~
+```
 
 とは言えません。
 
@@ -48,7 +48,7 @@ Evidenceには、**どの成果物に対する証拠か**という時間軸が�
 
 ## Fresh Evidenceとは何か
 
-このBookでいうFresh Evidenceは、
+本書でいうFresh Evidenceは、
 
 > **現在判断しようとしている成果物に対して、判断に必要な検証を直近で行った証拠**
 
@@ -57,30 +57,30 @@ Evidenceには、**どの成果物に対する証拠か**という時間軸が�
 古くなる代表例は、
 
 - コードを変更した
-- Review repairを入れた
+- Review修復を入れた
 - dependencyやgenerated artifactが変わった
-- branch / worktreeが変わった
+- ブランチ / worktreeが変わった
 - 対象commitが変わった
 - 別環境の結果をそのまま流用した
 
 といったときです。
 
-PlanGateのquality command evidence仕様でも、Evidenceの `createdAt` が対象実装より古ければstaleとしてblockする設計があります。
+PlanGateのqualityコマンドevidence仕様でも、Evidenceの `createdAt` が対象実装より古ければstaleとしてblockする設計があります。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/quality-command-evidence.md
 
 ## VerificationとReviewを混ぜない
 
 第3章で整理したように、
 
-~~~text
+```text
 Verification
 = 定義済み条件を満たしたか
 
 Review
 = 定義し切れなかった問題も探す
-~~~
+```
 
 です。
 
@@ -122,7 +122,7 @@ V-1の問いは比較的明確です。
 一方、外部Reviewでは、
 
 - 責務境界が不自然ではないか
-- security上の見落としはないか
+- セキュリティ上の見落としはないか
 - edge caseが抜けていないか
 - 既存architectureを壊していないか
 
@@ -136,19 +136,19 @@ V-1がPASSでも、V-3で問題が出ることはあります。
 
 品質コマンドも同じです。
 
-PlanGateのquality command evidence仕様では、
+PlanGateのqualityコマンドevidence仕様では、
 
-- command
+- コマンド
 - exit code
 - output excerpt
 - conclusion
 - timestamp
 
-などをEvidenceとして記録し、required commandの未実行やFAILをGate条件にできます。
+などをEvidenceとして記録し、requiredコマンドの未実行やFAILをGate条件にできます。
 
 ここでの違いは、
 
-~~~text
+```text
 READMEに
 「pnpm test:markdown を実行すること」
 と書いてある
@@ -157,7 +157,7 @@ READMEに
 
 その対象commitに対して
 実行して exitCode=0 のEvidenceがある
-~~~
+```
 
 です。
 
@@ -171,9 +171,9 @@ READMEに
 
 検査対象が正しいか、positive controlが成立しているか、必要な範囲を見ているかも重要です。
 
-このBookでは、Evidenceを見るときに次の3点を確認します。
+本書では、Evidenceを見るときに次の3点を確認します。
 
-~~~text
+```text
 Fresh
 = 現在の成果物に対するものか
 
@@ -182,7 +182,7 @@ Relevant
 
 Reproducible
 = 何を実行し、どういう結果だったか追えるか
-~~~
+```
 
 これはPlanGate公式の「三要件」という意味ではなく、本書でEvidenceを読むときのチェック観点です。
 
@@ -195,7 +195,7 @@ Fresh Evidenceを要求すると、毎回人間が同じテストを手元でや
 AIが、
 
 - 対象commit
-- 実行command
+- 実行コマンド
 - exit code
 - output
 - conclusion
@@ -222,14 +222,14 @@ AIが、
 
 PlanGate Core Contractでも、完了系の報告・記録の直前に一次Evidenceを取り直す `verify-then-report` をDecision Ruleとして持っています。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/core-contract.md
 
 ## VerificationはContinueの条件を更新する
 
 3分類で見ると、Verificationの役割は **Continueしてよい状態かをEvidenceで更新すること**です。
 
-~~~text
+```text
 Verification PASS
 → 現在の成果物についてContinue候補
 
@@ -239,11 +239,11 @@ Verification FAIL
 
 FAILがPlan前提を壊す
 → Escalate / Re-plan
-~~~
+```
 
 ここで大切なのは、FAIL = 即Humanという単純化をしないことです。
 
-承認されたPlanがまだ有効で、root causeが分かり、その範囲内でrepairできるならAI側で継続できます。
+承認されたPlanがまだ有効で、root causeが分かり、その範囲内で修復できるならAI側で継続できます。
 
 一方、FAILから「そもそもPlanが間違っていた」と分かったなら、第3部のre-plan triggerへ戻ります。
 

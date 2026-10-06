@@ -29,11 +29,11 @@ title: "第7部 自分のプロジェクトへ導入する"
 
 導入後は、仕組みを足すだけでなく見直します。
 
-~~~text
+```text
 Keep
 Strengthen
 Simplify
 Remove
-~~~
+```
 
 の4つで、Boundaryの強さと維持コストを定期的に見直します。

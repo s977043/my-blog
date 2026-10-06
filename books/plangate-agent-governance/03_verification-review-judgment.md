@@ -158,7 +158,7 @@ Reviewする
 
 という責務の分離です。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate
 - https://github.com/s977043/PlanGate/blob/main/docs/pages/explanation/product/philosophy.md
 
