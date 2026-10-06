@@ -106,7 +106,7 @@ Partごと、または大きなまとまりごとに `references/review-loop.md`
 
 ### BOOK_REVIEW → PUBLISH_READY
 
-`references/publish-gate.md` とBook内 `PUBLISH_CHECKLIST.md` を使う。
+`references/publish-gate.md` と `docs/books/<slug>/PUBLISH_CHECKLIST.md` を使う。
 
 ## 新規Bookの初期化
 
@@ -121,6 +121,10 @@ npm run new:zenn-book -- <slug> \
 
 生成後も `published: false` を維持する。
 
+generatorは内部編集用ファイルを `docs/books/<slug>/` に作る。`--out` が `books/` 配下でないときは `--internal-dir` が必要で、`--out` のディレクトリ名は slug と一致させる。
+
+公開する章と `config.yaml` は `books/<slug>/`、`BOOK_PLAN.md` などの内部編集用ファイルは `docs/books/<slug>/` に置く。Zennは `config.yaml` の `chapters` に無い `.md` を「デプロイがスキップされました」と通知し続けるため、内部編集用ファイルを `books/<slug>/` に置かない。
+
 generatorを使えない環境では `templates/zenn-book/` を参照して同等構成を作る。
 
 ## 既存Bookを改善する場合
@@ -128,7 +132,7 @@ generatorを使えない環境では `templates/zenn-book/` を参照して同�
 最初に現在のBookを壊さず読む。
 
 1. `config.yaml`
-2. `BOOK_PLAN.md` があれば読む
+2. `docs/books/<slug>/BOOK_PLAN.md` があれば読む
 3. introduction / part divider / afterword
 4. 対象Part
 5. source / QA artifact
@@ -153,7 +157,7 @@ generatorを使えない環境では `templates/zenn-book/` を参照して同�
 - current mainとlatest releaseを同一視しない
 - 仮想walkthroughはObserved factと混同しない
 - 「存在する」と「実際に効く」を同義にしない
-- source driftがある主題は `SOURCE_MAP.md` を使う
+- source driftがある主題は `docs/books/<slug>/SOURCE_MAP.md` を使う
 
 ## Book固有の編集原則
 
