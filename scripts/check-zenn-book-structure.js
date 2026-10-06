@@ -185,11 +185,21 @@ function findBookDirs(rootDir) {
     .sort();
 }
 
+// 内部編集用ファイルは Zenn のデプロイ対象外に置くため <repo>/docs/books/<slug>/ に移した。
+// 旧配置（Book ディレクトリ直下）も modern book の判定に含める。
+function hasBookPlan(bookDir) {
+  const repoRoot = path.dirname(path.dirname(bookDir));
+  return [
+    path.join(bookDir, "BOOK_PLAN.md"),
+    path.join(repoRoot, "docs", "books", path.basename(bookDir), "BOOK_PLAN.md"),
+  ].some((file) => fs.existsSync(file));
+}
+
 function validateBooksRoot(rootDir, options = {}) {
   return findBookDirs(rootDir).map((bookDir) => {
     const bookOptions = { ...options };
     if (options.modernH1ByBookPlan) {
-      bookOptions.checkH1 = fs.existsSync(path.join(bookDir, "BOOK_PLAN.md"));
+      bookOptions.checkH1 = hasBookPlan(bookDir);
     }
     return {
       bookDir,
@@ -434,6 +444,19 @@ function selfTest() {
         checkPlaceholders: false,
       }).flatMap((result) => result.errors),
     (errors) => errors.length === 0,
+  );
+
+  const bookBPlanDir = path.join(root, "docs", "books", "book-b");
+  fs.mkdirSync(bookBPlanDir, { recursive: true });
+  fs.writeFileSync(path.join(bookBPlanDir, "BOOK_PLAN.md"), "# Plan\n");
+  expect(
+    "BOOK_PLAN.md under docs/books/<slug>/ marks a modern book",
+    () =>
+      validateBooksRoot(booksRoot, {
+        modernH1ByBookPlan: true,
+        checkPlaceholders: false,
+      }).flatMap((result) => result.errors),
+    (errors) => errors.some((e) => e.includes("本文に H1 を置かない")),
   );
 
   fs.rmSync(root, { recursive: true, force: true });

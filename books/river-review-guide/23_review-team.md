@@ -29,7 +29,14 @@ Findings merge
 
 これは「完全に独立した複数Agentが最終判断する仕組み」とは違います。
 
-同じContext・Model・Prompt構造を共有していれば、Roleが別でも強い独立検証にはなりません。
+同じContext・Model・Prompt構造を共有していれば、Roleを分けても、同じ条件で3回レビューしても、強い独立検証にはなりません。独立性はレビュー数では決まらず、重要なのは、
+
+- 観点を分ける
+- Evidenceを再確認する
+- 不確実なFindingを残す
+- 必要ならHuman Judgmentへ返す
+
+ことです。
 
 さらに独立性が必要なら、Context / Model / Evidence package / Authorityまで分離する必要があります。
 

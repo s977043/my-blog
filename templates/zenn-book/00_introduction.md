@@ -6,7 +6,7 @@ title: "はじめに"
 
 ## 読者の課題
 
-`BOOK_PLAN.md` で定義したReader Problemを、読者の言葉でここに置く。
+`docs/books/{{BOOK_SLUG}}/BOOK_PLAN.md` で定義したReader Problemを、読者の言葉でここに置く。
 
 ## このBookで伝えたいこと
 

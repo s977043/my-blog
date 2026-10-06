@@ -12,7 +12,7 @@ title: "第2部 PlanGateとは何か"
 2. **Architecture** — Workflow / Skill / Agent / Gate / Artifact / Hookが何を担当するか
 3. **State** — 会話ではなく、Plan / Current State / Evidence / Handoffへ何を残すか
 
-~~~text
+```text
 04 Flow
 → 仕事がどう進むか
 
@@ -21,6 +21,6 @@ title: "第2部 PlanGateとは何か"
 
 06 State
 → 現在状態をどこへ残すか
-~~~
+```
 
 この3つを分けると、PlanGateを「Pluginの機能一覧」ではなく、**判断境界を持つGovernance Harness**として理解しやすくなります。

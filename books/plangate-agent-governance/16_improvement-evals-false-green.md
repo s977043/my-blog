@@ -8,7 +8,7 @@ CI PASS。doctor OK。registered: YES。review PASS。
 
 しかし本当に知りたいのは、
 
-> **greenかどうかではなく、そのgreenが何を証明しているか。**
+> greenかどうかではなく、そのgreenが何を証明しているか。
 
 です。
 
@@ -20,7 +20,7 @@ PlanGate自身では、greenだったのに守りたい性質が成立してい�
 
 この章は長いため、先に全体像を置きます。
 
-~~~text
+```text
 前半
 False Greenを4パターンで見分ける
 → Proxy / Coverage / Classifier / Observer
@@ -32,7 +32,7 @@ False Greenを4パターンで見分ける
 後半
 改善Candidateを安全に採用する
 → Trust Boundary / held-out Eval / Promotion / Recurrence
-~~~
+```
 
 最初に読むなら前半と「最小Eval Contract」までで十分です。
 
@@ -40,9 +40,9 @@ Harness改善そのものを設計するときに、後半のEvaluation Trust Bo
 
 ## False Greenを4つに分ける
 
-このBookではFalse Greenを、
+本書ではFalse Greenを、
 
-> **検査や状態表示は成功を示しているが、判断したいClaimを実挙動で確認できていない状態**
+> 検査や状態表示は成功を示しているが、判断したいClaimを実挙動で確認できていない状態
 
 と呼びます。
 
@@ -54,16 +54,16 @@ PlanGate公式用語ではなく、この章で使う整理です。
 | --- | --- | --- |
 | Proxy Green | 代理指標と実挙動 | #1085 |
 | Coverage Green | 検査範囲と現実の入力空間 | #1173 / #1277 |
-| Classifier Green | 判定ロジックとcommand semantics | #1326 |
+| Classifier Green | 判定ロジックとコマンドの意味 | #1326 |
 | Observer Green | 検査と観測対象の非干渉性 | #1169 |
 
 ### 1. Proxy Green — 「ある」を「効いている」と扱う
 
 Issue #1085では、Codex pluginが実際には1件もロードされていないのにdoctorが、
 
-~~~text
+```text
 registered: YES
-~~~
+```
 
 を返していました。
 
@@ -75,22 +75,22 @@ registered: YES
 
 です。
 
-~~~text
+```text
 proxy
 cache directory exists
 
 claim
 plugin works in runtime
-~~~
+```
 
 がずれていました。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/issues/1085
 
 この失敗を一般化すると、
 
-~~~text
+```text
 installed
 ≠
 registered
@@ -102,20 +102,18 @@ fired
 produced evidence
 ≠
 influenced decision
-~~~
+```
 
 です。
 
 現行ai-loop V2のHarnessManifestでは、Runtime Activationをこの6段階に分けています。
 
-Verifier / Gateの改善では、単にcomponentが存在・発火しただけではなく、Evidenceが実際のDecisionへ影響した `influenced_decision` まで要求する設計です。
+Verifier / Gateの改善では、componentが存在・発火しただけでは足りません。Evidenceが実際のDecisionへ影響した `influenced_decision` まで要求する設計です。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/harness-manifest.md
 
-### 持ち帰る原則
-
-> **存在確認を、動作確認の代わりにしない。**
+持ち帰る原則は「存在確認を、動作確認の代わりにしない。」です。
 
 「設定した」「登録した」「呼び出した」は、それぞれ別のClaimです。
 
@@ -123,15 +121,15 @@ Source:
 
 Coverage Greenには二つの形があります。
 
-### 検査同士は一致していた
+#### 検査同士は一致していた
 
 Issue #1173では、plugin配布allowlistが2箇所にありました。
 
-既存testは、
+既存テストは、
 
-~~~text
+```text
 allowlist A == allowlist B
-~~~
+```
 
 を確認し、PASSしていました。
 
@@ -139,43 +137,41 @@ allowlist A == allowlist B
 
 2ファイルが配布対象から漏れていました。
 
-~~~text
+```text
 A == B
-~~~
+```
 
 でも、
 
-~~~text
+```text
 A == reality
-~~~
+```
 
 とは限りません。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/issues/1173
 
-### 代表経路では動いていた
+#### 代表経路では動いていた
 
 Issue #1277では、Hardening Override Guardがrepository rootでは正しくBLOCKしていました。
 
 一方、linked worktreeではpath normalizationの前提が崩れ、同じ保護対象fileをallowしていました。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/issues/1277
 
 つまり、
 
-~~~text
+```text
 root pathでPASS
 ≠
 保証したいpath class全体でPASS
-~~~
+```
 
 です。
 
-### 持ち帰る原則
-
-> **Evalの対象集合を明示する。**
+持ち帰る原則は「Evalの対象集合を明示する。」です。
 
 たとえば、
 
@@ -191,52 +187,50 @@ root pathでPASS
 
 ### 3. Classifier Green — 検出したが、意味を判定していなかった
 
-Issue #1326では、force pushを止めるGuardが安全なcommandまでBLOCKしました。
+Issue #1326では、force pushを止めるGuardが安全なコマンドまでBLOCKしました。
 
 `git push` と `--force` が同じcommand segmentに属するかを見ず、文字列全体から独立に探していたためです。
 
 結果として、
 
-- 別commandの `--force`
+- 別コマンドの `--force`
 - echo内の `+`
 - 実行されない文字列
 
 まで危険操作と分類されました。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/issues/1326
 
 ここで必要なのは、単にdangerous caseがBLOCKされるテストではありません。
 
-### Positive Control
+#### Positive Control
 
 本当に止めたい入力を止める。
 
-~~~text
+```text
 git push --force-with-lease origin main
 → BLOCK
-~~~
+```
 
-### Negative Control
+#### Negative Control
 
 通したい入力を通す。
 
-~~~text
+```text
 git push origin HEAD && echo a + b
 → allow
-~~~
+```
 
 です。
 
-~~~text
+```text
 all dangerous blocked
-~~~
+```
 
 だけを見ると、全部BLOCKするGuardも高得点になります。
 
-### 持ち帰る原則
-
-> **検出力と誤検出率を同時に見る。**
+持ち帰る原則は「検出力と誤検出率を同時に見る。」です。
 
 安全系ではfail-closedが重要でも、false positiveが増えすぎると、利用者やAgentは迂回経路を作り始めます。
 
@@ -244,16 +238,16 @@ Guard品質は「何件blockしたか」ではなく、意図したsemanticsを�
 
 ### 4. Observer Green — Eval自身が対象を変えていた
 
-Issue #1169では、read-only検査のつもりでPython scriptを `sh` から起動した結果、docstring内のbacktickがshell command substitutionとして評価されました。
+Issue #1169では、read-only検査のつもりでPython scriptを `sh` から起動しました。その結果、docstring内のbacktickがshellのcommand substitutionとして評価されました。
 
 install scriptが実行され、`.codex/skills/**` の34ファイルが書き換わりました。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/issues/1169
 
 検査のつもりの操作が、観測対象を変更していたわけです。
 
-~~~text
+```text
 before
 評価対象A
 
@@ -263,13 +257,11 @@ evalを実行
 
 after
 評価対象Bを測定
-~~~
+```
 
 この状態では「検査がPASSした」というEvidence自体の意味が弱くなります。
 
-### 持ち帰る原則
-
-> **Evalの副作用も脅威モデルに入れる。**
+持ち帰る原則は「Evalの副作用も脅威モデルに入れる。」です。
 
 read-onlyを期待する検査では、
 
@@ -285,19 +277,19 @@ read-onlyを期待する検査では、
 
 しかし、共通しているのは、
 
-~~~text
+```text
 判断したいClaim
         ≠
 検査が実際に測っているもの
-~~~
+```
 
 です。
 
-だからEvalを作るとき、最初にtest codeを書くのではなく、Claimを固定します。
+だからEvalを作るとき、最初にテストコードを書くのではなく、Claimを固定します。
 
 ## 最小Eval Contract
 
-このBookでは、Harness Evalを最低限次の6項目で考えます。
+本書では、Harness Evalを最低限次の6項目で考えます。
 
 | 項目 | 問い |
 | --- | --- |
@@ -310,7 +302,7 @@ read-onlyを期待する検査では、
 
 たとえばplugin activationなら、
 
-~~~text
+```text
 Claim
 pluginがruntimeで実際に利用できる
 
@@ -329,7 +321,7 @@ isolated Codex runtime
 
 Promotion
 Candidate自身の自己申告だけでは採用しない
-~~~
+```
 
 となります。
 
@@ -337,44 +329,32 @@ Candidate自身の自己申告だけでは採用しない
 
 ## Detect → Reproduce → Fix → Regression Guard
 
-実運用でfailureを見つけたら、次の順にします。
+実運用で失敗を見つけたら、次の順にします。
 
-### Detect
+1. **Detect**: 違和感や失敗を観測する
+2. **Reproduce**: 最小ケースへ落とし、次を固定する
 
-違和感や失敗を観測する。
-
-### Reproduce
-
-最小ケースへ落とし、
-
-~~~text
+```text
 input
 expected
 actual
 target identity
-~~~
+```
 
-を固定します。
-
-### Fix
-
-fixtureだけを通すpatchではなく、failure classへ修正を当てます。
-
-### Regression Guard
-
-再現ケースを継続実行できるfixture / test / canaryへ残します。
+3. **Fix**: fixtureだけを通すpatchではなく、failure classへ修正を当てる
+4. **Regression Guard**: 再現ケースを継続実行できるfixture / テスト / canaryへ残す
 
 ここで重要なのが、**修正前の実装で本当にFAILすること**です。
 
-新しいtestが最初から旧実装でもPASSするなら、検出力を証明していません。
+新しいテストが最初から旧実装でもPASSするなら、検出力を証明していません。
 
 ### Regression suiteを「事故の墓場」にしない
 
-failureを再現testへ残すのは重要です。
+失敗を再現テストへ残すのは重要です。
 
-しかし、事故のたびにfixtureを1件ずつ永久追加すると、test suiteは過去の事故履歴そのものになります。
+しかし、事故のたびにfixtureを1件ずつ永久追加すると、テストスイートは過去の事故履歴そのものになります。
 
-~~~text
+```text
 incident A
 → test A
 
@@ -383,19 +363,19 @@ incident B
 
 incident C
 → test C
-~~~
+```
 
-だけでは、なぜ別testなのか、何を守っているのか分からなくなります。
+だけでは、なぜ別テストなのか、何を守っているのか分からなくなります。
 
 そこでfixtureを、個別Incidentだけでなく**failure class / invariant**へ結びつけます。
 
 たとえば#1326なら、
 
-> 「この特定commandをallowする」
+> 「この特定コマンドをallowする」
 
 だけでなく、
 
-> **`git push` とforce tokenが同じcommand segmentに属するときだけdangerousと分類する**
+> `git push` とforce tokenが同じcommand segmentに属するときだけdangerousと分類する
 
 というinvariantにします。
 
@@ -411,11 +391,11 @@ incident C
 
 定期的に次も見ます。
 
-- 同じinvariantを重複testしていないか
+- 同じinvariantを重複テストしていないか
 - fixtureの前提がもう存在しないのに残っていないか
 - known-badが本当にbaselineでFAILするか
 - known-goodが過剰にBLOCKされていないか
-- test自体が対象コードの内部実装へ結合しすぎていないか
+- テスト自体が対象コードの内部実装へ結合しすぎていないか
 
 Regression Guardも保守対象です。
 
@@ -433,11 +413,11 @@ VerifierやEval自身を変更すると、さらに難しくなります。
 
 現行ai-loop V2のEvaluation Trust Boundaryでは、
 
-> **Candidate cannot modify the authority that judges the candidate.**
+> Candidate cannot modify the authority that judges the candidate.
 
 をinvariantにしています。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/evaluation-trust-boundary.md
 
 つまりCandidateは、自分の採用評価中に、
@@ -464,15 +444,13 @@ Verifier Candidateを評価するなら、変更後Verifierの出力だけでな
 
 原則はシンプルです。
 
-> **評価対象と、評価を成立させるAuthorityを分離する。**
+> 評価対象と、評価を成立させるAuthorityを分離する。
 
 ### known fixtureだけに最適化しない
 
 公開されたregression fixtureだけを見てCandidateを改善すると、そのケースだけ通るpatchを作ることもできます。
 
-これはHarness改善でも同じです。
-
-~~~text
+```text
 known-badを知る
 ↓
 そのinputだけ特別扱い
@@ -480,7 +458,7 @@ known-badを知る
 fixture PASS
 ↓
 未知の同型failureは残る
-~~~
+```
 
 そこで現行V2のEvaluation Trust Boundaryでは、Candidate作成前にIDを固定したsealed / held-out fixtureを評価Authority側で持つ考え方があります。
 
@@ -488,7 +466,7 @@ Candidateはそのfixtureを自分で変更できません。
 
 目的は「秘密のテストを作ること」ではありません。
 
-> **改善が既知ケースの暗記ではなく、failure classへ効いているかを見る。**
+> 改善が既知ケースの暗記ではなく、failure classへ効いているかを見る。
 
 ためです。
 
@@ -500,10 +478,10 @@ known fixtureは開発・再現に使い、独立したfixtureはpromotion evalu
 
 Evidenceが足りないとき、
 
-~~~text
+```text
 FAILしていない
 → PASS
-~~~
+```
 
 にしないことも重要です。
 
@@ -527,7 +505,7 @@ FAILしていない
 
 INCONCLUSIVEはFAILとは違いますが、Promotion Readyでもありません。
 
-> **分からない状態をgreenへ変換しない。**
+> 分からない状態をgreenへ変換しない。
 
 ための値です。
 
@@ -546,13 +524,13 @@ INCONCLUSIVEはFAILとは違いますが、Promotion Readyでもありません�
 
 読者が自分のHarnessで最小限取り入れるなら、
 
-~~~text
+```text
 baseline
 known-bad
 known-good
 promotion threshold
 critical regression
-~~~
+```
 
 だけでも先に固定します。
 
@@ -560,7 +538,7 @@ critical regression
 
 ## 改善Candidateを最小化してPromotionする
 
-### failureが出ても、最初に新しいAgentやHookを作らない
+### 失敗が出ても、最初に新しいAgentやHookを作らない
 
 Harness改善では、問題を見つけると新しい仕組みを足したくなります。
 
@@ -577,23 +555,23 @@ Harness改善では、問題を見つけると新しい仕組みを足したく�
 現行Ratchet Traceabilityでは、改善候補を考える順序として、概ね次を置いています。
 
 1. 既存configurationの是正
-2. deterministic test / lint / invariant
+2. deterministicテスト / lint / invariant
 3. 既存Verifierの改善
 4. reuse / update / merge / deprecate
 5. 既存ownershipでは表現できない場合だけcreate
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/ratchet-traceability.md
 
-これは、failureからすぐ新しいSkillやAgentを生やさないための **Create Last** 原則と読めます。
+これは、失敗からすぐ新しいSkillやAgentを生やさないための **Create Last** 原則と読めます。
 
 Harness改善そのものがinstruction debtを増やさないようにします。
 
 ### 改善を自動化してもPromotionは分ける
 
-ai-loop V2のRatchetは、failureからHarness改善候補を作り、paired evaluationする方向へ進んでいます。
+ai-loop V2のRatchetは、失敗からHarness改善候補を作り、paired evaluationする方向へ進んでいます。
 
-~~~text
+```text
 Failure Evidence
 → Improvement Candidate
 → evaluator-observed delta
@@ -601,18 +579,15 @@ Failure Evidence
 → Experiment Result
 → Promotion Decision
 → Human-owned Production Promotion
-~~~
-
-Source:
-- https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/ratchet-traceability.md
+```
 
 Candidate生成やEvalを自動化しても、Production promotionまで同じ主体に渡しません。
 
 第12章の、
 
-~~~text
+```text
 Autonomy != Authority
-~~~
+```
 
 はHarness改善にも適用されます。
 
@@ -620,13 +595,13 @@ Autonomy != Authority
 
 paired evaluationでPASSしても、改善の学習は終わりではありません。
 
-productionで同じfailure patternが再発していないかを観測します。
+productionで同じ失敗パターンが再発していないかを観測します。
 
 現行Ratchet Traceabilityでは、counterfactualな
 
-~~~text
+```text
 prevented_recurrence_count
-~~~
+```
 
 は記録しない方針です。
 
@@ -634,11 +609,11 @@ prevented_recurrence_count
 
 代わりに最小の観測として、
 
-~~~text
+```text
 eligible_run_count = N
 matching_failure_run_count = M
 same_pattern_recurrence_rate = M / N
-~~~
+```
 
 を置きます。
 
@@ -646,7 +621,7 @@ same_pattern_recurrence_rate = M / N
 
 ここで言えるのは、
 
-> **同じ定義で観測したfailure patternが、その後どれくらい発生したか。**
+> 同じ定義で観測した失敗パターンが、その後どれくらい発生したか。
 
 までです。
 
@@ -656,7 +631,7 @@ same_pattern_recurrence_rate = M / N
 
 ここまでをつなぐと、Harness Improvement Loopは次のようになります。
 
-~~~text
+```text
 Production Failure
         ↓
 Failure Evidence
@@ -677,36 +652,19 @@ Production observation
         ↓
 same-pattern recurrenceを測る
         └──────────────→ 次の改善
-~~~
+```
 
-これで、
-
-~~~text
-修正した
-→ testが通った
-→ 完了
-~~~
-
-ではなく、
-
-~~~text
-失敗から学ぶ
-→ 独立評価する
-→ 採用する
-→ 実運用で再観測する
-~~~
-
-までが一つのloopになります。
+失敗から学び、独立に評価し、採用し、実運用で再び観測するところまでが一つのloopです。
 
 ## この章で持ち帰ること
 
 Harness Evalで最初に問うのは、
 
-> testはいくつあるか。
+> テストはいくつあるか。
 
 ではありません。
 
-> **そのgreenは、どのClaimを、どのOracleと対照で確かめた結果なのか。**
+> そのgreenは、どのClaimを、どのOracleと対照で確かめた結果なのか。
 
 です。
 
@@ -716,7 +674,7 @@ False Greenを避けるために、
 2. 保証対象のCoverageを明示する
 3. Positive / Negative Controlを持つ
 4. Eval自身の副作用を見る
-5. failureをregression fixtureへ固定する
+5. 失敗をregression fixtureへ固定する
 6. Candidateと評価Authorityを分離する
 7. 分からない状態をINCONCLUSIVEにする
 8. fixtureをfailure class / invariantへ整理する

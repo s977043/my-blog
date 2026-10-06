@@ -10,8 +10,8 @@ title: "AIの責務をPR作成で終わらせず、MERGE_READYまで伸ばす"
 
 - CIが落ちる
 - Reviewerから指摘が来る
-- repairしたら別のtestが落ちる
-- branchが進んでconflictする
+- 修復したら別のテストが落ちる
+- ブランチが進んでconflictする
 - Evidenceが古くなる
 
 「PRを作りました」でAgentが止まると、ここから人間がDelivery作業を引き取ることになります。
@@ -24,21 +24,21 @@ PRを作ったことは重要なmilestoneです。
 
 しかし、
 
-~~~text
+```text
 PR_CREATED
     ≠
 MERGE_READY
-~~~
+```
 
 です。
 
-PR作成後にCI / review / repairを収束させる工程を、Deliveryの一部として扱います。
+PR作成後にCI / review / 修復を収束させる工程を、Deliveryの一部として扱います。
 
-current mainでは、ai-loop V2の最初のvertical sliceとしてowner-backed Delivery runtimeが導入されています。
+現在のmainでは、ai-loop V2の最初のvertical sliceとしてowner-backed Delivery runtimeが導入されています。
 
-2026年10月3日時点でGitHub ReleasesのLatestはv8.22.0です。mainのREADMEはv8.23.0をLatestと記載していますが、生成済みChangelogページはv8.23.0をTBDのまま残しています。そのため本章では、このV2実装を **current mainにある未リリース差分** として扱います。
+2026年10月3日時点でGitHub ReleasesのLatestはv8.22.0です。mainのREADMEはv8.23.0をLatestと記載していますが、生成済みChangelogページはv8.23.0をTBDのまま残しています。そのため本章では、このV2実装を **現在のmainにある未リリース差分** として扱います。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/blob/main/docs/changelog.md
 
 ## 1つのDelivery loopで見る
@@ -47,7 +47,7 @@ Source:
 
 PRを作ったあとにCIで1件失敗し、Reviewerから1件major指摘が来たとします。
 
-~~~text
+```text
 PR_CREATED
   ↓
 checksを取得
@@ -71,17 +71,17 @@ Fresh Verification
 checks / findings / stateを再照合
   ↓
 MERGE_READY
-~~~
+```
 
 途中で、
 
-> status filterには実はschema migrationが必要
+> status filterには実はスキーマのmigrationが必要
 
-と分かったなら、repairを続けずRe-plan / Escalateへ戻ります。
+と分かったなら、修復を続けずRe-plan / Escalateへ戻ります。
 
 つまりDelivery loopは、
 
-> **何が何でもgreenになるまで直し続けるloop**
+> 何が何でもgreenになるまで直し続けるloop
 
 ではありません。
 
@@ -89,13 +89,13 @@ MERGE_READY
 
 ## PR_CONVERGINGという途中状態
 
-ai-loop V2 taxonomyでは、PR作成後の収束を `PR_CONVERGING` というLifecycle Stateで表します。
+ai-loop V2（ai-loopの次の版）の分類では、PR作成後の収束を `PR_CONVERGING` というLifecycle Stateで表します。
 
 この中には、
 
 - checks待ち
-- checks failure
-- review repair
+- checks失敗
+- review修復
 - conflict解消
 - merge-ready candidate
 
@@ -103,24 +103,24 @@ ai-loop V2 taxonomyでは、PR作成後の収束を `PR_CONVERGING` というLif
 
 大事なのは、
 
-> **PRが存在することと、Delivery契約を満たしたことを別にする。**
+> PRが存在することと、Delivery契約を満たしたことを別にする。
 
 ことです。
 
-## CI failureは「人間へ返す理由」ではない
+## CI失敗は「人間へ返す理由」ではない
 
 CIが落ちたとき、すぐ人間へhandoffする必要はありません。
 
 たとえば、
 
-- lint failure
-- test failure
+- lint失敗
+- テスト失敗
 - generated artifact drift
 - type error
 
-など、root causeを調べて承認済みPlan内でrepairできるなら、前章のContinue Policyに従ってAIが修正できます。
+など、root causeを調べて承認済みPlan内で修復できるなら、前章のContinue Policyに従ってAIが修正できます。
 
-~~~text
+```text
 CI FAIL
   ↓
 failureをEvidence化
@@ -130,17 +130,17 @@ root cause
 Planはまだ有効？
   ├─ Yes → repair → re-verify
   └─ No  → Re-plan / Escalate
-~~~
+```
 
 これにより、人間の仕事を「CIの赤を直す人」から外せます。
 
-## Review repairも同じloopへ入れる
+## Review修復も同じloopへ入れる
 
 Reviewerから指摘が来た場合も、
 
 1. findingを取得
 2. severity / classを確認
-3. Plan内repairか判断
+3. Plan内修復か判断
 4. 修正
 5. Fresh Verification
 6. 再review / reconcile
@@ -149,7 +149,7 @@ Reviewerから指摘が来た場合も、
 
 ここでも大切なのは、修正後に以前のEvidenceを使い回さないことです。
 
-repairは成果物を変えるので、必要なVerificationを更新します。
+修復は成果物を変えるので、必要なVerificationを更新します。
 
 ## DeliveryでもIdentityがずれるとFalse Greenになる
 
@@ -157,14 +157,14 @@ CIがgreenでも、それが古いHEADに対する結果なら現在のPRのEvid
 
 Reviewも同じです。
 
-~~~text
+```text
 HEAD A
 → CI green
 → review PASS
 
 repairして HEAD B
 → 以前のgreenをそのまま利用
-~~~
+```
 
 ではMERGE_READYを主張できません。
 
@@ -189,7 +189,7 @@ Deliveryでreconcileする対象は、statusの色だけではなく、
 - GitHub checksはgreen
 - local Evidenceはstale
 - review findingは未解決
-- RunStateはrepair中のまま
+- RunStateは修復中のまま
 
 かもしれません。
 
@@ -211,11 +211,11 @@ V2では、Lifecycle State、Terminal Outcome、Stop Reason、Policy Verdictを�
 
 ここで重要なのが、
 
-~~~text
+```text
 MERGE_READY
     ≠
 MERGED
-~~~
+```
 
 という境界です。
 
@@ -225,14 +225,14 @@ AIは、
 - Verification
 - PR作成
 - CI収束
-- Review repair
+- Review修復
 - Evidence準備
 
 まで進められます。
 
 しかしC-4 / mergeはそのDelivery Runの外に置かれ、Human-ownedです。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/taxonomy.md
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/core-contract.md
 
@@ -253,7 +253,7 @@ Source:
 
 逆に複数Agentでも、全員が同じstateを自由に書き換えれば責務境界は弱くなります。
 
-> **Multi-agent topologyよりownership topologyを先に決める。**
+> Multi-agent topologyよりownership topologyを先に決める。
 
 という順序です。
 
@@ -263,7 +263,7 @@ Source:
 
 ここで重要なのは、名前そのものではありません。
 
-> **誰がそのstateを書き、誰がEvidenceを作り、誰がdecisionを導出するかを分ける。**
+> 誰がそのstateを書き、誰がEvidenceを作り、誰がdecisionを導出するかを分ける。
 
 ことです。
 
@@ -277,23 +277,23 @@ AIの責務をMERGE_READYまで伸ばすことは、AIのAuthorityをmergeまで
 
 これは第12章の原則そのものです。
 
-~~~text
+```text
 Autonomy
 PR作成後のrepairまで広げる
 
 Authority
 C-4 / mergeはHuman-ownedのまま
-~~~
+```
 
 つまり、
 
-> **AIの作業責務は伸ばす。最終判断権限は必要な境界に残す。**
+> AIの作業責務は伸ばす。最終判断権限は必要な境界に残す。
 
 という設計です。
 
 ## 長時間loopにはStop条件も必要
 
-Deliveryを自律化すると、永遠にrepairを続ける危険があります。
+Deliveryを自律化すると、永遠に修復を続ける危険があります。
 
 ai-loop V2 taxonomyでは、
 
@@ -317,8 +317,8 @@ V2にはRunStateやtaxonomyがありますが、読者が最初に必要なの�
 自分のDelivery automationで最低限決めたいのは、
 
 - 何を取得すれば現状が分かるか
-- 何なら自動repairしてよいか
-- repair後に何を再検証するか
+- 何なら自動修復してよいか
+- 修復後に何を再検証するか
 - どの状態ならMERGE_READYと言えるか
 - 何が起きたらEscalate / Blockするか
 
@@ -330,7 +330,7 @@ state machineは、その条件が増えてから導入しても構いません�
 
 AIエージェントの責務は、コード生成やPR作成で終える必要はありません。
 
-> **CI / Review / Repairまで自律化し、HumanにはMERGE_READYな成果物とEvidenceを渡す。**
+> CI / Review / Repairまで自律化し、HumanにはMERGE_READYな成果物とEvidenceを渡す。
 
 その一方で、
 
@@ -340,7 +340,7 @@ AIエージェントの責務は、コード生成やPR作成で終える必要�
 
 これで第5部の3つがつながりました。
 
-~~~text
+```text
 Context Boundary
 → 次の主体へ現在状態を渡す
 
@@ -349,6 +349,6 @@ Review Boundary
 
 Delivery Boundary
 → AIの責務をMERGE_READYまで伸ばす
-~~~
+```
 
 次の第6部では、こうして作ったHarness自身が本当に機能しているかをEvalし、False Greenをどう潰すかを扱います。

@@ -10,73 +10,26 @@ PlanGateには、Workflow、Skill、Agent、Gate、Hook、Metrics、Evalなど�
 
 - README: **Level 1〜5** — どの機能範囲まで採用するかを示す段階
 - staged-adoption-guide: **Phase 0〜3** — Day 1から運用習熟を進める導入ロードマップ
-- plugin-only-adoption: **Level 0** — CLIを入れずに観点・型だけ試す入口
+- plugin-only-adoption: **Level 0** — Pluginだけで観点・型を試す入口
 
 どれか一つが「正しく」、残りが「旧い」と断定するより、用途を分けて読む方が安全です。
 
-## 本書ではPhase 0〜3を導入手順に使う
+## 本書ではPluginのLevel 0から始める
 
-この章では、**実際にどの順序で導入するか**を説明するため、staged-adoption-guideのPhase 0〜3を主軸にします。
+この章では、**実際にどの順序で導入するか**を説明します。最初の段はPluginだけで始めるLevel 0にし、その先はstaged-adoption-guideのPhase 1〜3の考え方を借ります。
 
 | 段階 | 主目的 |
 | --- | --- |
-| plugin-only Level 0 | CLIなしで観点・型を試す |
-| Phase 0 | ultra-lightで1タスクを完走 |
+| Level 0（Plugin） | Pluginを入れて観点・型を試す |
 | Phase 1 | Planを先に作る習慣をつくる |
 | Phase 2 | Approval Boundaryを導入する |
-| Phase 3 | 必要なHook / external review / Metricsを強化する |
+| Phase 3 | 必要なHook / 外部Review / Metricsを強化する |
 
-各Phaseで「何をまだ使わなくてよいか」は、後続の節で具体的に説明します。
+各段で「何をまだ使わなくてよいか」は、後続の節で具体的に説明します。
 
-READMEのLevel 1〜5は、Plan approval → handoff → hooks/validate → metrics → eval/timelineと、**採用する機能範囲を段階化する別の見取り図**として参照します。
+## Level 0 — Pluginで「型」だけ試す
 
-重要なのはPhase番号を覚えることではありません。
-
-~~~text
-観点を使う
-↓
-Planを残す
-↓
-Approval Boundaryを置く
-↓
-必要な境界だけ機械強制する
-↓
-運用データから改善する
-~~~
-
-という順で、失敗コストに合わせてGovernanceを強くすることです。
-
-## PhaseとModeは別の軸
-
-ここは混同しやすいところです。
-
-現行の段階導入ガイドでは、Phaseは**導入・習熟の進み方**を表します。
-
-一方、Modeは**そのタスク自体に必要な運用強度**を表します。
-
-~~~text
-Phase
-= チーム / projectがPlanGateをどこまで導入しているか
-
-Mode
-= 今回のtaskにどれだけ重いGateが必要か
-~~~
-
-したがって、
-
-> Phase 3まで導入したチームだから、すべてのtaskをcriticalで回す
-
-という意味ではありません。
-
-導入が進んだあとも、軽いtaskは軽いModeで扱います。
-
-逆に、導入初期でも高リスクtaskを軽く扱ってよいという意味でもありません。
-
-**導入成熟度とtask riskを別軸で持つ**ことが、過剰なceremonyを避けるポイントです。
-
-## Level 0 — CLIなしで「型」だけ試す
-
-CLI導入の判断コストが高いなら、plugin-onlyから始められます。
+最初はPluginを入れるだけで始められます。
 
 この段階で使えるのは、
 
@@ -89,39 +42,63 @@ CLI導入の判断コストが高いなら、plugin-onlyから始められます
 
 などです。
 
-一方で、未承認実装のmechanical block、plan hash改変検知、doctorによるsettings検査、CLIによるexec / validateは使えません。
+一方で、未承認実装の機械的な停止、承認後のPlan改変の検知、設定の自動検査、機械検証は、Pluginだけでは働きません。
 
 つまりLevel 0は、
 
-> **Governanceの考え方は使うが、守る責任はまだ人間の規律にある。**
+> Governanceの考え方は使うが、守る責任はまだ人間の規律にある。
 
 状態です。
 
-これで価値が出るなら、無理にCLIへ進まなくても構いません。
+これで価値が出るなら、無理に次の段へ進まなくても構いません。
 
-## Phase 0 — まず1タスクを完走する
+公式の段階導入ガイドには、PlanGateが動くかを確かめるPhase 0もあります。手順は[公式ガイド](https://github.com/s977043/PlanGate/blob/main/docs/staged-adoption-guide.md)を参照してください。
 
-現行staged adoption guideのPhase 0はultra-lightです。
+READMEのLevel 1〜5は、Plan approval → handoff → hooks/validate → metrics → eval/timelineの順に機能を足していきます。本書では、これを**採用する機能範囲を段階化する別の見取り図**として参照します。
 
-最小の流れは、
+重要なのはPhase番号を覚えることではありません。
 
-~~~text
-bin/plangate init TASK-XXXX
+```text
+観点を使う
 ↓
-小さな変更を完了
+Planを残す
 ↓
-bin/plangate doctor
-~~~
+Approval Boundaryを置く
+↓
+必要な境界だけ機械強制する
+↓
+運用データから改善する
+```
 
-です。
+という順で、失敗コストに合わせてGovernanceを強くすることです。
 
-PlanもC-3も必須ではなく、Agentも0体で構いません。
+## PhaseとModeは別の軸
 
-ここでの目的はGovernance全体を体験することではなく、
+ここは混同しやすいところです。
 
-> **このprojectでPlanGateを使うこと自体が成立するか。**
+現行の段階導入ガイドでは、Phaseは**導入・習熟の進み方**を表します。
 
-を確認することです。
+一方、Modeは**そのタスク自体に必要な運用強度**を表します。
+
+```text
+Phase
+= チーム / projectがPlanGateをどこまで導入しているか
+
+Mode
+= 今回のtaskにどれだけ重いGateが必要か
+```
+
+したがって、
+
+> Phase 3まで導入したチームだから、すべてのタスクをcriticalで回す
+
+という意味ではありません。
+
+導入が進んだあとも、軽いタスクは軽いModeで扱います。
+
+逆に、導入初期でも高リスクタスクを軽く扱ってよいという意味でもありません。
+
+**導入成熟度とタスクのリスクを別軸で持つ**ことが、過剰なceremonyを避けるポイントです。
 
 ## Phase 1 — Planを残す
 
@@ -129,7 +106,7 @@ PlanもC-3も必須ではなく、Agentも0体で構いません。
 
 ここで得たいのは高度なReviewではありません。
 
-> **先に何をするかを会話の外へ出してから実装する。**
+> 先に何をするかを会話の外へ出してから実装する。
 
 という習慣です。
 
@@ -138,7 +115,7 @@ PlanもC-3も必須ではなく、Agentも0体で構いません。
 見るべきなのは、
 
 - Planが実装中の迷いを減らしたか
-- 曖昧なscopeに早く気づけたか
+- 曖昧な範囲に早く気づけたか
 - 実装中の確認待ちが減ったか
 
 です。
@@ -147,11 +124,11 @@ PlanもC-3も必須ではなく、Agentも0体で構いません。
 
 Planだけでは、
 
-~~~text
+```text
 Planを書いた
 ↓
 そのまま実装
-~~~
+```
 
 となり、ReviewとAuthorityはまだ分かれません。
 
@@ -159,17 +136,17 @@ Planを書いた
 
 ここから、
 
-~~~text
+```text
 Planがある
 ≠
 Executionしてよい
-~~~
+```
 
 という境界を持ちます。
 
 重要なのは「たくさん止める」ことではありません。
 
-> **Plan未作成・未承認・承認後Plan変更のような、繰り返し起こる境界違反を機械側へ移せるか。**
+> Plan未作成・未承認・承認後Plan変更のような、繰り返し起こる境界違反を機械側へ移せるか。
 
 を見ることです。
 
@@ -181,7 +158,7 @@ Phase 3では、Hook、外部Review、Metricsなどを本格運用できます�
 
 たとえば、
 
-- scope外変更が繰り返される
+- 範囲外変更が繰り返される
 - Review漏れが繰り返される
 - Handoff不備が複数人で問題になる
 - CI / Verificationの手作業がボトルネックになる
@@ -190,7 +167,7 @@ Phase 3では、Hook、外部Review、Metricsなどを本格運用できます�
 
 第16章と同じく、
 
-> **観測されたfailure classへ仕組みを足す。**
+> 観測されたfailure classへ仕組みを足す。
 
 という考え方です。
 
@@ -198,13 +175,13 @@ Phase 3では、Hook、外部Review、Metricsなどを本格運用できます�
 
 Hookをwarningで導入したあと、blockへ昇格すると開発フローが変わります。
 
-~~~text
+```text
 warning
 = 観測する
 
 block
 = Authorityをmechanical gateへ渡す
-~~~
+```
 
 からです。
 
@@ -218,18 +195,18 @@ False Positiveが多いGuardをいきなりblockへすると、迂回やbypass�
 
 | 観測 | 次に検討するもの |
 | --- | --- |
-| 実装前にscopeが膨らむ | Plan / Acceptance |
+| 実装前に範囲が膨らむ | Plan / Acceptance |
 | Planを書いても勝手に実装へ進む | Approval Boundary |
-| 未承認やscope外変更が繰り返される | Hook / CLI enforcement |
-| session切替で状態が失われる | Handoff / Current State |
+| 未承認や範囲外変更が繰り返される | Hookなどの機械的な強制 |
+| セッション切替で状態が失われる | Handoff / Current State |
 | Builderの盲点がReviewへ残る | Independent Review |
 | PR後のCI修正で人間が詰まる | Delivery loop |
 | Guardの効き方を信用できない | Eval / positive-negative controls |
-| 同じfailureが繰り返される | Regression / Ratchet |
+| 同じ失敗が繰り返される | Regression / Ratchet |
 
 つまり、
 
-> **機能一覧ではなく、観測した摩擦をトリガーに強度を上げる。**
+> 機能一覧ではなく、観測した摩擦をトリガーに強度を上げる。
 
 という考え方です。
 
@@ -248,7 +225,7 @@ False Positiveが多いGuardをいきなりblockへすると、迂回やbypass�
 
 既存workflowで満たせている責務はそのまま残します。
 
-> **欠けているBoundaryだけ輸入する。**
+> 欠けているBoundaryだけ輸入する。
 
 方が移行コストを小さくできます。
 
@@ -258,7 +235,7 @@ PlanGate自身も、すべてのAIコーディングへ向くとはしていま�
 
 たとえば、
 
-- 短時間で捨てるprototype
+- 短時間で捨てるプロトタイプ
 - Notebookでの探索
 - one-shot bug reproduction
 - millisecond単位のinline completion
@@ -272,11 +249,11 @@ PlanGate自身も、すべてのAIコーディングへ向くとはしていま�
 
 チーム規模や期間はコスト感を変える要因ですが、本質は、
 
-~~~text
+```text
 Boundaryを置く便益
 >
 Boundaryを維持するコスト
-~~~
+```
 
 かどうかです。
 
@@ -287,14 +264,14 @@ Boundaryを維持するコスト
 ### PlanGate公式の現在仕様
 
 - plugin-only Level 0
-- Phase 0〜3
+- Phase 0〜3（本書ではLevel 0とPhase 1〜3を使う）
 - warningからstrictへの段階導入
 - coexistence / partial adoption
 - when-not-to-useの非採用ケース
 
 ### 本書で提案している判断原則
 
-- 機能一覧ではなく、観測したfailureから次の仕組みを足す
+- 機能一覧ではなく、観測した失敗から次の仕組みを足す
 - warning→blockをAuthority変更として扱う
 - 人数や期間の固定値より、Boundary便益と維持コストで判断する
 - PhaseとModeを別軸にする
@@ -309,7 +286,7 @@ Boundaryを維持するコスト
 
 本書では、
 
-~~~text
+```text
 Level 1〜5
 = 採用する機能範囲の見取り図
 
@@ -318,7 +295,7 @@ Phase 0〜3
 
 Mode
 = 個々のtask risk / 運用強度
-~~~
+```
 
 として読み分けます。
 
@@ -338,7 +315,7 @@ Governanceは、一度入れたら増やし続けるものではありません�
 
 | 判断 | いつ選ぶか |
 | --- | --- |
-| Keep | failureを抑え、摩擦も許容範囲 |
+| Keep | 失敗を抑え、摩擦も許容範囲 |
 | Strengthen | 同じ境界違反が繰り返される |
 | Simplify | 手作業やceremonyが便益より重い |
 | Remove | 既存CIやworkflowへ責務が移り、二重化した |
@@ -349,7 +326,7 @@ Governanceは、一度入れたら増やし続けるものではありません�
 
 重要なのは、
 
-> **導入量ではなく、責務の重複とfailure coverageを管理する。**
+> 導入量ではなく、責務の重複とfailure coverageを管理する。
 
 ことです。
 
@@ -357,7 +334,7 @@ Governanceは、一度入れたら増やし続けるものではありません�
 
 段階導入の成功条件は、Phase 3へ到達することではありません。
 
-> **今のfailureに対して必要なBoundaryだけが働き、不要なceremonyを増やしていないこと。**
+> **今の失敗に対して必要なBoundaryだけが働き、不要なceremonyを増やしていないこと。**
 
 です。
 

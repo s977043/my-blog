@@ -23,30 +23,7 @@ River Reviewを導入しただけでは、レビュー判断は資産になり�
 | Review Cost | latency / token / waitingは許容か |
 | Recurrence | 同じ失敗が再発したか |
 
-## 観測から資産化する
-
-Feedbackをログに残すだけでは、次のレビューは変わりません。
-
-そこで分類します。
-
-~~~text
-Useful repeated Finding
-  → Skill / Rule
-
-False positive
-  → Guard / Negative Fixture / Suppression
-
-Missed issue
-  → Positive Fixture / New Criterion
-
-Repeated human judgment
-  → Promotion candidate
-
-Accepted risk
-  → Memory with expiry / resurface
-~~~
-
-この変換がReview Judgment as Codeの運用です。
+Feedbackをログに残すだけでは、次のレビューは変わりません。観測した結果を判断資産へ戻す変換は、第27章の改善ループで扱いました。
 
 ## 「AIを改善する」より「判断系を改善する」
 
