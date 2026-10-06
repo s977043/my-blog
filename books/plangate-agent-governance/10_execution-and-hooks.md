@@ -2,6 +2,8 @@
 title: "Hookで「お願い」を実行時の検査へ近づける"
 ---
 
+Hookは、承認した計画を守らせる手段の一つです。PlanGateの中心は計画づくりにあり、この章で扱うのは、その計画の境界を実行時にも保つための補助の層です。
+
 前章までで、PlanとApproval Boundaryを作りました。
 
 では、承認前やscope外の変更をしないように、
@@ -178,7 +180,7 @@ PlanGateの現行Hook documentationでは、強制を複数層に分けていま
 - CI
 - PlanGateのコマンドを経由する検査
 - GitHub branch protection等の外部設定
-- Codex側runtime integration
+- Codex側の実行環境との統合（現時点では未発火・未保証の統合対象）
 
 重要なのは、どの層も万能ではないことです。
 
@@ -191,6 +193,8 @@ Claudeの `Edit|Write` matcherだけにあるGuardは、Bash経由では同じ�
 > **Enforcementの仕様には「何を守るか」だけでなく「どの経路で発火するか」も含まれる。**
 
 と考える必要があります。
+
+Codex側は、設定が書かれているだけでは配線済みと数えません。PlanGateの現行の文書では、Codex側のHook登録が0件で、一度も発火していなかったFalse Greenが記録されています。
 
 Source:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/hook-enforcement.md
