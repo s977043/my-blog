@@ -194,7 +194,7 @@ Claudeの `Edit|Write` matcherだけにあるGuardは、Bash経由では同じ�
 
 と考える必要があります。
 
-Codex側は、設定が書かれているだけでは配線済みと数えません。PlanGateの現行の文書では、Codex側のHook登録が0件で、一度も発火していなかったFalse Greenが記録されています。
+Codex側は、設定が書かれているだけでは配線済みと数えません。PlanGateの現行の文書では、Codex側のHook登録が0件で、一度も発火していなかったFalse Greenが記録されています。Hookを含むGovernanceの整え方は、[AIコーディングを「比較で改善」できる土台にする：PlanGate v8.6.0のMetrics v1とGovernance](/articles/plangate-v86-hook-enforcement)でも扱いました。
 
 Source:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/hook-enforcement.md

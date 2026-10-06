@@ -28,7 +28,7 @@ AIは、計画に書かれていない前提を自分で補って進みます。
 
 ## この章では「良いPlanの書き方」は扱わない
 
-既存の `plangate-guide` では、
+『AI にコードを書かせる前にやること — PlanGate 実践ガイド』では、
 
 - Why
 - In Scope / Out of Scope
@@ -165,7 +165,7 @@ PlanGateでは、実行順はtodo、検証条件はtest-casesへ分けます。
 
 これにより、後から何かが変わったときに「Approvalへ戻る変更なのか」「単なる実行順の調整なのか」「Verification条件の変更なのか」を区別しやすくなります。
 
-具体的なPlan / todo / test-casesの作り方は、既存の `plangate-guide` 側で扱います。
+具体的なPlan / todo / test-casesの作り方は、『AI にコードを書かせる前にやること — PlanGate 実践ガイド』で扱います。
 
 ## 境界があると、実装中の確認を減らせる
 

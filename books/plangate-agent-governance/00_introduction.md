@@ -8,9 +8,9 @@ title: "はじめに"
 
 > AIエージェントを信頼できるようにするのではなく、信頼しなくても仕事を任せられる環境をどう作るか。
 
-既存の『AI にコードを書かせる前にやること — PlanGate 実践ガイド』が、良いPlanを作る方法を中心に扱うのに対し、本書ではPlanの前後まで含めた開発環境全体を扱います。
+既存の[『AI にコードを書かせる前にやること — PlanGate 実践ガイド』](https://zenn.dev/minewo/books/plangate-guide)が、良いPlanを作る方法を中心に扱うのに対し、本書ではPlanの前後まで含めた開発環境全体を扱います。
 
-Artifact、Evidence、Approval Boundary、Verification、Human Judgment、Context、Handoff。これらをどう組み合わせると、AIへ任せる範囲を広げても判断と責任を失わずに済むのかを、PlanGateの実例から考えます。
+Artifact、Evidence、Approval Boundary、Verification、Human Judgment、Context、Handoff。これらをどう組み合わせると、AIへ任せる範囲を広げても判断と責任を失わずに済むのかを、PlanGateの実例から考えます。PlanGateがどう育ってきたかは、[PlanGate v3 から v8.6 までの設計変遷](/articles/plangate-design-evolution-v3-to-v8)にまとめています。
 
 ## この本で扱うこと
 
