@@ -2,7 +2,7 @@
 title: "最初のRiver Reviewを実行する"
 ---
 
-最初に理解したいのはコマンドではなく、レビューの入出力です。
+コマンドを打つ前に、レビューの入出力を押さえておきます。
 
 ~~~text
 Engineering Artifacts
@@ -23,6 +23,30 @@ Claude Code / CodexのPluginから始める場合も、GitHub Actionsから実�
 この場合、River Review専用の別モデルを覚える必要はありません。
 
 「現在の変更をRiver Reviewの観点でレビューして」と依頼し、どのSkillが選ばれ、どんなEvidence付きFindingが返るかを見るところから始められます。
+
+## Claude CodeにPluginを入れる
+
+River Review v1.126.0時点のREADMEでは、Claude Codeへの導入は次の3ステップです。
+
+~~~text
+/plugin marketplace add s977043/river-review
+/plugin install river-review@river-review-marketplace
+/reload-plugins
+~~~
+
+1行目でmarketplaceを追加し、2行目でPluginを入れ、3行目で再起動せずに有効化します。CodexもClaude Codeと同じmarketplaceから導入できます。
+
+手順はバージョンによって変わることがあります。試す前に、READMEの「river-review プラグインの導入」を確認してください。
+
+## 1つ実行してみる
+
+導入できたら、作業中の変更に対して次のコマンドを実行します。
+
+~~~text
+/river-review:review-local
+~~~
+
+working treeの差分をレビューし、修正案を返すPluginのコマンドです。前節のように自然文で依頼しても構いません。
 
 ## 最初に確認する3点
 
