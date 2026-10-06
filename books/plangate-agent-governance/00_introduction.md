@@ -24,6 +24,14 @@ Artifact、Evidence、Approval Boundary、Verification、Human Judgment、Contex
 - Harness自体のFalse Greenをどう検出し改善するか
 - Level / Phase / Modeを混同せず、必要な範囲から段階導入する方法
 
+## 対象読者と前提知識
+
+本書は、AIコーディングエージェントをチーム開発に乗せる仕組みを設計する人に向けて書いています。テックリードやEM、開発フローを整える立場のエンジニアを想定しています。
+
+前提として、Claude CodeやCodexのようなAIコーディングエージェントを一度は使ったことがあると読みやすくなります。PlanGateを使ったことがなくても読めます。
+
+姉妹作の『AI にコードを書かせる前にやること — PlanGate 実践ガイド』を先に読む必要はありません。良いPlanの書き方を知りたくなったら、そちらを参照してください。用語は付録Aの用語集で引けます。
+
 ## 読み終えたときの状態
 
 個々のプロンプトを工夫するだけでなく、AIが間違えても壊れにくく、進行状況を証拠で確認でき、必要な場所で人間が判断できる開発環境を設計する観点を持ち帰ることを目指します。
@@ -36,6 +44,8 @@ PlanGateの具体仕様は、**2026年10月3日時点のcurrent main**を再確�
 release状態はGitHub Releasesを優先し、同日時点のLatest releaseは **v8.22.0** です。一方、mainのREADMEにはv8.23.0をLatestとする記述があり、生成済みChangelogページではv8.23.0がTBDのまま残っています。
 
 そのため本書では、v8.23系のContext / ai-loop V2機能を「current mainで確認できる実装」として扱い、release済みとは断定しません。
+
+姉妹作はv8.22.0時点の公開情報を基準にしています。本書はそれより新しいmainを基準にしているため、細部の記述が異なることがあります。
 
 また、段階導入についてもREADMEのLevel 1〜5とstaged-adoption-guideのPhase 0〜3が併存しているため、用途を分けて説明します。
 
