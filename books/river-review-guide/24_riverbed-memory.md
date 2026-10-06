@@ -59,7 +59,7 @@ Judgment Memory
 
 ここは状態表記で注意が必要です。
 
-Riverbed Memory v1のruntime実装は存在しますが、Stable InterfacesではRiverbed Memory Entryなど関連する外部schemaの一部が **Experimental** と分類されています。
+Riverbed Memory v1のruntime実装は存在しますが、Stable InterfacesではRiverbed Memory全体と、Entry / Indexなど関連するschemaが **Experimental** と分類されています。予告なく変更・削除される可能性があります。
 
 したがって、
 
@@ -134,4 +134,4 @@ current v1と混同してはいけません。
 - [Riverbed Memory](https://github.com/s977043/river-review/blob/main/pages/explanation/riverbed-memory.md)
 - [Riverbed Storage](https://github.com/s977043/river-review/blob/main/pages/reference/riverbed-storage.md)
 - [Stable Interfaces](https://github.com/s977043/river-review/blob/main/pages/reference/stable-interfaces.md)
-- [Issue #474](https://github.com/s977043/river-review/issues/474)
+- [PR #474](https://github.com/s977043/river-review/pull/474)

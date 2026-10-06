@@ -22,7 +22,8 @@ River Reviewでは、**意味判断を生成する責務**と**機械的に確�
 - severityがSkill宣言を超えていないか
 - Fix / Suggestionがactionableか
 - Evidenceのfile referenceがdiffに存在するか
-- Finding lineが実際の追加行か
+
+加えて、Findingの行が今回の追加行か既存行かを機械で判定し、メタデータとして付けます。この判定は却下には使いません。
 
 ## なぜLLMへ全部再確認させないのか
 

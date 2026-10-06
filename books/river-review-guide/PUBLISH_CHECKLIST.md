@@ -19,7 +19,7 @@ Verification date: 2026-10-06
 - [x] Latest Release: `v1.126.0`（2026-10-05）
 - [x] Review Coverage = Experimental
 - [x] Riverbed Memory v1 = runtime implemented
-- [x] Riverbed関連の一部外部schema = Experimental
+- [x] Riverbed Memory全体（関連schemaを含む） = Experimental
 - [x] Riverbed external datastore v2 = Planned
 - [x] Progressive Disclosureのimplemented / proto / plannedを分離
 - [x] verify gate = Planned / 未実装

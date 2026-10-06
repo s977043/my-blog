@@ -90,7 +90,7 @@ River Reviewのcontractでは次を分離します。
 
 2026年10月6日に再確認したverification snapshotでは、Review Coverageは **Experimental** です。
 
-machine-readableなreview execution surfaceへ出力されますが、Stable Contractではありません。
+LLMを実際に呼んだ実行では、machine-readableなreview execution surfaceへ出力されます。dry-run、offline、key未設定のように意図的にskipした実行では出力されません。また、Stable Contractではありません。
 
 Coverageの使われ方は2つに分かれます。保存した複数回の実行結果を比べる収束判定では既定で使われ、Coverage不足を理由にGateを止めるのは明示的に有効化（opt-in）した場合だけです。収束判定での扱いは第28章で詳しく見ます。
 

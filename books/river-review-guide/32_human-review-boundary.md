@@ -48,7 +48,7 @@ Review Engine
   ↓
 Finding / Evidence / Verdict
   ↓
-Decision Surface
+判断の提示（Decision Surface）
   ↓
 Authority Owner
 ~~~

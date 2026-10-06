@@ -43,7 +43,7 @@ Findings merge
 - Evidenceをまとめる
 - severityの不整合を確認する
 
-ことで、Human Decision Surfaceへ過剰なノイズを出さないようにします。
+ことで、人間へ判断を提示する場面に過剰なノイズを出さないようにします。
 
 最終的なContinue / Stop / Human EscalationのAuthorityはCaller側に残ります。
 

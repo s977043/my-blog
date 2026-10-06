@@ -46,7 +46,7 @@ Source type:
 | 21 Generation / Verification | `src/lib/verifier.mjs`, `pages/explanation/judgment-placement.md` | Runtime / Design | rule-based checkの実装範囲 |
 | 22 Context Engineering | `pages/explanation/progressive-disclosure.md`, `pages/guides/repo-wide-review.md` | Design / Guide | proto / plannedの状態差 |
 | 23 Review Team | `README.md`, `pages/reference/artifact-input-contract.md` | Design / Reference | Reviewer Role / reviewSignals |
-| 24 Riverbed Memory | `pages/explanation/riverbed-memory.md`, `pages/reference/riverbed-storage.md`, `pages/reference/stable-interfaces.md`, Issue #474 | Design / Reference / Issue | v1 implemented と interface stability |
+| 24 Riverbed Memory | `pages/explanation/riverbed-memory.md`, `pages/reference/riverbed-storage.md`, `pages/reference/stable-interfaces.md`, PR #474 | Design / Reference / PR | v1 implemented と interface stability |
 | 25 Suppression / Resurface | `pages/reference/riverbed-storage.md`, `pages/guides/repo-wide-review.md` | Reference / Guide | expiry / scope / resurface条件 |
 | 26 Skill Evaluation | `pages/reference/evaluation-fixture-format.md`, `pages/guides/planner-evaluation.md` | Reference / Guide | positive / negative fixture、planner eval |
 | 27 Improvement Loop | `pages/explanation/judgment-placement.md`, `pages/guides/adopter-playbook.md` | Design / Guide | promotionを万能自動化にしない |

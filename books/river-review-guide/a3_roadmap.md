@@ -7,7 +7,7 @@ River Reviewは継続的に変化しています。本書では状態を混同�
 | 区分 | 意味 | 例 |
 | --- | --- | --- |
 | Implemented | current mainでruntime実装を確認できる | Riverbed Memory v1、Artifact contract、Review Team |
-| Experimental | 実装・schema・surfaceはあるがStable Contractではない / observe-only等 | Review Coverage、Riverbedの一部外部schema |
+| Experimental | 実装・schema・surfaceはあるがStable Contractではない / observe-only等 | Review Coverage、Riverbed Memory（v1） |
 | Planned | 設計・roadmap上の予定 | Riverbed external datastore v2、Progressive Disclosureの未実装slice |
 | Direction | 長期の概念的方向 | Engineering Judgment Infrastructure |
 
@@ -18,7 +18,7 @@ River Reviewは継続的に変化しています。本書では状態を混同�
 - River Review main: `a61dadfccdcf9ef154ebb23e354a7396a2123ff6`
 - Latest Release: `v1.126.0`（2026年10月5日）
 - Review Coverage: Experimental
-- Riverbed Memory v1: runtime実装済み
+- Riverbed Memory v1: runtime実装済み（Stable InterfacesではExperimental）
 - Riverbed external datastore v2: Planned
 - Progressive Disclosure: Stage 1 protoあり、metadata専用loader / Stage 2・3完全分離は未完了
 - verify gate: Planned / 未実装
@@ -28,7 +28,7 @@ River Reviewは継続的に変化しています。本書では状態を混同�
 
 このBookでは「コードが存在すること」と「外部利用者向けに安定した契約であること」を別に扱います。
 
-たとえばRiverbed Memory v1は実装済みですが、関連schemaの一部はStable Interfaces上でExperimentalです。
+たとえばRiverbed Memory v1は実装済みですが、Stable InterfacesではRiverbed Memory全体がExperimentalで、予告なく変更されることがあります。
 
 またReview Coverageはruntimeから出力される経路がありますが、contract自体はExperimentalで、Gate integrationもopt-inです。
 

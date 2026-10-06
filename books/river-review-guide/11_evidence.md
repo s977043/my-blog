@@ -38,7 +38,8 @@ River ReviewのVerifierはLLMを呼ばず、rule-based checksを行います。
 - FindingのseverityがSkill宣言を超えていないか
 - Fix / Suggestionがactionableか
 - Evidence内のfile referenceがdiffに存在するか
-- Findingの行が実際にdiffで追加された行か
+
+加えて、Findingの行が今回の追加行か既存行かを機械で判定し、メタデータとして付けます。この判定は却下には使いません。
 
 ここが重要です。
 
