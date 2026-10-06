@@ -165,7 +165,7 @@ function readSeedRecord(root, file) {
     promoted_to: normalizeList(meta.promoted_to),
     article_type_candidates: normalizeList(meta.article_type_candidates),
     author_input_required_count: authorInputRequiredCount,
-    blocked_by_author_input: authorInputRequiredCount > 0,
+    author_input_gate_open: authorInputRequiredCount > 0,
     legacy: !optedIn,
     errors,
     warnings,
@@ -229,7 +229,7 @@ function escCell(value) {
 function renderMarkdown(graph) {
   const explicit = graph.nodes.filter((n) => !n.legacy).length;
   const legacy = graph.nodes.length - explicit;
-  const blockedByAuthorInput = graph.nodes.filter((n) => n.blocked_by_author_input).length;
+  const openAuthorInputGates = graph.nodes.filter((n) => n.author_input_gate_open).length;
   const lines = [
     "# Article Graph",
     "",
@@ -243,7 +243,7 @@ function renderMarkdown(graph) {
     `- Explicit provenance contract: ${explicit}`,
     `- Legacy seeds: ${legacy}`,
     `- Promotion edges: ${graph.edges.length}`,
-    `- Blocked by author input: ${blockedByAuthorInput}`,
+    `- Seeds with open author input gate: ${openAuthorInputGates}`,
     "",
     "## Seeds",
     "",
@@ -350,7 +350,7 @@ function selfTest(root) {
     promoted_to: [],
     article_type_candidates: [],
     author_input_required_count: 0,
-    blocked_by_author_input: false,
+    author_input_gate_open: false,
     legacy: false,
     errors: [],
     warnings: [],
@@ -363,6 +363,8 @@ function selfTest(root) {
 
   const actual = buildGraph(root);
   eq("repository graph has seeds", actual.nodes.length > 0, true);
+  eq("all graph nodes expose author input count", actual.nodes.every((n) => Number.isInteger(n.author_input_required_count)), true);
+  eq("all graph nodes expose author input gate state", actual.nodes.every((n) => typeof n.author_input_gate_open === "boolean"), true);
   eq("legacy repository remains valid", actual.errors, []);
 
   const failed = tests.filter((t) => !t.ok);
