@@ -8,7 +8,7 @@ Review Teamの目的は、Agent数を増やすことではありません。
 
 ## Reviewer Role
 
-現在のRiver Reviewには、bug-hunter、security-scanner、test-gap、dependency-reviewer、frontend-reviewer、ci-cd-reviewerなどのRoleがあります。
+現在のRiver Reviewには、観点ごとのRoleがあります。bug-hunter、security-scanner、test-gap、dependency-reviewer、frontend-reviewer、ci-cd-reviewerなどです。
 
 変更内容に応じて必要なRoleを選ぶことで、1人の万能レビュアーへすべてを詰め込むより責務を明確にできます。
 

@@ -21,17 +21,9 @@ River Reviewで改善対象になるのは、Promptだけではありません�
 
 たとえば次の3つを考えます。
 
-### False Positive
-
-問題ではないものを指摘した。
-
-### Missed Issue
-
-人間レビューでは見つかったがSkillは見逃した。
-
-### Repeated Human Judgment
-
-人間が毎回同じ条件で同じ判断をしている。
+- **False Positive** — 問題ではないものを指摘した
+- **Missed Issue** — 人間レビューでは見つかったがSkillは見逃した
+- **Repeated Human Judgment** — 人間が毎回同じ条件で同じ判断をしている
 
 それぞれ改善先が違います。
 
@@ -95,13 +87,13 @@ Skill数が増えすぎると、
 - false positive / missed issueの両面を見る
 - 実運用で再発を観測する
 
-までつながると、改善loopとして閉じます。
+までつながると、改善ループとして閉じます。
 
 ## この章で持ち帰ること
 
 レビュー改善は「より良いPromptを書く」ことではなく、**失敗を再現可能な判断資産へ変えること**です。
 
-次章では、このReviewをgenerate → revise loopへ組み込み、いつ止めるかを扱います。
+次章では、このレビューをgenerate → reviseのループへ組み込み、いつ止めるかを扱います。
 
 ### Sources
 

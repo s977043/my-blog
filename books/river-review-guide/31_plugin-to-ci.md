@@ -42,7 +42,7 @@ warn / fail-if-required
 blocking gate
 ~~~
 
-最初はFindingを観測するだけ。
+最初はFindingを観測するだけにします。
 
 有用性とノイズが分かってから、criticalなど限定された条件をGateへ昇格します。
 

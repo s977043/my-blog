@@ -11,7 +11,7 @@ River Reviewは継続的に変化しています。本書では状態を混同�
 | Planned | 設計・roadmap上の予定 | Riverbed external datastore v2、Progressive Disclosureの未実装slice |
 | Direction | 長期の概念的方向 | Engineering Judgment Infrastructure |
 
-## 本稿のverification snapshot
+## 本書のverification snapshot
 
 2026年10月6日に次を再照合しました。
 
@@ -26,7 +26,7 @@ River Reviewは継続的に変化しています。本書では状態を混同�
 
 ## ImplementedとStableを分ける
 
-このBookでは「コードが存在すること」と「外部利用者向けに安定した契約であること」を別に扱います。
+本書では「コードが存在すること」と「外部利用者向けに安定した契約であること」を別に扱います。
 
 たとえばRiverbed Memory v1は実装済みですが、Stable InterfacesではRiverbed Memory全体がExperimentalで、予告なく変更されることがあります。
 
@@ -43,6 +43,6 @@ River Reviewのmainは動きます。
 3. 各chapterが参照するpublic docs
 4. schema / runtime implementation
 5. Latest Releaseとrelease notes
-6. 本稿snapshot以降の関連Issue / PR
+6. 本書のsnapshot以降の関連Issue / PR
 
 この付録にversion依存の詳細を寄せることで、本編は責務境界と設計原則を中心に保ちます。

@@ -55,7 +55,7 @@ VerifierはAgentic Reviewの代替ではなく、その前後に置く契約検�
 
 ## この章で持ち帰ること
 
-**意味判断はAgentic、証明可能な契約はDeterministic。**
+この章の要点は、**意味判断はAgentic、証明可能な契約はDeterministic**という分担です。
 
 次章では、Agentic Reviewへ渡すContextそのものをどう絞るかを扱います。
 

@@ -68,7 +68,7 @@ aggregated role status → fulfilled
 
 1つ成功していればrole全体がfulfilledに見えても、実際にはreview対象の一部が未実行です。
 
-この差をcallerが判断できるようにするのがReview Coverageです。
+この差をCallerが判断できるようにするのがReview Coverageです。
 
 ## CoverageはFinding Qualityとは別
 
@@ -90,7 +90,7 @@ River Reviewのcontractでは次を分離します。
 
 2026年10月6日に再確認したverification snapshotでは、Review Coverageは **Experimental** です。
 
-LLMを実際に呼んだ実行では、machine-readableなreview execution surfaceへ出力されます。dry-run、offline、key未設定のように意図的にskipした実行では出力されません。また、Stable Contractではありません。
+LLMを実際に呼んだ実行では、機械が読める実行結果として出力されます。dry-runやoffline、key未設定のように意図的に飛ばした実行では出力されません。また、安定した契約（Stable Contract）ではありません。
 
 Coverageの使われ方は2つに分かれます。保存した複数回の実行結果を比べる収束判定では既定で使われ、Coverage不足を理由にGateを止めるのは明示的に有効化（opt-in）した場合だけです。収束判定での扱いは第28章で詳しく見ます。
 

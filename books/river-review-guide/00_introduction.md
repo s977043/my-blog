@@ -20,7 +20,7 @@ AIエージェントによってコードを書く速度は大きく上がりま
 
 筆者が開発しているOSS [River Review](https://github.com/s977043/river-review) は、この問題を **Review Judgment as Code** として扱っています。
 
-レビュー観点・判断基準・Evidence・責任範囲・エスカレーション条件・品質評価方法を、一度きりのプロンプトや個人の経験に閉じ込めず、**versioned / repo-owned / testable な資産**として持つ考え方です。
+レビュー観点・判断基準・Evidence・責任範囲・エスカレーション条件・品質評価方法を、一度きりのプロンプトや個人の経験に閉じ込めない考え方です。これらを **versioned / repo-owned / testable な資産**として持ちます。
 
 ## River Reviewを「AIコードレビューツール」とだけ捉えない
 
@@ -80,7 +80,7 @@ Human Judgment
 
 **第8章 → 第3部 → 第4部 → 第5部** が近道です。
 
-第8章でPluginとCIの実行経路を押さえ、Skill / Artifact / Evidenceを理解したうえで、Plan / Diff / Testsをどうレビューし、レビュー自体の完遂性をどう確認するかを追えます。
+第8章でPluginとCIの実行経路を押さえ、Skill / Artifact / Evidenceを理解します。そのうえで、Plan / Diff / Testsをどうレビューし、レビュー自体の完遂性をどう確認するかを追えます。
 
 ### チーム導入を判断したい
 
@@ -94,7 +94,7 @@ Human Judgment
 
 River Reviewの具体仕様は、**2026年10月6日時点の公開リポジトリ current main** を一次情報として確認して記述します。
 
-公開前レビューで再現できるよう、本稿の仕様確認snapshotは次です。
+公開前レビューで再現できるよう、本書の仕様確認snapshotは次です。
 
 - River Review main: `a61dadfccdcf9ef154ebb23e354a7396a2123ff6`
 - Latest Release: **v1.126.0**（2026年10月5日公開）

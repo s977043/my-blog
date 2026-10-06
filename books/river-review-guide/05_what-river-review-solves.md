@@ -55,7 +55,7 @@ River Reviewの価値はLLMそのものではありません。**判断基準・
 
 ## River Reviewがやらないこと
 
-責務境界も重要です。
+何をしないかを先に決めておくと、他のツールや人との責務の境界がはっきりします。
 
 River Reviewは、
 
@@ -82,9 +82,9 @@ Caller / PlanGate / Human
   = continue / stop / approve / merge
 ~~~
 
-River Reviewがレビューし、呼び出し側がどう進むか決める。
+River Reviewがレビューし、どう進むかは呼び出し側が決めます。
 
-この境界があるため、Claude Code、Codex、GitHub Actions、独自workflowなど複数のcallerへ組み込めます。
+この境界があるため、Claude Code、Codex、GitHub Actions、独自workflowなど複数のCallerへ組み込めます。
 
 ## この章で持ち帰ること
 

@@ -67,7 +67,7 @@ Artifact-drivenだからといって、すべてのチームにPlanやDesign文�
 
 Artifact Input Contractでは多くの入力がoptionalです。
 
-planが無いチームならdiffから始められます。testsが無いなら、そのContextを必要とするSkillをskipまたはdegradeできます。
+Planが無いチームならdiffから始められます。テストが無いなら、そのContextを必要とするSkillをskipまたはdegradeできます。
 
 重要なのは形式を揃えることより、**判断に必要な材料が何かを明示し、無い場合の挙動も契約にすること**です。
 

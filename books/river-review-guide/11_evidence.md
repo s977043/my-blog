@@ -41,8 +41,6 @@ River ReviewのVerifierはLLMを呼ばず、rule-based checksを行います。
 
 加えて、Findingの行が今回の追加行か既存行かを機械で判定し、メタデータとして付けます。この判定は却下には使いません。
 
-ここが重要です。
-
 Verifierは「この設計判断が本当に正しいか」という意味判断まではしません。
 
 代わりに、**機械で確認できる前提をLLMの自己申告に任せない**ようにします。
@@ -53,7 +51,7 @@ Verifierは「この設計判断が本当に正しいか」という意味判断
 
 hallucinated-reference Skillでも、code searchで定義が見つからなくても、codegenや動的生成の可能性を排除できない場合はQuestionへ落とします。
 
-この境界は重要です。
+Evidenceの量によって、Findingにするか、Questionにするかを分けます。
 
 ~~~text
 Evidence enough

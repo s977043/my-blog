@@ -25,7 +25,7 @@ title: "人間レビューとの境界を決める"
 
 この分類はRiver Reviewの固定enumそのものではなく、本書で導入判断を整理するための見方です。
 
-## RiskとAuthorityを一緒に決める
+## リスクとAuthorityを一緒に決める
 
 運用では、FindingのseverityだけでAuthorityを決めない方が安全です。
 
@@ -33,7 +33,7 @@ title: "人間レビューとの境界を決める"
 
 - **Field** — Reviewは定型チェックや既知patternを確認する。Authorityはpolicy条件内での自律継続に置き、必要に応じて事後監査する。
 - **Hill** — Reviewは意味的整合やEvidence不足を整理する。Callerは継続できるが、観測期限や人の確認条件を設定する。
-- **Cliff** — ReviewはRisk検出・Evidence整理・policy照合まで担当する。Authorityは **Human Approval Required** とする。
+- **Cliff** — Reviewはリスク検出・Evidence整理・policy照合まで担当する。Authorityは **Human Approval Required** とする。
 
 たとえばdocs変更のmajor Findingと、payment flowのmajor Findingを同じ自動処理にしません。
 
@@ -73,7 +73,7 @@ Human Judgment Focusでは、高リスク領域をCliffとして扱います。
 
 ここでRiver Reviewが担うのは、
 
-- Riskの検出
+- リスクの検出
 - Evidenceの整理
 - 既存policyとの照合
 - Humanへ返す理由の明示
@@ -118,7 +118,7 @@ Human Judgment Focusでは、高リスク領域をCliffとして扱います。
 
 Observation expiryを過ぎたら再レビューや停止へ戻す必要があります。
 
-## Human Reviewの価値を「最後の検査」に限定しない
+## 人間レビューの価値を「最後の検査」に限定しない
 
 人間が強いのは、バグ検出だけではありません。
 
@@ -137,7 +137,7 @@ AIレビューが増えるほど、こうした判断へ人のAttentionを残す
 
 Human-in-the-loopは、すべての出力を人が読むことではありません。
 
-**RiskとAuthorityを分け、責任を伴う判断のOwnerを明示すること**です。
+**リスクとAuthorityを分け、責任を伴う判断のOwnerを明示すること**です。
 
 最後の章では、この境界も含めてレビューシステム自体を継続的に改善します。
 

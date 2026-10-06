@@ -8,7 +8,7 @@ title: "会話ではなく、判断を記憶する"
 「この依存は今回は受け入れています」
 「このpatternはADRで決めています」
 
-毎回会話履歴を全部読み直すのではなく、次の判断に必要な情報だけ残したい。
+毎回会話履歴を全部読み直すのではなく、次の判断に必要な情報だけを残したいところです。
 
 Riverbed Memoryは、そのための層です。
 
@@ -59,7 +59,7 @@ Judgment Memory
 
 ここは状態表記で注意が必要です。
 
-Riverbed Memory v1のruntime実装は存在しますが、Stable InterfacesではRiverbed Memory全体と、Entry / Indexなど関連するschemaが **Experimental** と分類されています。予告なく変更・削除される可能性があります。
+Riverbed Memory v1のruntime実装は存在します。ただしStable Interfacesでは、Riverbed Memory全体とEntry / Indexなどの関連schemaが **Experimental** です。予告なく変更・削除される可能性があります。
 
 したがって、
 
