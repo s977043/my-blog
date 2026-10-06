@@ -38,9 +38,8 @@ River ReviewのVerifierはLLMを呼ばず、rule-based checksを行います。
 - FindingのseverityがSkill宣言を超えていないか
 - Fix / Suggestionがactionableか
 - Evidence内のfile referenceがdiffに存在するか
-- Findingの行が実際にdiffで追加された行か
 
-ここが重要です。
+加えて、Findingの行が今回の追加行か既存行かを機械で判定し、メタデータとして付けます。この判定は却下には使いません。
 
 Verifierは「この設計判断が本当に正しいか」という意味判断まではしません。
 
@@ -52,7 +51,7 @@ Verifierは「この設計判断が本当に正しいか」という意味判断
 
 hallucinated-reference Skillでも、code searchで定義が見つからなくても、codegenや動的生成の可能性を排除できない場合はQuestionへ落とします。
 
-この境界は重要です。
+Evidenceの量によって、Findingにするか、Questionにするかを分けます。
 
 ~~~text
 Evidence enough

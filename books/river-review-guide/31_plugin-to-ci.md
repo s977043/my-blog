@@ -4,12 +4,11 @@ title: "Pluginから始め、必要ならCIへ広げる"
 
 River Reviewには複数の導入経路があります。
 
-どれが「正式」かを決めるより、何をしたいかで選びます。
+入口はPluginにします。チームで共有する契約にしたくなったら、GitHub Actionsへ広げます。
 
 | Mode | 向いている用途 |
 | --- | --- |
 | Plugin | 対話的レビュー、AIエージェント開発 |
-| CLI / river run | PR前セルフレビュー、headless実行 |
 | GitHub Actions | PR時の継続レビュー |
 | Skill adoption only | 既存社内workflowへ観点だけ移植 |
 
@@ -23,7 +22,7 @@ River Reviewには複数の導入経路があります。
 
 Plugin経路では、AIエージェントがSkillを直接適用し、project ruleは `.river/rules.md` を使います。
 
-一方CLI / Action runnerではrepository configを読みます。
+一方GitHub Actionsのrunnerは、repository rootの設定ファイル（`.river-review.json` など）を読みます。
 
 導入経路ごとの責務を理解せず、全部同じ設定だと思わないことが重要です。
 
@@ -43,7 +42,7 @@ warn / fail-if-required
 blocking gate
 ~~~
 
-最初はFindingを観測するだけ。
+最初はFindingを観測するだけにします。
 
 有用性とノイズが分かってから、criticalなど限定された条件をGateへ昇格します。
 

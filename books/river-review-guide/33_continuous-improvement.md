@@ -17,7 +17,7 @@ River Reviewを導入しただけでは、レビュー判断は資産になり�
 | Useful Finding | 実際の修正や判断につながったか |
 | False Positive | 不要な指摘は何だったか |
 | Missed Issue | 人間が後から見つけた問題は何か |
-| Review Coverage | 予定したReviewが完遂したか |
+| Review Coverage | 予定したレビューが完遂したか |
 | Suppression | 例外判断が増えすぎていないか |
 | Human Escalation | どの種類で人へ戻ったか |
 | Review Cost | latency / token / waitingは許容か |
@@ -111,7 +111,7 @@ Observe Again
 - 不明なものはQuestionとして返る
 - 高リスクはHumanへ確実にEscalateされる
 - 過去判断はMemoryで再利用される
-- Review自体のCoverageとQualityを測れる
+- レビュー自体のCoverageとQualityを測れる
 
 という状態を目指します。
 
@@ -123,7 +123,7 @@ River Reviewの導入完了は、CIにworkflowを追加した瞬間ではあり�
 
 **チームのレビュー判断が、観測・再利用・評価・改善できるloopになったとき**です。
 
-このBookで紹介した機能は、そのloopを作る部品です。
+本書で紹介した機能は、そのloopを作る部品です。
 
 本編はここで終わります。最後の「おわりに」では、個別機能から離れて、Review Judgment as Codeとして何を持ち帰るかをもう一度短く整理します。
 

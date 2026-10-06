@@ -2,8 +2,8 @@
 
 > 内部編集用。Zennのchaptersには含めない。
 >
-> Verification snapshot: River Review `60f55e75d6eaead1956c6945afc53f57acd64dd9` / Latest Release `v1.124.5`（2026-09-25）
-> Reverified: 2026-10-04 — main / Latest Releaseともdriftなし
+> Verification snapshot: River Review `a61dadfccdcf9ef154ebb23e354a7396a2123ff6` / Latest Release `v1.126.0`（2026-10-05）
+> Reverified: 2026-10-06 — 前回snapshot `60f55e7` から70 commits。本書が状態を述べる項目（Review Coverage / Riverbed / Loop Convergence / Progressive Disclosure / verify gate / Non-goal）とREADMEの差分を照合し、主張の変更なし
 
 ## 目的
 
@@ -46,7 +46,7 @@ Source type:
 | 21 Generation / Verification | `src/lib/verifier.mjs`, `pages/explanation/judgment-placement.md` | Runtime / Design | rule-based checkの実装範囲 |
 | 22 Context Engineering | `pages/explanation/progressive-disclosure.md`, `pages/guides/repo-wide-review.md` | Design / Guide | proto / plannedの状態差 |
 | 23 Review Team | `README.md`, `pages/reference/artifact-input-contract.md` | Design / Reference | Reviewer Role / reviewSignals |
-| 24 Riverbed Memory | `pages/explanation/riverbed-memory.md`, `pages/reference/riverbed-storage.md`, `pages/reference/stable-interfaces.md`, Issue #474 | Design / Reference / Issue | v1 implemented と interface stability |
+| 24 Riverbed Memory | `pages/explanation/riverbed-memory.md`, `pages/reference/riverbed-storage.md`, `pages/reference/stable-interfaces.md`, PR #474 | Design / Reference / PR | v1 implemented と interface stability |
 | 25 Suppression / Resurface | `pages/reference/riverbed-storage.md`, `pages/guides/repo-wide-review.md` | Reference / Guide | expiry / scope / resurface条件 |
 | 26 Skill Evaluation | `pages/reference/evaluation-fixture-format.md`, `pages/guides/planner-evaluation.md` | Reference / Guide | positive / negative fixture、planner eval |
 | 27 Improvement Loop | `pages/explanation/judgment-placement.md`, `pages/guides/adopter-playbook.md` | Design / Guide | promotionを万能自動化にしない |

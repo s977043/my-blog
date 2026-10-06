@@ -62,8 +62,8 @@ Riverbed    = what to remember
 
 River Reviewのコアを覚えるなら、まずこの3行で十分です。
 
-> **Skills define judgment.**  
-> **Gates execute judgment.**  
+> **Skills define judgment.**
+> **Gates execute judgment.**
 > **Riverbed remembers judgment.**
 
 次章では「どこで起動し、誰が実際に判断を実行するのか」に進みます。
