@@ -108,6 +108,6 @@ A を選んだ理由: 規約ファイルに触れず、既存データだけで�
 
 ## 人の判断が要る点
 
-- 状態タグ（案 2）を `AGENT_LEARNINGS.md` テンプレートに入れるか
-- ガード発火ログの保存先（リポジトリ外か `.claude/state` か）
-- ai-second-brain 側 `feedback_*.md` と `AGENT_LEARNINGS.md` の正本をどちらに寄せるか
+- **決定（2026-10-07）**: 学びの記録の正本は `AGENT_LEARNINGS.md` とする。ai-second-brain の memory は個人の動き方（feedback）に絞る
+- **決定（2026-10-07）**: 最初の 1 手（`scripts/report-learnings-promotion.js`）は実装に進む（別ブランチ・別 PR）。状態タグ（案 B）は、このレポートの集計結果を見てから判断する
+- 未決: ガード発火ログの保存先（リポジトリ外か `.claude/state` か）
