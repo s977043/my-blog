@@ -93,6 +93,8 @@ Deterministicへ移せば安くなることはあります。
 
 無理にrule化して誤判定を増やすなら、Agentic ReviewやHuman Judgmentへ残した方がよい場合もあります。
 
+4つの層がSkill Schemaの `evaluationType` などでどう実装されているかは、[AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計](/articles/river-review-judgment-placement) でコードに沿って説明しています。
+
 ## この章で持ち帰ること
 
 「AIに任せる / 人が見る」の二択ではありません。

@@ -8,7 +8,7 @@ Review Teamの目的は、Agent数を増やすことではありません。
 
 ## Reviewer Role
 
-現在のRiver Reviewには、bug-hunter、security-scanner、test-gap、dependency-reviewer、frontend-reviewer、ci-cd-reviewerなどのRoleがあります。
+現在のRiver Reviewには、観点ごとのRoleがあります。bug-hunter、security-scanner、test-gap、dependency-reviewer、frontend-reviewer、ci-cd-reviewerなどです。
 
 変更内容に応じて必要なRoleを選ぶことで、1人の万能レビュアーへすべてを詰め込むより責務を明確にできます。
 
@@ -43,7 +43,7 @@ Findings merge
 - Evidenceをまとめる
 - severityの不整合を確認する
 
-ことで、Human Decision Surfaceへ過剰なノイズを出さないようにします。
+ことで、人間へ判断を提示する場面に過剰なノイズを出さないようにします。
 
 最終的なContinue / Stop / Human EscalationのAuthorityはCaller側に残ります。
 

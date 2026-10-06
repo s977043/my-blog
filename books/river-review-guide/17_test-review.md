@@ -56,7 +56,7 @@ Coverage
 
 しかし、
 
-> locale追加のRiskに対して、unknown locale testが必要か
+> locale追加のリスクに対して、unknown locale testが必要か
 
 は仕様とPlanを読む必要があります。
 

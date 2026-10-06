@@ -120,14 +120,36 @@ function normalizeList(value) {
   return [String(value)];
 }
 
+function maskFencedBlocks(content) {
+  let inFence = false;
+  return String(content)
+    .split(/\r?\n/)
+    .map((line) => {
+      if (/^\s*(```|~~~)/.test(line)) {
+        inFence = !inFence;
+        return "";
+      }
+      return inFence ? "" : line;
+    })
+    .join("\n");
+}
+
+function countAuthorInputMarkers(content) {
+  const visible = maskFencedBlocks(content);
+  return (visible.match(/<!--\s*AUTHOR_INPUT_REQUIRED:\s*[\s\S]*?-->/gi) || []).length;
+}
+
 function readSeedRecord(root, file) {
-  const meta = parseFrontmatter(fs.readFileSync(file, "utf8"));
+  const content = fs.readFileSync(file, "utf8");
+  const meta = parseFrontmatter(content);
   const rel = path.relative(root, file).replace(/\\/g, "/");
   const optedIn = Boolean(meta.seed_id);
   const errors = optedIn ? validateOptedInSeed(meta, rel) : [];
   const warnings = optedIn
     ? []
     : [`${rel}: legacy seed (seed_id/evidence_status not required retroactively)`];
+
+  const authorInputRequiredCount = countAuthorInputMarkers(content);
 
   return {
     id: optedIn ? meta.seed_id : legacyId(rel),
@@ -142,6 +164,8 @@ function readSeedRecord(root, file) {
     evidence_status: meta.evidence_status || "",
     promoted_to: normalizeList(meta.promoted_to),
     article_type_candidates: normalizeList(meta.article_type_candidates),
+    author_input_required_count: authorInputRequiredCount,
+    author_input_gate_open: authorInputRequiredCount > 0,
     legacy: !optedIn,
     errors,
     warnings,
@@ -205,6 +229,7 @@ function escCell(value) {
 function renderMarkdown(graph) {
   const explicit = graph.nodes.filter((n) => !n.legacy).length;
   const legacy = graph.nodes.length - explicit;
+  const openAuthorInputGates = graph.nodes.filter((n) => n.author_input_gate_open).length;
   const lines = [
     "# Article Graph",
     "",
@@ -218,16 +243,17 @@ function renderMarkdown(graph) {
     `- Explicit provenance contract: ${explicit}`,
     `- Legacy seeds: ${legacy}`,
     `- Promotion edges: ${graph.edges.length}`,
+    `- Seeds with open author input gate: ${openAuthorInputGates}`,
     "",
     "## Seeds",
     "",
-    "| ID | Date | Status | Source | Evidence | Types | Title | Path | Promotions |",
-    "| --- | --- | --- | --- | --- | --- | --- | --- | ---: |",
+    "| ID | Date | Status | Source | Evidence | Author Input | Types | Title | Path | Promotions |",
+    "| --- | --- | --- | --- | --- | ---: | --- | --- | --- | ---: |",
   ];
 
   for (const n of graph.nodes) {
     lines.push(
-      `| \`${escCell(n.id)}\` | ${escCell(n.date)} | ${escCell(n.status)} | ${escCell(n.source)} | ${escCell(n.evidence_status || (n.legacy ? "legacy" : ""))} | ${escCell((n.article_type_candidates || []).join(", "))} | ${escCell(n.title)} | \`${escCell(n.path)}\` | ${n.promoted_to.length} |`
+      `| \`${escCell(n.id)}\` | ${escCell(n.date)} | ${escCell(n.status)} | ${escCell(n.source)} | ${escCell(n.evidence_status || (n.legacy ? "legacy" : ""))} | ${n.author_input_required_count || 0} | ${escCell((n.article_type_candidates || []).join(", "))} | ${escCell(n.title)} | \`${escCell(n.path)}\` | ${n.promoted_to.length} |`
     );
   }
 
@@ -283,6 +309,17 @@ function selfTest(root) {
   eq("empty list", fm.promoted_to, []);
   eq("article type candidates list", fm.article_type_candidates, ["experience"]);
   eq("legacy id", legacyId("article_seeds/example/foo.md"), "legacy:article_seeds/example/foo");
+  eq(
+    "author input marker count ignores fenced examples",
+    countAuthorInputMarkers([
+      "<!-- AUTHOR_INPUT_REQUIRED: real one -->",
+      "```md",
+      "<!-- AUTHOR_INPUT_REQUIRED: example only -->",
+      "```",
+      "<!-- AUTHOR_INPUT_REQUIRED: real two -->",
+    ].join("\n")),
+    2
+  );
 
   eq(
     "opted-in seed requires evidence",
@@ -311,6 +348,9 @@ function selfTest(root) {
     source_ref: "",
     evidence_status: "observed",
     promoted_to: [],
+    article_type_candidates: [],
+    author_input_required_count: 0,
+    author_input_gate_open: false,
     legacy: false,
     errors: [],
     warnings: [],
@@ -323,6 +363,8 @@ function selfTest(root) {
 
   const actual = buildGraph(root);
   eq("repository graph has seeds", actual.nodes.length > 0, true);
+  eq("all graph nodes expose author input count", actual.nodes.every((n) => Number.isInteger(n.author_input_required_count)), true);
+  eq("all graph nodes expose author input gate state", actual.nodes.every((n) => typeof n.author_input_gate_open === "boolean"), true);
   eq("legacy repository remains valid", actual.errors, []);
 
   const failed = tests.filter((t) => !t.ok);
@@ -377,4 +419,5 @@ module.exports = {
   buildGraph,
   renderJson,
   renderMarkdown,
+  countAuthorInputMarkers,
 };

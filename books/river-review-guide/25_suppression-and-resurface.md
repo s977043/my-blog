@@ -23,7 +23,7 @@ AIレビューを継続運用すると、品質を落とす大きな要因の1�
 良いSuppressionには少なくとも次が必要です。
 
 - **Reason** — なぜ今回は抑制するのか
-- **Scope** — どのfile / pattern / phaseに適用するか
+- **Scope** — どの範囲（global / subsystem / file）に適用するか
 - **Source** — どの判断から生まれたか
 - **Expiry / Resurface condition** — 何が変われば再確認するか
 
@@ -63,6 +63,8 @@ Suppressionはレビューを静かにする強い機能です。
 - irreversible migration
 
 のようなCliff領域では、単純なauto suppressionを避けるべきです。
+
+実装にも、severityが `major` / `critical` の指摘は `accepted_risk` として了承された場合しか自動抑制しないガードがあります。
 
 「過去に一度WontFixだったから」という理由だけで、現在の変更まで自動的に通すべきではありません。
 

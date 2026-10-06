@@ -18,7 +18,7 @@ title: "プロジェクト固有の判断を持ち込む"
 
 ## .river/rules.md
 
-River Reviewでは、project固有ルールを .river/rules.md へ置けます。
+River Reviewでは、project固有ルールを `.river/rules.md` へ置けます。
 
 たとえば、
 

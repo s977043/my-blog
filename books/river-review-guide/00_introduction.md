@@ -2,6 +2,12 @@
 title: "はじめに"
 ---
 
+:::message
+- 対象読者: Claude CodeやCodexでAIレビューを使い始めた、またはチームへの導入を考えているエンジニア・テックリード
+- 前提: PRレビューの経験があること。River Reviewの導入手順は第14章で最小限だけ扱い、詳細はREADMEに任せます
+- 得られること: レビュー判断を機械・AI・人間のどこへ置き、どう検証・改善するかを、自分のチームで設計するための考え方
+:::
+
 この本は、River Reviewの機能一覧を説明するための本ではありません。
 
 中心に置く問いは次です。
@@ -14,7 +20,7 @@ AIエージェントによってコードを書く速度は大きく上がりま
 
 筆者が開発しているOSS [River Review](https://github.com/s977043/river-review) は、この問題を **Review Judgment as Code** として扱っています。
 
-レビュー観点・判断基準・Evidence・責任範囲・エスカレーション条件・品質評価方法を、一度きりのプロンプトや個人の経験に閉じ込めず、**versioned / repo-owned / testable な資産**として持つ考え方です。
+レビュー観点・判断基準・Evidence・責任範囲・エスカレーション条件・品質評価方法を、一度きりのプロンプトや個人の経験に閉じ込めない考え方です。これらを **versioned / repo-owned / testable な資産**として持ちます。
 
 ## River Reviewを「AIコードレビューツール」とだけ捉えない
 
@@ -62,7 +68,7 @@ Human Judgment
 
 ## 3つの読み方
 
-33章を必ず最初から最後まで読む必要はありません。目的に合わせて入口を変えられます。
+本編33章を必ず最初から最後まで読む必要はありません。目的に合わせて入口を変えられます。
 
 ### まず設計思想を理解したい
 
@@ -72,26 +78,26 @@ Human Judgment
 
 ### 実際のレビューへ使いたい
 
-**第3部 → 第4部 → 第5部** が近道です。
+**第8章 → 第3部 → 第4部 → 第5部** が近道です。
 
-Skill / Artifact / Evidenceを理解したうえで、Plan / Diff / Testsをどうレビューし、レビュー自体の完遂性をどう確認するかを追えます。
+第8章でPluginとCIの実行経路を押さえ、Skill / Artifact / Evidenceを理解します。そのうえで、Plan / Diff / Testsをどうレビューし、レビュー自体の完遂性をどう確認するかを追えます。
 
 ### チーム導入を判断したい
 
-**第5部 → 第6部 → 第7部** を中心に読んでください。
+**第12・13章 → 第5部 → 第6部 → 第7部** を中心に読んでください。
 
-Review Coverage、Memory、Evaluation、Human Judgment、段階導入までを確認できます。
+第12・13章で判断の置き場所と人間が担う範囲を押さえてから、Review Coverage、Memory、Evaluation、Human Judgment、段階導入までを確認できます。
 
 迷った場合は、Partページの「この部で答える問い」と「読み終えたとき」だけ先に読んでから進むと現在地を掴みやすくなります。
 
 ## 情報の基準
 
-River Reviewの具体仕様は、**2026年10月4日時点の公開リポジトリ current main** を一次情報として確認して記述します。
+River Reviewの具体仕様は、**2026年10月6日時点の公開リポジトリ current main** を一次情報として確認して記述します。
 
-公開前レビューで再現できるよう、本稿の仕様確認snapshotは次です。
+公開前レビューで再現できるよう、本書の仕様確認snapshotは次です。
 
-- River Review main: `60f55e75d6eaead1956c6945afc53f57acd64dd9`
-- Latest Release: **v1.124.5**（2026年9月25日公開）
+- River Review main: `a61dadfccdcf9ef154ebb23e354a7396a2123ff6`
+- Latest Release: **v1.126.0**（2026年10月5日公開）
 
 本書ではrelease済み機能だけでなくcurrent main上のExperimentalな契約も扱うため、次の状態を区別します。
 
