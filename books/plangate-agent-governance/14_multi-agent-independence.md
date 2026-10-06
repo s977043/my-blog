@@ -12,7 +12,7 @@ Planner、Builder、Reviewerを3体用意する。
 
 しかし、3体すべてに同じ長い会話履歴を渡していたらどうでしょうか。
 
-> **Agentが別でも、前提が同じなら独立性は弱い。**
+> Agentが別でも、前提が同じなら独立性は弱い。
 
 ここが複数Agent設計で重要な点です。
 
@@ -23,7 +23,7 @@ Planner、Builder、Reviewerを3体用意する。
 たとえば、
 
 - roleが違う
-- modelが違う
+- モデルが違う
 - promptが違う
 - contextが違う
 - evidence sourceが違う
@@ -33,12 +33,12 @@ Planner、Builder、Reviewerを3体用意する。
 
 モデルを変えることは、その一つにすぎません。
 
-~~~text
+```text
 same context
 + same assumptions
 + same evidence selection
 + different model
-~~~
+```
 
 でも、同じ盲点を共有することはあります。
 
@@ -51,14 +51,14 @@ Reviewerが読むのは、
 - canonical Plan
 - review package
 - diff
-- test / verification Evidence
-- 必要なproject rules
+- テスト / verification Evidence
+- 必要なプロジェクトのルール
 
 です。
 
 一方、
 
-- Builderのraw chat
+- Builderの生のチャット
 - hidden reasoning
 - superseded alternatives
 - 「なぜ自分の実装が正しいと思うか」という長い弁明
@@ -67,7 +67,7 @@ Reviewerが読むのは、
 
 目的は情報を減らすことそのものではありません。
 
-> **Reviewerが自分で観測できる材料から判断を始められるようにすること。**
+> Reviewerが自分で観測できる材料から判断を始められるようにすること。
 
 です。
 
@@ -79,25 +79,25 @@ Reviewerが読むのは、
 
 ### 渡す
 
-- task intent / Requirement
+- タスクの意図 / Requirement
 - approved PlanとScope
 - Acceptance Criteria
 - 対象diff / commit identity
 - Verification Evidence
-- relevant project rules
-- 既知のrisk / unresolved item
+- relevantプロジェクトのルール
+- 既知のrisk / 未解決の項目
 
 ### 原則として渡さない
 
-- Builderのraw chat transcript
+- Builderの生の会話ログ
 - hidden reasoning
 - supersededな設計案の長い履歴
 - Builder自身の「問題ない」という結論
 - 期待するreview verdict
 
-materialな設計理由が必要なら、会話ではなくdecision-log / ADR / Planへ反映して渡します。
+重要な設計理由が必要なら、会話ではなくdecision-log / ADR / Planへ反映して渡します。
 
-~~~text
+```text
 Builderの説明
 → Reviewerへの説得材料
 
@@ -105,11 +105,11 @@ Builderの説明
 
 Artifact + Diff + Evidence
 → Reviewerの観測材料
-~~~
+```
 
 にします。
 
-この契約があると、modelを変えるかどうかに依存せず、review inputの独立性を管理できます。
+この契約があると、モデルを変えるかどうかに依存せず、review inputの独立性を管理できます。
 
 ## ReviewerはBuilderと違う問いを持つ
 
@@ -133,7 +133,7 @@ Verifierならさらに違います。
 
 となります。
 
-~~~text
+```text
 Builder
 → 作る
 
@@ -145,7 +145,7 @@ Reviewer
 
 Human
 → 残るtrade-offとAuthorityを判断する
-~~~
+```
 
 Agent数ではなく、**問いと責務を分けること**が先です。
 
@@ -166,7 +166,7 @@ PlanGateのReview Principlesでは、C-2のPlan Reviewを二つのlaneへ分け�
 
 - planの論理
 - Acceptance coverage
-- scope整合
+- 範囲整合
 
 ### Codebase整合lane
 
@@ -184,14 +184,14 @@ PlanGateのReview Principlesでは、C-2のPlan Reviewを二つのlaneへ分け�
 
 **別の情報源・別の問いを持たせること**です。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/blob/main/.claude/rules/review-principles.md
 
 ## Modelを変えるだけでは足りない
 
 別モデルを使うことには価値があります。
 
-同じmodel family特有の癖や推論傾向から離れられる可能性があります。
+同じモデルファミリー特有の癖や推論傾向から離れられる可能性があります。
 
 ただし、
 
@@ -224,9 +224,9 @@ Review Artifactには少なくとも、
 
 の対応関係が必要です。
 
-repair後にHEADが変わったなら、以前のreviewがどこまで有効かを再判断します。
+修復後にHEADが変わったなら、以前のreviewがどこまで有効かを再判断します。
 
-~~~text
+```text
 reviewed commit A
         ↓
 repair
@@ -236,7 +236,7 @@ commit B
 Aへのreview
 ≠
 自動的にBへのreview
-~~~
+```
 
 Fresh Contextだけでなく、**Review targetのIdentity**も独立性の一部です。
 
@@ -254,7 +254,7 @@ high-risk / criticalなどでは複数roundを要求し、2round目以降は、
 
 そして収束は、
 
-> **新しい回避クラス / failure classが出なくなったか**
+> 新しい回避クラス / failure classが出なくなったか
 
 で見ます。
 
@@ -268,15 +268,15 @@ high-risk / criticalなどでは複数roundを要求し、2round目以降は、
 
 このとき、
 
-~~~text
+```text
 review result = 0 findings
-~~~
+```
 
 と、
 
-~~~text
+```text
 review unavailable
-~~~
+```
 
 は全く違います。
 
@@ -291,7 +291,7 @@ PlanGateのReview Principlesでも、unavailableは理由、代替観点、未�
 たとえば、
 
 - typoや小さなconfig変更
-- deterministic testで十分な修正
+- deterministicテストで十分な修正
 - contextが小さくhandoff costの方が高い
 - Reviewer追加による新しい観点がほぼない
 
@@ -299,30 +299,30 @@ PlanGateのReview Principlesでも、unavailableは理由、代替観点、未�
 
 逆に、
 
-- security boundary
+- セキュリティの境界
 - irreversible action
 - architecture変更
-- long-running repair loop
+- long-running修復のloop
 - Builderのassumptionを独立して疑いたい
 
 なら、Contextを切った別Reviewerの価値が上がります。
 
-> **Agent topologyはtask riskとcoordination complexityから決める。**
+> Agent topologyはタスクのリスクと調整の複雑さから決める。
 
 という位置づけです。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/README.md
 
 ## Fresh Contextにもコストがある
 
-もちろん、毎回新しいsessionを立ち上げ、Artifactを読み直すにはコストがあります。
+もちろん、毎回新しいセッションを立ち上げ、Artifactを読み直すにはコストがあります。
 
 そのため現行Context Lifecycleでは、ultra-light / lightへmandatory ceremonyを増やしていません。
 
 Independent reviewの強さもriskに応じて変えます。
 
-> **独立性は最大化するものではなく、誤判断コストに見合う強さで設計する。**
+> 独立性は最大化するものではなく、誤判断コストに見合う強さで設計する。
 
 という考え方です。
 
@@ -332,11 +332,11 @@ Independent reviewの強さもriskに応じて変えます。
 
 1. **Role** — Builderと別の問いを持っているか
 2. **Context** — Builderのraw reasoningをそのまま継承していないか
-3. **Evidence** — Reviewer自身がdiff / test / sourceへ辿れるか
+3. **Evidence** — Reviewer自身がdiff / テスト / sourceへ辿れるか
 4. **Authority** — ReviewerのPASSが最終Authorityへ自動変換されていないか
 5. **Failure** — unavailable / inconclusiveをgreenとして扱っていないか
 
-すべてを別modelにすることより、この5つを分離する方が先です。
+すべてを別モデルにすることより、この5つを分離する方が先です。
 
 ## この章で持ち帰ること
 
@@ -346,4 +346,4 @@ Independent reviewの強さもriskに応じて変えます。
 
 これがReview Boundaryです。
 
-次章では、Reviewが終わったあとも残るCIやrepairを含め、AIのDelivery責務をどこまで伸ばすかを扱います。
+次章では、Reviewが終わったあとも残るCIや修復を含め、AIのDelivery責務をどこまで伸ばすかを扱います。

@@ -5,7 +5,7 @@ title: "自律性と判断権限を分ける — Autonomy != Authority"
 AIエージェントが、
 
 - Planに沿って実装し
-- scopeを守り
+- 範囲を守り
 - テストを回し
 - Review指摘を修正し
 - PRを更新する
@@ -14,9 +14,9 @@ AIエージェントが、
 
 PlanGateでは、ここを二つに分けます。
 
-~~~text
+```text
 Autonomy != Authority
-~~~
+```
 
 日本語では、
 
@@ -32,10 +32,10 @@ Autonomy != Authority
 たとえば、
 
 - 実装
-- test実行
+- テスト実行
 - lint修正
 - Acceptance Verification
-- Review指摘へのrepair
+- Review指摘への修復
 - PR更新
 - CI結果の収集
 
@@ -53,14 +53,14 @@ Autonomyを高くする一番の価値は、AIが派手に動くことではあ�
 
 Plan、Scope、Verification Policyが明確なら、
 
-~~~text
+```text
 実装
 → test
 → lint
 → repair
 → 再test
 → PR更新
-~~~
+```
 
 をAgent側で継続できます。
 
@@ -72,9 +72,9 @@ Plan、Scope、Verification Policyが明確なら、
 
 一方で、
 
-- scopeを広げる
+- 範囲を広げる
 - high-riskな設計変更を採用する
-- security上の残リスクを受容する
+- セキュリティ上の残リスクを受容する
 - protected policyを変更する
 - 最終的にmergeする
 
@@ -82,11 +82,11 @@ Plan、Scope、Verification Policyが明確なら、
 
 AIが技術的にできることと、AIに決定権を持たせることを分けます。
 
-~~~text
+```text
 Can do
     ≠
 May decide
-~~~
+```
 
 ということです。
 
@@ -102,9 +102,9 @@ May decide
 
 | 領域 | Autonomy | Authority |
 | --- | --- | --- |
-| 承認scope内の局所実装 | 高くできる | 既存Plan内 |
-| test / lint / repair | 高くできる | Verification Policy内 |
-| scope変更 | 停止 | 再Approvalが必要 |
+| 承認範囲内の局所実装 | 高くできる | 既存Plan内 |
+| テスト / lint / 修復 | 高くできる | Verification Policy内 |
+| 範囲変更 | 停止 | 再Approvalが必要 |
 | high-risk / critical判断 | 準備はAI | Human-owned |
 | Hardening / policy変更 | 提案・patch準備まで | Human-owned |
 | PR convergence | AIへ広く委譲可能 | mergeは別 |
@@ -126,18 +126,18 @@ PlanGateのai-loop V2では、AIのDelivery責務を `MERGE_READY` まで伸ば�
 
 - CIを確認する
 - Review feedbackへ対応する
-- conflictやrepairを収束させる
+- conflictや修復を収束させる
 - 必要なEvidenceを揃える
 
 ところまでAI側で進める考え方です。
 
 ただし、
 
-~~~text
+```text
 MERGE_READY
     ≠
 MERGED
-~~~
+```
 
 です。
 
@@ -145,7 +145,7 @@ MERGED
 
 C-4 / mergeはそのRunの外にあり、Human-ownedとされています。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/taxonomy.md
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/core-contract.md
 
@@ -168,7 +168,7 @@ Human-ownedな領域でも、AIはかなり準備できます。
 
 つまり、
 
-~~~text
+```text
 Human-owned
 = 人間が全部手作業する
 
@@ -176,7 +176,7 @@ Human-owned
 
 Human-owned
 = 最終的なAuthorityを人間に残す
-~~~
+```
 
 です。
 
@@ -184,13 +184,13 @@ Human-owned
 
 理想は、
 
-~~~text
+```text
 AI
 → 調査・実装・検証・repair・Evidence準備
 
 Human
 → 残リスクとbusiness contextを見てdecision
-~~~
+```
 
 へ近づけることです。
 
@@ -198,7 +198,7 @@ Human
 
 逆に、一部のApproval AuthorityをAIへ委譲する場合もあります。
 
-現行PlanGateには、eligible run向けのC-3'や、条件付きのAutonomous APPROVEがあります。
+現行PlanGateには、対象となる実行向けのC-3'や、条件付きのAutonomous APPROVEがあります。
 
 このとき大切なのは、
 
@@ -207,7 +207,7 @@ Human
 ではなく、
 
 - 対象Mode
-- scope
+- 範囲
 - risk
 - protected resource
 - escalation条件
@@ -223,16 +223,16 @@ AutonomyとAuthorityを実運用へ落とすなら、Agentに「いい感じに�
 
 | 判定 | 典型条件 | 次の行動 |
 | --- | --- | --- |
-| Continue | 承認scope内、必要Evidenceあり、risk不変 | AIが継続 |
+| Continue | 承認範囲内、必要Evidenceあり、risk不変 | AIが継続 |
 | Stop | Iron Law / mechanical guard違反 | 即停止、迂回しない |
 | Escalate | Scope / Acceptance / Risk / Architecture / Authorityの意味が変わる | Re-plan / Human Judgment |
 
 たとえば、
 
-- lint FAILで原因が明確、Plan内repair可能 → **Continue**
+- lint FAILで原因が明確、Plan内修復可能 → **Continue**
 - C-3未承認なのにproduction code編集 → **Stop**
-- schema変更が新たに必要 → **Escalate**
-- Review repair後にtest未実行 → **Continueではなく再Verification**
+- スキーマ変更が新たに必要 → **Escalate**
+- Review修復後にテスト未実行 → **Continueではなく再Verification**
 - protected policy変更が必要 → **Escalate**
 
 です。
@@ -275,7 +275,7 @@ AI駆動開発で目指したいのは、
 
 第3部で「何を承認したか」を固定し、第4部で「承認後にどう進み、どこで止まり、どこで戻すか」を固定しました。
 
-~~~text
+```text
 Hook / Enforcement
 → 越えてはいけない境界を検査する
 
@@ -284,6 +284,6 @@ Fresh Evidence
 
 Autonomy / Authority
 → どこまで任せ、どの決定権を残すか決める
-~~~
+```
 
 次の第5部では、この構造を長時間セッションや複数Agentへ広げます。

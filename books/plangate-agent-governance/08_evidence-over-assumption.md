@@ -10,7 +10,7 @@ AIは、それらしい答えをかなり速く出せます。
 
 しかし、実装前に必要なのは「文章として完成したPlan」ではありません。
 
-> **次の判断に必要な前提が、確認できているPlan。**
+> 次の判断に必要な前提が、確認できているPlan。
 
 です。
 
@@ -26,23 +26,23 @@ AIが次のように書いたとします。
 
 ただし、実際にコードを見ていなければ、これはAssumptionです。
 
-~~~text
+```text
 見た目:
 断定文
 
 実態:
 未確認の仮説
-~~~
+```
 
 この差を放置すると、Reviewする側も「確認済みの事実」として読んでしまいます。
 
 だから、安く確認できることは確認します。
 
-## このBookでは「Cheapest Useful Verification」と呼ぶ
+## 本書では「Cheapest Useful Verification」と呼ぶ
 
-ここから先、このBookでは、
+ここから先、本書では、
 
-> **次の意思決定に必要な範囲で、十分な証拠を最小コストで取りに行く。**
+> 次の意思決定に必要な範囲で、十分な証拠を最小コストで取りに行く。
 
 という実践原則を **Cheapest Useful Verification** と呼びます。
 
@@ -56,7 +56,7 @@ AIが次のように書いたとします。
 | --- | --- |
 | 対象ファイル数 | repository search / count |
 | enumの定義場所 | code search |
-| APIの現在挙動 | test / local request |
+| APIの現在挙動 | テスト / local request |
 | config値 | config file / runtime output |
 | package version | lockfile / package manager |
 | CI失敗原因 | workflow log |
@@ -80,13 +80,13 @@ AIに次の作業候補を相談したとき、ある画像描き直し作業は
 
 この1件が示したのは、
 
-> **プロジェクト固有の数値を簡単に測れるのに、推定だけで意思決定していた。**
+> プロジェクト固有の数値を簡単に測れるのに、推定だけで意思決定していた。
 
 という失敗です。
 
 その後PlanGateでは、件数や規模が判断に影響する場合、Plan作成時に実数を確認する考えを取り込みました。
 
-Source:
+Sources:
 - https://github.com/s977043/PlanGate/issues/351
 
 ## 件数は、数えられるなら数える
@@ -97,7 +97,7 @@ Source:
 
 たとえば、
 
-~~~text
+```text
 「数個の設定ファイル」
 → findで数える
 
@@ -106,7 +106,7 @@ Source:
 
 「影響するテストはこの周辺だけ」
 → test referencesを検索する
-~~~
+```
 
 と、判断前に測れます。
 
@@ -136,7 +136,7 @@ AIは存在しないファイル、関数、設定項目を自然に提案する
 たとえば、
 
 - endpointを実際に叩く
-- failing testを再現する
+- failingテストを再現する
 - workflow logを見る
 - CLIの現在出力を確認する
 
@@ -154,10 +154,10 @@ Evidenceは文書である必要はなく、**判断したいClaimを確認で�
 
 そこで、Unknownを次のように見ます。
 
-~~~text
+```text
 このUnknownが外れていたら、
 Plan / Scope / Mode / Approachは変わるか？
-~~~
+```
 
 変わらないなら、今は深掘りしなくてよいかもしれません。
 
@@ -172,7 +172,7 @@ Evidenceがあると、毎回同じ前提を人間へ聞き直す必要がなく
 たとえば、
 
 - 既存enumを再利用できる
-- DB schema変更は不要
+- DBスキーマ変更は不要
 - pagination併用の既存patternがある
 
 ことが確認できていれば、その範囲の実装を継続する判断材料になります。
@@ -187,27 +187,27 @@ Evidenceを取りに行く本当の価値は、Planを正当化することで�
 
 注文一覧APIで、調査した結果、
 
-> status filterを追加するには、実はDB schema変更が必要だった
+> status filterを追加するには、実はDBスキーマ変更が必要だった
 
 と分かったとします。
 
-最初のPlanではschema変更をOut of Scopeにしていました。
+最初のPlanではスキーマ変更をOut of Scopeにしていました。
 
 このときやるべきことは、
 
-~~~text
+```text
 「でも実装できそうなので進める」
-~~~
+```
 
 ではありません。
 
-~~~text
+```text
 Assumptionが崩れた
         ↓
 Planの境界が変わる
         ↓
 Review / Approvalへ戻る
-~~~
+```
 
 です。
 

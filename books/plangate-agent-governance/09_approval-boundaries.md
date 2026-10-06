@@ -8,11 +8,11 @@ Planを作り、Evidenceを集め、Reviewで問題を減らしました。
 
 PlanGateでは、ここを分けます。
 
-~~~text
+```text
 Review済み
     ≠
 Approved
-~~~
+```
 
 Reviewは問題を探す仕事です。
 
@@ -34,7 +34,7 @@ Approvalは、**そのPlanを実行対象として扱ってよいかを決める
 それでも、
 
 > 今回のリリースへ入れるか  
-> このscopeを実行してよいか  
+> この範囲を実行してよいか  
 > 残るリスクを受け入れるか
 
 という判断は残ります。
@@ -59,7 +59,7 @@ C-3はAuthorityを扱います。
 
 ここでの核心は、
 
-> **Reviewを通過したことと、Execution Authorityを渡したことを同一視しない。**
+> Reviewを通過したことと、Execution Authorityを渡したことを同一視しない。
 
 ことです。
 
@@ -67,11 +67,11 @@ C-3はAuthorityを扱います。
 
 現行PlanGateでは、すべてのタスクを同じC-3運用にはしていません。
 
-低リスクや明示的な自律委任では自動化余地を持たせつつ、high-risk / critical、Hardening Override、schema / destructive / security関連などでは人間側へAuthorityを戻します。ai-loopにはeligible run向けのC-3'もありますが、C-4はHuman-ownedです。
+低リスクや明示的な自律委任では、自動化の余地を持たせます。一方、high-risk / critical、Hardening Override、スキーマ / destructive / セキュリティ関連などでは、人間側へAuthorityを戻します。ai-loopには対象となる実行向けのC-3'もありますが、C-4はHuman-ownedです。
 
-個別条件は将来変わりうるため、このBookでは次の原則を中心にします。
+個別条件は将来変わりうるため、本書では次の原則を中心にします。
 
-~~~text
+```text
 低リスク
 → Authorityを限定的に委譲できる
 
@@ -81,7 +81,7 @@ C-3はAuthorityを扱います。
 
 最終受入
 → Human-owned
-~~~
+```
 
 重要なのは、「必ず人間がクリックする」ことではありません。
 
@@ -99,7 +99,7 @@ PlanGateのC-3では、判断を三値で扱います。
 
 Planの骨格は使えるが、条件や修正が必要。
 
-現行のC-3 approval commandでは、条件付き承認時にconditionsを記録します。
+現行のC-3 approvalコマンドでは、条件付き承認時にconditionsを記録します。
 
 ### REJECT
 
@@ -123,11 +123,11 @@ PlanGateのC-3 approval artifactには、承認対象の `plan_hash` を記録�
 
 これは、「承認というイベントがあった」だけでなく、
 
-> **この内容のPlanを承認した**
+> この内容のPlanを承認した
 
 という紐づきを持つためです。
 
-~~~text
+```text
 Plan v1
   ↓
 Approval(plan_hash = v1)
@@ -135,7 +135,7 @@ Approval(plan_hash = v1)
 Planがv2へ変更
   ↓
 Approval対象と不一致
-~~~
+```
 
 となれば、同じ承認をそのまま使うべきではありません。
 
@@ -147,11 +147,11 @@ Approval対象と不一致
 
 たとえば、
 
-> schema変更なしで実装できると承認したが、実際にはmigrationが必要だった。
+> スキーマ変更なしで実装できると承認したが、実際にはmigrationが必要だった。
 
 このとき、AIが「目的は同じなので続けます」と判断すると、Approval Boundaryは意味を失います。
 
-~~~text
+```text
 新しいEvidence
       ↓
 承認時の前提を壊す
@@ -161,7 +161,7 @@ Scope / Risk / Planが変わる
 Executionを止める
       ↓
 Review / Approvalへ戻る
-~~~
+```
 
 ここで止まれることが重要です。
 
@@ -175,8 +175,8 @@ Review / Approvalへ戻る
 | --- | --- |
 | Scope | In / Outの境界を越える |
 | Acceptance | 成功条件そのものが変わる |
-| Risk | security / destructive / migrationなど新しい高リスクが出る |
-| Architecture | 承認時になかった責務・依存・schema変更が必要になる |
+| Risk | セキュリティ / destructive / migrationなど新しい高リスクが出る |
+| Architecture | 承認時になかった責務・依存・スキーマ変更が必要になる |
 | Authority | Human-owned領域やprotected resourceへ触れる |
 | Evidence | 承認時の重要Assumptionが否定される |
 
@@ -188,19 +188,19 @@ Review / Approvalへ戻る
 
 まで毎回Approvalへ戻すと、Gateが単なる待ち行列になります。
 
-> **Approvalへ戻るのは、承認した意味が変わるとき。**
+> Approvalへ戻るのは、承認した意味が変わるとき。
 
 という基準にすると、止める場所と任せる場所を分けやすくなります。
 
 ## Human Presenceも「絶対防御」とは書かない
 
-現行PlanGateの `plangate approve` は、人間の承認判断をJSON手書きにせず、対話TTY・環境・親process・nonce challengeなどでhuman presenceをbest-effortに確認し、approval artifactを生成します。
+PlanGateには、人間の承認を記録として残す仕組みがあります。承認の記録をAIが手で書けないようにし、その場に人間がいるかを、できる範囲で確かめてから記録を作ります。
 
-重要なのは、PlanGate自身がこれを**絶対的なsecurity boundaryとは主張していない**ことです。
+重要なのは、PlanGate自身がこれを**絶対的なセキュリティの境界とは主張していない**ことです。
 
 疑似TTYなどを使う高度な自動化への限界も公開文書に明記されています。
 
-このBookでも、
+本書でも、
 
 > Approval Boundaryがある = 技術的に突破不能
 
@@ -226,14 +226,14 @@ Approval Boundaryの核心は、
 - Planを判断対象にする
 - ReviewとApprovalを分ける
 - Approval対象をPlanへbindする
-- 前提やscopeが変われば止まる
+- 前提や範囲が変われば止まる
 - Riskに応じてAuthorityを変える
 
 という構造を作ります。
 
 これで第3部の流れがつながりました。
 
-~~~text
+```text
 Requirement
   ↓
 Planで境界を作る
@@ -245,6 +245,6 @@ Reviewする
 Approval Boundaryを通す
   ↓
 Execution
-~~~
+```
 
 次の第4部では、承認された後のExecutionをどう安全に自律化するかを扱います。
