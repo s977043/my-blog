@@ -18,6 +18,9 @@ const INTERNAL_FILES = new Set([
 ]);
 
 function defaultInternalDir(outDir, slug) {
+  if (path.basename(path.dirname(outDir)) !== "books") {
+    throw new Error("--internal-dir is required when --out is not under a books/ directory");
+  }
   return path.join(path.dirname(path.dirname(outDir)), "docs", "books", slug);
 }
 
@@ -204,6 +207,30 @@ function selfTest() {
       throw new Error("dry-run created files");
     }
 
+    const base = { title: "Out", summary: "Out", topics: ["test"], date: "2026-01-01" };
+    const outUnderBooks = path.join(tmp, "x", "books", "out-a");
+    createBook({ ...base, slug: "out-a", outDir: outUnderBooks });
+    if (!fs.existsSync(path.join(tmp, "x", "docs", "books", "out-a", "BOOK_PLAN.md"))) {
+      throw new Error("--out under books/ did not place internal files in docs/books/<slug>/");
+    }
+
+    const outElsewhere = path.join(tmp, "elsewhere", "out-b");
+    let missingInternalDirBlocked = false;
+    try {
+      createBook({ ...base, slug: "out-b", outDir: outElsewhere });
+    } catch (error) {
+      missingInternalDirBlocked = /--internal-dir is required/.test(error.message);
+    }
+    if (!missingInternalDirBlocked || fs.existsSync(outElsewhere)) {
+      throw new Error("--out outside books/ without --internal-dir was not blocked");
+    }
+
+    const explicitPlanDir = path.join(tmp, "plans", "out-c");
+    createBook({ ...base, slug: "out-c", outDir: outElsewhere, internalDir: explicitPlanDir });
+    if (!fs.existsSync(path.join(explicitPlanDir, "BOOK_PLAN.md")) || fs.existsSync(path.join(outElsewhere, "BOOK_PLAN.md"))) {
+      throw new Error("--internal-dir was not used for internal files");
+    }
+
     let existingBlocked = false;
     try {
       createBook({
@@ -243,6 +270,9 @@ function main() {
     const outDir = args.out
       ? path.resolve(args.out)
       : path.join(ROOT, "books", slug || "");
+    let internalDir;
+    if (args["internal-dir"]) internalDir = path.resolve(args["internal-dir"]);
+    else if (!args.out) internalDir = path.join(ROOT, "docs", "books", slug || "");
     const date = new Date().toISOString().slice(0, 10);
 
     createBook({
@@ -251,6 +281,7 @@ function main() {
       summary: args.summary,
       topics,
       outDir,
+      internalDir,
       dryRun: Boolean(args["dry-run"]),
       date,
     });
