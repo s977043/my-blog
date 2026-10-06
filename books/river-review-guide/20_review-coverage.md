@@ -94,9 +94,9 @@ machine-readableなreview execution surfaceへ出力されますが、Stable Con
 
 ここで適用先を分けて理解する必要があります。
 
-### saved-runの収束判定
+### 保存した実行結果の収束判定
 
-`river runs diff` 側では、最新runのCoverageが `partial` / `not_executed` の場合、`CONVERGED` を `NO_SIGNAL` へ降格するqualificationが既定で入ります。
+保存した複数回の実行結果を比べる収束判定では、最新runのCoverageが `partial` / `not_executed` なら、「収束した」という判定を既定で取り下げます。
 
 つまり、未完了reviewを「問題なしで収束」と扱いにくくします。
 
@@ -104,7 +104,7 @@ machine-readableなreview execution surfaceへ出力されますが、Stable Con
 
 一方、Gate自体をCoverage不足で `NO_GO` に倒すのはopt-inです。
 
-current contractでは `RIVER_GATE_COVERAGE=1` を有効にした場合に、Coverage不足をGate判断へ反映します。
+current contractでは、明示的に有効化（opt-in）した場合に限り、Coverage不足をGate判断へ反映します。
 
 この非対称は意図されています。
 
@@ -118,7 +118,7 @@ Coverage blocks gate
 opt-in
 ~~~
 
-本書で重要なのは設定名より、
+大事なのは、
 
 > **0 findings と review complete を別の事実にする**
 
