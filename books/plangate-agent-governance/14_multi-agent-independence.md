@@ -307,7 +307,7 @@ PlanGateのReview Principlesでも、unavailableは理由、代替観点、未�
 
 なら、Contextを切った別Reviewerの価値が上がります。
 
-> Agent topologyはタスクのリスクとcoordination complexityから決める。
+> Agent topologyはタスクのリスクと調整の複雑さから決める。
 
 という位置づけです。
 

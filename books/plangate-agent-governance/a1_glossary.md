@@ -206,7 +206,7 @@ settings、rules、agents / commands、Hook scripts、bin/plangate、CI workflow
 
 Hardening Override、policy変更、重大な不一致、判定不能などはHumanへ戻します。C-4はHuman-ownedのままです。
 
-## Governance Harness
+## Governance Harness [Official]
 
 PlanGateが自身を「AIコーディングエージェントのためのガバナンス優先ワークフローハーネス」と位置づけるときの呼び方です。
 
@@ -221,6 +221,8 @@ PlanGateのai-loopの次の版です。Delivery runtime、HarnessManifest、Eval
 ## RunState [Official]
 
 ai-loopの実行中の状態を表すruntime stateです。v8.23時点の実装詳細で、最初から名前を覚える必要はありません。
+
+Context Lifecycle側では、RunStateを新たに追加せず、既存の所有者を参照でつなぎます。
 
 ## Intent Context Package [Official]
 

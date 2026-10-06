@@ -41,7 +41,7 @@ Agentを増やすと、
 
 のコストも増えます。
 
-PlanGateのai-loop V2でも、Graphはcoordination complexityが必要な場所にだけ導入する考え方です。
+PlanGateのai-loop V2でも、Graphは調整の複雑さ（coordination complexity）が必要な場所にだけ導入する考え方です。
 
 この部では「複数Agentを使うべき」とは置きません。
 
