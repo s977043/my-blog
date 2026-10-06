@@ -7,6 +7,19 @@ const { spawnSync } = require("child_process");
 
 const ROOT = path.resolve(__dirname, "..");
 const TEMPLATE_DIR = path.join(ROOT, "templates", "zenn-book");
+// Zenn は config.yaml の chapters に無い .md を「デプロイがスキップされました」と通知し続けるため、
+// 内部編集用ファイルは Book ディレクトリではなく docs/books/<slug>/ に生成する。
+const INTERNAL_FILES = new Set([
+  "README.md",
+  "BOOK_PLAN.md",
+  "SOURCE_MAP.md",
+  "EDITORIAL_QA.md",
+  "PUBLISH_CHECKLIST.md",
+]);
+
+function defaultInternalDir(outDir, slug) {
+  return path.join(path.dirname(path.dirname(outDir)), "docs", "books", slug);
+}
 
 function fail(message) {
   console.error(`[new:zenn-book] ${message}`);
@@ -70,7 +83,7 @@ function render(content, values) {
   return out;
 }
 
-function createBook({ slug, title, summary, topics, outDir, dryRun = false, date }) {
+function createBook({ slug, title, summary, topics, outDir, internalDir, dryRun = false, date }) {
   validateSlug(slug);
   if (!title) throw new Error("--title is required");
   if (!summary) throw new Error("--summary is required");
@@ -78,6 +91,8 @@ function createBook({ slug, title, summary, topics, outDir, dryRun = false, date
   if (topics.length > 5) throw new Error("--topics accepts at most 5 comma-separated topics");
   if (!fs.existsSync(TEMPLATE_DIR)) throw new Error(`template directory not found: ${TEMPLATE_DIR}`);
   if (fs.existsSync(outDir)) throw new Error(`target already exists: ${outDir}`);
+  const planDir = internalDir || defaultInternalDir(outDir, slug);
+  if (fs.existsSync(planDir)) throw new Error(`target already exists: ${planDir}`);
 
   const values = {
     BOOK_SLUG: slug,
@@ -90,24 +105,24 @@ function createBook({ slug, title, summary, topics, outDir, dryRun = false, date
   };
 
   const templateFiles = listFiles(TEMPLATE_DIR);
+  const targetOf = (rel) => path.join(INTERNAL_FILES.has(rel) ? planDir : outDir, rel);
   if (dryRun) {
-    console.log(`[new:zenn-book] dry-run target: ${outDir}`);
-    templateFiles.forEach((file) => console.log(`  ${file}`));
+    console.log(`[new:zenn-book] dry-run target: ${outDir} / ${planDir}`);
+    templateFiles.forEach((file) => console.log(`  ${targetOf(file)}`));
     return templateFiles;
   }
 
-  fs.mkdirSync(outDir, { recursive: true });
   for (const rel of templateFiles) {
     const source = path.join(TEMPLATE_DIR, rel);
-    const target = path.join(outDir, rel);
+    const target = targetOf(rel);
     fs.mkdirSync(path.dirname(target), { recursive: true });
     const rendered = render(fs.readFileSync(source, "utf8"), values);
     fs.writeFileSync(target, rendered);
   }
 
-  console.log(`[new:zenn-book] created ${outDir}`);
+  console.log(`[new:zenn-book] created ${outDir} / ${planDir}`);
   console.log("[new:zenn-book] next:");
-  console.log(`  1. edit ${path.join(outDir, "BOOK_PLAN.md")}`);
+  console.log(`  1. edit ${path.join(planDir, "BOOK_PLAN.md")}`);
   console.log(`  2. edit ${path.join(outDir, "config.yaml")} chapters`);
   console.log(`  3. node scripts/check-zenn-book-structure.js ${outDir}`);
   console.log("  4. keep published: false until the human publish decision");
@@ -117,7 +132,8 @@ function createBook({ slug, title, summary, topics, outDir, dryRun = false, date
 
 function selfTest() {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "zenn-book-template-"));
-  const outDir = path.join(tmp, "sample-book");
+  const outDir = path.join(tmp, "books", "sample-book");
+  const planDir = path.join(tmp, "docs", "books", "sample-book");
   try {
     const files = createBook({
       slug: "sample-book",
@@ -141,8 +157,14 @@ function selfTest() {
       "99_afterword.md",
     ];
     for (const file of required) {
-      if (!files.includes(file) || !fs.existsSync(path.join(outDir, file))) {
+      const dir = INTERNAL_FILES.has(file) ? planDir : outDir;
+      if (!files.includes(file) || !fs.existsSync(path.join(dir, file))) {
         throw new Error(`missing generated file: ${file}`);
+      }
+    }
+    for (const file of INTERNAL_FILES) {
+      if (fs.existsSync(path.join(outDir, file))) {
+        throw new Error(`internal file generated inside book directory: ${file}`);
       }
     }
 
@@ -151,7 +173,8 @@ function selfTest() {
     if (!config.includes("published: false")) throw new Error("published must default to false");
 
     for (const file of files) {
-      const generated = fs.readFileSync(path.join(outDir, file), "utf8");
+      const dir = INTERNAL_FILES.has(file) ? planDir : outDir;
+      const generated = fs.readFileSync(path.join(dir, file), "utf8");
       const unresolved = generated.match(/{{[A-Z0-9_]+}}/);
       if (unresolved) {
         throw new Error(`unresolved token in ${file}: ${unresolved[0]}`);
@@ -167,7 +190,7 @@ function selfTest() {
       throw new Error(`structure checker failed:\n${check.stdout}\n${check.stderr}`);
     }
 
-    const dryRunDir = path.join(tmp, "dry-run-book");
+    const dryRunDir = path.join(tmp, "books", "dry-run-book");
     createBook({
       slug: "dry-run-book",
       title: "Dry Run",
@@ -177,7 +200,7 @@ function selfTest() {
       dryRun: true,
       date: "2026-01-01",
     });
-    if (fs.existsSync(dryRunDir)) {
+    if (fs.existsSync(dryRunDir) || fs.existsSync(path.join(tmp, "docs", "books", "dry-run-book"))) {
       throw new Error("dry-run created files");
     }
 

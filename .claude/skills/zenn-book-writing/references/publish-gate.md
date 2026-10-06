@@ -26,7 +26,7 @@ currentな主題なら、公開直前に再確認する。
 - source drift
 - chapter impact
 
-`SOURCE_MAP.md` があればreverse impactを使う。
+`docs/books/<slug>/SOURCE_MAP.md` があればreverse impactを使う。
 
 ## Gate 3 — Editorial
 

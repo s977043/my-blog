@@ -1,11 +1,11 @@
 # {{BOOK_TITLE}}
 
-このディレクトリは `npm run new:zenn-book` で生成したZenn Bookの作業領域です。
+このディレクトリは `npm run new:zenn-book` で生成したZenn Bookの内部編集用ファイルの置き場です。公開する章と `config.yaml` は `books/{{BOOK_SLUG}}/` にあります。
 
 ## 最初にやること
 
 1. `BOOK_PLAN.md` の Reader Problem / Central Claim / Scope / Evidence Boundary を埋める
-2. `config.yaml` の章順をReader Journeyに合わせて更新する
+2. `books/{{BOOK_SLUG}}/config.yaml` の章順をReader Journeyに合わせて更新する
 3. 章を増やす場合は、1章1責務になるようにファイルを追加する
 4. 本文執筆前に構成レビューを行う
 5. `published: false` のままPRへ出す
@@ -88,7 +88,8 @@ Book chapterから `articles/*.md` のrepository相対パスを直接リンク�
 
 ## 重要
 
-- `BOOK_PLAN.md`, `SOURCE_MAP.md`, `EDITORIAL_QA.md`, `PUBLISH_CHECKLIST.md` は内部編集用。必要なものだけ残してよい
+- `README.md`, `BOOK_PLAN.md`, `SOURCE_MAP.md`, `EDITORIAL_QA.md`, `PUBLISH_CHECKLIST.md` は内部編集用。必要なものだけ残してよい
+- 内部編集用ファイルは `docs/books/{{BOOK_SLUG}}/` に置き、`books/{{BOOK_SLUG}}/` には置かない。Zennは `config.yaml` の `chapters` に無い `.md` を「デプロイがスキップされました」と通知し続ける
 - 内部編集用ファイルを `config.yaml` の `chapters` に追加しない
 - 公開判断までは `published: false` を維持する
 - merge / publishは人間の明示判断を必要とする
