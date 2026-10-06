@@ -46,7 +46,7 @@ PlanGateには、Workflow、Skill、Agent、Gate、Hook、Metrics、Evalなど�
 
 つまりLevel 0は、
 
-> **Governanceの考え方は使うが、守る責任はまだ人間の規律にある。**
+> Governanceの考え方は使うが、守る責任はまだ人間の規律にある。
 
 状態です。
 
@@ -54,7 +54,7 @@ PlanGateには、Workflow、Skill、Agent、Gate、Hook、Metrics、Evalなど�
 
 公式の段階導入ガイドには、PlanGateが動くかを確かめるPhase 0もあります。手順は[公式ガイド](https://github.com/s977043/PlanGate/blob/main/docs/staged-adoption-guide.md)を参照してください。
 
-READMEのLevel 1〜5は、Plan approval → handoff → hooks/validate → metrics → eval/timelineと、**採用する機能範囲を段階化する別の見取り図**として参照します。
+READMEのLevel 1〜5は、Plan approval → handoff → hooks/validate → metrics → eval/timelineの順に機能を足していきます。本書では、これを**採用する機能範囲を段階化する別の見取り図**として参照します。
 
 重要なのはPhase番号を覚えることではありません。
 
@@ -106,7 +106,7 @@ Mode
 
 ここで得たいのは高度なReviewではありません。
 
-> **先に何をするかを会話の外へ出してから実装する。**
+> 先に何をするかを会話の外へ出してから実装する。
 
 という習慣です。
 
@@ -146,7 +146,7 @@ Executionしてよい
 
 重要なのは「たくさん止める」ことではありません。
 
-> **Plan未作成・未承認・承認後Plan変更のような、繰り返し起こる境界違反を機械側へ移せるか。**
+> Plan未作成・未承認・承認後Plan変更のような、繰り返し起こる境界違反を機械側へ移せるか。
 
 を見ることです。
 
@@ -167,7 +167,7 @@ Phase 3では、Hook、外部Review、Metricsなどを本格運用できます�
 
 第16章と同じく、
 
-> **観測されたfailure classへ仕組みを足す。**
+> 観測されたfailure classへ仕組みを足す。
 
 という考え方です。
 
@@ -206,7 +206,7 @@ False Positiveが多いGuardをいきなりblockへすると、迂回やbypass�
 
 つまり、
 
-> **機能一覧ではなく、観測した摩擦をトリガーに強度を上げる。**
+> 機能一覧ではなく、観測した摩擦をトリガーに強度を上げる。
 
 という考え方です。
 
@@ -225,7 +225,7 @@ False Positiveが多いGuardをいきなりblockへすると、迂回やbypass�
 
 既存workflowで満たせている責務はそのまま残します。
 
-> **欠けているBoundaryだけ輸入する。**
+> 欠けているBoundaryだけ輸入する。
 
 方が移行コストを小さくできます。
 
@@ -326,7 +326,7 @@ Governanceは、一度入れたら増やし続けるものではありません�
 
 重要なのは、
 
-> **導入量ではなく、責務の重複と失敗coverageを管理する。**
+> 導入量ではなく、責務の重複とfailure coverageを管理する。
 
 ことです。
 

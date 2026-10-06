@@ -14,7 +14,7 @@ title: "「完了しました」ではなくFresh Evidenceで判定する"
 
 Iron Lawの一つに、
 
-> **NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE**
+> NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 があります。
 
@@ -50,7 +50,7 @@ Evidenceには、**どの成果物に対する証拠か**という時間軸が�
 
 本書でいうFresh Evidenceは、
 
-> **現在判断しようとしている成果物に対して、判断に必要な検証を直近で行った証拠**
+> 現在判断しようとしている成果物に対して、判断に必要な検証を直近で行った証拠
 
 です。
 
@@ -65,7 +65,7 @@ Evidenceには、**どの成果物に対する証拠か**という時間軸が�
 
 といったときです。
 
-PlanGateのqualityコマンドevidence仕様でも、Evidenceの `createdAt` が対象実装より古ければstaleとしてblockする設計があります。
+PlanGateのquality command evidence仕様でも、Evidenceの `createdAt` が対象実装より古ければstaleとしてblockする設計があります。
 
 Sources:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/quality-command-evidence.md
@@ -136,7 +136,7 @@ V-1がPASSでも、V-3で問題が出ることはあります。
 
 品質コマンドも同じです。
 
-PlanGateのqualityコマンドevidence仕様では、
+PlanGateのquality command evidence仕様では、
 
 - コマンド
 - exit code
@@ -204,7 +204,7 @@ AIが、
 
 つまりVerification Evidenceは、AIを疑うためだけの仕組みではありません。
 
-> **人間による二重作業を減らしつつ、完了判断の質を維持するためのインターフェース**
+> 人間による二重作業を減らしつつ、完了判断の質を維持するためのインターフェース
 
 でもあります。
 
@@ -216,7 +216,7 @@ AIが、
 
 という意味で使わず、
 
-> **現在の成果物が、定義した条件を満たしていることをFresh Evidenceで確認できる**
+> 現在の成果物が、定義した条件を満たしていることをFresh Evidenceで確認できる
 
 というClaimとして扱います。
 

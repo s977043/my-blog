@@ -6,7 +6,7 @@ title: "第6部 Harness自体を改善する"
 
 しかし、もう一段厄介な問いがあります。
 
-> **そのHarness自体が、本当に想定どおり機能していると、どう確かめるのか。**
+> そのHarness自体が、本当に想定どおり機能していると、どう確かめるのか。
 
 Guardが存在する。テストがgreenになる。doctorが「registered」と表示する。
 
@@ -36,7 +36,7 @@ Detect
 
 ポイントは、Harnessもsoftwareだということです。
 
-> **Harnessを信頼するのではなく、Harnessの主張もEvidenceで検証する。**
+> Harnessを信頼するのではなく、Harnessの主張もEvidenceで検証する。
 
 
 ## 改善のたびに新しいGuardを増やすわけではない

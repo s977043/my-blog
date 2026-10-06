@@ -4,7 +4,7 @@ title: "おわりに — AIを信頼するのではなく、任せられる環�
 
 本書の出発点は、AIの性能評価ではありませんでした。
 
-> **AIエージェントを信頼できるようにするのではなく、信頼しなくても仕事を任せられる環境をどう作るか。**
+> AIエージェントを信頼できるようにするのではなく、信頼しなくても仕事を任せられる環境をどう作るか。
 
 という問いでした。
 
@@ -36,11 +36,7 @@ MERGE_READY != MERGED
 
 そして、会話の中に埋め込まれていた状態や判断を、Plan / Approval / Evidence / Handoff / Review Package / Gate / Policyとして外へ出しました。
 
-これらを増やすこと自体が目的ではありません。
-
-**AIの自己申告だけに依存せず、次の主体が現在状態を確認できること。**
-
-そのための手段です。
+これらを増やすこと自体が目的ではありません。AIの自己申告だけに依存せず、次の主体が現在状態を確認できるようにするための手段です。
 
 ## 人間を増やすためのGovernanceではない
 
@@ -69,7 +65,7 @@ Hookがある。CIがgreen。doctorがOK。
 
 それだけで「守れている」とは扱いませんでした。
 
-Harnessもsoftwareなので、Detect → Reproduce → Fix → Regression → Independent Eval → Promotion → Production Observation の対象になります。
+Harnessもソフトウェアです。Detect → Reproduce → Fix → Regression → Independent Eval → Promotion → Production Observation の対象になります。
 
 AIを囲う仕組みそのものも検証する。
 

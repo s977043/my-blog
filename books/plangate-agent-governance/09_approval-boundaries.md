@@ -59,7 +59,7 @@ C-3はAuthorityを扱います。
 
 ここでの核心は、
 
-> **Reviewを通過したことと、Execution Authorityを渡したことを同一視しない。**
+> Reviewを通過したことと、Execution Authorityを渡したことを同一視しない。
 
 ことです。
 
@@ -67,7 +67,7 @@ C-3はAuthorityを扱います。
 
 現行PlanGateでは、すべてのタスクを同じC-3運用にはしていません。
 
-低リスクや明示的な自律委任では自動化余地を持たせつつ、high-risk / critical、Hardening Override、スキーマ / destructive / セキュリティ関連などでは人間側へAuthorityを戻します。ai-loopには対象となる実行向けのC-3'もありますが、C-4はHuman-ownedです。
+低リスクや明示的な自律委任では、自動化の余地を持たせます。一方、high-risk / critical、Hardening Override、スキーマ / destructive / セキュリティ関連などでは、人間側へAuthorityを戻します。ai-loopには対象となる実行向けのC-3'もありますが、C-4はHuman-ownedです。
 
 個別条件は将来変わりうるため、本書では次の原則を中心にします。
 
@@ -123,7 +123,7 @@ PlanGateのC-3 approval artifactには、承認対象の `plan_hash` を記録�
 
 これは、「承認というイベントがあった」だけでなく、
 
-> **この内容のPlanを承認した**
+> この内容のPlanを承認した
 
 という紐づきを持つためです。
 
@@ -188,7 +188,7 @@ Review / Approvalへ戻る
 
 まで毎回Approvalへ戻すと、Gateが単なる待ち行列になります。
 
-> **Approvalへ戻るのは、承認した意味が変わるとき。**
+> Approvalへ戻るのは、承認した意味が変わるとき。
 
 という基準にすると、止める場所と任せる場所を分けやすくなります。
 

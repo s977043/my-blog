@@ -81,7 +81,7 @@ MERGE_READY
 
 つまりDelivery loopは、
 
-> **何が何でもgreenになるまで直し続けるloop**
+> 何が何でもgreenになるまで直し続けるloop
 
 ではありません。
 
@@ -89,7 +89,7 @@ MERGE_READY
 
 ## PR_CONVERGINGという途中状態
 
-ai-loop V2 taxonomyでは、PR作成後の収束を `PR_CONVERGING` というLifecycle Stateで表します。
+ai-loop V2（ai-loopの次の版）の分類では、PR作成後の収束を `PR_CONVERGING` というLifecycle Stateで表します。
 
 この中には、
 
@@ -103,7 +103,7 @@ ai-loop V2 taxonomyでは、PR作成後の収束を `PR_CONVERGING` というLif
 
 大事なのは、
 
-> **PRが存在することと、Delivery契約を満たしたことを別にする。**
+> PRが存在することと、Delivery契約を満たしたことを別にする。
 
 ことです。
 
@@ -253,7 +253,7 @@ Sources:
 
 逆に複数Agentでも、全員が同じstateを自由に書き換えれば責務境界は弱くなります。
 
-> **Multi-agent topologyよりownership topologyを先に決める。**
+> Multi-agent topologyよりownership topologyを先に決める。
 
 という順序です。
 
@@ -263,7 +263,7 @@ Sources:
 
 ここで重要なのは、名前そのものではありません。
 
-> **誰がそのstateを書き、誰がEvidenceを作り、誰がdecisionを導出するかを分ける。**
+> 誰がそのstateを書き、誰がEvidenceを作り、誰がdecisionを導出するかを分ける。
 
 ことです。
 
@@ -287,7 +287,7 @@ C-4 / mergeはHuman-ownedのまま
 
 つまり、
 
-> **AIの作業責務は伸ばす。最終判断権限は必要な境界に残す。**
+> AIの作業責務は伸ばす。最終判断権限は必要な境界に残す。
 
 という設計です。
 
@@ -330,7 +330,7 @@ state machineは、その条件が増えてから導入しても構いません�
 
 AIエージェントの責務は、コード生成やPR作成で終える必要はありません。
 
-> **CI / Review / Repairまで自律化し、HumanにはMERGE_READYな成果物とEvidenceを渡す。**
+> CI / Review / Repairまで自律化し、HumanにはMERGE_READYな成果物とEvidenceを渡す。
 
 その一方で、
 

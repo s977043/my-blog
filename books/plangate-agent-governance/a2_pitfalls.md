@@ -19,7 +19,7 @@ PlanGateを使うときに起きやすい誤解を、症状と戻り方でまと
 
 ## 1. 何でも重いPlanにする
 
-**症状**: 小さなtypo修正でも詳細Plan、複数Review、厳格なGateを要求する。
+**症状**: 小さなtypo修正でも詳細Plan、複数Review、厳格なGateを要求します。
 
 **なぜ危険か**: Governance costが変更riskを上回り、迂回や形骸化を誘発します。
 
@@ -32,7 +32,7 @@ PlanGateを使うときに起きやすい誤解を、症状と戻り方でまと
 
 ## 2. Planを書いたのでApproval済みだと思う
 
-**症状**: plan.mdがあるので、そのまま実装開始する。
+**症状**: plan.mdがあるので、そのまま実装開始します。
 
 **なぜ危険か**: Planは判断対象であり、Execution Authorityそのものではありません。
 
@@ -40,7 +40,7 @@ PlanGateを使うときに起きやすい誤解を、症状と戻り方でまと
 
 ## 3. Self ReviewをApprovalと誤解する
 
-**症状**: Planを書いたAIが自己ReviewでPASSし、そのまま実装する。
+**症状**: Planを書いたAIが自己ReviewでPASSし、そのまま実装します。
 
 **なぜ危険か**: 問題探索とAuthority判断が同じ主体・同じ行為になります。
 
@@ -58,7 +58,7 @@ C-3
 
 ## 4. Unknownをきれいな文章で隠す
 
-**症状**: 確認していない件数・file・API・既存実装を断定文としてPlanへ書く。
+**症状**: 確認していない件数・file・API・既存実装を断定文としてPlanへ書きます。
 
 **なぜ危険か**: ReviewerもVerified factとして読みやすくなります。
 
@@ -69,7 +69,7 @@ C-3
 
 ## 5. 前提が崩れてもそのまま進める
 
-**症状**: 承認時はスキーマ変更なしだったが、実装中にmigrationが必要と分かっても続行する。
+**症状**: 承認時はスキーマ変更なしだったが、実装中にmigrationが必要と分かっても続行します。
 
 **なぜ危険か**: Approvalした対象の意味が変わっています。
 
@@ -79,7 +79,7 @@ C-3
 
 ## 6. Scope外を「ついでに」直す
 
-**症状**: AIが関連問題を見つけ、善意でrefactorや別bug修正まで行う。
+**症状**: AIが関連問題を見つけ、善意でrefactorや別bug修正まで行います。
 
 **なぜ危険か**: 良い改善でも、今回のExecution Authorityの外かもしれません。
 
@@ -90,7 +90,7 @@ C-3
 
 ## 7. Hookを入れただけで有効だと思う
 
-**症状**: Guard scriptがrepositoryにあるので、境界は守られていると判断する。
+**症状**: Guard scriptがrepositoryにあるので、境界は守られていると判断します。
 
 **なぜ危険か**: matcher、runtime登録、tool経路、worktree pathなどで抜ける可能性があります。
 
@@ -108,7 +108,7 @@ exists != registered != fired != influenced decision
 
 ## 8. Guardを強くすれば安全だと思う
 
-**症状**: 少しでも怪しいコマンドを全部blockする。
+**症状**: 少しでも怪しいコマンドを全部blockします。
 
 **なぜ危険か**: false positiveが増え、Agentや人間がGuardを迂回し始めます。
 
@@ -123,7 +123,7 @@ safe      → allow
 
 ## 9. 古いEvidenceで完了判定する
 
-**症状**: テストPASS後に修復し、そのまま以前のPASSを完了Evidenceとして使う。
+**症状**: テストPASS後に修復し、そのまま以前のPASSを完了Evidenceとして使います。
 
 **なぜ危険か**: Evidence対象と現在HEADがずれています。
 
@@ -134,7 +134,7 @@ safe      → allow
 
 ## 10. ReviewとVerificationを一つにする
 
-**症状**: 「AI Reviewerが問題なしと言ったのでテスト不要」または「テストPASSなので設計Review不要」とする。
+**症状**: 「AI Reviewerが問題なしと言ったのでテスト不要」または「テストPASSなので設計Review不要」とします。
 
 **なぜ危険か**: 確認している問いが違います。
 
@@ -155,7 +155,7 @@ Judgment
 
 ## 11. 会話履歴を正本にする
 
-**症状**: 「前のセッションで説明した」「上で決めた」が唯一の状態になる。
+**症状**: 「前のセッションで説明した」「上で決めた」が唯一の状態になります。
 
 **なぜ危険か**: 古い判断、捨てた案、最新stateが混ざります。
 
@@ -169,15 +169,15 @@ Judgment
 
 ## 12. 別Agentを呼べば独立Reviewになると思う
 
-**症状**: 別モデルへBuilderの会話を丸ごと渡して「独立レビュー」とする。
+**症状**: 別モデルへBuilderの会話を丸ごと渡して「独立レビュー」とします。
 
 **なぜ危険か**: Agentは別でもassumptionとcontextを共有しています。
 
-**戻り方**: Reviewerへはapproved Plan / diff / Acceptance / Evidence / relevant rulesを渡し、raw implementation reasoningを原則引き継ぎません。
+**戻り方**: Reviewerへは承認済みPlan / diff / Acceptance / Evidence / 関係するrulesを渡します。実装時の推論そのものは、原則として引き継ぎません。
 
 ## 13. Multi-agentを増やしすぎる
 
-**症状**: 小さなタスクでもPlanner / Builder / Verifier / Reviewer / Orchestratorを全部別Agentにする。
+**症状**: 小さなタスクでもPlanner / Builder / Verifier / Reviewer / Orchestratorを全部別Agentにします。
 
 **なぜ危険か**: handoff、state sync、重複探索の調整コストが増えます。
 
@@ -189,7 +189,7 @@ Judgment
 
 ## 14. PRを作ったらDelivery完了だと思う
 
-**症状**: PR作成後のCI失敗、review修復、conflictを人間が引き取る。
+**症状**: PR作成後のCI失敗、review修復、conflictを人間が引き取ります。
 
 **なぜ危険か**: AIの自律性がcodingで止まり、Deliveryの待ち時間が人間へ戻ります。
 
@@ -197,7 +197,7 @@ Judgment
 
 ## 15. AIにmergeまで任せる
 
-**症状**: MERGE_READYとMERGEDを同じものとして扱う。
+**症状**: MERGE_READYとMERGEDを同じものとして扱います。
 
 **なぜ危険か**: Delivery Autonomyと最終Authorityが混ざります。
 
@@ -215,7 +215,7 @@ MERGED
 
 ## 16. GreenならHarnessが正しいと思う
 
-**症状**: doctor / テスト / CIがgreenなのでGuardやpluginは正しく機能していると結論する。
+**症状**: doctor / テスト / CIがgreenなのでGuardやpluginは正しく機能していると結論します。
 
 **なぜ危険か**: 測っているProxyと、本当に知りたいClaimが違うかもしれません。
 
@@ -223,7 +223,7 @@ MERGED
 
 ## 17. FailureごとにSkill / Agent / Hookを増やす
 
-**症状**: 事故のたびに新componentを追加する。
+**症状**: 事故のたびに新componentを追加します。
 
 **なぜ危険か**: Harness自体が複雑になり、routing / activation / ownership / Evalの面積が増えます。
 
@@ -236,7 +236,7 @@ MERGED
 
 ## 18. Phaseを上げ続けることを成功にする
 
-**症状**: Phase 3、strict、multi-agent、Metrics導入を「成熟」とみなし、戻せなくなる。
+**症状**: Phase 3、strict、multi-agent、Metrics導入を「成熟」とみなし、戻せなくなります。
 
 **なぜ危険か**: Governance debtが増えます。
 

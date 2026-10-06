@@ -17,13 +17,13 @@ Sources:
 | 種別 | 意味 |
 | --- | --- |
 | **Official** | 現行PlanGateの公開ドキュメントで定義されている用語・略号 |
-| **Bookモデル** | 本書で複数概念を整理するために置いた説明モデル |
+| **Book model** | 本書で複数概念を整理するために置いた説明モデル |
 
 たとえばC-X / V-X / WF-X / Mode / Hardening Override / MERGE_READYはOfficialです。
 
-一方、Continue / Stop / Escalate、False Greenの4分類、Cheapest Useful VerificationはBookモデルです。
+一方、Continue / Stop / Escalate、False Greenの4分類、Cheapest Useful VerificationはBook modelです。
 
-**BookモデルをPlanGate公式仕様や業界標準用語として引用しない**ようにしてください。
+**Book modelをPlanGate公式仕様や業界標準用語として引用しない**ようにしてください。
 
 ## まず覚える7つ — Book core concepts
 
@@ -50,7 +50,7 @@ Artifactが存在すること自体は、その中の主張が正しい証拠で
 
 例:
 
-- テストresult
+- テスト結果
 - lint result
 - repository search
 - runtime output
@@ -200,6 +200,42 @@ settings、rules、agents / commands、Hook scripts、PlanGateのコマンド、
 
 対象pathの正確な一覧はmode classification / Hook実装を正本としてください。
 
+## C-3' / Autonomous APPROVE [Official]
+
+条件を限定して、AIがC-3の承認を裁定する経路です。
+
+Hardening Override、policy変更、重大な不一致、判定不能などはHumanへ戻します。C-4はHuman-ownedのままです。
+
+## Governance Harness
+
+PlanGateが自身を「AIコーディングエージェントのためのガバナンス優先ワークフローハーネス」と位置づけるときの呼び方です。
+
+業界標準のカテゴリへの準拠を主張する言葉ではありません。
+
+## ai-loop V2 [Official]
+
+PlanGateのai-loopの次の版です。Delivery runtime、HarnessManifest、Evaluation Trust Boundary、Ratchet Traceabilityなどを含みます。
+
+本書では、v8.23系のmainにある未リリース差分として扱います。
+
+## RunState [Official]
+
+ai-loopの実行中の状態を表すruntime stateです。v8.23時点の実装詳細で、最初から名前を覚える必要はありません。
+
+## Intent Context Package [Official]
+
+仕事の意味（`context_ref`）と、その時点の成果物のスナップショット（`snapshot_ref`）を分けて引き渡す仕組みです。
+
+## PR_CONVERGING [Official]
+
+PR作成後に、checks待ち、checks失敗、review修復、conflict解消などを収束させている途中のLifecycle Stateです。
+
+## Execution Authority [Book model]
+
+承認したPlanの範囲で実装へ進めてよいという権限です。
+
+Reviewを通過しただけでは渡さず、Approvalで渡します。
+
 ## Fresh Evidence
 
 現在判断している成果物に対する、直近の検証証拠です。
@@ -240,7 +276,7 @@ EvidenceやReviewが「何に対するものか」を結びつけることです
 
 本書では、長時間・複数Agentで特に重要な横断原則として扱いました。
 
-## Continue / Stop / Escalate [Bookモデル]
+## Continue / Stop / Escalate [Book model]
 
 本書でExecution中の判断を整理するために使う3分類です。
 
@@ -275,7 +311,7 @@ AIはCI / review修復 / Evidence準備まで進めても、merge Authorityは�
 
 重要なのは、人間が全部作業することではなく、**最終Authorityの所在を明示すること**です。
 
-## False Green [Bookモデル]
+## False Green [Book model]
 
 本書で使った整理です。
 
@@ -285,7 +321,7 @@ AIはCI / review修復 / Evidence準備まで進めても、merge Authorityは�
 
 PlanGate公式Glossaryの用語ではありません。
 
-## Cheapest Useful Verification [Bookモデル]
+## Cheapest Useful Verification [Book model]
 
 本書内で使った実践ラベルです。
 

@@ -13,7 +13,7 @@ title: "Contextを会話からArtifactへ移す"
 
 ただし、会話が長くなるほど別の問題が出ます。
 
-> **今も有効な情報と、もう捨てた情報が同じ履歴に残る。**
+> 今も有効な情報と、もう捨てた情報が同じ履歴に残る。
 
 長時間実行やAgent切替では、この問題を放置できません。
 
@@ -44,7 +44,7 @@ title: "Contextを会話からArtifactへ移す"
 
 PlanGateのContext Lifecycleでは、これを避けるために、
 
-> **conversation / tool historyではなく、canonical artifactとevidenceをcheckpointして次のcontextを始める**
+> conversation / tool historyではなく、canonical artifactとevidenceをcheckpointして次のcontextを始める
 
 という方針を置いています。
 
@@ -75,7 +75,7 @@ fresh session
 
 つまり、
 
-> **履歴を持ち越すのではなく、現在有効な状態を再構成して渡す。**
+> 履歴を持ち越すのではなく、現在有効な状態を再構成して渡す。
 
 という設計です。
 
@@ -122,7 +122,7 @@ Handoff
 | 今どこにいるか | Current State / blocker / 次の行動 / current Evidence |
 | 次の主体へ何を渡すか | Handoff / Review Package / stable refs |
 
-Dynamic Context Engine、Intent Context Package、Context Lifecycleは、この3つの問いを別の角度から支える仕組みです。
+この3つの問いを別の角度から支えるのが、Dynamic Context Engine、Intent Context Package、Context Lifecycleです。Intent Context Packageは、仕事の意味とその時点のスナップショットを分けて渡す仕組みです。
 
 最初から各スキーマ名を覚える必要はありません。
 
@@ -182,7 +182,7 @@ Dynamic Context Engineでも、Contextを二種類に分けています。
 
 全部を毎回Promptへ詰め込むのではなく、
 
-> **契約として固定するContextと、作業のために取得するContextを分ける。**
+> 契約として固定するContextと、作業のために取得するContextを分ける。
 
 という考え方です。
 
@@ -254,7 +254,7 @@ Handoffで大事なのは、過去をきれいに要約することではあり�
 
 その意味でHandoffは、
 
-> **次のAgentが現在状態から再開するためのAPI**
+> 次のAgentが現在状態から再開するためのAPI
 
 と考えられます。
 

@@ -12,7 +12,7 @@ Planner、Builder、Reviewerを3体用意する。
 
 しかし、3体すべてに同じ長い会話履歴を渡していたらどうでしょうか。
 
-> **Agentが別でも、前提が同じなら独立性は弱い。**
+> Agentが別でも、前提が同じなら独立性は弱い。
 
 ここが複数Agent設計で重要な点です。
 
@@ -67,7 +67,7 @@ Reviewerが読むのは、
 
 目的は情報を減らすことそのものではありません。
 
-> **Reviewerが自分で観測できる材料から判断を始められるようにすること。**
+> Reviewerが自分で観測できる材料から判断を始められるようにすること。
 
 です。
 
@@ -191,7 +191,7 @@ Sources:
 
 別モデルを使うことには価値があります。
 
-同じモデルfamily特有の癖や推論傾向から離れられる可能性があります。
+同じモデルファミリー特有の癖や推論傾向から離れられる可能性があります。
 
 ただし、
 
@@ -254,7 +254,7 @@ high-risk / criticalなどでは複数roundを要求し、2round目以降は、
 
 そして収束は、
 
-> **新しい回避クラス / failure classが出なくなったか**
+> 新しい回避クラス / failure classが出なくなったか
 
 で見ます。
 
@@ -307,7 +307,7 @@ PlanGateのReview Principlesでも、unavailableは理由、代替観点、未�
 
 なら、Contextを切った別Reviewerの価値が上がります。
 
-> **Agent topologyはタスクriskとcoordination complexityから決める。**
+> Agent topologyはタスクriskとcoordination complexityから決める。
 
 という位置づけです。
 
@@ -322,7 +322,7 @@ Sources:
 
 Independent reviewの強さもriskに応じて変えます。
 
-> **独立性は最大化するものではなく、誤判断コストに見合う強さで設計する。**
+> 独立性は最大化するものではなく、誤判断コストに見合う強さで設計する。
 
 という考え方です。
 

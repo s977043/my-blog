@@ -8,7 +8,7 @@ CI PASS。doctor OK。registered: YES。review PASS。
 
 しかし本当に知りたいのは、
 
-> **greenかどうかではなく、そのgreenが何を証明しているか。**
+> greenかどうかではなく、そのgreenが何を証明しているか。
 
 です。
 
@@ -42,7 +42,7 @@ Harness改善そのものを設計するときに、後半のEvaluation Trust Bo
 
 本書ではFalse Greenを、
 
-> **検査や状態表示は成功を示しているが、判断したいClaimを実挙動で確認できていない状態**
+> 検査や状態表示は成功を示しているが、判断したいClaimを実挙動で確認できていない状態
 
 と呼びます。
 
@@ -54,7 +54,7 @@ PlanGate公式用語ではなく、この章で使う整理です。
 | --- | --- | --- |
 | Proxy Green | 代理指標と実挙動 | #1085 |
 | Coverage Green | 検査範囲と現実の入力空間 | #1173 / #1277 |
-| Classifier Green | 判定ロジックとコマンドsemantics | #1326 |
+| Classifier Green | 判定ロジックとコマンドの意味 | #1326 |
 | Observer Green | 検査と観測対象の非干渉性 | #1169 |
 
 ### 1. Proxy Green — 「ある」を「効いている」と扱う
@@ -108,7 +108,7 @@ influenced decision
 
 現行ai-loop V2のHarnessManifestでは、Runtime Activationをこの6段階に分けています。
 
-Verifier / Gateの改善では、単にcomponentが存在・発火しただけではなく、Evidenceが実際のDecisionへ影響した `influenced_decision` まで要求する設計です。
+Verifier / Gateの改善では、componentが存在・発火しただけでは足りません。Evidenceが実際のDecisionへ影響した `influenced_decision` まで要求する設計です。
 
 Sources:
 - https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/harness-manifest.md
@@ -189,7 +189,7 @@ root pathでPASS
 
 Issue #1326では、force pushを止めるGuardが安全なコマンドまでBLOCKしました。
 
-`git push` と `--force` が同じコマンドsegmentに属するかを見ず、文字列全体から独立に探していたためです。
+`git push` と `--force` が同じcommand segmentに属するかを見ず、文字列全体から独立に探していたためです。
 
 結果として、
 
@@ -238,7 +238,7 @@ Guard品質は「何件blockしたか」ではなく、意図したsemanticsを�
 
 ### 4. Observer Green — Eval自身が対象を変えていた
 
-Issue #1169では、read-only検査のつもりでPython scriptを `sh` から起動した結果、docstring内のbacktickがshellコマンドsubstitutionとして評価されました。
+Issue #1169では、read-only検査のつもりでPython scriptを `sh` から起動しました。その結果、docstring内のbacktickがshellのcommand substitutionとして評価されました。
 
 install scriptが実行され、`.codex/skills/**` の34ファイルが書き換わりました。
 
@@ -285,7 +285,7 @@ read-onlyを期待する検査では、
 
 です。
 
-だからEvalを作るとき、最初にテストcodeを書くのではなく、Claimを固定します。
+だからEvalを作るとき、最初にテストコードを書くのではなく、Claimを固定します。
 
 ## 最小Eval Contract
 
@@ -352,7 +352,7 @@ target identity
 
 失敗を再現テストへ残すのは重要です。
 
-しかし、事故のたびにfixtureを1件ずつ永久追加すると、テストsuiteは過去の事故履歴そのものになります。
+しかし、事故のたびにfixtureを1件ずつ永久追加すると、テストスイートは過去の事故履歴そのものになります。
 
 ```text
 incident A
@@ -375,7 +375,7 @@ incident C
 
 だけでなく、
 
-> **`git push` とforce tokenが同じコマンドsegmentに属するときだけdangerousと分類する**
+> `git push` とforce tokenが同じcommand segmentに属するときだけdangerousと分類する
 
 というinvariantにします。
 
@@ -413,7 +413,7 @@ VerifierやEval自身を変更すると、さらに難しくなります。
 
 現行ai-loop V2のEvaluation Trust Boundaryでは、
 
-> **Candidate cannot modify the authority that judges the candidate.**
+> Candidate cannot modify the authority that judges the candidate.
 
 をinvariantにしています。
 
@@ -444,7 +444,7 @@ Verifier Candidateを評価するなら、変更後Verifierの出力だけでな
 
 原則はシンプルです。
 
-> **評価対象と、評価を成立させるAuthorityを分離する。**
+> 評価対象と、評価を成立させるAuthorityを分離する。
 
 ### known fixtureだけに最適化しない
 
@@ -466,7 +466,7 @@ Candidateはそのfixtureを自分で変更できません。
 
 目的は「秘密のテストを作ること」ではありません。
 
-> **改善が既知ケースの暗記ではなく、failure classへ効いているかを見る。**
+> 改善が既知ケースの暗記ではなく、failure classへ効いているかを見る。
 
 ためです。
 
@@ -505,7 +505,7 @@ FAILしていない
 
 INCONCLUSIVEはFAILとは違いますが、Promotion Readyでもありません。
 
-> **分からない状態をgreenへ変換しない。**
+> 分からない状態をgreenへ変換しない。
 
 ための値です。
 
@@ -621,7 +621,7 @@ same_pattern_recurrence_rate = M / N
 
 ここで言えるのは、
 
-> **同じ定義で観測した失敗パターンが、その後どれくらい発生したか。**
+> 同じ定義で観測した失敗パターンが、その後どれくらい発生したか。
 
 までです。
 
@@ -664,7 +664,7 @@ Harness Evalで最初に問うのは、
 
 ではありません。
 
-> **そのgreenは、どのClaimを、どのOracleと対照で確かめた結果なのか。**
+> そのgreenは、どのClaimを、どのOracleと対照で確かめた結果なのか。
 
 です。
 
