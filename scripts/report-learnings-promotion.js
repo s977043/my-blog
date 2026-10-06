@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Report: AGENT_LEARNINGS.md の学びが、どこまで機械ガード（check・hook・CI・settings）へ昇格したかを集計する。
+// Report: AGENT_LEARNINGS.md の各エントリが機械ガード（check・hook・CI・settings）の語に触れているかを集計する。
+//   ガード語への言及（文字列一致）を数えるだけで、昇格の確定ではない。
 //
 // ■ 背景
 //   学びは AGENT_LEARNINGS.md に追記されるが、それが check や hook に落ちたかは追えていなかった。
@@ -8,7 +9,7 @@
 //
 // ■ 数え方（設計書 §3 と一致させる）
 //   - `## 📇` 見出しより後ろを `\n### YYYY-MM-DD` で区切った各ブロックを 1 エントリとする
-//   - 機械ガード言及 / 再発明記 / テーマは、下の表の正規表現がエントリ本文に 1 回でも当たれば数える
+//   - ガード語への言及（文字列一致。昇格の確定ではない）/ 再発明記 / テーマは、下の表の正規表現がエントリ本文に 1 回でも当たれば数える
 //   - 昇格候補: テーマに当たったエントリのうち、機械ガードに触れていないものが 3 件以上あるテーマ
 //
 // ■ `npm run check` に入れない理由
@@ -32,19 +33,19 @@ const CANDIDATE_MIN = 3;
 
 const GUARD_RE =
   /npm run (check|test):|scripts\/hooks|pre-commit|pre-push|PreToolUse|ci\.yml|check-[a-z-]+\.js/;
-const RECUR_RE = /再発|2回目|二度目|同型|同じ(ミス|失敗)|再び/;
+const RECUR_RE = /再発|2回目|二度目|同じ(ミス|失敗)|再び/;
 
 const THEMES = [
   { id: "parallel-session", label: "並列セッション", re: /並列セッション/ },
   {
     id: "gh-account",
     label: "gh アカウント",
-    re: /gh auth|active account|kominem/,
+    re: /gh auth (setup-git|switch)|active account|kominem/,
   },
-  { id: "formatter-churn", label: "formatter churn", re: /formatter|churn/i },
+  { id: "formatter-churn", label: "formatter churn", re: /formatter/i },
   { id: "worktree", label: "worktree", re: /worktree/ },
   { id: "stash", label: "stash", re: /stash/ },
-  { id: "stale-pr", label: "stale PR / squash", re: /stale|squash/i },
+  { id: "stale-pr", label: "stale PR", re: /stale PR|pr-staleness/ },
   { id: "note-wxr", label: "note WXR", re: /WXR/ },
   {
     id: "zenn-release",
@@ -132,6 +133,8 @@ function formatText(r) {
           (x) => `  - ${x.label}: 未言及 ${x.unguarded} 件（全 ${x.count} 件）`,
         )
       : ["  （なし）"]),
+    "",
+    "注意: 本文の文字列で判定しているため、昇格候補は実態より多めに出る。",
   ];
 }
 
@@ -140,7 +143,11 @@ function parseArgs(argv) {
   for (let i = 0; i < argv.length; i++) {
     const x = argv[i];
     if (x === "--json") a.json = true;
-    else if (x === "--file") a.file = argv[++i];
+    else if (x === "--file") {
+      const v = argv[++i];
+      if (!v || v.startsWith("--")) throw new Error("--file にはファイルパスを指定してください（例: --file AGENT_LEARNINGS.md）");
+      a.file = v;
+    }
     else throw new Error(`unknown option ${x}`);
   }
   return a;
@@ -180,14 +187,18 @@ function selfTest() {
     "並列セッションで stash が消えた。",
     "### 2026-10-01 並列セッション 4 回目",
     "並列セッション。gh auth が kominem に戻った。",
+    "### 2026-10-03 Dependabot API が 403",
+    "古いトークンなので gh auth refresh を試す。同型の別事象。",
+    "### 2026-10-04 note エクスポートの画像 M は churn",
+    "差分は churn にすぎない。",
     "#### 2026-10-02 深い見出しは区切りにしない",
     "### 日付の無い見出しも区切りにしない",
   ].join("\n");
   const r = analyze(fixture);
 
-  eq("📇 以降の ### YYYY-MM-DD だけを区切る", r.total, 4);
-  eq("月別件数", r.byMonth, { "2026-09": 3, "2026-10": 1 });
-  eq("ガード言及数と割合", r.guard, { count: 1, ratio: 0.25 });
+  eq("📇 以降の ### YYYY-MM-DD だけを区切る", r.total, 6);
+  eq("月別件数", r.byMonth, { "2026-09": 3, "2026-10": 3 });
+  eq("ガード言及数と割合", r.guard, { count: 1, ratio: 0.167 });
   eq("再発明記", r.recurring.entries, ["2026-09-02 並列セッションの再発"]);
   const ps = r.themes.find((x) => x.id === "parallel-session");
   eq(
@@ -220,6 +231,16 @@ function selfTest() {
     threw = true;
   }
   eq("未知のオプションは拒否", threw, true);
+  eq("gh auth refresh（Dependabot トークン）は gh アカウントに数えない", r.themes.find((x) => x.id === "gh-account").count, 1);
+  eq("formatter の無い churn は formatter churn に数えない", r.themes.find((x) => x.id === "formatter-churn").count, 0);
+  eq("「同型の別事象」は再発に数えない", r.recurring.count, 1);
+  let msg = "";
+  try {
+    parseArgs(["--file"]);
+  } catch (e) {
+    msg = e.message;
+  }
+  eq("--file の値なしは日本語エラー", /ファイルパスを指定/.test(msg), true);
 
   const failed = t.filter((x) => !x.ok);
   for (const x of t) console.log(`${x.ok ? "PASS" : "FAIL"}: ${x.name}`);
