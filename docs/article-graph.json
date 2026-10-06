@@ -21,7 +21,7 @@
       "promoted_to": [],
       "article_type_candidates": [],
       "author_input_required_count": 0,
-      "blocked_by_author_input": false,
+      "author_input_gate_open": false,
       "legacy": true
     },
     {
@@ -43,7 +43,7 @@
       "promoted_to": [],
       "article_type_candidates": [],
       "author_input_required_count": 2,
-      "blocked_by_author_input": true,
+      "author_input_gate_open": true,
       "legacy": true
     },
     {
@@ -68,7 +68,7 @@
       ],
       "article_type_candidates": [],
       "author_input_required_count": 2,
-      "blocked_by_author_input": true,
+      "author_input_gate_open": true,
       "legacy": true
     },
     {
@@ -90,7 +90,7 @@
       "promoted_to": [],
       "article_type_candidates": [],
       "author_input_required_count": 1,
-      "blocked_by_author_input": true,
+      "author_input_gate_open": true,
       "legacy": true
     },
     {
@@ -112,7 +112,7 @@
       "promoted_to": [],
       "article_type_candidates": [],
       "author_input_required_count": 1,
-      "blocked_by_author_input": true,
+      "author_input_gate_open": true,
       "legacy": true
     },
     {
@@ -134,7 +134,7 @@
       "promoted_to": [],
       "article_type_candidates": [],
       "author_input_required_count": 1,
-      "blocked_by_author_input": true,
+      "author_input_gate_open": true,
       "legacy": true
     },
     {
@@ -155,7 +155,7 @@
       "promoted_to": [],
       "article_type_candidates": [],
       "author_input_required_count": 1,
-      "blocked_by_author_input": true,
+      "author_input_gate_open": true,
       "legacy": true
     },
     {
@@ -177,7 +177,7 @@
       "promoted_to": [],
       "article_type_candidates": [],
       "author_input_required_count": 0,
-      "blocked_by_author_input": false,
+      "author_input_gate_open": false,
       "legacy": true
     },
     {
@@ -206,7 +206,7 @@
         "analysis"
       ],
       "author_input_required_count": 0,
-      "blocked_by_author_input": false,
+      "author_input_gate_open": false,
       "legacy": false
     },
     {
@@ -231,7 +231,7 @@
         "insight"
       ],
       "author_input_required_count": 0,
-      "blocked_by_author_input": false,
+      "author_input_gate_open": false,
       "legacy": false
     },
     {
@@ -258,7 +258,7 @@
         "insight"
       ],
       "author_input_required_count": 0,
-      "blocked_by_author_input": false,
+      "author_input_gate_open": false,
       "legacy": false
     },
     {
@@ -285,7 +285,7 @@
         "insight"
       ],
       "author_input_required_count": 0,
-      "blocked_by_author_input": false,
+      "author_input_gate_open": false,
       "legacy": false
     },
     {
@@ -314,7 +314,7 @@
         "insight"
       ],
       "author_input_required_count": 0,
-      "blocked_by_author_input": false,
+      "author_input_gate_open": false,
       "legacy": false
     },
     {
@@ -342,7 +342,7 @@
         "analysis"
       ],
       "author_input_required_count": 0,
-      "blocked_by_author_input": false,
+      "author_input_gate_open": false,
       "legacy": false
     },
     {
@@ -368,7 +368,7 @@
         "insight"
       ],
       "author_input_required_count": 0,
-      "blocked_by_author_input": false,
+      "author_input_gate_open": false,
       "legacy": false
     },
     {
@@ -397,7 +397,7 @@
         "experience"
       ],
       "author_input_required_count": 0,
-      "blocked_by_author_input": false,
+      "author_input_gate_open": false,
       "legacy": false
     },
     {
@@ -424,7 +424,7 @@
         "insight"
       ],
       "author_input_required_count": 0,
-      "blocked_by_author_input": false,
+      "author_input_gate_open": false,
       "legacy": false
     },
     {
@@ -450,7 +450,7 @@
         "analysis"
       ],
       "author_input_required_count": 0,
-      "blocked_by_author_input": false,
+      "author_input_gate_open": false,
       "legacy": false
     }
   ],
