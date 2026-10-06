@@ -30,7 +30,7 @@ Verification:
 
 一見、十分そうです。
 
-しかしReviewでは次を確認できます。
+しかしPlan Reviewでは次を確認できます。
 
 - unknown localeはどう扱うのか
 - 既存consumerが追加fieldを無視できることをどう確認するのか
@@ -90,7 +90,7 @@ PlanGate / caller
   = proceed or stop
 ~~~
 
-責務を混ぜないことが重要です。
+レビューする側と、進むか止まるかを決める側を混ぜません。
 
 ## この章で持ち帰ること
 

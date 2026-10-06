@@ -68,7 +68,7 @@ aggregated role status → fulfilled
 
 1つ成功していればrole全体がfulfilledに見えても、実際にはreview対象の一部が未実行です。
 
-この差をcallerが判断できるようにするのがReview Coverageです。
+この差をCallerが判断できるようにするのがReview Coverageです。
 
 ## CoverageはFinding Qualityとは別
 
@@ -88,37 +88,13 @@ River Reviewのcontractでは次を分離します。
 
 ## 現在はExperimental
 
-2026年10月4日に再確認したverification snapshotでは、Review Coverageは **Experimental** です。
+2026年10月6日に再確認したverification snapshotでは、Review Coverageは **Experimental** です。
 
-machine-readableなreview execution surfaceへ出力されますが、Stable Contractではありません。
+LLMを実際に呼んだ実行では、機械が読める実行結果として出力されます。dry-runやoffline、key未設定のように意図的に飛ばした実行では出力されません。また、安定した契約（Stable Contract）ではありません。
 
-ここで適用先を分けて理解する必要があります。
+Coverageの使われ方は2つに分かれます。保存した複数回の実行結果を比べる収束判定では既定で使われ、Coverage不足を理由にGateを止めるのは明示的に有効化（opt-in）した場合だけです。収束判定での扱いは第28章で詳しく見ます。
 
-### saved-runの収束判定
-
-`river runs diff` 側では、最新runのCoverageが `partial` / `not_executed` の場合、`CONVERGED` を `NO_SIGNAL` へ降格するqualificationが既定で入ります。
-
-つまり、未完了reviewを「問題なしで収束」と扱いにくくします。
-
-### Gateへの強制反映
-
-一方、Gate自体をCoverage不足で `NO_GO` に倒すのはopt-inです。
-
-current contractでは `RIVER_GATE_COVERAGE=1` を有効にした場合に、Coverage不足をGate判断へ反映します。
-
-この非対称は意図されています。
-
-~~~text
-Coverage observed
-  ↓
-saved-run convergence qualification: default
-
-Coverage blocks gate
-  ↓
-opt-in
-~~~
-
-本書で重要なのは設定名より、
+大事なのは、
 
 > **0 findings と review complete を別の事実にする**
 

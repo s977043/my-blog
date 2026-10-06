@@ -39,15 +39,10 @@ Expected Conditions
 
 Skill評価で危険なのは、問題を見つけるfixtureだけを増やすことです。
 
-たとえばhallucinated-reference Skillなら、
+たとえばhallucinated-reference Skillなら、次の両方が必要です。
 
-### Positive
-存在しないhelperを新規参照したらFindingを出す。
-
-### Negative
-同じdiff内でhelperを定義しているならFindingを出さない。
-
-の両方が必要です。
+- **Positive** — 存在しないhelperを新規参照したらFindingを出す
+- **Negative** — 同じdiff内でhelperを定義しているならFindingを出さない
 
 Review Skillには、
 
@@ -76,7 +71,7 @@ Planner evaluationでは、
 
 ## 評価値を絶対品質と考えない
 
-Fixtureが通ったから、本番で必ず良いReviewになるわけではありません。
+Fixtureが通ったから、本番で必ず良いレビューになるわけではありません。
 
 既知fixtureへ最適化しすぎる可能性があります。
 

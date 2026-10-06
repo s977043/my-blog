@@ -36,10 +36,10 @@ schema validation、明示ルールの検査、Findingの構造検証、Coverage
 
 ## 3. Headless LLM
 
-GitHub Actionsやstandalone runnerでは、River Review側からLLM providerを呼び出す経路があります。
+GitHub Actions経由のheadless実行では、River Review側からLLM providerを呼び出します。
 
 ~~~text
-GitHub Actions / runner
+GitHub Actions
       ↓
 River Review
       ↓
@@ -50,7 +50,7 @@ CI上で継続的にレビューしたい場合はこちらが使えます。
 
 ## 実行surfaceと判断所有権を混ぜない
 
-Plugin、CLI、CIのどこで実行しても、Review Judgmentの正本はチーム側へ置けます。
+PluginでもCIでも、Review Judgmentの正本はチーム側へ置けます。
 
 ~~~text
 Execution surface changes

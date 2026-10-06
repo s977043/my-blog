@@ -4,7 +4,7 @@ title: "Skillをレビュー職務として設計する"
 
 River ReviewのSkillは、単なるPrompt断片ではありません。
 
-公開されているSkill schemaでは、id / name / description / categoryに加えて、適用対象、必要Context、severity、出力種別、evaluationType、dependenciesなどを宣言できます。
+公開されているSkill schemaでは、id / name / description / categoryを宣言します。加えて、適用対象、必要Context、severity、出力種別、evaluationType、dependenciesなども持てます。
 
 つまりSkillは、
 
