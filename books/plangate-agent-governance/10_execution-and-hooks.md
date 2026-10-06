@@ -13,7 +13,7 @@ title: "Hookで「お願い」を実行時の検査へ近づける"
 
 規範としては必要です。
 
-ただし、PlanGateでは重要な一部を、PromptだけでなくHookやCLIの検査へ移そうとしています。
+ただし、PlanGateでは重要な一部を、Promptだけでなく実行時の検査へ移そうとしています。
 
 ここで大事なのは、
 
@@ -50,7 +50,7 @@ Hook
 
 です。
 
-PlanGateでは、たとえば次のような不変条件をHookやCLIで検査します。
+PlanGateでは、たとえば次のような不変条件を実行時に検査します。
 
 - Planが存在するか
 - Approvalが成立しているか
@@ -176,13 +176,13 @@ PlanGateの現行Hook documentationでは、強制を複数層に分けていま
 
 - Claude PreToolUse
 - CI
-- `bin/plangate` CLI
+- PlanGateのコマンドを経由する検査
 - GitHub branch protection等の外部設定
 - Codex側runtime integration
 
 重要なのは、どの層も万能ではないことです。
 
-たとえばCLI経由でしか発火しない検査は、CLIを使わなければ休眠します。
+たとえばPlanGateのコマンドを経由したときだけ発火する検査は、そのコマンドを使わなければ休眠します。
 
 Claudeの `Edit|Write` matcherだけにあるGuardは、Bash経由では同じ保証になりません。
 

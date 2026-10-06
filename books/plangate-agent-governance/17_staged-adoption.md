@@ -10,23 +10,49 @@ PlanGateには、Workflow、Skill、Agent、Gate、Hook、Metrics、Evalなど�
 
 - README: **Level 1〜5** — どの機能範囲まで採用するかを示す段階
 - staged-adoption-guide: **Phase 0〜3** — Day 1から運用習熟を進める導入ロードマップ
-- plugin-only-adoption: **Level 0** — CLIを入れずに観点・型だけ試す入口
+- plugin-only-adoption: **Level 0** — Pluginだけで観点・型を試す入口
 
 どれか一つが「正しく」、残りが「旧い」と断定するより、用途を分けて読む方が安全です。
 
-## 本書ではPhase 0〜3を導入手順に使う
+## 本書ではPluginのLevel 0から始める
 
-この章では、**実際にどの順序で導入するか**を説明するため、staged-adoption-guideのPhase 0〜3を主軸にします。
+この章では、**実際にどの順序で導入するか**を説明します。最初の段はPluginだけで始めるLevel 0にし、その先はstaged-adoption-guideのPhase 1〜3の考え方を借ります。
 
 | 段階 | 主目的 |
 | --- | --- |
-| plugin-only Level 0 | CLIなしで観点・型を試す |
-| Phase 0 | ultra-lightで1タスクを完走 |
+| Level 0（Plugin） | Pluginを入れて観点・型を試す |
 | Phase 1 | Planを先に作る習慣をつくる |
 | Phase 2 | Approval Boundaryを導入する |
-| Phase 3 | 必要なHook / external review / Metricsを強化する |
+| Phase 3 | 必要なHook / 外部Review / Metricsを強化する |
 
-各Phaseで「何をまだ使わなくてよいか」は、後続の節で具体的に説明します。
+各段で「何をまだ使わなくてよいか」は、後続の節で具体的に説明します。
+
+## Level 0 — Pluginで「型」だけ試す
+
+最初はPluginを入れるだけで始められます。
+
+この段階で使えるのは、
+
+- Requirement整理
+- Acceptance Criteria
+- Risk / edge case観点
+- Reviewの型
+- Plan / Handoffの型
+- mode分類の考え方
+
+などです。
+
+一方で、未承認実装の機械的な停止、承認後のPlan改変の検知、設定の自動検査、機械検証は、Pluginだけでは働きません。
+
+つまりLevel 0は、
+
+> **Governanceの考え方は使うが、守る責任はまだ人間の規律にある。**
+
+状態です。
+
+これで価値が出るなら、無理に次の段へ進まなくても構いません。
+
+公式の段階導入ガイドには、PlanGateが動くかを確かめるPhase 0もあります。手順は[公式ガイド](https://github.com/s977043/PlanGate/blob/main/docs/staged-adoption-guide.md)を参照してください。
 
 READMEのLevel 1〜5は、Plan approval → handoff → hooks/validate → metrics → eval/timelineと、**採用する機能範囲を段階化する別の見取り図**として参照します。
 
@@ -73,55 +99,6 @@ Mode
 逆に、導入初期でも高リスクtaskを軽く扱ってよいという意味でもありません。
 
 **導入成熟度とtask riskを別軸で持つ**ことが、過剰なceremonyを避けるポイントです。
-
-## Level 0 — CLIなしで「型」だけ試す
-
-CLI導入の判断コストが高いなら、plugin-onlyから始められます。
-
-この段階で使えるのは、
-
-- Requirement整理
-- Acceptance Criteria
-- Risk / edge case観点
-- Reviewの型
-- Plan / Handoffの型
-- mode分類の考え方
-
-などです。
-
-一方で、未承認実装のmechanical block、plan hash改変検知、doctorによるsettings検査、CLIによるexec / validateは使えません。
-
-つまりLevel 0は、
-
-> **Governanceの考え方は使うが、守る責任はまだ人間の規律にある。**
-
-状態です。
-
-これで価値が出るなら、無理にCLIへ進まなくても構いません。
-
-## Phase 0 — まず1タスクを完走する
-
-現行staged adoption guideのPhase 0はultra-lightです。
-
-最小の流れは、
-
-~~~text
-bin/plangate init TASK-XXXX
-↓
-小さな変更を完了
-↓
-bin/plangate doctor
-~~~
-
-です。
-
-PlanもC-3も必須ではなく、Agentも0体で構いません。
-
-ここでの目的はGovernance全体を体験することではなく、
-
-> **このprojectでPlanGateを使うこと自体が成立するか。**
-
-を確認することです。
 
 ## Phase 1 — Planを残す
 
@@ -220,7 +197,7 @@ False Positiveが多いGuardをいきなりblockへすると、迂回やbypass�
 | --- | --- |
 | 実装前にscopeが膨らむ | Plan / Acceptance |
 | Planを書いても勝手に実装へ進む | Approval Boundary |
-| 未承認やscope外変更が繰り返される | Hook / CLI enforcement |
+| 未承認やscope外変更が繰り返される | Hookなどの機械的な強制 |
 | session切替で状態が失われる | Handoff / Current State |
 | Builderの盲点がReviewへ残る | Independent Review |
 | PR後のCI修正で人間が詰まる | Delivery loop |
@@ -287,7 +264,7 @@ Boundaryを維持するコスト
 ### PlanGate公式の現在仕様
 
 - plugin-only Level 0
-- Phase 0〜3
+- Phase 0〜3（本書ではLevel 0とPhase 1〜3を使う）
 - warningからstrictへの段階導入
 - coexistence / partial adoption
 - when-not-to-useの非採用ケース

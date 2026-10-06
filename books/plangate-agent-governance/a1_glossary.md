@@ -196,7 +196,7 @@ Phase 3まで導入していても、軽いtaskは軽いModeで扱います。
 
 AIが自分の統制機構を直接変更して自己承認しないための、Human-ownedな保護対象群です。
 
-settings、rules、agents / commands、Hook scripts、bin/plangate、CI workflow、AGENTS.md、CLAUDE.mdなどが対象になります。
+settings、rules、agents / commands、Hook scripts、PlanGateのコマンド、CI workflow、AGENTS.md、CLAUDE.mdなどが対象になります。
 
 対象pathの正確な一覧はmode classification / Hook実装を正本としてください。
 

@@ -10,41 +10,44 @@ title: "最小構成で1タスクを最後まで回す"
 
 という判断境界を、一度体験することです。
 
-Planの詳細な書き方は既存の plangate-guide に譲ります。
+Planの詳細な書き方は『AI にコードを書かせる前にやること — PlanGate 実践ガイド』に譲ります。
 
-## まず公式Phase 0で動作確認する
+## まずPluginを入れる
 
-PlanGateを初めて導入したprojectなら、現行staged adoption guideはPhase 0から始めます。
+PlanGateは、Claude CodeとCodexのPluginとして配布されています。最初の1周は、Pluginだけで回せます。
 
-~~~text
-bin/plangate init TASK-XXXX
-↓
-小さな変更を完了
-↓
-bin/plangate doctor
-~~~
+Claude Codeなら、セッションの中で次を実行します。
 
-ultra-lightなのでPlanやC-3は必須ではありません。
+```text
+/plugin marketplace add s977043/PlanGate
+/plugin install plangate
+```
 
-最初からGovernance全体を試すより、
+Codexでは、Marketplaceの登録とPluginの追加が別の手順です。登録だけではPluginは読み込まれないので、追加まで行います。手順は更新されることがあるので、導入するときは[公式README](https://github.com/s977043/PlanGate/blob/main/README.md)を確認してください。
 
-> **このprojectでPlanGateを使うこと自体が成立するか。**
+## Pluginで回す1タスクの流れ
 
-を確認します。
+Pluginを入れると、タスクごとの作業用フォルダ（`docs/working/TASK-XXXX/`）に、入力・Plan・検証結果・引き継ぎがまとまります。Claude Codeでの流れは次のとおりです。
 
-plugin-onlyならCLIなしのLevel 0からでも構いません。
+```text
+/working-context TASK-XXXX
+（pbi-input.mdに、Why・やらないこと・Acceptanceを書く）
+/ai-dev-workflow TASK-XXXX plan
+（人がPlanを読んで承認する）
+/ai-dev-workflow TASK-XXXX exec
+```
 
-この段階が通ったあと、Bookで扱ってきた判断境界を最小構成で一周します。
+要件の整理、Acceptance Criteria、リスクの洗い出し、Reviewの型、Plan / Handoffの型は、Pluginだけで使えます。一方、承認前の実装を機械的に止める仕組みや機械検証は、Pluginだけでは働きません。Pluginだけの段階では、境界を守る責任はまだ人間の規律にあります。
+
+この章では、この流れに沿って、本書で扱ってきた判断境界を最小構成で一周します。
 
 ## ここからは「本書の演習」であり、公式Phase名ではない
 
 このあと行う最小Governance Loopは、PlanGate公式の新しいPhaseを定義するものではありません。
 
-公式Phase 0はultra-lightです。
+本書では中心概念を一周するために、Plan / Review / Approval / Verificationまで意図的に使います。
 
-一方、このBookでは中心概念を一周するために、Plan / Review / Approval / Verificationまで意図的に使います。
-
-そのため、この演習は現行staged adoptionの感覚ではPhase 1〜2の要素をまたぎます。
+そのため、この演習は公式の段階導入ガイドでいえばPhase 1〜2の要素をまたぎます。
 
 目的はPhase番号を再定義することではなく、
 
@@ -173,9 +176,9 @@ Self Reviewだけでも構いません。
 
 のどれかを明示するだけでも、Reviewとの違いを体験できます。
 
-CLI / C-3を導入しているなら、現行PlanGateのapproval artifactへbindできます。
+PlanGateには、人間の承認を記録として残し、承認したPlanと実装を結びつける仕組みもあります。
 
-重要なのはcommandそのものではなく、
+重要なのは仕組みそのものではなく、
 
 ~~~text
 Review
@@ -411,8 +414,9 @@ PlanGateの導入度を上げることは目的ではありません。
 ここまで一度体験すれば、HookやAgentの数を知らなくても、PlanGateの中心思想は使えます。
 
 Sources:
-- https://github.com/s977043/PlanGate/blob/main/docs/staged-adoption-guide.md
+- https://github.com/s977043/PlanGate/blob/main/README.md
 - https://github.com/s977043/PlanGate/blob/main/docs/plugin-only-adoption.md
+- https://github.com/s977043/PlanGate/blob/main/docs/staged-adoption-guide.md
 - https://github.com/s977043/PlanGate/blob/main/docs/plangate.md
 
 ## この1周で確認したかったこと

@@ -194,7 +194,7 @@ Review / Approvalへ戻る
 
 ## Human Presenceも「絶対防御」とは書かない
 
-現行PlanGateの `plangate approve` は、人間の承認判断をJSON手書きにせず、対話TTY・環境・親process・nonce challengeなどでhuman presenceをbest-effortに確認し、approval artifactを生成します。
+PlanGateには、人間の承認を記録として残す仕組みがあります。承認の記録をAIが手で書けないようにし、その場に人間がいるかを、できる範囲で確かめてから記録を作ります。
 
 重要なのは、PlanGate自身がこれを**絶対的なsecurity boundaryとは主張していない**ことです。
 
