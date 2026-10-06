@@ -564,6 +564,7 @@ River Reviewで取り組んでいるJudgment Placementは、その問いをも�
 
 ## 参考
 
+- 📕 [Zenn Book: AIエージェント時代のレビューを設計する — River Review 実践ガイド](https://zenn.dev/minewo/books/river-review-guide) - この記事の Judgment Placement を含め、レビュー判断をチームの資産にする設計を全7部で体系化した実践ガイドです。
 - [Stop burning tokens on code review - Swizec Teller](https://swizec.com/blog/stop-burning-tokens-on-code-review)
 - [River Review - GitHub](https://github.com/s977043/river-review)
 - [Judgment Placement - River Review](https://river-review.the3396.com/explanation/judgment-placement/)
