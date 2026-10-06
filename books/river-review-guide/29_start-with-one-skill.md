@@ -72,14 +72,7 @@ Packにはofficial / community / experimentalといったmaturity tierがあり�
 
 最初の1 Skillでは、複雑なKPIを作る必要はありません。
 
-最低限、次を記録します。
-
-- Useful Finding
-- False Positive
-- Missed Issue
-- Humanが実際に修正したか
-- Review Cost / latency
-- 同じ指摘が再発したか
+最低限、Useful Finding・False Positive・Missed Issueと、同じ指摘が再発したかを記録します。観測する項目の全体は第33章で扱います。
 
 特に「何件出たか」だけで評価しないことが重要です。
 

@@ -86,7 +86,7 @@ Agent    = その役割を実行する主体
 
 次の層は、「今どこにいて、何を根拠に進んでいるか」です。
 
-Plan、todo、test-cases、approval、review、current state、handoff、evidenceなどを、会話の外に残します。
+Plan、todo、test-cases、approval、review、現在の状態、handoff、evidenceなどを、会話の外に残します。
 
 これにより、
 
@@ -152,11 +152,11 @@ Promptで、
 
 Hookは、その規範を実行時の検査へ近づけます。
 
-たとえばPlanの存在、承認状態、承認後のPlan変更、scope外変更などを検査できます。
+たとえばPlanの存在、承認状態、承認後のPlan変更、範囲外変更などを検査できます。
 
 ただし、Hookがあるだけで安全とは限りません。
 
-linked worktreeで境界が外れた事例や、安全なcommandを誤ってblockした事例もありました。だからHook自身も、後半では検証対象になります。
+linked worktreeで境界が外れた事例や、安全なコマンドを誤ってblockした事例もありました。だからHook自身も、後半では検証対象になります。
 
 ```text
 Gate = 進める条件
@@ -184,8 +184,8 @@ Hook = 条件を機械的に確かめる手段の一つ
 | 層 | このタスクで起きること |
 | --- | --- |
 | 仕事 | Plannerが範囲を整理し、Implementerが実装し、Reviewerが確認する |
-| 状態 | Planに「schema変更なし」、test-casesに正常系・不正値・pagination併用を残す |
-| 制御 | schema変更が必要になったらGateで止まり、scope変更の判断へ戻す |
+| 状態 | Planに「スキーマ変更なし」、test-casesに正常系・不正値・pagination併用を残す |
+| 制御 | スキーマ変更が必要になったらGateで止まり、範囲変更の判断へ戻す |
 
 Plugin、Agent、Hookをたくさん入れることが本質なのではありません。
 

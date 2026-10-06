@@ -4,51 +4,54 @@ title: "最小構成で1タスクを最後まで回す"
 
 最後に、ここまでの概念を1つのタスクで一周させます。
 
-この章の目的は、PlanGateの全commandを覚えることではありません。
+この章の目的は、PlanGateの全コマンドを覚えることではありません。
 
-> **Plan → Evidence → Approval → Execution → Verification → Judgment**
+> Plan → Evidence → Approval → Execution → Verification → Judgment
 
 という判断境界を、一度体験することです。
 
-Planの詳細な書き方は既存の plangate-guide に譲ります。
+Planの詳細な書き方は『AI にコードを書かせる前にやること — PlanGate 実践ガイド』に譲ります。
 
-## まず公式Phase 0で動作確認する
+## まずPluginを入れる
 
-PlanGateを初めて導入したprojectなら、現行staged adoption guideはPhase 0から始めます。
+PlanGateは、Claude CodeとCodexのPluginとして配布されています。最初の1周は、Pluginだけで回せます。
 
-~~~text
-bin/plangate init TASK-XXXX
-↓
-小さな変更を完了
-↓
-bin/plangate doctor
-~~~
+Claude Codeなら、セッションの中で次を実行します。
 
-ultra-lightなのでPlanやC-3は必須ではありません。
+```text
+/plugin marketplace add s977043/PlanGate
+/plugin install plangate
+```
 
-最初からGovernance全体を試すより、
+Codexでは、Marketplaceの登録とPluginの追加が別の手順です。登録だけではPluginは読み込まれないので、追加まで行います。手順は更新されることがあるので、導入するときは[公式README](https://github.com/s977043/PlanGate/blob/main/README.md)を確認してください。
 
-> **このprojectでPlanGateを使うこと自体が成立するか。**
+## Pluginで回す1タスクの流れ
 
-を確認します。
+Pluginを入れると、タスクごとの作業用フォルダ（`docs/working/TASK-XXXX/`）に、入力・Plan・検証結果・引き継ぎがまとまります。Claude Codeでの流れは次のとおりです。
 
-plugin-onlyならCLIなしのLevel 0からでも構いません。
+```text
+/working-context TASK-XXXX
+（pbi-input.mdに、Why・やらないこと・Acceptanceを書く）
+/ai-dev-workflow TASK-XXXX plan
+（人がPlanを読んで承認する）
+/ai-dev-workflow TASK-XXXX exec
+```
 
-この段階が通ったあと、Bookで扱ってきた判断境界を最小構成で一周します。
+要件の整理、Acceptance Criteria、リスクの洗い出し、Reviewの型、Plan / Handoffの型は、Pluginだけで使えます。一方、承認前の実装を機械的に止める仕組みや機械検証は、Pluginだけでは働きません。Pluginだけの段階では、境界を守る責任はまだ人間の規律にあります。
+
+この章では、この流れに沿って、本書で扱ってきた判断境界を最小構成で一周します。
 
 ## ここからは「本書の演習」であり、公式Phase名ではない
 
 このあと行う最小Governance Loopは、PlanGate公式の新しいPhaseを定義するものではありません。
 
-公式Phase 0はultra-lightです。
+本書では中心概念を一周するために、Plan / Review / Approval / Verificationまで意図的に使います。
 
-一方、このBookでは中心概念を一周するために、Plan / Review / Approval / Verificationまで意図的に使います。
-
-そのため、この演習は現行staged adoptionの感覚ではPhase 1〜2の要素をまたぎます。
+そのため、この演習は公式の段階導入ガイドでいえばPhase 1〜2の要素をまたぎます。
 
 目的はPhase番号を再定義することではなく、
 
-> **判断境界を一度、小さなtaskで体験すること。**
+> 判断境界を一度、小さなタスクで体験すること。
 
 です。
 
@@ -56,21 +59,21 @@ plugin-onlyならCLIなしのLevel 0からでも構いません。
 
 最初のGovernance Loopに向くタスクは、
 
-- scopeが狭い
+- 範囲が狭い
 - 戻しやすい
 - Acceptance Criteriaを書ける
-- 結果をtestや画面から確認できる
-- schema / security / destructive変更を含まない
+- 結果をテストや画面から確認できる
+- スキーマ / セキュリティ / destructive変更を含まない
 
 ものです。
 
 前章まで使ってきた架空例を続けます。
 
-> **注文一覧APIにstatus絞り込みを追加する。**
+> 注文一覧APIにstatus絞り込みを追加する。
 
 今回は、
 
-- DB schema変更なし
+- DBスキーマ変更なし
 - status定義変更なし
 - public APIの追加parameterのみ
 - rollbackしやすい
@@ -83,7 +86,7 @@ plugin-onlyならCLIなしのLevel 0からでも構いません。
 
 最低限、
 
-~~~text
+```text
 Why
 注文一覧から特定statusだけ取得したい
 
@@ -101,7 +104,7 @@ Acceptance
 - valid statusで対象だけ返る
 - invalid statusは400
 - paginationと併用できる
-~~~
+```
 
 を用意します。
 
@@ -115,12 +118,12 @@ Planを書く前後で、判断を変えうるUnknownを確認します。
 
 - 既存status enumはどこにあるか
 - query parameter validationの既存patternはあるか
-- pagination testはどこにあるか
-- DB schema変更なしで実装できるか
+- paginationテストはどこにあるか
+- DBスキーマ変更なしで実装できるか
 
 です。
 
-~~~text
+```text
 Unknown
 DB schema変更が必要か
 
@@ -129,9 +132,9 @@ existing schema / model / query実装を確認
 
 Evidence
 既存status fieldでfilter可能
-~~~
+```
 
-とできれば、Out of Scopeの「schema変更なし」を支える材料になります。
+とできれば、Out of Scopeの「スキーマ変更なし」を支える材料になります。
 
 確認した結果、migrationが必要ならここでPlanを変えます。
 
@@ -161,7 +164,7 @@ Self Reviewだけでも構いません。
 
 ここで、
 
-> **このPlanなら実装へ進めてよいか。**
+> このPlanなら実装へ進めてよいか。
 
 を判断します。
 
@@ -173,17 +176,17 @@ Self Reviewだけでも構いません。
 
 のどれかを明示するだけでも、Reviewとの違いを体験できます。
 
-CLI / C-3を導入しているなら、現行PlanGateのapproval artifactへbindできます。
+PlanGateには、人間の承認を記録として残し、承認したPlanと実装を結びつける仕組みもあります。
 
-重要なのはcommandそのものではなく、
+重要なのは仕組みそのものではなく、
 
-~~~text
+```text
 Review
 = 問題を探した
 
 Approval
 = このPlanへExecution Authorityを渡した
-~~~
+```
 
 を分けることです。
 
@@ -193,7 +196,7 @@ Approval
 
 ### Continue
 
-- 承認scope内
+- 承認範囲内
 - risk不変
 - Plan前提が有効
 
@@ -209,9 +212,9 @@ Approval
 
 ### Escalate
 
-- schema変更が必要になった
+- スキーマ変更が必要になった
 - Acceptanceを変えたい
-- 新しいsecurity riskが出た
+- 新しいセキュリティリスクが出た
 
 ならRe-plan / Approvalへ戻ります。
 
@@ -223,7 +226,7 @@ Approval
 
 Acceptanceに対応するVerificationを実行します。
 
-~~~text
+```text
 AC-1 valid status
 → PASS
 
@@ -232,11 +235,11 @@ AC-2 invalid status
 
 AC-3 pagination併用
 → PASS
-~~~
+```
 
-さらに必要なlint / unit testなどを実行します。
+さらに必要なlint / 単体テストなどを実行します。
 
-Review repairを入れたなら、Evidenceを更新します。
+Review修復を入れたなら、Evidenceを更新します。
 
 古いHEADに対するgreenをそのまま使わないことが重要です。
 
@@ -244,20 +247,20 @@ Review repairを入れたなら、Evidenceを更新します。
 
 一人・短時間で終わるなら、重いhandoffは不要かもしれません。
 
-しかしsessionを跨ぐ、Reviewerへ渡す、PR後もDeliveryを続けるなら、
+しかしセッションを跨ぐ、Reviewerへ渡す、PR後もDeliveryを続けるなら、
 
-- current state
-- completed work
-- unresolved item
-- next action
+- 現在の状態
+- 終わった作業
+- 未解決の項目
+- 次の行動
 - Evidence refs
-- current commit / PR identity
+- 現在のcommit / PR identity
 
 を残します。
 
 「何を考えたか」ではなく、
 
-> **次の主体が現在状態から再開できるか。**
+> 次の主体が現在状態から再開できるか。
 
 で十分です。
 
@@ -265,19 +268,19 @@ Review repairを入れたなら、Evidenceを更新します。
 
 VerificationがPASSしても、
 
-~~~text
+```text
 PASS
 ≠
 merge
-~~~
+```
 
 です。
 
 最後に、
 
-- scopeは守られたか
+- 範囲は守られたか
 - Acceptanceは満たされたか
-- unresolved riskは許容できるか
+- 未解決のリスクは許容できるか
 - 今この変更を入れるか
 
 を判断します。
@@ -286,11 +289,11 @@ PlanGateのDeliveryまで自動化しているなら、AIはMERGE_READYまで持
 
 それでも、
 
-~~~text
+```text
 MERGE_READY
 ≠
 MERGED
-~~~
+```
 
 です。
 
@@ -302,17 +305,17 @@ MERGED
 
 ### Planが重かった
 
-taskが小さすぎるかもしれません。light / ultra-lightへ下げます。
+タスクが小さすぎるかもしれません。light / ultra-lightへ下げます。
 
 ### Approval待ちが長かった
 
 Approval対象を狭くできないか。低リスク領域を明示委譲できないかを見ます。
 
-### 同じscope逸脱が起きた
+### 同じ範囲逸脱が起きた
 
 Hook / deterministic checkの候補です。
 
-### session切替で迷った
+### セッション切替で迷った
 
 Handoff / Current Stateを強くします。
 
@@ -320,7 +323,7 @@ Handoff / Current Stateを強くします。
 
 Fresh Context / Review Packageを検討します。
 
-### CI repairで人間が引き取った
+### CI修復で人間が引き取った
 
 Delivery loopをMERGE_READYまで伸ばす候補です。
 
@@ -330,7 +333,7 @@ Eval / positive-negative controlを導入します。
 
 つまり、
 
-> **次に何を導入するかは、最初の1周で観測したfailureから決める。**
+> 次に何を導入するかは、最初の1周で観測した失敗から決める。
 
 ということです。
 
@@ -347,7 +350,7 @@ Eval / positive-negative controlを導入します。
 
 PlanGateの導入度を上げることは目的ではありません。
 
-> **必要なBoundaryが、必要な強さで存在すること。**
+> 必要なBoundaryが、必要な強さで存在すること。
 
 が目的です。
 
@@ -361,15 +364,15 @@ PlanGateの導入度を上げることは目的ではありません。
 - Harness Eval / Ratchet
 - PR後の完全自動Delivery loop
 
-もちろん、既に必要性が分かっているprojectでは例外です。
+もちろん、既に必要性が分かっているプロジェクトでは例外です。
 
-ただ、まだfailureを観測していないなら、まずBoundary / Evidence / Approval / Verificationの一周から始めます。
+ただ、まだ失敗を観測していないなら、まずBoundary / Evidence / Approval / Verificationの一周から始めます。
 
-**導入しないものを明示することも、Scope管理です。**
+導入しないものを明示することも、Scope管理の一部です。
 
 ## 明日やるなら、この7項目だけ
 
-このBookを読み終えて、明日1つ試すなら次だけで十分です。
+本書を読み終えて、明日1つ試すなら次だけで十分です。
 
 - [ ] 小さく、戻しやすいタスクを1つ選ぶ
 - [ ] In Scope / Out of Scope / Acceptanceを書く
@@ -383,9 +386,9 @@ PlanGateの導入度を上げることは目的ではありません。
 
 ## 最小Governance Loop
 
-このBook全体を最小形へ圧縮すると、次の7段階になります。
+本書全体を最小形へ圧縮すると、次の7段階になります。
 
-~~~text
+```text
 1. Boundary
    何を任せてよいか決める
 
@@ -406,18 +409,19 @@ PlanGateの導入度を上げることは目的ではありません。
 
 7. Judge
    最終Authorityを別に置く
-~~~
+```
 
 ここまで一度体験すれば、HookやAgentの数を知らなくても、PlanGateの中心思想は使えます。
 
 Sources:
-- https://github.com/s977043/PlanGate/blob/main/docs/staged-adoption-guide.md
+- https://github.com/s977043/PlanGate/blob/main/README.md
 - https://github.com/s977043/PlanGate/blob/main/docs/plugin-only-adoption.md
+- https://github.com/s977043/PlanGate/blob/main/docs/staged-adoption-guide.md
 - https://github.com/s977043/PlanGate/blob/main/docs/plangate.md
 
 ## この1周で確認したかったこと
 
-このBookで一貫して扱ってきたのは、AIを信用できる存在へ変える方法ではありません。
+本書で一貫して扱ってきたのは、AIを信用できる存在へ変える方法ではありません。
 
 1タスクを回したとき、
 
@@ -433,9 +437,9 @@ Sources:
 
 逆に、モデルがどれだけ高性能でも、これらが曖昧なら、人間は途中経過を監視し続けることになります。
 
-> **信頼できるAgentを作るのではなく、信頼しなくても任せられる環境を作る。**
+> 信頼できるAgentを作るのではなく、信頼しなくても任せられる環境を作る。
 
-ここが、このBookの出発点であり到達点です。
+ここが、本書の出発点であり到達点です。
 
 ## この章で持ち帰ること
 

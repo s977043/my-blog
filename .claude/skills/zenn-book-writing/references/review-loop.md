@@ -84,7 +84,7 @@ Part本文を書くときも3種類の観点を使う。
 
 ## Review log
 
-`BOOK_PLAN.md` に最低限を残す。
+`docs/books/<slug>/BOOK_PLAN.md` に最低限を残す。
 
 ~~~text
 Loop N — name
