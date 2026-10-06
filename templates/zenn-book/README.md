@@ -40,7 +40,7 @@ npm run new:zenn-book -- sample-book \
   --dry-run
 ~~~
 
-`--dry-run` は作成予定ファイルだけを表示し、書き込みを行わない。
+`--dry-run` は作成予定ファイルだけを表示し、書き込みを行わない。`--out` が `books/` 配下でないときは `--internal-dir` で内部編集用ファイルの置き場を指定する。
 
 ## 検証
 

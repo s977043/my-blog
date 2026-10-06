@@ -94,7 +94,18 @@ function createBook({ slug, title, summary, topics, outDir, internalDir, dryRun 
   if (topics.length > 5) throw new Error("--topics accepts at most 5 comma-separated topics");
   if (!fs.existsSync(TEMPLATE_DIR)) throw new Error(`template directory not found: ${TEMPLATE_DIR}`);
   if (fs.existsSync(outDir)) throw new Error(`target already exists: ${outDir}`);
-  const planDir = internalDir || defaultInternalDir(outDir, slug);
+  if (path.basename(outDir) !== slug) {
+    throw new Error(`--out directory name must match slug: ${path.basename(outDir)} != ${slug}`);
+  }
+  const planDir = path.resolve(internalDir || defaultInternalDir(outDir, slug));
+  const insideOut = path.relative(outDir, planDir);
+  if (insideOut === "" || !insideOut.startsWith("..")) {
+    throw new Error("--internal-dir must not be the book directory or inside it");
+  }
+  const insideBooks = path.relative(path.join(ROOT, "books"), planDir);
+  if (insideBooks === "" || !insideBooks.startsWith("..")) {
+    throw new Error("--internal-dir must not be under books/");
+  }
   if (fs.existsSync(planDir)) throw new Error(`target already exists: ${planDir}`);
 
   const values = {
@@ -225,11 +236,27 @@ function selfTest() {
       throw new Error("--out outside books/ without --internal-dir was not blocked");
     }
 
+    const outC = path.join(tmp, "elsewhere", "out-c");
     const explicitPlanDir = path.join(tmp, "plans", "out-c");
-    createBook({ ...base, slug: "out-c", outDir: outElsewhere, internalDir: explicitPlanDir });
-    if (!fs.existsSync(path.join(explicitPlanDir, "BOOK_PLAN.md")) || fs.existsSync(path.join(outElsewhere, "BOOK_PLAN.md"))) {
+    createBook({ ...base, slug: "out-c", outDir: outC, internalDir: explicitPlanDir });
+    if (!fs.existsSync(path.join(explicitPlanDir, "BOOK_PLAN.md")) || fs.existsSync(path.join(outC, "BOOK_PLAN.md"))) {
       throw new Error("--internal-dir was not used for internal files");
     }
+
+    const expectThrow = (name, pattern, opts) => {
+      let blocked = false;
+      try {
+        createBook({ ...base, ...opts });
+      } catch (error) {
+        blocked = pattern.test(error.message);
+      }
+      if (!blocked || fs.existsSync(opts.outDir)) throw new Error(`${name} was not blocked`);
+    };
+    const outD = path.join(tmp, "elsewhere", "out-d");
+    expectThrow("--internal-dir equal to --out", /must not be the book directory/, { slug: "out-d", outDir: outD, internalDir: outD });
+    expectThrow("--internal-dir inside --out", /must not be the book directory/, { slug: "out-d", outDir: outD, internalDir: path.join(outD, "plan") });
+    expectThrow("--internal-dir under ROOT/books", /must not be under books/, { slug: "out-d", outDir: outD, internalDir: path.join(ROOT, "books", "out-d-plan") });
+    expectThrow("--out name differs from slug", /must match slug/, { slug: "other-slug", outDir: path.join(tmp, "books", "out-e") });
 
     let existingBlocked = false;
     try {

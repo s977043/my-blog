@@ -121,6 +121,8 @@ npm run new:zenn-book -- <slug> \
 
 生成後も `published: false` を維持する。
 
+generatorは内部編集用ファイルを `docs/books/<slug>/` に作る。`--out` が `books/` 配下でないときは `--internal-dir` が必要で、`--out` のディレクトリ名は slug と一致させる。
+
 公開する章と `config.yaml` は `books/<slug>/`、`BOOK_PLAN.md` などの内部編集用ファイルは `docs/books/<slug>/` に置く。Zennは `config.yaml` の `chapters` に無い `.md` を「デプロイがスキップされました」と通知し続けるため、内部編集用ファイルを `books/<slug>/` に置かない。
 
 generatorを使えない環境では `templates/zenn-book/` を参照して同等構成を作る。
