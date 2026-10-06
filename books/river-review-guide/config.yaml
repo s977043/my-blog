@@ -1,5 +1,5 @@
 title: "AIエージェント時代のレビューを設計する — River Review 実践ガイド"
-summary: "AIエージェントでコードを書く速度が上がるほど、ボトルネックは『誰が、何を根拠に判断するか』へ移る。本書ではRiver Reviewを題材に、Review Judgment as Code、Artifact、Evidence、Judgment Placement、Review Coverage、Memory、Evaluationを全33章で解説する。読み終えたとき、自分のチームでレビュー判断をどこに置き、何をAIへ任せ、どこを人間が担い、その判断をどう検証・改善するかを設計できる状態を目指す。"
+summary: "AIエージェントでコードを書く速度が上がるほど、ボトルネックは『誰が、何を根拠に判断するか』へ移る。本書ではRiver Reviewを題材に、Review Judgment as Code、Artifact、Evidence、Judgment Placement、Review Coverage、Memory、Evaluationを、全7部・本編33章と付録で解説する。読み終えたとき、自分のチームでレビュー判断をどこに置き、何をAIへ任せ、どこを人間が担い、その判断をどう検証・改善するかを設計できる状態を目指す。"
 topics: ["AI", "AIエージェント", "コードレビュー", "ClaudeCode", "Codex"]
 published: true
 price: 0
