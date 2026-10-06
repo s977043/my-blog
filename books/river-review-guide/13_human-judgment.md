@@ -20,7 +20,9 @@ River ReviewのHuman Judgment Focusは、少し違う方向を取ります。
 
 ## Cliff / Hill / Field
 
-River Reviewのdocsでは、リスクを3階層で説明しています。
+River Reviewのdocsでは、リスクを3階層で説明しています。日本語では崖（Cliff）・丘（Hill）・原っぱ（Field）と呼びます。
+
+この3階層は、第12章のJudgment Placementとは別の軸です。Judgment Placementは「その判断を誰 / 何が実行するか」を分け、Cliff / Hill / Fieldは「その変更にどれだけ人間監督が要るか」を分けます。Cliffの変更でも、型や依存方向の確認はDeterministicに任せられます。
 
 | 階層 | 例 | 人間監督 |
 | --- | --- | --- |

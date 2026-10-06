@@ -92,31 +92,7 @@ River Reviewのcontractでは次を分離します。
 
 machine-readableなreview execution surfaceへ出力されますが、Stable Contractではありません。
 
-ここで適用先を分けて理解する必要があります。
-
-### 保存した実行結果の収束判定
-
-保存した複数回の実行結果を比べる収束判定では、最新runのCoverageが `partial` / `not_executed` なら、「収束した」という判定を既定で取り下げます。
-
-つまり、未完了reviewを「問題なしで収束」と扱いにくくします。
-
-### Gateへの強制反映
-
-一方、Gate自体をCoverage不足で `NO_GO` に倒すのはopt-inです。
-
-current contractでは、明示的に有効化（opt-in）した場合に限り、Coverage不足をGate判断へ反映します。
-
-この非対称は意図されています。
-
-~~~text
-Coverage observed
-  ↓
-saved-run convergence qualification: default
-
-Coverage blocks gate
-  ↓
-opt-in
-~~~
+Coverageの使われ方は2つに分かれます。保存した複数回の実行結果を比べる収束判定では既定で使われ、Coverage不足を理由にGateを止めるのは明示的に有効化（opt-in）した場合だけです。収束判定での扱いは第28章で詳しく見ます。
 
 大事なのは、
 
