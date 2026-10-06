@@ -10,7 +10,7 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 - Explicit provenance contract: 10
 - Legacy seeds: 8
 - Promotion edges: 7
-- Blocked by author input: 6
+- Seeds with open author input gate: 6
 
 ## Seeds
 
