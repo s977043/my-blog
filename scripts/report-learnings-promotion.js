@@ -21,7 +21,7 @@
 //   npm run report:learnings-promotion -- --file path/to/AGENT_LEARNINGS.md
 //   npm run test:learnings-promotion    # = node scripts/report-learnings-promotion.js --self-test
 //
-// 常に exit 0。ファイルを読めないときだけ exit 1。ファイルは書かない。
+// 集計結果によらず exit 0。ファイルを読めないとき、または引数が不正なときだけ exit 1。ファイルは書かない。
 
 const fs = require("fs");
 const path = require("path");
