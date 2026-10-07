@@ -33,10 +33,11 @@ const CANDIDATE_MIN = 3;
 
 const GUARD_RE =
   /npm run (check|test):|scripts\/hooks|pre-commit|pre-push|PreToolUse|ci\.yml|check-[a-z-]+\.js/;
-const RECUR_RE = /再発|2回目|二度目|同じ(ミス|失敗)|再び/;
+// 「同一セッションで N 回」のように再発語を使わない書き方は拾えない。
+const RECUR_RE = /再発(?!行|防止)|二度目|同じ(ミス|失敗)|再び/;
 
 const THEMES = [
-  { id: "parallel-session", label: "並列セッション", re: /並列セッション/ },
+  { id: "parallel-session", label: "並列セッション", re: /並[列行]セッション/ },
   {
     id: "gh-account",
     label: "gh アカウント",
@@ -45,12 +46,15 @@ const THEMES = [
   { id: "formatter-churn", label: "formatter churn", re: /formatter/i },
   { id: "worktree", label: "worktree", re: /worktree/ },
   { id: "stash", label: "stash", re: /stash/ },
-  { id: "stale-pr", label: "stale PR", re: /stale PR|pr-staleness/ },
+  { id: "stale-pr", label: "stale PR", re: /stale PR|pr-staleness/i },
   { id: "note-wxr", label: "note WXR", re: /WXR/ },
   {
     id: "zenn-release",
     label: "Zenn 公開・rate-limit",
-    re: /release\/zenn|rate-limit|rate limit/,
+    // rate-limit は Zenn と同じエントリに出たときだけ数える（記事 slug の rate-limit を除く）
+    test: (t) =>
+      /release\/zenn/.test(t) ||
+      (/Zenn/.test(t) && /rate-limit|rate limit/.test(t)),
   },
   {
     id: "qiita-publish",
@@ -69,6 +73,7 @@ function splitEntries(text) {
     .split(/\n### (?=\d{4}-\d\d-\d\d)/)
     .slice(1)
     .map((e) => ({
+      date: e.slice(0, 10),
       month: e.slice(0, 7),
       title: e.split("\n", 1)[0].trim(),
       text: e,
@@ -84,7 +89,9 @@ function analyze(text, themes = THEMES) {
   const guarded = entries.filter(isGuarded).length;
   const recurring = entries.filter((e) => RECUR_RE.test(e.text));
   const themeStats = themes.map((t) => {
-    const hit = entries.filter((e) => t.re.test(e.text));
+    const hit = entries.filter((e) =>
+      t.test ? t.test(e.text) : t.re.test(e.text),
+    );
     const unguarded = hit.filter((e) => !isGuarded(e)).length;
     return {
       id: t.id,
@@ -92,6 +99,11 @@ function analyze(text, themes = THEMES) {
       count: hit.length,
       guarded: hit.length - unguarded,
       unguarded,
+      entries: hit.map((e) => ({
+        date: e.date,
+        title: e.title,
+        guarded: isGuarded(e),
+      })),
     };
   });
   return {
@@ -129,9 +141,12 @@ function formatText(r) {
     "",
     `昇格候補（ガード未言及が ${CANDIDATE_MIN} 件以上）:`,
     ...(r.candidates.length
-      ? r.candidates.map(
-          (x) => `  - ${x.label}: 未言及 ${x.unguarded} 件（全 ${x.count} 件）`,
-        )
+      ? r.candidates.flatMap((x) => [
+          `  - ${x.label}: 未言及 ${x.unguarded} 件（全 ${x.count} 件）`,
+          ...x.entries
+            .filter((e) => !e.guarded)
+            .map((e) => `      - ${e.title}`),
+        ])
       : ["  （なし）"]),
     "",
     "注意: 本文の文字列で判定しているため、昇格候補は実態より多めに出る。",
@@ -145,10 +160,12 @@ function parseArgs(argv) {
     if (x === "--json") a.json = true;
     else if (x === "--file") {
       const v = argv[++i];
-      if (!v || v.startsWith("--")) throw new Error("--file にはファイルパスを指定してください（例: --file AGENT_LEARNINGS.md）");
+      if (!v || v.startsWith("--"))
+        throw new Error(
+          "--file にはファイルパスを指定してください（例: --file AGENT_LEARNINGS.md）",
+        );
       a.file = v;
-    }
-    else throw new Error(`unknown option ${x}`);
+    } else throw new Error(`unknown option ${x}`);
   }
   return a;
 }
@@ -231,9 +248,53 @@ function selfTest() {
     threw = true;
   }
   eq("未知のオプションは拒否", threw, true);
-  eq("gh auth refresh（Dependabot トークン）は gh アカウントに数えない", r.themes.find((x) => x.id === "gh-account").count, 1);
-  eq("formatter の無い churn は formatter churn に数えない", r.themes.find((x) => x.id === "formatter-churn").count, 0);
-  eq("「同型の別事象」は再発に数えない", r.recurring.count, 1);
+  eq(
+    "gh auth refresh（Dependabot トークン）は gh アカウントに数えない",
+    r.themes.find((x) => x.id === "gh-account").count,
+    1,
+  );
+  eq(
+    "formatter の無い churn は formatter churn に数えない",
+    r.themes.find((x) => x.id === "formatter-churn").count,
+    0,
+  );
+  const extra = analyze(
+    [
+      "## 📇",
+      "### 2026-10-05 トークンの再発行",
+      "トークンを再発行した。再発防止に手順を書いた。",
+      "### 2026-10-06 Stale PR は 3 点 diff で見る",
+      "並行セッションが先にマージしていた。",
+      "### 2026-10-07 レビューのフォールバック",
+      "記事 ai-review-rate-limit-fallback の話。",
+      "### 2026-10-08 Zenn の rate-limit",
+      "Zenn はアカウント単位の rate-limit。",
+    ].join("\n"),
+  );
+  const count = (id) => extra.themes.find((x) => x.id === id).count;
+  eq("「再発行」「再発防止」は再発に数えない", extra.recurring.count, 0);
+  eq("大文字の Stale PR も stale PR に数える", count("stale-pr"), 1);
+  eq(
+    "「並行セッション」も並列セッションに数える",
+    count("parallel-session"),
+    1,
+  );
+  eq(
+    "Zenn の無い rate-limit（記事 slug）は Zenn テーマに数えない",
+    count("zenn-release"),
+    1,
+  );
+  eq(
+    "テーマごとにエントリの日付・見出し・ガード言及を持つ",
+    extra.themes.find((x) => x.id === "zenn-release").entries,
+    [
+      {
+        date: "2026-10-08",
+        title: "2026-10-08 Zenn の rate-limit",
+        guarded: false,
+      },
+    ],
+  );
   let msg = "";
   try {
     parseArgs(["--file"]);
