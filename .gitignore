@@ -34,3 +34,4 @@ __pycache__/
 
 # Codex がローカルで生成した .claude/agents の変換コピー（正本は .claude/agents/。二重管理を避けるため追跡しない）
 .codex/
+# probe
