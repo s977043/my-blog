@@ -27,6 +27,8 @@ AIレビューを継続運用すると、品質を落とす大きな要因の1�
 - **Source** — どの判断から生まれたか
 - **Expiry / Resurface condition** — 何が変われば再確認するか
 
+現行のschemaでは、Reasonを自由記述ではなく `feedbackType` の分類（`false_positive` / `accepted_risk` / `wont_fix` など）で持ちます。
+
 ## 例: locale fallbackの意図的例外
 
 仮にlegacy consumerだけはlocale未対応で、半年後の廃止までfallbackを残すとします。

@@ -21,7 +21,7 @@ River Reviewは継続的に変化しています。本書では状態を混同�
 - Riverbed Memory v1: runtime実装済み（Stable InterfacesではExperimental）
 - Riverbed external datastore v2: Planned
 - Progressive Disclosure: Stage 1 protoあり、metadata専用loader / Stage 2・3完全分離は未完了
-- verify gate: Planned / 未実装
+- verify gate: Planned（runtimeはstub。[#802](https://github.com/s977043/river-review/issues/802)）
 - 自動承認・自動merge: Non-goal
 
 ## ImplementedとStableを分ける

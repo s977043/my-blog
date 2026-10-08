@@ -27,6 +27,8 @@ River Reviewは、会話を正本にせず **Artifactを外部入力として扱
 | coverage | カバレッジ |
 | lint / typecheck | 機械検査結果 |
 
+表のArtifactは、snapshot時点のArtifact Input Contractに定義済み（Implemented）の入力です。ただし多くは任意入力で、渡さなければその分の判断がスキップされます。
+
 重要なのは、これらがPlanGate内部形式ではなく、**River Reviewへ渡す外部契約**になっていることです。
 
 ## 例: locale追加をArtifactへ分ける

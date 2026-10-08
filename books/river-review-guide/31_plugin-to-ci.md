@@ -20,11 +20,11 @@ River Reviewには複数の導入経路があります。
 
 です。
 
-Plugin経路では、AIエージェントがSkillを直接適用し、project ruleは `.river/rules.md` を使います。
+プロジェクト固有のレビューポリシー（`.river/rules.md`）は、PluginでもGitHub Actionsでも読まれます。
 
-一方GitHub Actionsのrunnerは、repository rootの設定ファイル（`.river-review.json` など）を読みます。
+一方、モデル・レビュー言語・厳格度・除外パターンといったrunnerの動作設定は、repository rootの `.river-review.json` などで指定します。
 
-導入経路ごとの責務を理解せず、全部同じ設定だと思わないことが重要です。
+ポリシーと実行設定を別ファイルで持つ点を押さえ、置いたファイルがどちらの役割なのかを確認することが重要です。
 
 ## 最初からblockingにしない
 

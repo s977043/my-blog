@@ -30,7 +30,7 @@ Gateは、適切なArtifactやフェーズでSkillを実行する境界です。
 
 たとえばPlan段階とDiff段階では、同じSkillでも見られるEvidenceが違います。Gateは「何を判断するか」ではなく、**いつ判断するか**を担います。
 
-現在のRiver Reviewではplan / exec側のゲートを扱い、verify gateには計画中の領域があります。本書でも将来構想を現在機能のようには書きません。
+snapshot時点では、plan gateとexec gateがImplementedです。verify gateはPlannedで、runtimeはstubのまま未実装です（[#802](https://github.com/s977043/river-review/issues/802)）。本書でも将来構想を現在機能のようには書きません。
 
 ## Riverbed remembers judgment
 
