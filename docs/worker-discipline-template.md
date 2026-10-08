@@ -64,6 +64,7 @@ npm ci   # 必須
 - マージは squash only（`--merge` は GraphQL エラーになる）
 - worktree 内では、隔離ガードが **`&&` / `;` で連結した git コマンド**と、**本文に `git` という語を含む `gh pr create --body "$(cat <<EOF ...)"`** を拒否することがある。git コマンドは1つずつ分けて実行し、PR 本文は scratchpad のファイルに書いて `gh pr create --body-file <path>` で渡す（2026-09-23 のワーカーで観測）
   - パスに `GitHub` を含むだけで（例: `~/Documents/GitHub/...` 配下の scratchpad）、`for` ループや `>` リダイレクトと組み合わせると同じく拒否されることがある。ループやリダイレクトを使う処理は Python スクリプトへ寄せるか、コマンドを分ける。`gh pr create --body-file <path>` 単体は通る（同日、別ワーカーで観測）
+- worktree 内では `gh pr close --delete-branch` が PR を閉じたところで止まり、リモートブランチが残る（本体の checkout が `main` を使用中で、ローカルの main へ切り替えられないため）。ブランチの削除は `git push origin --delete <branch>` を別コマンドで打ち、`git ls-remote --heads origin <branch>` が空であることを確かめる（2026-10-08 の CI probe PR #790 で観測）
 
 ---
 
