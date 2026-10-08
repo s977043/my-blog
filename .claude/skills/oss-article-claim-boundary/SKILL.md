@@ -5,7 +5,7 @@ description: 公開済みOSS設計記事、未公開でも実装・検証・効�
 
 # oss-article-claim-boundary
 
-公開済みOSS設計記事と、未公開でも実装・検証・効果を書く原稿、その改善PRをレビューする。構成・誤字・SEOは `article-reviewer` の領分。本スキルは **主張の境界** だけを見る。
+公開済みOSS設計記事と、実装・検証・効果・段階の現在地・借用用語を扱う会社公式note（およびその改善PR）をレビューする。構成・誤字・SEOは媒体別の `article-reviewer` / `note-article-reviewer` に残す。本スキルは **主張の境界** だけを見る。
 
 ## いつ使う
 
@@ -132,12 +132,12 @@ Loop Engineering を「実行ループ」とだけ書くのは must。原典は�
 - 照合した一次情報（path、PR number、または未検証）
 - 最小修正（1文追加で足りるならそれ以上要求しない）
 
-記事本文（`articles/*.md`、`articles_note/**/*.md`）は変更しない。指摘はチャットまたは `reviews/` 側の記録に残す。本文へ落とすのは `article-review-apply`。
+記事本文（`articles/*.md`、`articles_note/**/*.md`）は変更しない。指摘はチャットまたは `reviews/` 側の記録に残す。反映担当は **Zennが `article-review-apply`、noteが `note-review-applier`**。noteの `drafts/` は反映せず、`published/` は手動公開を別途行う。
 
 ## 出力
 
 ```markdown
-# OSS記事 主張境界レビュー
+# 主張境界レビュー（OSS設計記事 / 会社公式note）
 
 ## 判定
 Approve / Comment / Request changes
@@ -164,9 +164,9 @@ Approve / Comment / Request changes
 
 ## article-reviewer との境界
 
-- 読みやすさ、3ペルソナ、Zenn記法は `article-reviewer`
-- 採否して本文へ入れるのは `article-review-apply`
+- 読みやすさ、3ペルソナ、媒体記法は `article-reviewer`（Zenn）または `note-article-reviewer`（note）
+- 採否して本文へ入れるのは `article-review-apply`（Zenn）または `note-review-applier`（note）
 - 実装済み / 原則 / 層 / Promotion / commit固定 / 段階の時制 / 借用用語は本スキル
 - **他者のOSSを外から読んで解説する記事**は `docs/article-guides/oss-explainer-writing.md`。本スキルは自分が作ったOSSの設計記事と、自チームの展開記が対象
 
-両方必要なときは、本スキルを先に通し、残った読みやすさだけを `article-reviewer` に渡す。
+両方必要なときは、本スキルを先に通し、残った読みやすさだけを媒体別レビュアへ渡す。エッセイや表紙制作など、主張境界の確認が不要な作業には適用しない。
