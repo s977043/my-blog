@@ -71,6 +71,10 @@ function report(result, outputPath) {
   if (result.skip) {
     console.log(`::notice::Book smoke skipped (${result.reason})`);
     if (outputPath) fs.appendFileSync(outputPath, "skip_smoke=true\n");
+  } else if (/^(git failed|HEAD is not a 2-parent merge)/.test(result.reason)) {
+    console.log(
+      `::warning::Book smoke scope undecidable (${result.reason}); running smoke`,
+    );
   } else {
     console.log(`[book-smoke-scope] run smoke (${result.reason})`);
   }
@@ -180,6 +184,19 @@ function selfTest() {
     delete process.env.GITHUB_OUTPUT;
     report({ skip: true, reason: "self-test" }, process.env.GITHUB_OUTPUT);
     if (before !== undefined) process.env.GITHUB_OUTPUT = before;
+    passed += 1;
+
+    const logged = [];
+    const origLog = console.log;
+    console.log = (msg) => logged.push(msg);
+    try {
+      report({ skip: false, reason: "git failed: x" });
+      report({ skip: false, reason: "empty diff" });
+    } finally {
+      console.log = origLog;
+    }
+    if (!logged[0].startsWith("::warning::") || logged[1].startsWith("::warning::"))
+      throw new Error(`warning branch: ${JSON.stringify(logged)}`);
     passed += 1;
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });

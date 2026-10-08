@@ -18,7 +18,7 @@ env:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  # main の push / schedule は各 run の結果を残すため cancel しない
+  # main の push / schedule は実行中の run を cancel しない（同 group で待機中の run は新しい run に置き換わる）
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
@@ -118,6 +118,7 @@ jobs:
 
       # Book smoke の横あふれ判定は CJK フォントの有無で結果が変わるため導入する。
       # apt ミラーの遅延で 660s かかった実例があり、smoke から分けて上限を付ける。
+      # release/zenn 宛は Changed Books browser check もフォントに依存するため smoke skip 時も入れる
       - name: Install CJK fonts for browser smoke
         if: steps.book_scope.outputs.skip_smoke != 'true' || github.base_ref == 'release/zenn'
         timeout-minutes: 5
