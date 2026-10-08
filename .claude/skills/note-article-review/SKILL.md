@@ -91,8 +91,6 @@ mkdir -p reviews/note/<state>
 
 ### 4. 3ペルソナレビュー
 
-会社公式noteで実装・検証・効果、件数・段階の現在地、借用用語を扱う場合、または対応Planが `claim_boundary: required` の場合は、`note-article-reviewer` が3ペルソナより先に `.claude/skills/oss-article-claim-boundary/SKILL.md` を Read して該当Checkを適用する。`not_required` または旧Planで項目未記入でも、本文に該当する主張があれば省略しない。結果は通常の `reviews/note/<state>/<slug>.md` に統合する。エッセイや表紙のみは対象外。
-
 `note-article-reviewer` に委譲する。エージェント自身が次を読むため、同じ構成ルールをここで重複定義しない。
 
 - `articles_note/guides/note-structure-best-practices.md`
