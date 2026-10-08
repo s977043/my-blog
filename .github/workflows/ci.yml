@@ -6,6 +6,9 @@ on:
     branches:
       - main
   workflow_dispatch:
+  # PR では Book 非変更時に smoke を skip するため、main の Book smoke を週1で補完する
+  schedule:
+    - cron: '17 3 * * 1'
 
 permissions:
   contents: read
@@ -15,7 +18,8 @@ env:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # main の push / schedule は各 run の結果を残すため cancel しない
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   content:
@@ -54,6 +58,7 @@ jobs:
           npm run test:zenn-book-writing-contract
           npm run test:zenn-book-browser
           npm run test:changed-zenn-books
+          npm run test:book-smoke-scope
           npm run test:note-setext
           npm run test:queue-drift
           npm run test:orphan-docs
@@ -103,9 +108,18 @@ jobs:
       - name: Check Zenn content
         run: npm run check
 
+      # PR のみ: 合成 merge commit の差分が Book smoke に無関係と確定できたときだけ skip する。
+      # push / schedule / workflow_dispatch と判定不能時は常に実行する。
+      - name: Decide Book smoke scope
+        id: book_scope
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        run: node scripts/book-smoke-scope.js
+
       # Book smoke の横あふれ判定は CJK フォントの有無で結果が変わるため導入する。
       # apt ミラーの遅延で 660s かかった実例があり、smoke から分けて上限を付ける。
       - name: Install CJK fonts for browser smoke
+        if: steps.book_scope.outputs.skip_smoke != 'true' || github.base_ref == 'release/zenn'
         timeout-minutes: 5
         run: |
           sudo apt-get -o Acquire::Retries=3 update -qq
@@ -116,6 +130,8 @@ jobs:
       # 見た目の良し悪しは人間の preview review に残し、ここでは
       # server 起動 / Book route / Book title の3点だけを自動検証する。
       - name: Smoke test River Review Book preview
+        if: steps.book_scope.outputs.skip_smoke != 'true'
+        timeout-minutes: 3
         run: |
           set -euo pipefail
           ./node_modules/.bin/zenn preview --no-watch --port 8000 > /tmp/zenn-preview.log 2>&1 &
@@ -152,7 +168,7 @@ jobs:
           trap - EXIT
 
       - name: Upload River Review Book browser evidence
-        if: always()
+        if: always() && steps.book_scope.outputs.skip_smoke != 'true'
         uses: actions/upload-artifact@v7
         with:
           name: river-review-book-browser-evidence
@@ -183,6 +199,7 @@ jobs:
 
       - name: Browser check changed published Zenn Books
         if: github.event_name == 'pull_request' && github.base_ref == 'release/zenn' && steps.changed_zenn_books.outputs.has_books == 'true'
+        timeout-minutes: 5
         run: |
           set -euo pipefail
           mapfile -t changed_books < /tmp/changed-zenn-books.txt

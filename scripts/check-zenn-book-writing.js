@@ -28,6 +28,14 @@ function requireTokens(errors, label, text, tokens) {
   }
 }
 
+const FORBIDDEN_TOKENS = ['npm install --no-save', 'playwright-core@']
+
+function forbidTokens(errors, label, text, tokens = FORBIDDEN_TOKENS) {
+  for (const token of tokens) {
+    if (String(text).includes(token)) errors.push(`${label} contains forbidden token: ${token}`)
+  }
+}
+
 function validate(files) {
   const errors = []
   for (const file of Object.values(PATHS)) {
@@ -88,8 +96,13 @@ function validate(files) {
     'npm run check:zenn-book-browser',
     'list:changed-zenn-books',
     'changed-zenn-book-browser-evidence',
-    'playwright-core@1.63.0',
+    'npm ci',
+    'devDependencies',
   ])
+
+  forbidTokens(errors, 'publish gate', publishGate)
+  forbidTokens(errors, 'template README', templateReadme)
+  forbidTokens(errors, 'template publish checklist', templatePublish)
 
   requireTokens(errors, 'template config', templateConfig, [
     'published: false',
@@ -106,7 +119,8 @@ function validate(files) {
     'cover.png',
     'repository相対パス',
     'npm run check:zenn-book-browser',
-    'playwright-core@1.63.0',
+    'npm ci',
+    'devDependencies',
   ])
 
   requireTokens(errors, 'template plan', templatePlan, [
@@ -127,7 +141,8 @@ function validate(files) {
     'cover image',
     'repositoryファイル相対パス',
     'npm run check:zenn-book-browser',
-    'playwright-core@1.63.0',
+    'npm ci',
+    'devDependencies',
   ])
 
   requireTokens(errors, 'generator', generator, [
@@ -315,6 +330,24 @@ function selfTest() {
   }
   if (!validate(missingReleasePreviewCondition).some((e) => e.includes('CI workflow missing token'))) {
     throw new Error('missing release preview condition was not rejected')
+  }
+
+  const revivedNoSave = {
+    ...base,
+    [PATHS.templateReadme]: `${base[PATHS.templateReadme]}\nnpm install --no-save --package-lock=false --ignore-scripts playwright-core@1.63.0\n`,
+  }
+  const revivedErrors = validate(revivedNoSave)
+  if (!revivedErrors.some((e) => e.includes('forbidden token: npm install --no-save'))
+    || !revivedErrors.some((e) => e.includes('forbidden token: playwright-core@'))) {
+    throw new Error('revived --no-save install step was not rejected')
+  }
+
+  const missingNpmCi = {
+    ...base,
+    [PATHS.publishGate]: base[PATHS.publishGate].replaceAll('npm ci', ''),
+  }
+  if (!validate(missingNpmCi).some((e) => e.includes('publish gate missing token: npm ci'))) {
+    throw new Error('missing npm ci guidance was not rejected')
   }
 
   console.log('[test:zenn-book-writing-contract] PASS')
