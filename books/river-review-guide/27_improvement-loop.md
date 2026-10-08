@@ -68,6 +68,8 @@ Deterministic
 
 **判断を環境へ埋め込んだ**のです。
 
+この昇格の流れは、River Review側でも実装が始まっています。snapshot時点のcurrent mainには、昇格候補をRiverbedへ記録し、承認・却下する仕組みがExperimentalとして入っています。
+
 ## Create Last
 
 改善時に注意したいのは、問題が起きるたびに新しいSkillを作ることです。

@@ -46,7 +46,7 @@ River Review
 LLM provider
 ~~~
 
-CI上で継続的にレビューしたい場合はこちらが使えます。
+CI上で継続的にレビューしたい場合はこちらが使えます。GitHub ActionはImplementedですが、Stable InterfacesではBeta（v0.x）扱いで、inputsや挙動がminor versionで変わる可能性があります。
 
 ## 実行surfaceと判断所有権を混ぜない
 
