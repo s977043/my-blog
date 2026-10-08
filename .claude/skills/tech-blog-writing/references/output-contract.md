@@ -28,6 +28,8 @@ READY | NEEDS_INPUT | PARK
 - 媒体:
 - 記事タイプ:
 - 想定読者:
+- claim_boundary: required | not_required
+- 理由:
 
 ## 根拠マップ
 | 主張候補 | 根拠 | 状態 |
@@ -42,6 +44,8 @@ READY | NEEDS_INPUT | PARK
 ```
 
 `AUTHOR_INPUT_REQUIRED` が残っている場合は判定を `NEEDS_INPUT` とし、Draft Article Plan / Draftへ進めない。
+
+`claim_boundary` は `.claude/skills/note-article-review/references/claim-routing.md` で判定する。実装・検証・効果、段階の現在地、件数、借用用語があるなら required。エッセイや表紙は not_required。
 
 ### 既存記事モード
 
@@ -61,6 +65,7 @@ PASS | NEEDS_REVISION | BLOCKED
 - 読者課題:
 - 中心主張:
 - 読後価値:
+- claim_boundary: required | not_required
 
 ## Gate Results
 | Gate | 判定 | 根拠 |
@@ -77,3 +82,5 @@ PASS | NEEDS_REVISION | BLOCKED
 ## 次のレビュー
 既存コマンドへの接続提案
 ```
+
+`claim_boundary: required` のときの委譲先は、媒体別レビューの前に `oss-article-claim-boundary`。not_required なら既存の媒体別レビューだけ。

@@ -1,6 +1,6 @@
 ---
 name: note-article-review
-description: note.com記事（articles_note/<state>/<slug>.md、<state>は new/drafts/published）の通常レビュー成果物を生成し、編集可能な状態では指摘を反映するワークフロー。主題保護型の反復3/5ループは note-thesis-review-loop を使う。drafts は読み取り専用ミラーのためレビューのみ行う。
+description: note.com記事（articles_note/<state>/<slug>.md、<state>は new/drafts/published）の通常レビュー成果物を生成し、編集可能な状態では指摘を反映するワークフロー。実装・検証・効果がある原稿は先に oss-article-claim-boundary を通す。主題保護型の反復3/5ループは note-thesis-review-loop を使う。drafts は読み取り専用ミラーのためレビューのみ行う。
 ---
 
 # note-article-review
@@ -19,6 +19,8 @@ note.com記事のレビュー → 指摘反映 のライフサイクルを扱う
 - 出力先: `reviews/note/<state>/<slug>.md`
 - **構成判断の正本**: `articles_note/guides/note-structure-best-practices.md`
 - 品質チェック: `articles_note/checklists/note-article-quality-checklist.md`
+- 主張境界の分岐: `references/claim-routing.md`
+- 主張境界の Check: `.claude/skills/oss-article-claim-boundary/SKILL.md`
 - レビュー生成: `.claude/agents/note-article-reviewer.md`
 - レビュー反映: `.claude/agents/note-review-applier.md`
 - note状態管理の正本: `articles_note/README.md`
@@ -89,6 +91,14 @@ mkdir -p reviews/note/<state>
 - 解説 / ハウツー
 - 混合
 
+
+### 3b. 主張境界の要否
+
+`references/claim-routing.md` で `claim_boundary` を判定する。Plan にフラグがあればそれを使う。無ければ原稿から判定する。
+
+- `required`: 3ペルソナの前に `oss-article-claim-boundary` を Read し、Check を適用する。結果をレビュー成果物の先頭に残す。記事本文は変更しない
+- `not_required`: 境界スキルは読まない。エッセイ、表紙、構成だけの確認はこちら
+
 ### 4. 3ペルソナレビュー
 
 `note-article-reviewer` に委譲する。エージェント自身が次を読むため、同じ構成ルールをここで重複定義しない。
@@ -142,6 +152,7 @@ gh pr create --title "docs(reviews): add note review for <state>/<slug>" --body 
 - 採用: 誤字脱字、明白な表記揺れ、JTFスタイル、壊れたリンクなど客観修正
 - 保留: タイトル/リード、構成変更、追記、トーンなど著者判断が必要なもの
 - 却下: 事実誤認、コンテキスト違い、Zenn固有観点の誤混入
+- 境界指摘の採用は `references/claim-routing.md` の最小差分だけ。母数がない件数から率を足す、未実装宣言を消す、原典の部品表を根拠に足す、は却下
 
 ### 8. 採用分の反映
 
@@ -178,6 +189,7 @@ gh pr create --title "docs(articles_note): apply note review feedback to <state>
 
 ## ガードレール
 
+- [ ] `claim_boundary: required` の原稿で、境界 Check を飛ばして3ペルソナに入らない
 - [ ] レビュー生成では `articles_note/**/*.md` を変更しない
 - [ ] **`articles_note/drafts/**` はレビューのみ。反映時にEdit / commit / PRしない**
 - [ ] 反映時は `note-review-applier` を使い、Zenn固有記法を混入させない
@@ -205,6 +217,8 @@ gh pr create --title "docs(articles_note): apply note review feedback to <state>
 
 ## 参考
 
+- `references/claim-routing.md`
+- `.claude/skills/oss-article-claim-boundary/SKILL.md`
 - `articles_note/README.md`
 - `articles_note/guides/note-structure-best-practices.md`
 - `articles_note/checklists/note-article-quality-checklist.md`

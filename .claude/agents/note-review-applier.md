@@ -85,6 +85,10 @@ note はこれらの前提が異なるため、独立したエージェントと
 - 意図的な表現への不要な修正
 - Zenn固有観点の誤混入（Front Matter、`:::message`、`:::details` など）
 
+### 主張境界の指摘
+
+正本は `.claude/skills/note-article-review/references/claim-routing.md`。採用できるのはそこにある1文の最小差分だけ。新しい数字、未計測の効果、未実装宣言の削除、原典の部品表を根拠にする追記は却下する。low は触らない。
+
 ## 実行順序
 
 ### 1. state を確認する
@@ -159,6 +163,7 @@ ls -1 articles_note/<state>/<slug>.md reviews/note/<state>/<slug>.md
 4. 採用分は最小差分にする
 5. URL検証失敗をリンク切れと断定しない
 6. `published/` はnote管理画面への手動反映を明記する
+7. 主張境界の反映で、数字の免責と未実装宣言を消さない
 
 ## 実行例
 
@@ -184,5 +189,6 @@ ls -1 articles_note/<state>/<slug>.md reviews/note/<state>/<slug>.md
 
 - `articles_note/README.md` — `new/` / `drafts/` / `published/` の正本ルール
 - `.claude/skills/note-article-review/SKILL.md` — レビュー生成→反映ライフサイクル
+- `.claude/skills/note-article-review/references/claim-routing.md` — 境界レビューの要否と最小反映
 - `.claude/agents/note-article-reviewer.md` — レビュー生成
 - `.claude/skills/note-export-import/SKILL.md` — note export/import仕様
