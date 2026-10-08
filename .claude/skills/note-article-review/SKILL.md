@@ -94,7 +94,7 @@ mkdir -p reviews/note/<state>
 
 ### 3b. 主張境界の要否
 
-`references/claim-routing.md` で `claim_boundary` を判定する。Plan にフラグがあればそれを使う。無ければ原稿から判定する。
+`references/claim-routing.md` で `claim_boundary` を判定する。Planのフラグと本文を照合し、**どちらかが `required` の条件を満たせば実施する**。Planが `not_required` でも本文に該当主張があれば実施し、ずれを記録する。未記入の旧Planは本文から判定する。
 
 - `required`: 3ペルソナの前に `oss-article-claim-boundary` を Read し、Check を適用する。結果をレビュー成果物の先頭に残す。記事本文は変更しない
 - `not_required`: 境界スキルは読まない。エッセイ、表紙、構成だけの確認はこちら
