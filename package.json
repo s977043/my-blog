@@ -98,13 +98,15 @@
     "check:zenn-book-browser": "node scripts/check-zenn-book-browser.mjs",
     "test:zenn-book-browser": "node scripts/check-zenn-book-browser.mjs --self-test",
     "list:changed-zenn-books": "node scripts/list-changed-zenn-books.js",
-    "test:changed-zenn-books": "node scripts/list-changed-zenn-books.js --self-test"
+    "test:changed-zenn-books": "node scripts/list-changed-zenn-books.js --self-test",
+    "test:book-smoke-scope": "node scripts/book-smoke-scope.js --self-test"
   },
   "dependencies": {
     "zenn-cli": "^0.5.4"
   },
   "devDependencies": {
     "@qiita/qiita-cli": "^1.10.0",
-    "js-yaml": "^4.3.2"
+    "js-yaml": "^4.3.2",
+    "playwright-core": "1.63.0"
   }
 }
