@@ -26,7 +26,7 @@ article_type_candidates:
 - DATのEXP-001では「一度の実験をミスしない」ために準備・確認が膨らみ、肝心の実測Runに進めないことが問題となった。対応候補は [DAT #124](https://github.com/s977043/dynamic-agent-topology/pull/124)（2026-10-10時点ではDraft）と [DAT #125](https://github.com/s977043/dynamic-agent-topology/pull/125)（同時点では提案中）。
 - PlanGateではIssue棚卸しを3〜5件の小バッチで回し、棚卸しの方法自体を振り返る二重ループを設計した。初回2バッチ6件の観測は残るが、所要時間や改善効果は未検証。[PlanGate #1548](https://github.com/s977043/PlanGate/pull/1548)
 - PlanGateでは「人間の判断が必要 ≠ すべての作業が停止」を方針候補として記録し、許可された調査・証拠収集・PR準備と、Human-ownedの承認・マージを分離した。[PlanGate #1549](https://github.com/s977043/PlanGate/pull/1549)
-- River Reviewではアジャイルに立脚した実践進化方針を、既存のガバナンスと切り離した公開文書として取り込んだ。[River Review #2634](https://github.com/s977043/river-review/pull/2634)
+- River Reviewではアジャイルに立脚した実践進化方針を、既存のガバナンスと切り離した公開文書として取り込んだ（2026-10-10 05:44 JSTにマージ。運用効果は未計測）。[River Review #2634](https://github.com/s977043/river-review/pull/2634)
 - 私自身は、以前はAIエージェントの自由度を抑え、細かなゲートで制御することを重視してきた。モデル能力と運用経験が変化した今、その前提を見直し始めている（体験に基づく解釈。効果の一般化ではない）。
 
 ## 違和感
@@ -40,6 +40,8 @@ AIに長い仕事を任せられるようになった一方、確認・承認・
 HITLをすべてHOTLへ置き換えるのではない。Human in Command（目的・権限の設定）とHuman on the Loop（許可範囲での監督）、重要判断のHuman in the Loopを組み合わせる。その境界内では小さく動かし、確かなEvidenceを取り、観測・適応する。アジャイルが重視してきた価値提供と振り返りは、その中心にある。
 
 ## 外部知識との接続・正確性の境界
+
+このSeedの `evidence_status: verified` は、主要な**外部事実の出典を確認済み**という意味であり、Seed全体の効果実証を意味しない。River Review #2634の公開方針のマージ、アジャイル宣言原文、Anthropicの自律利用の一次資料は確認済み。一方、DAT・PlanGateの関連PRで検討中の方針、筆者の解釈、HOTLとFast Feedbackによる改善効果は、導入完了・効果検証済みとは扱わない。`source: mixed` は一次体験と外部資料を組み合わせた出所区分であり、`evidence_status` の値ではない。
 
 - [アジャイルソフトウェア開発宣言](https://agilemanifesto.org/iso/ja/manifesto.html)と[背後にある原則](https://agilemanifesto.org/iso/ja/principles.html)：変化への対応、小さな価値提供、継続的な振り返りを重視。**HITL/HOTLやHuman-ownedの細部は宣言の直接の規定ではない**。
 - [Anthropic: Measuring AI agent autonomy in practice（2026-02-18）](https://www.anthropic.com/news/measuring-agent-autonomy)：Claude Codeの自律実行と利用者の監督に関する観測。**モデル性能の向上だけが自律利用の変化を説明するわけではない**。
@@ -85,7 +87,7 @@ AIエージェントの構成を比較する実験で、1回の実行を失敗�
 
 安全性や実験条件を緩める話ではない。戻せる範囲では小さく試し、失敗を早く見つけて学ぶ。その方が、前に進めるのではないかと考えた。
 
-### HITLからHOTLへ、関わり方を変える
+### 関わり方を分ける
 
 今考えているのは、Human in the Loop（HITL）を全部なくすことではない。
 
@@ -95,7 +97,7 @@ Human on the Loop（HOTL）は、AIの一つひとつの操作を承認する代
 
 **AIの自由度を一律に抑えるのではなく、AIが自律できる境界を設計する。**
 
-[PlanGate](https://github.com/s977043/PlanGate/pull/1549)では、「人間の判断が必要」という理由で、許可済みの調査や準備まで全部止めない方針を検討した。[River Review](https://github.com/s977043/river-review/pull/2634)でも、守る判断・承認の境界と、見直せる開発の進め方を分けた。
+[PlanGate](https://github.com/s977043/PlanGate/pull/1549)では、「人間の判断が必要」という理由で、許可済みの調査や準備まで全部止めない方針を検討した。[River Review](https://github.com/s977043/river-review/pull/2634)でも、守る判断・承認の境界と、見直せる開発の進め方を分けた（2026年10月10日〈日本時間〉に公開方針のPRをマージ。運用効果は未計測）。
 
 ### そこで、アジャイルの原点に戻ってきた
 
@@ -117,13 +119,14 @@ AIが賢くなったから、人間の判断が不要になったわけではな
 
 ## X記事投稿時の短いキャプション案（256字以内）
 
-AIが賢くなって、以前の「細かく制御する」設計がボトルネックになり始めた。失敗しない準備で実験が止まった経験から、HITL→HOTL、そしてアジャイルの原点を考え直した。大切なのは無制限に任せることではなく、AIが自律できる境界を設計すること。まだ検証途中の実践を書きました。
+AIが賢くなって、以前の「細かく制御する」設計がボトルネックになり始めた。失敗しない準備で実験が止まった経験から、HITLは残したまま監督の置き方を変え、アジャイルの原点を考え直した。大切なのは無制限に任せることではなく、AIが自律できる境界を設計すること。まだ検証途中の実践を書きました。
 
 ## 公開前の確認・追記ログ
 
 - [x] 主要な公開PRと文書を確認。PlanGate/DATの未マージ提案と、River Reviewのマージ済み方針を混同しない
 - [x] モデル能力の向上は筆者の実感と外部の自律利用の観測にとどめ、因果を断定しない
 - [x] Human-ownedの承認、Feature Freeze、Evidenceの真正性を維持する
+- [x] Grokのレビューを反映。`evidence_status` は有効値 `verified` を維持し、Verifiedの範囲を本文で限定。River Reviewのマージ日時はJSTに換算。HITL全面廃止と誤読される見出し・キャプションを修正
 - [ ] 著者レビュー・X記事としての公開判断
 - [ ] 公開後にX記事URLを `promoted_to` に追加
 - [ ] DATでの有効な実測Runまでの時間、PlanGateの判断待ち・追加質問などを継続観測
