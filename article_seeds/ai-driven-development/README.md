@@ -44,6 +44,7 @@ AI駆動開発の実践で得た小さな原体験・違和感・仮説を、長
 
 | Date | Title | Status | Topics |
 | --- | --- | --- | --- |
+| 2026-10-10 | [AIが賢くなった今、アジャイルの原点に戻ってきた](./2026-10-10-agile-hotl-practice-evolution.md) | `draft` | AI駆動開発 / Agile / HITL-HOTL / Agent Autonomy |
 | 2026-09-29 | [いつ会話を捨てて、新しいセッションで始めるか](./2026-09-29-fresh-context-restart.md) | `seed` | AI駆動開発 / PlanGate / Context Management / Claude Code |
 | 2026-09-26 | [AIにどこまで任せるか、ではなく「どの境界で自律させるか」を考えたい](./2026-09-26-agent-team-topology-audit.md) | `draft` | AI駆動開発 / Agent Teams / Team Topologies / Bounded Agency / Governance |
 | 2026-09-10 | [AIを使い切ろうとしたら、人間の判断待ちが積み上がった](./2026-09-10-flow-efficiency.md) | `published` | AI駆動開発 / Agile / Flow Efficiency / WIP |
