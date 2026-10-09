@@ -400,6 +400,8 @@ done
 
 **根拠**: PR #445 / #446 / #447 / #449 / #450 の作成過程（2026-07-03、4エージェントが独立に遭遇・同一手順で回避）
 
+**再発**: 2026-10-09、`AGENT_LEARNINGS.md` 自体を Edit した際に +111 行の churn（太字記法の破損を含む）が混入した。`git diff --stat` で気づき、HEAD 版に Python で 2 行だけ足して解消した。学びを書く作業ほど、この学びを先に読む
+
 ### 2026-07-03 — Workflow スクリプトでは引数なし new Date() / Date.now() / Math.random() が throw する [Tooling][Gotcha]
 
 **観察**: `.claude/workflows/*.js`（Workflow ツール実行環境)では、resume 安全性のため非決定 API（引数なし `new Date()`、`Date.now()`、`Math.random()`）が **throw する仕様**。PR #447 初版で `reviewedAt=${new Date().toISOString()}` をトップレベルに書いてしまい、起動時に必ず落ちるバグとなった（check スクリプト側の self-test では捕捉不能な位置）。
