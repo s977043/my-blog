@@ -46,7 +46,7 @@ HITLをすべてHOTLへ置き換えるのではない。**人間を外すので�
 このSeedの `evidence_status: verified` は、主要な**外部事実の出典を確認済み**という意味であり、Seed全体の効果実証を意味しない。River Review #2634の公開方針のマージ、アジャイル宣言原文、Anthropicの自律利用の一次資料は確認済み。一方、DAT・PlanGateの関連PRで検討中の方針、筆者の解釈、HOTLとFast Feedbackによる改善効果は、導入完了・効果検証済みとは扱わない。`source: mixed` は一次体験と外部資料を組み合わせた出所区分であり、`evidence_status` の値ではない。
 
 - [アジャイルソフトウェア開発宣言](https://agilemanifesto.org/iso/ja/manifesto.html)と[背後にある原則](https://agilemanifesto.org/iso/ja/principles.html)：変化への対応、小さな価値提供、継続的な振り返りを重視。**HITL/HOTLやHuman-ownedの細部は宣言の直接の規定ではない**。
-- [Anthropic: Measuring AI agent autonomy in practice（2026-02-18）](https://www.anthropic.com/news/measuring-agent-autonomy)：Claude Codeの自律実行と利用者の監督に関する観測。**モデル性能の向上だけが自律利用の変化を説明するわけではない**。
+- [Anthropic: Measuring AI agent autonomy in practice（2026-02-18）](https://www.anthropic.com/news/measuring-agent-autonomy)：Claude Codeの自律実行と利用者の監督に関する観測。経験豊富な利用者ほど自動承認の利用と実行中の割り込みがともに増える傾向が示されている。**モデル性能の向上だけが自律利用の変化を説明するわけではなく、この調査はHOTLの効果実証や命名根拠でもない**。
 - [Anthropic: Trustworthy agents in practice（2026-04-09）](https://www.anthropic.com/research/trustworthy-agents)：逐次承認の摩擦と、人間の意味ある制御・介入可能性の両立を議論。
 - 実装PRの状態、改善率、Humanの承認権限は混同しない。「方針を提案・文書化した」と「運用効果を実証した」は異なる。
 
@@ -100,6 +100,8 @@ AIエージェントの構成を比較する実験で、1回の実行を失敗�
 - **Human in Command**：目的・権限・任せる範囲を決める。
 - **Human on the Loop**：許可範囲の自律実行を見守り、ずれたら介入する。
 - **Human in the Loop**：重要な承認や不可逆な操作で判断する。
+
+この見方は、[Anthropicの実利用調査](https://www.anthropic.com/news/measuring-agent-autonomy)で、経験豊富な利用者ほど自動承認と実行中の割り込みがともに増えるという観測にも重なる。監督をやめたのではなく、介入する場面が変わったと読める。
 
 権限変更やマージ、本番反映のような判断は、私のOSS運用では人間が持つ。その一方で、許可済みの調査や準備まで止める必要はない。
 
