@@ -3,7 +3,7 @@ title: "いつ会話を捨てて、新しいセッションで始めるか：区
 emoji: "🔁"
 type: "tech"
 topics: ["claudecode", "codex", "ai", "aiagent", "自動化"]
-published: false
+published: true
 ---
 
 Claude Code や Codex で長い作業を続けていると、このまま続けるか、新しいセッションに切り替えるか、切り替えるなら何を残せばよいかで迷います。切ると、積み上げた文脈が消えそうで怖くなります。切らないと、古い判断や失敗した試行を引きずります。
