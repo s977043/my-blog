@@ -377,7 +377,7 @@ printf '%s' '{"tool_input":{"command":"rm -rf /"}}' \
 
 ### 設定側の `onFailure: "block"`
 
-現行の Claude Code では、hook の設定に `"onFailure": "block"` を書くと、hook が失敗したとき（起動できない、異常終了する、タイムアウトするなど）にアクションを止められます。既定は `"continue"` で、これまで見てきた「失敗しても進む」挙動です（[公式ドキュメント「Block the action when a hook fails」](https://code.claude.com/docs/en/hooks#block-the-action-when-a-hook-fails)、2026-10-11 閲覧）。
+現行の Claude Code では、hook の設定に `"onFailure": "block"` を書くと、hook が失敗したとき（起動できない、異常終了する、タイムアウトするなど）にアクションを止められます。v2.1.295 以降で使え、既定は `"continue"` です。既定では、これまで見てきた「失敗しても進む」挙動になります（[公式ドキュメント「Block the action when a hook fails」](https://code.claude.com/docs/en/hooks#block-the-action-when-a-hook-fails)、2026-10-11 閲覧）。
 
 ```json
 {
