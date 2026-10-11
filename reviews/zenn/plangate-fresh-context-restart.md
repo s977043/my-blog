@@ -79,4 +79,4 @@ Claude Code / Codex で長時間作業する開発者に向け、「切る基準
 ## 反映状況（2026-10-11）
 
 - medium 2（引き継ぎメモの出どころ）と low（Codex のリンク名）は L64・L194 に反映した
-- medium 1（v8.23.0 と main の差）は著者判断で、PlanGate の次のリリース後に公開する。公開前にリリースノートで standard 以上の規定が配布物に入ったことを確かめる
+- medium 1（v8.23.0 と main の差）は事実誤認として取り下げる。v8.23.0 のタグで `docs/ai/context-lifecycle.md` L54「(standard mode and above)」と `plugin/plangate/skills/working-context/SKILL.md` L85「必須（standard 以上）」を確認し、記事 L88 と一致した
