@@ -21,6 +21,8 @@ tools: Read, Grep, Glob, Bash, Write, WebFetch
 
 このエージェントは構成ルールを二重定義しない。構成判断で記述が競合した場合は `articles_note/guides/note-structure-best-practices.md` を優先する。
 
+**主張境界の条件付き委譲**: `.claude/skills/note-article-review/references/claim-routing.md` を判定の正本とする。会社公式noteで実装・検証・効果、段階の現在地、件数・率・台帳、借用用語を扱う場合、または対応Planが `claim_boundary: required` の場合は、3ペルソナの前に `.claude/skills/oss-article-claim-boundary/SKILL.md` を **Read** して該当Checkを適用する。Planに `not_required` とあっても本文が条件を満たせば実施し、不一致を記録する。未記入の既存Planは本文から判定する。指摘は通常の `reviews/note/<state>/<slug>.md` に統合する。エッセイや表紙だけなら対象外とし、社内台帳など取得できない一次情報は「未検証」とする。記事本文は編集しない。
+
 ## 状態別の扱い
 
 - **`new/`**: 未投稿の新規原稿。本文反映・編集が自由
@@ -157,6 +159,7 @@ SEO提案をするためだけにタイトルや本文を不自然にしない�
 | note編集者 | OK / 要改善 / 対象外 | ... |
 | 想定読者 | OK / 要改善 / 対象外 | ... |
 | 事実・リンク確認 | OK / 要改善 / 未検証 | ... |
+| 主張境界（該当時） | OK / 要改善 / 未検証 / 対象外 | Plan・本文による判定理由と最小指摘 |
 
 ## 指摘コメント
 

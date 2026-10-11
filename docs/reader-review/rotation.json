@@ -9,13 +9,37 @@
       "last_reviewed": "2026-10-02",
       "report": "reviews/reader/2026-10-02.md"
     },
+    "https://izanami.dev/post/dc72ca9e-b731-4b39-8aa2-ba8e7bcfc0d4": {
+      "last_reviewed": "2026-10-08",
+      "report": "reviews/reader/2026-10-08.md"
+    },
     "https://note.com/mine_unilabo/n/n02992266d622": {
       "last_reviewed": "2026-10-02",
       "report": "reviews/reader/2026-10-02.md"
     },
+    "https://note.com/mine_unilabo/n/n050f094c021d": {
+      "last_reviewed": "2026-10-08",
+      "report": "reviews/reader/2026-10-08.md"
+    },
+    "https://note.com/mine_unilabo/n/n062a695d5af9": {
+      "last_reviewed": "2026-10-09",
+      "report": "reviews/reader/2026-10-09.md"
+    },
     "https://qiita.com/s977043/items/05934596111b9065465d": {
       "last_reviewed": "2026-10-02",
       "report": "reviews/reader/2026-10-02.md"
+    },
+    "https://qiita.com/s977043/items/0a43ef1991769fc07ae8": {
+      "last_reviewed": "2026-10-08",
+      "report": "reviews/reader/2026-10-08.md"
+    },
+    "https://qiita.com/s977043/items/1ce6753867f4b166d74b": {
+      "last_reviewed": "2026-10-09",
+      "report": "reviews/reader/2026-10-09.md"
+    },
+    "https://qiita.com/s977043/items/2ee39ebf0711609c34c3": {
+      "last_reviewed": "2026-10-09",
+      "report": "reviews/reader/2026-10-09.md"
     },
     "https://zenn.dev/minewo/articles/agent-learnings-md-operation": {
       "last_reviewed": "2026-10-02",
@@ -24,6 +48,22 @@
     "https://zenn.dev/minewo/articles/agent-utilization-vs-flow-efficiency": {
       "last_reviewed": "2026-10-02",
       "report": "reviews/reader/2026-10-02.md"
+    },
+    "https://zenn.dev/minewo/articles/ai-agent-autonomy-boundary-with-memory": {
+      "last_reviewed": "2026-10-08",
+      "report": "reviews/reader/2026-10-08.md"
+    },
+    "https://zenn.dev/minewo/articles/ai-agent-self-improvement-loop-design": {
+      "last_reviewed": "2026-10-08",
+      "report": "reviews/reader/2026-10-08.md"
+    },
+    "https://zenn.dev/minewo/articles/ai-agile-value-increases": {
+      "last_reviewed": "2026-10-09",
+      "report": "reviews/reader/2026-10-09.md"
+    },
+    "https://zenn.dev/minewo/articles/ai-article-quality-gate-workflow": {
+      "last_reviewed": "2026-10-09",
+      "report": "reviews/reader/2026-10-09.md"
     }
   }
 }

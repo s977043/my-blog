@@ -66,6 +66,28 @@ Human Judgment
 
 目標はRiver Reviewのコマンドを暗記することではありません。「この判断は機械で決めるか、AIへ任せるか、人が判断するか」「何をEvidenceにするか」を設計できる状態を目指します。
 
+## 用語マップ
+
+本書に繰り返し出てくる用語を、先にまとめておきます。
+
+| 用語 | まずはこう読む |
+| --- | --- |
+| Skill | **何を判断するか**。レビュー職務と判断基準 |
+| Artifact | **何を材料にするか**。Plan / Diff / Testsなどの入力 |
+| Evidence | **何を根拠にするか**。Findingを再確認できる材料 |
+| Judgment Placement | **どこで判断するか**。機械・ルール・AI・人間の配置 |
+| Human Judgment | **誰が責任を持つか**。受入・例外・不可逆な判断 |
+| Finding | レビューで見つかった個々の指摘 |
+| Verdict | レビュー結果としての判断材料。mergeの許可ではない |
+| Gate | Plan段階・実装段階など、**いつ判断するか**の境界 |
+| Riverbed | 過去のレビュー判断を記録し、次のレビューで再利用する記憶 |
+
+ほかの用語は[付録A 用語集](https://zenn.dev/minewo/books/river-review-guide/viewer/a1_glossary)にまとめています。
+
+:::message
+**すぐ試したい場合は、[第14章「最初のRiver Reviewを実行する」](https://zenn.dev/minewo/books/river-review-guide/viewer/14_first-review)から読んでも構いません。** Claude CodeへPluginを入れ、作業中の変更に `/river-review:review-local` を実行するところまでを最小限で扱います。設計の背景は、試したあとで第1部から読めば足ります。
+:::
+
 ## 3つの読み方
 
 本編33章を必ず最初から最後まで読む必要はありません。目的に合わせて入口を変えられます。

@@ -9,12 +9,12 @@ published: false
 :::message
 CodexやClaude Codeで複数のAgent・Modelを使い始めた人向けの記事です。
 
-この記事では「どのモデルが最強か」ではなく、モデルが入れ替わっても残るAI開発チームの責務境界を考えます。Provider別のModel/Effortは2026-10-01時点のBinding例であり、固定の推奨構成ではありません。
+この記事では「どのモデルが最強か」ではなく、モデルが入れ替わっても残るAI開発チームの責務境界を考えます。Provider別のModel/Effortは2026-10-11時点のBinding例（論理Roleへ実際のモデルとeffortを割り当てた例）であり、固定の推奨構成ではありません。
 :::
 
 ## TL;DR
 
-複数Agentを使うようになって、最初は「Sonnetは実装、Opusは難しい判断」「GPT-6.1 SolはWorker、GPT-6 AstraはReviewer」のようにモデル名で役割を分けていました。
+複数Agentを使うようになって、最初は「AnthropicのSonnetは実装、Opusは難しい判断」「OpenAIのGPT-6.1 SolはWorker、GPT-6 AstraはReviewer」のようにモデル名で役割を分けていました。
 
 ただ、モデル性能が更新されるたびに、この組織図も書き換えることになります。
 
@@ -89,7 +89,7 @@ responsibility:
   - evidence_evaluation
 ```
 
-その後でProvider Profileを介してRuntimeへBindingします。
+その後でProvider Profile（OpenAI / Anthropicなど提供元ごとの割り当て表）を介してRuntimeへBinding（割り当て）します。
 
 ```text
 Logical Topology
@@ -168,7 +168,7 @@ test passed
 != safe to merge
 ```
 
-これは、自分がRiver Reviewで考えてきた **EvidenceとJudgmentを分ける** という設計と同じでした。
+これは、自分が開発しているAIコードレビューOSS、River Reviewで考えてきた **EvidenceとJudgmentを分ける** という設計と同じでした。
 
 ## ReviewerとJudgeも分ける
 
@@ -269,7 +269,7 @@ Responsibility ultimately escalates to Human.
              ▼                           ▼
       Investigation                  Planning
                                          │
-                                     Plan Gate
+                                Plan Gate（Human承認）
                                          │
                                          ▼
                                       Builder
@@ -418,7 +418,7 @@ Topology本体にはSonnetやSolを書きません。
 現在のモデルを使うなら、例えば次のようにBindingできます。
 
 :::message
-以下は2026-10-01時点のモデル特性を踏まえた自分の設計例です。OpenAI / Anthropicの公式推奨Role表ではありません。
+以下は2026-10-11時点のモデル特性を踏まえた自分の設計例です。OpenAI / Anthropicの公式推奨Role表ではありません。
 :::
 
 ### Codex Profile
@@ -490,6 +490,8 @@ Claude側でもTopologyは変えません。
 
 AnthropicはSonnet 5.5をwell-scopedな日常タスク、Opus 5.5をcomplex / open-endedで継続的なjudgmentが必要な仕事に強いモデルと説明しています。
 
+Claude Code側だけ、設計判断を担うArchitectをJudgeと別Roleとして置き、Opus 5.5へ割り当てています。
+
 それを現在のProfileへ当てはめるなら、通常経路はSonnet中心にして、次のような条件でOpusへ上げます。
 
 ```text
@@ -515,7 +517,7 @@ Human
 
 設定したつもりのTopologyと、実際に実行されたRuntimeです。
 
-そこで、別軸としてRuntime Receiptを残します。
+そこで、別軸としてRuntime Receipt（実際に動いたモデルとeffortの実行記録）を残します。
 
 ```yaml
 desired:

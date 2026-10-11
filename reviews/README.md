@@ -39,6 +39,8 @@ Slash Command 経由で生成・反映する（Claude Code）。
 
 公開済みOSS設計記事の改善PRで、実装済みと設計原則、Judgment Placementの層、Promotionの型、検証対象commitの固定が主題なら、3ペルソナの前に `.claude/skills/oss-article-claim-boundary/SKILL.md` を Read し、その Check を適用する。
 
+会社公式noteで実装・検証・効果、段階の現在地、集計数値、借用用語を扱う場合も、noteの通常レビュー前に同じ主張境界Checkを実施する。判定条件・媒体別の委譲先・反映禁止事項の正本は `.claude/skills/note-article-review/references/claim-routing.md`。本文反映はZennの `article-review-apply` ではなく `note-review-applier` に任せる。
+
 ## 運用ルール（重要）
 
 - **レビュー成果物は不変**。採否判断や反映は本文側の PR で行う

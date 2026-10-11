@@ -53,13 +53,12 @@ npm run check
 `npm run preview` と汎用browser checkerを使う。
 
 ~~~bash
-npm install --no-save --package-lock=false --ignore-scripts playwright-core@1.63.0
 CHROME_PATH="$(command -v google-chrome || command -v chromium || command -v chromium-browser)" \
 ZENN_PREVIEW_URL="http://127.0.0.1:8000" \
 npm run check:zenn-book-browser -- --book <slug>
 ~~~
 
-`playwright-core` はbrowser preview時だけ一時installし、package dependencyへ常設しない。
+`playwright-core` はdevDependenciesに版固定済みなので `npm ci` で入る。browser preview用の一時installは不要。
 
 browser checkerはmobile 390pxで全章、desktopで最大7章を均等抽出して検査し、`artifacts/zenn-book-browser/<slug>/` へreport / screenshotを残す。
 

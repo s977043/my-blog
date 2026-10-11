@@ -48,8 +48,9 @@ npm run check
 
 ## 5. Zenn preview
 
+`playwright-core` はdevDependenciesに固定済みなので、`npm ci` 済みなら追加installは不要。
+
 ~~~bash
-npm install --no-save --package-lock=false --ignore-scripts playwright-core@1.63.0
 npm run preview
 # 別terminal:
 CHROME_PATH="$(command -v google-chrome || command -v chromium || command -v chromium-browser)" \
