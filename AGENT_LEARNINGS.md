@@ -137,6 +137,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-09-07 — 自分が書いた引用の帰属は、外部一次情報と同じ厳しさで検証する（読んだ直後でも要約段階で誤帰属する）
 - 2026-09-17 — 規律を定めたドキュメントは、その規律を自分自身に適用して検算する（出典と未検証の明示が落ちやすい）
 - 2026-10-05 — 模擬ペルソナの「実例が欲しい」は実データで反証された。模擬の指摘は確かさ A/B/C で扱い、C は実データで確かめてから手を打つ
+- 2026-10-11 — 公開判断を変えるサブエージェントの事実主張は伝える前に一次情報と carry-over へ突合。レビュー観点に「案内・見出し・中身の対応」と固有用語の説明
 ### G. CI / tooling / マルチAI
 - 2026-08-27 — `catch` が ReferenceError を握りつぶすと実装の誤りが「検証したが不一致」に化ける（純関数テストは依存欠落を検出しない）
 - 2026-05-21 — 媒体実測の取得は `scripts/fetch-channel-metrics.mjs` に集約
@@ -176,6 +177,8 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 別モデルのレビューを毎回必須にするのはコストに見合わない（Codex）。Codex と agy はどちらも、最優先は上の受理ゲートだと答えた。なお両者が独立に挙げた「PlanGate 固有の規模区分が未説明」は #808 で反映した
 - 外部 AI が PDF やスクリーンショットから出した誤字指摘は、原稿を grep してから採否を決める
 - Gemini CLI（gemini-cli 0.42.0、個人の無料枠）は 2026-10-11 時点で `IneligibleTierError: UNSUPPORTED_CLIENT` により使えない。Gemini 系の独立レビューは `agy`（Antigravity CLI、`agy --mode plan -p "<prompt>"`）を使う
+
+**反映先**: `CLAUDE.md` §サブエージェント報告の受理基準（受理ゲート）、`.claude/agents/article-reviewer.md` §レビュー観点・§事実検証、`.claude/workflows/article-review-improve-loop.js` の reviewPrompt（観点と一次情報の場所の明記）
 
 **根拠**: PR #804（レビュー成果物・medium 1 取り下げ）、PR #808（Gemini 指摘 2 件と Codex・agy 指摘 1 件の反映）、Codex（gpt-5.5）と agy への振り返りレビュー
 
