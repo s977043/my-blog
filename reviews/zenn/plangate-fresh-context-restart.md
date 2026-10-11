@@ -1,4 +1,4 @@
-<!-- publish-readiness: blocked=false mustHigh=0 verified=true articleHash=1f7d431183ec273501356709298e3054834f38ec loops=1 reviewedAt=2026-10-11T00:00:00Z -->
+<!-- publish-readiness: blocked=false mustHigh=0 verified=true articleHash=c4a8934b696cf27624a99bd10a28efbe7ba5438c loops=1 reviewedAt=2026-10-11T00:00:00Z -->
 # articles/plangate-fresh-context-restart.md の記事レビュー
 
 > Zennカテゴリー: Tech
@@ -75,3 +75,8 @@ Claude Code / Codex で長時間作業する開発者に向け、「切る基準
 ### 未検証事項
 - Claude Code best-practices の「more than twice」、Anthropic ブログの「compaction isn't sufficient」の文言は URL 到達のみ確認（Seed の記録と一致）
 - PR #744（2026-07-07）の日付は Seed 記録に依拠
+
+## 反映状況（2026-10-11）
+
+- medium 2（引き継ぎメモの出どころ）と low（Codex のリンク名）は L64・L194 に反映した
+- medium 1（v8.23.0 と main の差）は著者判断で、PlanGate の次のリリース後に公開する。公開前にリリースノートで standard 以上の規定が配布物に入ったことを確かめる
