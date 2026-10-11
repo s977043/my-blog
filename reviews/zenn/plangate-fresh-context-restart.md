@@ -1,4 +1,4 @@
-<!-- publish-readiness: blocked=false mustHigh=0 verified=true articleHash=d4ed319f2d75f907a7981a39651b1de7cb1bac99 loops=1 reviewedAt=2026-10-11T00:00:00Z -->
+<!-- publish-readiness: blocked=false mustHigh=0 verified=true articleHash=be715bb0686ae567ac90b4313fe1f83e7fe045d6 loops=1 reviewedAt=2026-10-11T00:00:00Z -->
 # articles/plangate-fresh-context-restart.md の記事レビュー
 
 > Zennカテゴリー: Tech
@@ -82,3 +82,4 @@ Claude Code / Codex で長時間作業する開発者に向け、「切る基準
 - medium 1（v8.23.0 と main の差）は事実誤認として取り下げる。v8.23.0 のタグで `docs/ai/context-lifecycle.md` L54「(standard mode and above)」と `plugin/plangate/skills/working-context/SKILL.md` L85「必須（standard 以上）」を確認し、記事 L88 と一致した
 - Gemini レビュー（2026-10-11）から2件を反映した（L23 の案内先を節名に、ひな形の見出しを「2ブロック」に）。誤字3件の指摘は PDF 化の欠けで、原稿には無かった。articleHash を cc82ba3ae965a03f31b87f3c0eaf8271b460dbd4 へ更新
 - Codex・agy の指摘で、L88 に PlanGate の5段階の規模区分を1文追加（出典: plangate v8.23.0 docs/ai/contracts/classify.md）。articleHash を d4ed319f2d75f907a7981a39651b1de7cb1bac99 へ更新
+- 公開フリップ（published 行のみ）に合わせて articleHash を be715bb0686ae567ac90b4313fe1f83e7fe045d6 へ更新した。本文は変わっていない
