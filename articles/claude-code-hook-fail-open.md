@@ -22,11 +22,13 @@ published: false
 **この記事が扱うもの**: hook の書き方ではなく、**書いた hook が効いているかの検証**です。実際に動く2つの実装（修正前・修正後）に同じペイロードを流し、exit code を突き合わせています。扱う対象は **exit code で可否を伝える hook** です（exit 0 + stdout の JSON で決定を返す方式については後述します）
 
 **検証環境**: macOS 26.6.2 / bash 5.3.15 / node v26.0.0 / jq 1.8.1 / Claude Code 2.1.267（検証日・公式ドキュメント閲覧日ともに 2026-09-10）。exit code の扱いは Claude Code のバージョンで変わりうるため、手元でも一度確かめてください
+
+**現行版との違い**: 現行の公式ドキュメントには、hook の設定側で `"onFailure": "block"` を指定すると hook の失敗時に操作を止める項目があります（既定は `"continue"`。2026-10-11 閲覧）。スクリプト内の fail-closed と併用でき、置き換えにも使えます。この記事の実測は v2.1.267 で、`onFailure` を使わない exit code 方式によるものです
 :::
 
 ## ブロックされていた形と、実際に届く形が違った
 
-Claude Code の PreToolUse hook で、`rm -rf` などの危険コマンドをブロックする設定を入れていました。危険パターンの配列を持ち、pipe-to-shell も検出する、それなりに書き込んだスクリプトです。
+Claude Code の PreToolUse hook で、`rm -rf` などの危険コマンドをブロックする設定を入れていました。危険パターンの配列を持ち、pipe-to-shell（`curl ... | sh` のように、取得したスクリプトをそのままシェルに渡す形）も検出する、それなりに書き込んだスクリプトです。
 
 その hook を後から検証したところ、こうなりました。
 
@@ -57,13 +59,13 @@ $ echo $?
 
 前提としてひとつ確認しておきます。PreToolUse hook の exit code の意味です。
 
-公式ドキュメントはこう書いています。
+公式ドキュメントの要点は次のとおりです（[Claude Code Docs「Hooks リファレンス」](https://code.claude.com/docs/ja/hooks)。2026-09-10 閲覧時の記述を、2026-10-11 に現行ページで再確認して要約）。
 
-> ほとんどのフック イベントでは、終了コード 2 のみがアクションをブロックします。Claude Code は終了コード 1 を非ブロッキング エラーとして扱い、1 が従来の Unix 失敗コードであっても、アクションを進行させます。（以下略）
+- stdout に有効な JSON が無い場合、ブロックになるのは exit code 2 だけ。exit code 1 は Unix では失敗を表すが、非ブロッキングエラーとして扱われ、アクションは進む
+- ポリシーを強制する目的の hook なら `exit 2` を使う
+- `WorktreeCreate` だけは 0 以外の終了コードで worktree の作成が失敗する例外がある。PreToolUse は対象外
 
-— [Claude Code Docs「Hooks リファレンス」](https://code.claude.com/docs/ja/hooks)（2026-09-10 閲覧）
-
-（省略部には「ポリシーを実施する目的なら `exit 2` を使う」ことと、`WorktreeCreate` だけは 0 以外の終了コードでワークツリー作成を中止するという例外が書かれています。PreToolUse は対象外です。）
+現行ページには、hook の失敗時にもアクションを止める `onFailure: "block"` の設定が加わっています（「[自分の hook を確かめる](#自分の-hook-を確かめる)」で触れます）。以下の表は、この設定を使わない既定（`"continue"`）の挙動です。
 
 つまり、
 
@@ -165,7 +167,7 @@ try {
 
 なお、バックスラッシュを含む入力では、修正後は後述の「フォールバックは「使わない」という選択もある」の経路（フォールバックを使わず fail-closed）に落ちます。
 
-修正前がブロックできていたのは、**6 パターン中 1 つだけ**でした。しかもそれは、実際には届かない形です。
+止めるべき 5 パターンのうち、修正前がブロックできていたのは**1 つだけ**でした。しかもそれは、実際には届かない形です。
 
 気になって、このスクリプトの過去バージョンも同じペイロードで試しました。git の履歴に残っている 4 世代すべてです。
 
@@ -262,7 +264,7 @@ try {
     fi
   fi
 
-  # ...（node 不在時のフォールバック。実物は次節で示します）...
+  # ...（node 不在時のフォールバック。実物は「フォールバックは「使わない」という選択もある」で示します）...
 
   if [ "$extracted" -eq 0 ]; then
     echo "[safety] Blocked: tool_input からコマンドを抽出できませんでした（fail-closed）。" >&2
@@ -373,6 +375,32 @@ printf '%s' '{"tool_input":{"command":"rm -rf /"}}' \
 
 `jq` や `node` に依存している hook は、それが無い環境で何を返すかを一度見ておく価値があります。ここで `1` や `5` が返るなら、その hook は異常終了したときに素通しする側へ倒れています。
 
+### 設定側の `onFailure: "block"`
+
+現行の Claude Code では、hook の設定に `"onFailure": "block"` を書くと、hook が失敗したとき（起動できない、異常終了する、タイムアウトするなど）にアクションを止められます。既定は `"continue"` で、これまで見てきた「失敗しても進む」挙動です（[公式ドキュメント「Block the action when a hook fails」](https://code.claude.com/docs/en/hooks#block-the-action-when-a-hook-fails)、2026-10-11 閲覧）。
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/safety.sh"],
+            "onFailure": "block"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+スクリプト内の fail-closed（抽出失敗で `exit 2`、`trap EXIT`）と併用でき、スクリプトのパス間違いのように**スクリプトの外で起きる失敗**も止められます。一方、抽出に失敗しても `exit 0` で抜けるスクリプトは「失敗」にならないので、この設定では止まりません。抽出できなかったときに止めるのは、スクリプト側の役目として残ります。この記事の実測は v2.1.267 の exit code 方式で、`onFailure` は使っていません。
+
 ## おわりに
 
 危険コマンドを止める hook を書くとき、時間をかけるのは危険パターンの列挙です。`rm -rf` を入れ、`git push --force` を入れ、pipe-to-shell を検出する。そこは実際に作り込んでありました。
@@ -393,10 +421,11 @@ hook の安全性には層があります。
 
 ## 関連記事
 
-- [品質ゲートは効かなかったのではなく、「呼ばれたか」を測れていなかった](https://zenn.dev/minewo/articles/ai-review-gate-not-called)
-- [AIエージェントの事故・未遂を、次のガードレールに変える — 実運用3ケースから学んだこと](https://zenn.dev/minewo/articles/proceed-driven-agent-session-log)
+- [品質ゲートは効かなかったのではなく、「呼ばれたか」を測れていなかった](/articles/ai-review-gate-not-called)
+- [AIエージェントの事故・未遂を、次のガードレールに変える — 実運用3ケースから学んだこと](/articles/proceed-driven-agent-session-log)
 
 ## 参考
 
 - [Claude Code Docs「Hooks リファレンス」](https://code.claude.com/docs/ja/hooks) — exit code の意味（2 のみがブロック、その他の非ゼロは非ブロッキングエラー）
+- [Claude Code Docs「Block the action when a hook fails」](https://code.claude.com/docs/en/hooks#block-the-action-when-a-hook-fails) — `onFailure: "block"` で hook 失敗時にアクションを止める設定
 - [同「JSON 出力」節](https://code.claude.com/docs/ja/hooks#json-output) — exit 0 + stdout の JSON で `permissionDecision` を返す方式
