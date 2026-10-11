@@ -6,8 +6,8 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 
 ## Summary
 
-- Seeds: 19
-- Explicit provenance contract: 11
+- Seeds: 20
+- Explicit provenance contract: 12
 - Legacy seeds: 8
 - Promotion edges: 7
 - Seeds with open author input gate: 6
@@ -30,6 +30,7 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 | `seed-20260930-openspec-plangate-living-spec` | 2026-09-30 | draft | mixed | verified | 0 | analysis, insight | AI駆動開発で「今の仕様」をどう残すか。OpenSpecのDelta Specから考えた | `article_seeds/ai-driven-development/2026-09-30-openspec-plangate-living-spec.md` | 1 |
 | `seed-20261001-agent-execution-policy-evidence` | 2026-10-01 | published | mixed | verified | 0 | experience, analysis, insight | AIエージェントは「よく考える」より「証拠を取りに行く」で設計する | `article_seeds/ai-driven-development/2026-10-01-agent-execution-policy-evidence.md` | 1 |
 | `seed-20261010-agile-hotl-practice-evolution` | 2026-10-10 | draft | mixed | verified | 0 | experience, insight | AIが賢くなった今、アジャイルの原点に戻ってきた | `article_seeds/ai-driven-development/2026-10-10-agile-hotl-practice-evolution.md` | 0 |
+| `seed-20261011-claude-code-hook-fail-open` | 2026-10-11 | seed | external | verified | 0 | experience, analysis | 危険コマンドを止める Claude Code hook が、検査の手前で素通ししていた | `article_seeds/ai-driven-development/2026-10-11-claude-code-hook-fail-open.md` | 0 |
 | `seed-20260911-media-operating-system-boundaries` | 2026-09-11 | seed | experience | observed | 0 | experience, analysis | Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった | `article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md` | 1 |
 | `seed-20260923-agent-role-boundaries` | 2026-09-23 | seed | external | verified | 0 | analysis, insight | AIエージェントを増やす前に、役割と委譲境界を分ける | `article_seeds/media-operating-system/2026-09-23-agent-role-boundaries.md` | 0 |
 | `seed-20260923-content-closed-loop` | 2026-09-23 | seed | external | verified | 0 | analysis, insight, experience | 記事作成を自動化するより、Signal→Seed→公開後学習を閉じたい | `article_seeds/media-operating-system/2026-09-23-content-closed-loop.md` | 1 |
