@@ -195,6 +195,7 @@ Hermes の仕事は、自分で実装を抱え込むことではありません�
 
 - 関連: [ObsidianとSupermemory MCPをつなぐ知識管理ワークフロー](https://zenn.dev/minewo/articles/obsidian-supermemory-mcp) — 外部 MCP サービスで横断共有する案。本記事は「自前 Vault を正本に固定し指示ベースで集約する」点が異なる
 - 関連: [AIエージェントの『進めて』問題：自走と確認の境界をmemoryで永続化する](https://zenn.dev/minewo/articles/ai-agent-autonomy-boundary-with-memory)
+- 関連: [いつ会話を捨てて、新しいセッションで始めるか：区切りで切り、正本から再開する](/articles/plangate-fresh-context-restart) — 記憶ではなく正本から再開する、セッションの区切り方
 - 関連: [推測で書いた学びが次の罠になった — AGENT_LEARNINGS.md の運用設計](https://zenn.dev/minewo/articles/agent-learnings-md-operation)
 - 関連: [Hermes Agentを「依頼窓口」として導入し始めた](https://note.com/mine_unilabo/n/nc1ac531190c9) — 「役割の呼び名」（本記事）と「導入した実体」（note）は別の粒度の説明
 

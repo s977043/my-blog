@@ -263,6 +263,7 @@ A. 1タスクあたりの初動は確かに遅くなります。ただし「ス�
 
 :::message
 - 📕 [Zenn Book: AI にコードを書かせる前にやること — PlanGate 実践ガイド](https://zenn.dev/minewo/books/plangate-guide) - この記事の考え方を、計画→実装→検証→チーム展開の型として全9章で体系化した実践ガイドです。
+- [いつ会話を捨てて、新しいセッションで始めるか：区切りで切り、正本から再開する](/articles/plangate-fresh-context-restart) - 長い作業でいつ会話を切り、PlanGate の正本からどう再開するかの記事です。
 - [PlanGate v3 から v8.6 までの設計変遷：AI コーディング統制ハーネスはどう育ったか](https://zenn.dev/minewo/articles/plangate-design-evolution-v3-to-v8) - この記事の考え方がバージョンを重ねてどう育ったかの設計変遷です。
 - [AIコーディングを「比較で改善」できる土台にする：PlanGate v8.6.0のMetrics v1とGovernance](https://zenn.dev/minewo/articles/plangate-v86-hook-enforcement) - 最新版で入れた計測と統制の話です。
 - [仕様を揃えて止めない：マルチエージェント開発の3原則（SDD・TDD・ノンブロッキング）](https://zenn.dev/minewo/articles/sdd-tdd-nonblocking-agent) - 仕様駆動開発の考え方をAI運用の制御点に落とし込む記事です。
