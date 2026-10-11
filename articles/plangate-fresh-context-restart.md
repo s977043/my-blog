@@ -61,7 +61,7 @@ PlanGate では、タスクを完了したときに一度だけ `handoff.md` と
 
 **要約型：引き継ぎメモの前提が3つとも外れていた（2026年9月）**
 
-2026-09-23 には、セッション間の引き継ぎメモに書いてあった前提3つが、すべて外れていました。
+2026-09-23 には、筆者が個人で残しているセッション間の引き継ぎメモに書いてあった前提3つが、すべて外れていました。
 
 - 「13件が判断待ち」と書かれていたうち12件は、13日前にすでに閉じられていた
 - 「A より先に B を閉じてはいけない」という制約は、向きが逆だった
@@ -191,7 +191,7 @@ PlanGate では、この考え方を Claude Code / Codex のプラグインの v
 - [セッションの管理（Claude Code）](https://code.claude.com/docs/ja/sessions)
 - [コンテキストウィンドウを探索する（Claude Code）](https://code.claude.com/docs/ja/context-window)
 - [Effective harnesses for long-running agents（Anthropic）](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
-- [Best practices（Codex / OpenAI）](https://learn.chatgpt.com/guides/best-practices)
+- [Best practices（ChatGPT Learn：Codex）](https://learn.chatgpt.com/guides/best-practices)
 - [Run long horizon tasks with Codex（OpenAI）](https://developers.openai.com/blog/run-long-horizon-tasks-with-codex)
 - 紹介されている実践例
   - [【Claude Code】スラッシュコマンドでセッション引き継ぎを仕組み化する（DevelopersIO）](https://dev.classmethod.jp/articles/claude-code-session-handover/)
