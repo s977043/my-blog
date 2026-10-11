@@ -1,4 +1,4 @@
-<!-- publish-readiness: blocked=false mustHigh=0 verified=true articleHash=4eced5748e3fe93fad0ba4ebe47c0cb9923e13e0 loops=0 reviewedAt=2026-10-11T07:02:00Z -->
+<!-- publish-readiness: blocked=false mustHigh=0 verified=true articleHash=a1569b6f954868eec99cb988abe637f194424852 loops=0 reviewedAt=2026-10-11T07:02:00Z -->
 # articles/openspec-plangate-living-spec.md のレビュー（改善ループ / Humanize / 最終レビュー）
 
 - 対象記事: `articles/openspec-plangate-living-spec.md`
@@ -56,3 +56,4 @@ overallVerdict: 新しい事実誤り、主張の希釈、文体の崩れ、保�
 
 - medium（フロー図2つの candidate の位置の食い違い）: 2つ目の図を1つ目に合わせ、Verification / Evidence の後に candidate を置いた
 - 未検証だった OpenSpec の記述を Fission-AI/OpenSpec の main で照合し、すべて一致した: `docs-lab/start/quickstart.md` L148「Specs describe the system as built」・L159「Git is a separate concern」・L177 verify は optional workflow、`docs-lab/customize/profiles.md` L17 `sync`（spec の更新を archive せずに specs/ へ反映）
+- #806 のフロー図修正に合わせて articleHash を a1569b6f954868eec99cb988abe637f194424852 へ更新した
