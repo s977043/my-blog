@@ -23,7 +23,9 @@ AIエージェントを使った開発を続けていると、問題はだんだ
 
 > チームが「何を確認し、何をEvidenceとして、どのように判断するか」を、モデルの中ではなくリポジトリ側の資産として持つ。
 
-この記事では、現在のRiver Reviewを機能一覧ではなく、**判断をArtifact・Evidence・Verification・Memory・Human Judgmentへ分ける責務境界**として整理します。文脈の選び方は、その周りの責務として扱います。
+この記事では、現在のRiver Reviewを機能一覧ではなく、**判断をArtifact・Evidence・Verification・Memory・Human Judgmentへ分ける責務境界**として整理します。文脈の選び方は、その周りの責務として扱います。以下の§1〜§7は、判断基準（§1）→ Artifact・Evidence（§2）→ 文脈（§3）→ 検証（§4）→ Memory（§5）→ 人の判断（§6）→ 実行の制御（§7）の順に並べています。
+
+なお、本文で「現在の実装」と書く箇所は、s977043/river-review の main ブランチの2026-10時点の状態を指します。
 
 :::message
 対象は、AIコードレビューを単発のプロンプトではなく、チーム開発の仕組みとして運用したい人です。
@@ -33,12 +35,12 @@ River Reviewは、Claude Code / Codexのプラグインや、GitHub Actionsか�
 
 ## TL;DR
 
-River Reviewのコアを圧縮すると、次の6点です。
+River Reviewのコアを圧縮すると、次の6点です。1〜6は§1・§2・§4・§5・§6・§7に対応します。§3（文脈の選び方）は周辺の責務として扱うため、ここには含めていません。
 
 1. **Judgmentをモデルに閉じ込めない**。レビュー基準を、リポジトリ側でバージョン管理するSkillとして持つ
 2. **会話ではなくArtifactとEvidenceを境界にする**。別のエージェントやCI、別のセッションでも再利用できる形にする
 3. **生成と検証を分ける**。レビュアーの指摘を、決定論的な検証とReview Coverageで確かめる
-4. **会話の全文ではなく判断を記憶する**。Riverbed Memoryに、次の判断を変える情報（決定・受け入れたリスク・抑制）を残す
+4. **会話の全文ではなく判断を記憶する**。Riverbed Memory（River Reviewでレビュー判断を記憶する層）に、次の判断を変える情報（決定・受け入れたリスク・抑制）を残す
 5. **人にはすべてを見せたうえで、判断が要る面に注意を集める**。Findingを隠さず、表示で注意を絞る
 6. **実行の制御を抱え込まない**。River ReviewはReview Judgmentを返し、セッション・再試行・停止は呼び出し側に残す
 
@@ -58,7 +60,7 @@ River Reviewに当てはめると、Context Budgetを小さくするだけでは
 
 River Reviewの出発点は、レビューの判断基準をモデルやプロンプトの中ではなく、リポジトリ側の資産として持つことです。
 
-判断基準がモデルやプロンプトの中にあると、モデルを変えるたびに指摘が変わり、ある人の手元で効いている知識もCIや別のエージェントには渡りません。そこで、何を見るか、何をEvidenceとするか、どの条件では指摘しないかを **Skill** としてチームが所有し、fixtureで回帰を確かめられるようにしています。
+判断基準がモデルやプロンプトの中にあると、モデルを変えるたびに指摘が変わり、ある人の手元で効いている知識もCIや別のエージェントには渡りません。そこで、何を見るか、何をEvidenceとするか、どの条件では指摘しないかを **Skill** としてチームが所有し、fixture（Skillの回帰を確かめるためのテスト用の入力例）で回帰を確かめられるようにしています。
 
 例として、River Reviewのリポジトリにある、AI生成コード向けのSkill `hallucinated-reference` を見ます。生成されたコードに紛れ込む、存在しない関数やメソッドの呼び出しを見つけるものです。
 
@@ -121,11 +123,13 @@ River ReviewにはContext Budgetがあります。
 | medium | 4,000 |
 | large | 16,000 |
 
+（値の根拠: [src/lib/context-presets.mjs](https://github.com/s977043/river-review/blob/main/src/lib/context-presets.mjs)）
+
 明示的なbudgetを指定することもできます。
 
 さらに、リポジトリ全体から文脈を集めるときは、候補を並べ替える仕組み（ranking）を設定で有効にできます。既定では無効です。
 
-現在の実装で実際に計算している信号は、変更ファイルどうしのパスの近さ（`pathProximity`）だけです。設定上は `symbolUsage`・`siblingTest`・`commitRecency` の重みも指定できますが、現在の実装はこれらの信号を計算しておらず、並び替えには効きません。
+現在の実装で実際に計算している信号は、変更ファイルどうしのパスの近さ（`pathProximity`）だけです。設定上は `symbolUsage`・`siblingTest`・`commitRecency` の重みも指定できますが、現在の実装はこれらの信号を計算しておらず、並び替えには効きません（[src/lib/repo-context.mjs](https://github.com/s977043/river-review/blob/main/src/lib/repo-context.mjs)）。
 
 考え方は単純です。
 
@@ -190,7 +194,7 @@ River Reviewでは、レビュアーが出した指摘の候補を、別のLLM�
 
 そこでReview Coverageでは、全体の状態を `complete` / `partial` / `not_executed` の3つに分けています。「問題が無かった」と「確認できなかった」を同じ値にしないためです。
 
-なお、Review Coverageは現時点ではExperimental（実験的）な扱いです。既定ではGateの判定を変えず、JSONの成果物や保存された実行記録に状態を残します。
+なお、Review Coverageは現時点ではExperimental（実験的）な扱いです。既定ではGate（マージ可否を返す判定）の判定を変えず、JSONの成果物や保存された実行記録に状態を残します。
 
 一方、レビューを繰り返すループの収束判定では、Coverageが不完全（`partial` / `not_executed`）な実行を「収束した」とはみなしません。タイムアウトで指摘が0件になった実行を根拠に、ループを止めてしまわないためです。
 
@@ -202,7 +206,7 @@ River Reviewでは、レビュアーが出した指摘の候補を、別のLLM�
 
 たとえば、
 
-- この設計判断はADRで決めている
+- この設計判断はADR（Architecture Decision Record、設計判断の記録）で決めている
 - この依存は受け入れ済み
 - このFindingはWontFixと判断した
 - このpatternは過去にも確認している
