@@ -498,8 +498,8 @@ Delta Spec
 → Plan
 → Review / Approval
 → Implementation
-→ Current Spec candidate
 → Verification / Evidence
+→ Current Spec candidate
 → Human C-4 / Merge
 → Current Specとして有効化
 ~~~
