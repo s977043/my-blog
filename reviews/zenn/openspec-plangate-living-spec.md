@@ -1,135 +1,58 @@
-# articles/openspec-plangate-living-spec.md の記事レビュー
+<!-- publish-readiness: blocked=false mustHigh=0 verified=true articleHash=4eced5748e3fe93fad0ba4ebe47c0cb9923e13e0 loops=0 reviewedAt=2026-10-11T07:02:00Z -->
+# articles/openspec-plangate-living-spec.md のレビュー（改善ループ / Humanize / 最終レビュー）
 
-> Zennカテゴリー: Idea
-> 構成タイプ: 概念解説 / 設計・アーキテクチャ
-> Review target: PR #733
-> Review date: 2026-10-01
+- 対象記事: `articles/openspec-plangate-living-spec.md`
+- 改善ループ数: 0（最大 3）
+- レビュー状態: post-humanize-verified
+- 総合判定: **公開可（must / high は 0 件、ブロッカーなし）**。ただし OpenSpec の仕様説明と URL は WebFetch で裏取りしておらず、未検証のまま
 
-## 編集部エージェントチーム
+## 各ループの要約
 
-今回のレビューでは、同じ記事を次の5つの役割から読む。
+| ループ | 指摘件数 | must/high | 反映件数 | 主張保持 | 収束 | verdict |
+|---|---|---|---|---|---|---|
+| 1 | 5 | 0 | 0 | 未評価（反映なし） | yes | must/high はなし。2 つのフロー図で candidate の位置が食い違っている（medium）。残りは重複の圧縮と表記の細部。OpenSpec の一部仕様は未検証なので、出典リンクの追加を推奨 |
+| verify | 3 | 0 | 0 | 未評価（反映なし） | yes | 新しい事実誤り、主張の希釈、保護領域への影響はなし。medium 1 件、low 2 件。URL と OpenSpec 仕様は未検証 |
 
-| 役割 | 主な責務 |
-| --- | --- |
-| 編集長 | 中心主張、読者価値、タイトルと本文の一致 |
-| Zenn編集 | 構成、情報密度、初見での読みやすさ |
-| 技術ファクトチェック | OpenSpec / PlanGate の事実境界、公式仕様との一致 |
-| アーキテクト | 責務分離、SSoT、状態遷移、driftリスク |
-| 初見読者 | PlanGate未認知でも理解・持ち帰りできるか |
+## Humanize 結果（Phase 1・review-only）
 
-## レビュー方針
+- passed: **true**
+- 件数: high 0 / medium 1 / low 4
+- 要約: 主張・事実・出典はよく保たれている。6 責務の対応図を 4 回再掲していること、否定の繰り返し、一文段落による引き延ばし、英語名詞の局所密集が指摘された
+- Humanize の指摘は記録するだけ。本文は変更しておらず、公開ブロッカーにも昇格させない
 
-メイン読者は、Claude Code / Codexなどを使ってAI駆動開発を進め、Plan・仕様・レビューartifactが増えてきた中級〜上級エンジニア。PlanGateの紹介記事ではなく、「現在仕様」と「変更差分」をどう分けるかというReader Problemを主役にする。
+| ID | パターン | リスク | 場所 | 理由 | 提案 |
+|---|---|---|---|---|---|
+| H-001 | T06 結論の重複 | medium | TL;DR / 6種類の章 / PoC章 / まとめ | 6 責務の対応図が 4 か所でほぼ同じ形で再掲されている | PoC章（395-401行）の図を削り、前述の6責務への参照に置き換える。まとめの図は残す |
+| H-002 | T06 結論の重複 | low | 「artifactを対応させると、かなり重なる」109-113行 | 同じ否定を 2 文で繰り返し、233 行で 3 回目が出る | 109 行を削り 113 行に一本化する。強調点3は維持 |
+| H-003 | F04/T05 一文段落 | low | 183-195, 207-217行 | 引用と一文段落で文が細切れになっている | 1 文にまとめ、対比の引用は片方だけ残す |
+| H-004 | S15 英語名詞の局所密集 | low | 368-370行 | 英語名詞が連続して読解負荷が高い | artifact→成果物など、中心概念以外を日本語化する（判断は著者） |
+| H-005 | S10/S17 表記の揺れ | low | 30行 / 395行 / 見出し | Current System と Current What の使い分けが曖昧。一人称「私」と「自分」が混在 | 意図がなければ Current What に統一する |
 
-## レビュー → 対応 ループ
+著者入力が必要な項目（requiresAuthorInput）: なし。ただし H-004 の用語選択は Terminology Contract に関わるので、著者の判断に委ねる。
 
-### Loop 1: 事実境界と正本化タイミング
+## 最終レビューの findings
 
-**レビュー**
+| ID | persona | priority | location | 指摘 | suggestion | 主張に関係 |
+|---|---|---|---|---|---|---|
+| F1 | engineer | medium | L448-464 / L496-505 | 2 つのフロー図で Current Spec candidate と Verification の順序が逆 | candidate も検証対象なら、両方とも「Current Spec candidate → Verification / Evidence」の順にそろえる。主張（candidate を同じ PR に含め、merge で有効化する）は変えない | yes |
+| F2 | editor | low | L109-113, L233 | 「Review/Verify の有無の比較ではない」という説明が 3 回繰り返されている | L109 を削って L113 に一本化し、L233 は「前述のとおり」程度に短くする。強調点3の太字は残す | no |
+| F3 | editor | low | L394-401 | コードブロック内の矢印の桁がずれている | L30-35 と同じ桁で矢印をそろえる | no |
 
-- Medium: L106 のOpenSpec `verify` がcore workflowの一部に見えやすい。
-- High: L422以降のCurrent Spec更新をmerge後の別処理にすると、実装とCurrent Specの間にdrift窓ができる。
+overallVerdict: 新しい事実誤り、主張の希釈、文体の崩れ、保護領域（published: false、中心仮説、強調点1〜10）への影響はなかった。公開ブロッカーはなく、収束と判定した。
 
-**対応**
+## 残課題
 
-- `/opsx:verify` を optional workflow と明記し、default core profileには含まれないことを反映。
-- Current Specはmerge後に別更新せず、同じchange / PR内にcandidateを含め、mergeを境界に正本化する仮説へ変更。
-- OpenSpecのarchive / syncとGit mergeは別関心事であることを維持。
+1. F1（medium）: フロー図 2 つの順序をそろえる。公開前の対応を推奨
+2. F2 / H-002: 否定の重複を圧縮する
+3. F3: 矢印の桁をそろえる
+4. H-001 / H-003 / H-004 / H-005: 文体の改善（任意）
+5. OpenSpec の仕様説明（verify が optional であること、sync ワークフロー、「system as built」の記述）と URL を一次情報で裏取りし、出典リンクを追加する
 
-**再レビュー**
+## 公開可否の総合判定
 
-- 技術ファクトチェック: OK
-- アーキテクト: OK
-- 残課題: PlanGate内部仕様の密度
+**公開可**。must は残っておらず、must/high は 0 件。公開前には F1 の修正と OpenSpec 仕様の裏取りを推奨する。
 
-### Loop 2: PlanGate詳細を主線から外す
+## 反映と追加の照合（2026-10-11）
 
-**レビュー**
-
-- Medium: C-3' / Plan Package / hash / reviewer snapshot が本文中盤で主役になり、タイトルから期待する「今の仕様をどう残すか」から離れる。
-
-**対応**
-
-- Change Executionのprovenanceとして必要な要点だけを本文に残した。
-- C-3'の6 artifactとhash詳細は `:::details` へ退避。
-- OpenSpecとPlanGateの比較軸を「機能の有無」ではなく「何を正本として守るか」に戻した。
-
-**再レビュー**
-
-- 編集長: OK
-- Zenn編集: OK
-- 初見読者: 主線を追いやすくなった
-- 残課題: 終盤に旧PoC手順と用語揺れが残る
-
-### Loop 3: 読者への持ち帰りとPoC手順を統一
-
-**レビュー**
-
-- Medium: 「現在仕様 / 変更仕様 / 変更差分」が混在。
-- High: PoC手順の一部に、旧い「変更確定後にspecへ反映」という説明が残り、Loop 1のcandidate方式と矛盾。
-- Medium: まとめが再びPlanGate固有の結論へ寄っている。
-
-**対応**
-
-- 「現在仕様」と「変更差分」に統一。
-- PoCを `Delta Spec → Implementation → Current Spec candidate → Verification → Merge → 正本化` に統一。
-- まとめを Current What / Changed What / Why / How / Judgment / Proof の6責務へ戻し、PlanGateは自分の実践例として位置づけた。
-- 見出しを「自分のフローでは、足りない責務だけを追加したい」「自分のAI開発フローに当てはめるための2つの問い」へ変更。
-
-**再レビュー**
-
-- 編集長: OK
-- Zenn編集: OK
-- 技術ファクトチェック: OK
-- アーキテクト: OK
-- 初見読者: OK
-
-## チェック結果
-
-| 観点 | 状況 | コメント |
-| --- | --- | --- |
-| 編集長 | OK | PlanGate未認知でも入れるタイトル・中心主張になった |
-| Zenn編集 | OK | 長い内部仕様を折りたたみ、本筋がCurrent What / Changed Whatへ収束 |
-| 技術ファクトチェック | OK | OpenSpec verifyのoptional境界とarchive/syncの役割を明確化 |
-| アーキテクト | OK | Current Spec candidateとmerge境界で正本化する仮説へ統一 |
-| 初見読者 | OK | 6責務と2つの問いを自分のフローへ持ち帰れる |
-| CI | 再確認中 | 最新headで確認する |
-
-## 総合評価
-
-### 良い点
-
-- タイトルがPlanGate認知に依存せず、AI駆動開発のReader Problemから入れる。
-- OpenSpecを導入チュートリアルとしてではなく、設計上の発見を得る一次情報として使えている。
-- Current What / Changed What / Why / How / Judgment / Proof の6責務が独自の整理軸として残る。
-- PlanGate固有の詳細は著者の一次体験・実装根拠として機能し、記事全体の主語にはなっていない。
-- 「まだ仮説」「1 capabilityで試す」と境界を置いており、完成済みのベストプラクティスとして断定していない。
-
-### 残る改善点
-
-公開ブロッカーになる指摘は現時点でなし。実際のPoC後には、Current Spec candidateの生成方法、並行change、rollback、AC / test-casesとのdriftについて実測を追記できる。
-
-## 改善後の読者ペルソナ反応
-
-### Persona A: AI駆動開発を実践する中級エンジニア
-
-> 「Planやレビュー記録は増えているのに、今の仕様はどこを見るのか、という違和感が自分にもある。OpenSpecを入れるかどうかより、Current WhatとChanged Whatを分ける、という考え方を持ち帰れるのが良かった。まず自分のrepoでも一つのcapabilityだけ試したい。」
-
-### Persona B: Tech Lead / EM
-
-> 「ツール比較ではなくSSoTと責務分離の話として読める。特にJudgmentとProofまで分けた6責務は、AIエージェントをチーム運用するときの設計レビューに使えそう。PlanGateを知らなくても本筋は理解できる。」
-
-### Persona C: OpenSpecに興味がある読者
-
-> 「OpenSpecの機能紹介だけではなく、main spec / delta specがなぜ効くのかを別の実践と比較しているのが面白い。verifyがoptionalであることなど、OpenSpecを過大評価していない点も安心できる。」
-
-### Persona D: 懐疑的なシニアエンジニア
-
-> 「specを増やせば解決する、という記事ではないのが良い。二重正本やdriftをリスクとして残し、PoCで検証するとしているので読みやすい。ただし本当に運用コストが下がるかは実測待ち。次の記事ではそこを見たい。」
-
-## 推奨アクション
-
-1. 最新headのCIを通す
-2. mainとの差分とmergeabilityを確認
-3. 本文は `published: false` のままmainへマージ可能
-4. PoC実施後、実測結果を別記事または追記で検証する
+- medium（フロー図2つの candidate の位置の食い違い）: 2つ目の図を1つ目に合わせ、Verification / Evidence の後に candidate を置いた
+- 未検証だった OpenSpec の記述を Fission-AI/OpenSpec の main で照合し、すべて一致した: `docs-lab/start/quickstart.md` L148「Specs describe the system as built」・L159「Git is a separate concern」・L177 verify は optional workflow、`docs-lab/customize/profiles.md` L17 `sync`（spec の更新を archive せずに specs/ へ反映）
