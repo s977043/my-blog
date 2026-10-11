@@ -3,7 +3,7 @@ title: "いつ会話を捨てて、新しいセッションで始めるか：区
 emoji: "🔁"
 type: "tech"
 topics: ["claudecode", "codex", "ai", "aiagent", "自動化"]
-published: false
+published: true
 ---
 
 Claude Code や Codex で長い作業を続けていると、このまま続けるか、新しいセッションに切り替えるか、切り替えるなら何を残せばよいかで迷います。切ると、積み上げた文脈が消えそうで怖くなります。切らないと、古い判断や失敗した試行を引きずります。
@@ -20,7 +20,7 @@ Claude Code や Codex で長い作業を続けていると、このまま続け�
 この記事で問題にするのは、引き継ぎ書を使うことではなく、**一度きりの要約だけを状態の唯一の置き場にする運用**です。
 
 :::message
-対象は、Claude Code / Codex で長時間続く作業です。区切りの判断表は「区切りの2種類」の章に、PlanGate を使わない場合の最小手順は「正本はいつ古くなり、いつ更新するか」の章にあります。
+対象は、Claude Code / Codex で長時間続く作業です。区切りの判断表は「区切りの2種類」の章に、PlanGate を使わない場合の手順は「PlanGate を使わない場合の最小手順」の節にあります。
 
 根拠は、筆者が作っている PlanGate（Claude Code / Codex 向けのプラグイン）の設計と、筆者の個人リポジトリに残っている記録です。区切りで切ることの効果を、使用率で切る場合と比べて計測したわけではありません。
 :::
@@ -61,7 +61,7 @@ PlanGate では、タスクを完了したときに一度だけ `handoff.md` と
 
 **要約型：引き継ぎメモの前提が3つとも外れていた（2026年9月）**
 
-2026-09-23 には、セッション間の引き継ぎメモに書いてあった前提3つが、すべて外れていました。
+2026-09-23 には、筆者が個人で残しているセッション間の引き継ぎメモに書いてあった前提3つが、すべて外れていました。
 
 - 「13件が判断待ち」と書かれていたうち12件は、13日前にすでに閉じられていた
 - 「A より先に B を閉じてはいけない」という制約は、向きが逆だった
@@ -85,7 +85,7 @@ issue には「次セッションが誤った地点から再開する」とあ�
 
 PlanGate の Context Lifecycle では、区切りを2種類に分けて定めています。
 
-- **必須の区切り**: PlanGate では、前の会話を前提にできない場面を必須の区切りとしています。working-context スキルでは、タスク規模の区分が standard（中規模）以上のときに適用します
+- **必須の区切り**: PlanGate では、前の会話を前提にできない場面を必須の区切りとしています。設計文書と working-context スキルのどちらでも、タスク規模の区分が standard（中規模）以上のときに適用します。PlanGate はタスクを規模・リスク・影響範囲から ultra-light / light / standard / high-risk / critical の5段階に分けます
 - **推奨の区切り**: 切ると役に立つことが多いが、状況で判断する場面
 
 判断表にまとめます。「区切り」と「扱い」は PlanGate の規定で、「理由」の列は筆者の補足です。
@@ -128,7 +128,7 @@ PlanGate の Context Lifecycle では、区切りを2種類に分けて定めて
 
 読んだ内容は鵜呑みにせず、外部の状態（issue や PR、ブランチ）と照合し、変わっていれば作業の前に正本を更新します。
 
-### 切る前のひな形（2項目）
+### 切る前に追記するひな形（2ブロック）
 
 状態の書き方そのものは既存のテンプレートに任せて、切る前に確認する項目だけを2つに絞ります。現在の状態のファイル（例: `current-state.md`）の末尾に追記する想定です。
 
@@ -183,7 +183,7 @@ Codex のベストプラクティスは、同じ問題なら同じチャット�
 - 切ると決めたら、会話の要約だけに頼らず、正本を確かめて再開する。入口の索引 → 現在の状態 → 必要なときだけ詳細、の順に読む
 - 要約も正本も古くなる。だから正本は、フェーズが変わるたびに更新する
 
-PlanGate では、この考え方を Claude Code / Codex のプラグインの次のリリースで配布する予定です。関連する変更の日付は、2026-07-07（圧縮前の鮮度チェック）、2026-08-25（索引の更新規定）、2026-09-29（Context Lifecycle）です。仕組みがなくても、正本を1つ決めて、フェーズごとに更新するところからは始められます。
+PlanGate では、この考え方を Claude Code / Codex のプラグインの v8.23.0（2026-10-06）で配布しました。関連する変更の日付は、2026-07-07（圧縮前の鮮度チェック）、2026-08-25（索引の更新規定）、2026-09-29（Context Lifecycle）です。仕組みがなくても、正本を1つ決めて、フェーズごとに更新するところからは始められます。
 
 ## 参考
 
@@ -191,7 +191,7 @@ PlanGate では、この考え方を Claude Code / Codex のプラグインの�
 - [セッションの管理（Claude Code）](https://code.claude.com/docs/ja/sessions)
 - [コンテキストウィンドウを探索する（Claude Code）](https://code.claude.com/docs/ja/context-window)
 - [Effective harnesses for long-running agents（Anthropic）](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
-- [Best practices（Codex / OpenAI）](https://learn.chatgpt.com/guides/best-practices)
+- [Best practices（ChatGPT Learn：Codex）](https://learn.chatgpt.com/guides/best-practices)
 - [Run long horizon tasks with Codex（OpenAI）](https://developers.openai.com/blog/run-long-horizon-tasks-with-codex)
 - 紹介されている実践例
   - [【Claude Code】スラッシュコマンドでセッション引き継ぎを仕組み化する（DevelopersIO）](https://dev.classmethod.jp/articles/claude-code-session-handover/)

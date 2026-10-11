@@ -50,6 +50,26 @@ Pluginへ移行した経緯と、Claude CodeとCodexで手順をそろえた設�
 
 working treeの差分をレビューし、修正案を返すPluginのコマンドです。前節のように自然文で依頼しても構いません。
 
+返ってくるレビューは、River Reviewの出力形式の要約・指摘・修正案に沿います。locale追加の変更なら、たとえば次のような形になります。
+
+~~~text
+Summary:
+  User Profile APIにoptionalなlocaleを追加する変更。
+  未対応のlocale値を受け取ったときの扱いが未定義。
+
+Finding (major / test-gap):
+  src/profile/update.ts:42
+  未対応のlocaleを渡した場合の分岐にテストがない。
+  Evidence:
+    - update.tsにfallback分岐が追加されている
+    - 追加されたテストは正常値の "ja" / "en" だけを確認している
+
+Suggestion:
+  未対応localeでfallbackすることを確認するテストを1件追加する。
+~~~
+
+これは本書で用意した**例（簡略化）**で、実際の出力ではありません。文面や項目の並びは、選ばれたSkillや実行環境によって変わります。ここで見てほしいのは、指摘（Finding）と、それを再確認できる根拠（Evidence）が対になっていることです。
+
 ## 最初に確認する3点
 
 ### 1. 何を入力にしたか

@@ -318,6 +318,57 @@
       "legacy": false
     },
     {
+      "id": "seed-20261010-agile-hotl-practice-evolution",
+      "path": "article_seeds/ai-driven-development/2026-10-10-agile-hotl-practice-evolution.md",
+      "title": "AIが賢くなった今、アジャイルの原点に戻ってきた",
+      "date": "2026-10-10",
+      "status": "draft",
+      "topics": [
+        "ai-driven-development",
+        "agile",
+        "hitl-hotl",
+        "agent-autonomy",
+        "fast-feedback"
+      ],
+      "source": "mixed",
+      "source_url": "https://www.anthropic.com/news/measuring-agent-autonomy",
+      "source_ref": "https://github.com/s977043/PlanGate/pull/1549",
+      "evidence_status": "verified",
+      "promoted_to": [],
+      "article_type_candidates": [
+        "experience",
+        "insight"
+      ],
+      "author_input_required_count": 0,
+      "author_input_gate_open": false,
+      "legacy": false
+    },
+    {
+      "id": "seed-20261011-claude-code-hook-fail-open",
+      "path": "article_seeds/ai-driven-development/2026-10-11-claude-code-hook-fail-open.md",
+      "title": "危険コマンドを止める Claude Code hook が、検査の手前で素通ししていた",
+      "date": "2026-10-11",
+      "status": "seed",
+      "topics": [
+        "ai-driven-development",
+        "claude-code",
+        "hooks",
+        "security"
+      ],
+      "source": "external",
+      "source_url": "https://github.com/s977043/growth-lab/pull/986",
+      "source_ref": "s977043/growth-lab .claude/hooks/safety.sh（4cfab484 / 997d1019 / 4968c28c / 97505505、修正 3d967255）; https://code.claude.com/docs/en/hooks",
+      "evidence_status": "verified",
+      "promoted_to": [],
+      "article_type_candidates": [
+        "experience",
+        "analysis"
+      ],
+      "author_input_required_count": 0,
+      "author_input_gate_open": false,
+      "legacy": false
+    },
+    {
       "id": "seed-20260911-media-operating-system-boundaries",
       "path": "article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md",
       "title": "Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった",

@@ -101,6 +101,7 @@ markerの削除は、著者本人から一次情報が得られた場合、ま�
 - Channel / Article Type（`channel`・`article_type`）: 媒体と主タイプ
 - Outline（`### Outline`）: 必要最小限の見出し
 - Out of Scope（`out_of_scope`）: 今回は書かない論点
+- Claim Boundary（`claim_boundary`）: 主張境界チェックが必要か。判断基準は `.claude/skills/note-article-review/references/claim-routing.md`。条件を満たせば `required`、それ以外は `not_required`
 - Lifecycle: 現在は PLANNED、次は DRAFTED
 
 初稿前は仮説や未確認事項を明記してよい。PR作成前の通過条件は `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」を正とする。
@@ -123,6 +124,7 @@ markerの削除は、著者本人から一次情報が得られた場合、ま�
 - reader_problem:
 - central_claim:
 - out_of_scope:
+- claim_boundary: required | not_required
 
 ### Evidence Boundary
 - Observed: 実体験なら誰が何を観測したか
@@ -143,7 +145,7 @@ Draftの配置は既存媒体規約を再利用する。
 - Qiita: `npm run new:qiita -- <slug>` または既存雛形を使い、公開準備までは `ignorePublish: true` を維持する
 - izanami: `articles_izanami/<slug>.md` を `status: draft` で作る
 
-Draftには `Draft Article Plan` の **Reader Problem / Central Claim / Evidence Boundary / Outline / Out of Scope** を入力契約として渡す。外部記事や検索結果から新しい中心主張を無断で追加しない。
+Draftには `Draft Article Plan` の **Reader Problem / Central Claim / Evidence Boundary / Outline / Out of Scope / claim_boundary** を入力契約として渡す。外部記事や検索結果から新しい中心主張を無断で追加しない。
 
 Draft作成後は、新しいレビュー系を作らず既存フローへ渡す。
 

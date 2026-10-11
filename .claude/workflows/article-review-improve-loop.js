@@ -208,6 +208,8 @@ ${INV}
 - priority は must（公開ブロッカー）/high/medium/low。各指摘は「主張・強調を変えずに直せる具体案（suggestion）」まで書く。
 - 主張・強調に触れる指摘は touchesClaim=true とし、suggestion は不変条件の枠内に収める。主張反転・希釈は提案しない。
 - 裏取りが必要な事実主張は location を具体的に。必要なら WebFetch で一次情報を確認する。
+- 公開を止める・遅らせる・公開条件を変える指摘は、確かめた一次情報の場所（タグ・ファイルパス・行番号・URL）を suggestion に書く。示せないものは「未検証」と書き、high 以上にしない。
+- 事実照合とは別に、目次から辿る読者の視点で次を確認する: 案内文（「〜の章にあります」等）が目次の見出し名と一致するか / 見出しの数詞（「2項目」等）が中身の数・単位と一致するか / ツール固有の用語（モード名・区分名）が初出で説明されているか。
 - must/high が無く改善余地が小さければ converged=true。
 
 StructuredOutput で findings / converged / overallVerdict を返す。レビュー用 Markdown は生成しない。`

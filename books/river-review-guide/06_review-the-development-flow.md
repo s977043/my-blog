@@ -20,6 +20,8 @@ River Reviewでは、SDLC上の複数Artifactを対象にします。
 
 ポイントは、**同じ判断基準を複数Artifactへまたいで使えること**です。
 
+ただし、この5つは公開docsの概念上の整理です。snapshot時点のcurrent mainで専用のレビューモードとしてImplementedなのは、Plan Review（plan gate）とDiff Review（exec gate）です。Requirements / Design / Report Reviewは、要件や設計文書、レビュー結果をArtifactとして渡し、対応するSkillで見る形になります。
+
 ## 実装後だけでは遅い判断がある
 
 たとえばPlanに次のように書かれていたとします。
