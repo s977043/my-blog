@@ -11,9 +11,9 @@
     {
       "id": "reader-review-2026-10-09",
       "due": "2026-10-09T17:00:00+09:00",
-      "what": "/reader-review の次回ローカル実行（週次。クラウドの routine は無効化済み）",
+      "what": "/reader-review の次回ローカル実行（週次。クラウドの routine は無効化済み）（2026-10-09 に実施、PR #799）",
       "source": "2026-10-05 の振り返り（routine trig_01HhLm6SgRWMhdvBAjZUsZCE を無効化し、ローカル実行へ切り替え）",
-      "done": false
+      "done": true
     },
     {
       "id": "izanami-ai-review-coverage-observe",
@@ -69,6 +69,13 @@
       "due": "2026-11-07T21:00:00+09:00",
       "what": "学びの昇格レポートの月次実行（npm run report:learnings-promotion）。基準値（docs/agent-growth-harness.md §3）と比べ、未言及 3 件以上のテーマが減ったかを記録する。2 か月連続で減らなければ案 B を提案。次月分の項目を足す",
       "source": "docs/agent-growth-harness.md §5（#779、2026-10-07 ユーザー決定）",
+      "done": false
+    },
+    {
+      "id": "reader-review-2026-10-16",
+      "due": "2026-10-16T17:00:00+09:00",
+      "what": "/reader-review の次回ローカル実行（週次。クラウドの routine は無効化済み）",
+      "source": "reader-review-2026-10-09（#799）の次回",
       "done": false
     }
   ]
