@@ -3,7 +3,7 @@ title: "River Reviewのコア設計：AIレビューではなく、チームの�
 emoji: "🗂️"
 type: "tech"
 topics: ["ai", "aiagent", "codereview", "claudecode", "codex"]
-published: false
+published: true
 ---
 
 AIエージェントを使った開発を続けていると、問題はだんだん「コードを書けるか」ではなくなってきます。
