@@ -22,7 +22,7 @@
 //
 // ■ なぜ diff モードが必要か（date モードの穴 その1・件数側）
 //   実 deploy=rate-limit 消費は release/zenn への merge だが、published フリップは main 上で
-//   コミットされる。AGENTS.md §150/§169 は「フリップを溜めてから後日まとめて sync」を許容するため、
+//   コミットされる。AGENTS.md §「Zenn 公開フロー」は「フリップを溜めてから後日まとめて sync」を許容するため、
 //   date モードだとフリップのコミット日付が 24h 窓外になり、同 deploy で複数記事が公開されても
 //   0 件と誤判定して**見逃す**（false negative）。逆に過去 deploy 済みフリップが日付都合で 24h 窓に
 //   残ると正当な単一公開を**誤ブロック**する（false positive）。diff モードは release/zenn を
