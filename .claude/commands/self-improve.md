@@ -32,6 +32,8 @@ npm run report:learnings-promotion
 
 - 未 push・未コミットの残り（`unpushed_commits` / `uncommitted_changes`）は、まず現物を確認する（`git log --branches --not --remotes`、`git -C <worktree> status --short`）。放置ブランチなら CLAUDE.md §セッション終了時のチェックリストで片付け、(a) として処理する
 - `redo_commit` は件名の語で拾っているので誤検知がある。やり直しではないもの（例: 単なる「再度確認」の文言）は (a) として理由を残す
+- シグナルの `repo` が `s977043/my-blog` でないもの、会社リポジトリ由来の内容は学びにしない（`AGENTS.md` §題材と媒体の対応。my-blog は公開リポジトリ）。処理済みにして理由を残す
+- `AGENT_LEARNINGS.md` 冒頭のテンプレート（規約部分）は変えない。変更が要ると判断したら提案に留める（設計書 §4 で承認必須）
 - 推測で分類しない。一次情報（commit・ファイル・PR）で確かめられなかったものは処理済みにせず、報告に「未確認」と書いて残す
 
 ### 3. 上限を確かめてから PR にする
@@ -59,7 +61,8 @@ PR を作ったものも作らなかったものも、判断理由を付けて�
 node scripts/growth-signals.js mark <id> [<id>...] --note "<分類と理由。PR を作ったなら番号>"
 ```
 
-- 理由は `detail` の末尾に `[processed: ...]` として残る
+- 理由は `processed.jsonl` に追記され、`list --all` では `detail` の末尾に `[processed: ...]` として見える
+- 未知の id を渡すと何も記録せず exit 1 になる。`list --json` の `id` をそのまま使う
 - 上限で止めた分・未確認の分は処理済みにしない（次回の SessionStart で再表示される）
 
 ### 5. 報告
