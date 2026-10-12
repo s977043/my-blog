@@ -16,7 +16,7 @@ command -v node >/dev/null 2>&1 || exit 0
 case "${1:-}" in
   append)
     [ $# -ge 3 ] || exit 0
-    node "$JS" append --kind "$2" --source "$3" --detail "${4:-}" ${5:+--session-id "$5"} </dev/null >/dev/null 2>&1
+    node "$JS" append "$2" "$3" "${4:-}" "${5:-}" </dev/null >/dev/null 2>&1
     ;;
   hook-session-start)
     node "$JS" hook-session-start 2>/dev/null
