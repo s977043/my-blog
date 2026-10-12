@@ -19,11 +19,9 @@ Zenn / Qiita / note / izanami の4プラットフォームで公開する記事�
 - `articles_note/README.md` — note（WXRインポート/エクスポート運用を含む）
 - `articles_izanami/README.md` — izanami（新規原稿と企画候補）
 
-記事作成・更新・レビュー・導線設計を行う場合は、媒体別の配置規約だけでなく `docs/content-channel-strategy.md` も参照し、媒体横断のポジショニングと役割分担に沿って判断する。
-
 ## コンテンツ方針
 
-記事作成・更新・レビューでは、以下を共通方針とする。詳細は `docs/content-channel-strategy.md` を正とする。
+記事作成・更新・レビュー・導線設計では、媒体別の配置規約に加えて以下を共通方針とする。詳細は `docs/content-channel-strategy.md` を正とする。
 
 - 共通ポジショニング: `AIコーディングをチーム開発に乗せる運用設計`
 - note: 背景・思想・マネジメント視点
@@ -98,7 +96,7 @@ gh repo view <owner>/<repo> --json owner --jq .owner.login   # s977043 なら個
 
 `<state>` = `new` / `drafts` / `published`（note固有）
 
-`reviews/` のディレクトリ構造はプラットフォームごとに非対称。note のみ `reviews/note/<state>/` と state 階層を持つ（`published` への反映 PR は ⚠️ バナーが必須で、state 判定がレビュー成果物の取り扱いを分岐させるため）。Zenn/Qiita はフラット配置（`reviews/zenn/<slug>.md`、`reviews/qiita/<slug>.md`）。
+`reviews/` は note のみ state 階層を持つ（`published` への反映 PR は ⚠️ バナーが必須で、state がレビュー成果物の扱いを分けるため）。Zenn/Qiita はフラット配置。
 
 ## 記事の状態（note固有）
 
@@ -116,7 +114,7 @@ gh repo view <owner>/<repo> --json owner --jq .owner.login   # s977043 なら個
 
 - 小文字 `proni-` は一覧上で埋もれるため使わない
 - `reviews/note/<state>/<slug>.md` は記事の slug に対応させる規約なので、記事をリネームしたら**レビュー成果物のファイル名と、その中身が参照している対象パスの両方**を更新する。ファイル名だけ直して中身を旧パスのまま残す漏れが実際に起きている（#641 → #642）。リネーム後に `grep -rln "<旧パス>" --include="*.md" .` で残存を確認する（`AGENT_LEARNINGS.md` と計測ログの旧パスは当時の事実の記録なので変更しない）
-- 大文字を含む slug は note ツールチェーンで安全（`md_to_wxr.py` の `derive_default_outname` は stem をそのまま使い小文字化しない / `clean-note-build.js` の `FILE_RE` は大文字にマッチする / 予約名 `new`・`drafts`・`published`・`bundle`・`batch` と衝突しない）
+- 大文字を含む slug は note ツールチェーン（`md_to_wxr.py` / `clean-note-build.js`）で安全に扱える
 - 会社公式記事は公開前に**社内のテックブログ投稿レギュレーション**（エンジニアレビュー2名 → note執筆ガイドライン適用 → 広報の事前確認依頼ワークフロー → デザイン室テンプレートのカバー画像）を通す。`/publish-zenn` `/publish-qiita` のような自動化パスは使えない
 
 ## クロスポスト時のリンク方針
@@ -129,7 +127,7 @@ gh repo view <owner>/<repo> --json owner --jq .owner.login   # s977043 なら個
 | note 版がまだ無い記事 | Zenn の URL を採用（後日 note 版が出たら差し替え可）|
 | 両方公開済み | note を優先 |
 
-**なぜ note メインか**: SNS 拡散・他媒体読者の回遊で note への流入を作りやすく、`mine_unilabo` プロフィール経由で他記事も読まれる導線になるため。Zenn は技術検索流入が強い一方、note はストック型ファン獲得が期待できる。
+**なぜ note メインか**: SNS 拡散・他媒体読者の回遊で note への流入を作りやすく、`mine_unilabo` プロフィール経由で他記事も読まれる導線になるため。
 
 既存 Qiita 公開済み記事の Zenn リンクは原則そのまま維持し、note 版が新規で出たタイミングで差し替える。一括書き換えは行わない（リンクの安定性を優先）。
 
@@ -258,7 +256,7 @@ main                      ← 通常運用（記事執筆、レビュー反映�
 
 - リポジトリ側に追加 commit を **作らない**（被害拡大を防ぐ）
 - [Zenn お問い合わせフォーム](https://zenn.dev/inquiry) で緩和申請（公式が「移行・特殊用途では緩和可」と明言している正規ルート）
-- 詳細仕様と緩和申請文案テンプレ: `memory/reference_zenn_rate_limit_spec.md`
+- 詳細仕様と緩和申請文案テンプレは Claude Code の auto-memory `reference_zenn_rate_limit_spec.md`（リポジトリ外）
 
 ## Commit Attribution
 
@@ -268,7 +266,7 @@ AIエージェントによるコミットは、利用中モデルの名前で `C
 Co-Authored-By: <Model name and byline> <noreply@anthropic.com>
 ```
 
-`<Model name and byline>` には **そのコミットを生成した実モデル名**を入れる（例として特定バージョンをここに固定しない。古い名前をハードコードして残さないこと）。
+`<Model name and byline>` には **そのコミットを生成した実モデル名**を入れる（特定バージョンをここに固定しない）。
 
 ## 禁止事項
 
@@ -282,11 +280,7 @@ Co-Authored-By: <Model name and byline> <noreply@anthropic.com>
 
 ## 参考ファイル
 
-- **規約の正**: `README.md`, `articles/README.md`, `Qiita/README.md`, `articles_note/README.md`
-- **コンテンツ方針**: `docs/content-channel-strategy.md`
-- **Claude Code ツール**: `CLAUDE.md`
-- **経験則ログ**: `AGENT_LEARNINGS.md`
+冒頭と各節で挙げたもの（README 群・`docs/content-channel-strategy.md`・`CLAUDE.md`・`AGENT_LEARNINGS.md`・note チェックリスト・note 運用スクリプト）以外:
+
 - **開発フロー自己採点の基準**: `docs/loop-audit/rubric.md` — 開発フローを印象でなく観測可能な条件で採点するルーブリック（採点結果は同ディレクトリ）
-- **運用スクリプト**: `.claude/skills/note-export-import/scripts/*.py`
-- **note記事品質チェックリスト**: `articles_note/checklists/note-article-quality-checklist.md`
 - **Skill / Agent / Command定義**: `.claude/skills/*/SKILL.md`, `.claude/agents/*.md`, `.claude/commands/*.md`
