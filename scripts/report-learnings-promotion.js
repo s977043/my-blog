@@ -11,6 +11,8 @@
 //   - `## 📇` 見出しより後ろを `\n### YYYY-MM-DD` で区切った各ブロックを 1 エントリとする
 //   - ガード語への言及（文字列一致。昇格の確定ではない）/ 再発明記 / テーマは、下の表の正規表現がエントリ本文に 1 回でも当たれば数える
 //   - 昇格候補: テーマに当たったエントリのうち、機械ガードに触れていないものが 3 件以上あるテーマ
+//   - ガード後の再発候補: THEMES の guards（ガード PR のマージ日）より後に追加された同テーマのエントリ。
+//     導入月から最終エントリの月までの月数以上あれば、設計書 §5 の C 条件に当たるとみなす
 //
 // ■ `npm run check` に入れない理由
 //   集計値は記事やスクリプトの不備ではない。形式の検証は `test:learnings-promotion`（self-test）で CI に載せている。
@@ -36,18 +38,45 @@ const GUARD_RE =
 // 「同一セッションで N 回」のように再発語を使わない書き方は拾えない。
 const RECUR_RE = /再発(?!行|防止)|二度目|同じ(ミス|失敗)|再び/;
 
+// guards: テーマの失敗を検出・阻止するガードを入れた PR と、そのマージ日（JST）。
+//   日付は `gh pr view <n> --json mergedAt` の値を JST に直したもの。推測で埋めず、該当 PR が無いテーマは空にする。
+//   ガード導入日は guards の最も早い日付。
 const THEMES = [
-  { id: "parallel-session", label: "並列セッション", re: /並[列行]セッション/ },
+  {
+    id: "parallel-session",
+    label: "並列セッション",
+    re: /並[列行]セッション/,
+    guards: [{ pr: 625, date: "2026-09-07" }], // check-pr-file-conflict.js
+  },
   {
     id: "gh-account",
     label: "gh アカウント",
     re: /gh auth (setup-git|switch)|active account|kominem/,
+    guards: [
+      { pr: 294, date: "2026-05-21" }, // check-gh-account.sh
+      { pr: 317, date: "2026-05-27" }, // pre-push hook
+      { pr: 446, date: "2026-07-03" }, // PreToolUse hook
+      { pr: 689, date: "2026-09-24" }, // hook を操作先 owner で絞る
+    ],
   },
-  { id: "formatter-churn", label: "formatter churn", re: /formatter/i },
-  { id: "worktree", label: "worktree", re: /worktree/ },
-  { id: "stash", label: "stash", re: /stash/ },
-  { id: "stale-pr", label: "stale PR", re: /stale PR|pr-staleness/i },
-  { id: "note-wxr", label: "note WXR", re: /WXR/ },
+  { id: "formatter-churn", label: "formatter churn", re: /formatter/i, guards: [] },
+  { id: "worktree", label: "worktree", re: /worktree/, guards: [] },
+  { id: "stash", label: "stash", re: /stash/, guards: [] },
+  {
+    id: "stale-pr",
+    label: "stale PR",
+    re: /stale PR|pr-staleness/i,
+    guards: [{ pr: 448, date: "2026-07-03" }], // check:pr-staleness
+  },
+  {
+    id: "note-wxr",
+    label: "note WXR",
+    re: /WXR/,
+    guards: [
+      { pr: 672, date: "2026-09-23" }, // verify_wxr.py --structure-only
+      { pr: 673, date: "2026-09-23" }, // note 公式のインポート条件
+    ],
+  },
   {
     id: "zenn-release",
     label: "Zenn 公開・rate-limit",
@@ -55,13 +84,27 @@ const THEMES = [
     test: (t) =>
       /release\/zenn/.test(t) ||
       (/Zenn/.test(t) && /rate-limit|rate limit/.test(t)),
+    guards: [
+      { pr: 207, date: "2026-05-07" }, // check-zenn-publish-pace.js
+      { pr: 391, date: "2026-06-07" }, // release/zenn 宛 PR の CI ゲート
+    ],
   },
   {
     id: "qiita-publish",
     label: "Qiita 公開",
     re: /publish:qiita|qiita-cli|\.remote/,
+    guards: [
+      { pr: 269, date: "2026-05-18" }, // check-qiita-publish-hygiene.js
+      { pr: 323, date: "2026-05-28" }, // check-qiita-drift.js
+      { pr: 366, date: "2026-06-03" }, // check-qiita-remote-cache.js / pre-commit の .remote 混入
+    ],
   },
-  { id: "claude-mem", label: "claude-mem 混入", re: /claude-mem/ },
+  {
+    id: "claude-mem",
+    label: "claude-mem 混入",
+    re: /claude-mem/,
+    guards: [{ pr: 366, date: "2026-06-03" }], // pre-commit の <claude-mem-context> 混入
+  },
 ];
 
 // ---- 純関数（self-test 対象） ----
@@ -80,11 +123,37 @@ function splitEntries(text) {
     }));
 }
 
+// "YYYY-MM" から "YYYY-MM" までの月数（両端を含む）
+function monthSpan(from, to) {
+  const n = (m) => Number(m.slice(0, 4)) * 12 + Number(m.slice(5, 7));
+  return n(to) - n(from) + 1;
+}
+
+// ガード導入日より後（同日は含めない）の同テーマエントリを再発候補とする。
+// 導入月から集計対象の最終月までの月数以上あれば、設計書 §5 の C 条件（導入後も月 1 件以上）に当たる。
+function recurrenceOf(hit, guards, lastMonth) {
+  if (!guards || !guards.length) return null;
+  const since = guards.map((g) => g.date).sort()[0];
+  const after = hit
+    .filter((e) => e.date > since)
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const months = lastMonth ? Math.max(monthSpan(since.slice(0, 7), lastMonth), 1) : 1;
+  return {
+    since,
+    count: after.length,
+    months,
+    meetsC: after.length >= months,
+    entries: after.map((e) => ({ date: e.date, title: e.title })),
+  };
+}
+
 function analyze(text, themes = THEMES) {
   const entries = splitEntries(text);
   const total = entries.length;
   const byMonth = {};
   for (const e of entries) byMonth[e.month] = (byMonth[e.month] || 0) + 1;
+  const months = Object.keys(byMonth).sort();
+  const lastMonth = months[months.length - 1];
   const isGuarded = (e) => GUARD_RE.test(e.text);
   const guarded = entries.filter(isGuarded).length;
   const recurring = entries.filter((e) => RECUR_RE.test(e.text));
@@ -93,6 +162,8 @@ function analyze(text, themes = THEMES) {
       t.test ? t.test(e.text) : t.re.test(e.text),
     );
     const unguarded = hit.filter((e) => !isGuarded(e)).length;
+    const themeByMonth = {};
+    for (const e of hit) themeByMonth[e.month] = (themeByMonth[e.month] || 0) + 1;
     return {
       id: t.id,
       label: t.label,
@@ -104,6 +175,9 @@ function analyze(text, themes = THEMES) {
         title: e.title,
         guarded: isGuarded(e),
       })),
+      byMonth: Object.fromEntries(Object.entries(themeByMonth).sort()),
+      guardPrs: (t.guards || []).map((g) => ({ pr: g.pr, date: g.date })),
+      recurrence: recurrenceOf(hit, t.guards, lastMonth),
     };
   });
   return {
@@ -121,6 +195,10 @@ function analyze(text, themes = THEMES) {
     candidates: themeStats
       .filter((s) => s.unguarded >= CANDIDATE_MIN)
       .sort((a, b) => b.unguarded - a.unguarded),
+    months,
+    cConditionThemes: themeStats
+      .filter((s) => s.recurrence && s.recurrence.meetsC)
+      .map((s) => s.id),
   };
 }
 
@@ -148,6 +226,31 @@ function formatText(r) {
             .map((e) => `      - ${e.title}`),
         ])
       : ["  （なし）"]),
+    "",
+    `テーマ×月の記録数（${r.months.join(" / ")}）:`,
+    ...r.themes.map(
+      (x) =>
+        `  - ${x.label}: ${r.months.map((m) => x.byMonth[m] || 0).join(" / ")}`,
+    ),
+    "",
+    "ガード導入後の再発候補（導入日より後に追加された同テーマのエントリ）:",
+    ...r.themes.flatMap((x) =>
+      x.recurrence
+        ? [
+            `  - ${x.label}: ${x.recurrence.count} 件 / 導入後 ${x.recurrence.months} か月（導入 ${x.recurrence.since}、${x.guardPrs.map((g) => `#${g.pr}`).join(" ")}）${x.recurrence.meetsC ? " ← C 条件" : ""}`,
+            ...x.recurrence.entries.map((e) => `      - ${e.title}`),
+          ]
+        : [`  - ${x.label}: ガード導入日なし`],
+    ),
+    "",
+    `C 条件（導入後も月 1 件以上）に当たるテーマ: ${
+      r.cConditionThemes.length
+        ? r.themes
+            .filter((x) => r.cConditionThemes.includes(x.id))
+            .map((x) => `${x.label}（${x.recurrence.count} 件 / ${x.recurrence.months} か月）`)
+            .join("、")
+        : "なし"
+    }`,
     "",
     "注意: 本文の文字列で判定しているため、昇格候補は実態より多めに出る。",
   ];
@@ -294,6 +397,63 @@ function selfTest() {
         guarded: false,
       },
     ],
+  );
+  const rec = analyze(
+    [
+      "## 📇",
+      "### 2026-08-31 alpha 導入前",
+      "alpha",
+      "### 2026-09-01 alpha 導入当日",
+      "alpha",
+      "### 2026-09-02 alpha 導入翌日",
+      "alpha",
+      "### 2026-10-05 alpha 翌月",
+      "alpha",
+      "### 2026-10-06 beta",
+      "beta",
+      "### 2026-11-01 gamma",
+      "gamma",
+    ].join("\n"),
+    [
+      { id: "alpha", label: "alpha", re: /alpha/, guards: [{ pr: 2, date: "2026-09-10" }, { pr: 1, date: "2026-09-01" }] },
+      { id: "beta", label: "beta", re: /beta/, guards: [{ pr: 3, date: "2026-10-01" }] },
+      { id: "gamma", label: "gamma", re: /gamma/, guards: [] },
+    ],
+  );
+  const theme = (id) => rec.themes.find((x) => x.id === id);
+  eq("集計対象の月一覧", rec.months, ["2026-08", "2026-09", "2026-10", "2026-11"]);
+  eq("テーマ×月の記録数", theme("alpha").byMonth, { "2026-08": 1, "2026-09": 2, "2026-10": 1 });
+  eq(
+    "導入日は guards の最も早い日付。同日は再発候補に含めず翌日から数える",
+    theme("alpha").recurrence.entries.map((e) => e.date),
+    ["2026-09-02", "2026-10-05"],
+  );
+  eq(
+    "導入月から最終月までの月数と C 条件（2 件 / 3 か月は非該当）",
+    [theme("alpha").recurrence.months, theme("alpha").recurrence.meetsC],
+    [3, false],
+  );
+  eq(
+    "beta は 1 件 / 2 か月で非該当",
+    [theme("beta").recurrence.count, theme("beta").recurrence.months, theme("beta").recurrence.meetsC],
+    [1, 2, false],
+  );
+  eq("導入日なしテーマは recurrence が null", theme("gamma").recurrence, null);
+  eq("導入日なしテーマの guardPrs は空", theme("gamma").guardPrs, []);
+  const recC = analyze(
+    ["## 📇", "### 2026-09-01 x", "alpha", "### 2026-09-02 y", "alpha", "### 2026-10-01 z", "alpha"].join("\n"),
+    [{ id: "alpha", label: "alpha", re: /alpha/, guards: [{ pr: 1, date: "2026-09-01" }] }],
+  );
+  eq("2 件 / 2 か月は C 条件に当たる", recC.cConditionThemes, ["alpha"]);
+  eq(
+    "C 条件は既存の数え方を変えない",
+    [recC.total, recC.themes[0].count, recC.themes[0].unguarded],
+    [3, 3, 3],
+  );
+  eq(
+    "THEMES のガード日付は YYYY-MM-DD",
+    THEMES.every((x) => x.guards.every((g) => /^\d{4}-\d\d-\d\d$/.test(g.date))),
+    true,
   );
   let msg = "";
   try {
