@@ -203,7 +203,7 @@ Zenn 記事の場合、`note.com/mine_unilabo` へのリンクは `npm run check
   - `chore/apply-review-<slug>` — レビュー反映
   - `feat/<topic>` — 新機能
   - `docs/<topic>` — ドキュメント変更
-- PR作成: `gh pr create` + HEREDOC body。マージは **squash only**（リポジトリ設定）
+- PR作成: `gh pr create`（本文は HEREDOC。worktree 内では `--body-file`、`docs/worker-discipline-template.md` 参照）。マージは **squash only**（リポジトリ設定）
 - `articles_note/export/` は `.gitignore` 除外（大容量WXR ZIP）
 - **バンドル PR の粒度判断**: 複数ファイル / 記事を 1 PR にまとめる場合、理由を PR 本文 Summary 直下に明記する
   - 例: 公開切替の一括 PR、同一品質ゲート通過分の束ね、レビュアー負荷最適化
