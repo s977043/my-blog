@@ -115,6 +115,7 @@ if bash "$CHECK" --fix >&2; then
   exit 0
 fi
 
+"$(dirname "${BASH_SOURCE[0]}")/growth-signal.sh" append guard_block claude-gh-account-guard "check-gh-account.sh --fix failed: ${CMD:0:120}" "$(printf '%s' "$INPUT" | jq -r '.session_id // empty' 2>/dev/null)" || true
 cat >&2 <<'EOM'
 [claude-gh-account-guard] ブロック: gh active account が期待アカウント s977043 でなく、自動切替（check-gh-account.sh --fix）にも失敗しました。
 このまま実行すると push 403 / "must be a collaborator" 失敗が発生します。

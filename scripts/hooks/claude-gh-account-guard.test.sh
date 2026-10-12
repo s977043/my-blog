@@ -10,6 +10,7 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GUARD="$HERE/claude-gh-account-guard.sh"
 TMPDIR_T="$(mktemp -d)"
 trap 'rm -rf "$TMPDIR_T"' EXIT
+export GROWTH_SIGNALS_DIR="$TMPDIR_T/growth-signals"
 
 PASS=0
 FAIL=0

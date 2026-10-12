@@ -26,6 +26,7 @@ if [ "$BRANCH" = "main" ] && [ "${ALLOW_MAIN_COMMIT:-}" != "1" ]; then
   echo "  作業ブランチを切ってください: git switch -c <branch>" >&2
   echo "  main で正当に作業する場合のみ: ALLOW_MAIN_COMMIT=1 git commit ..." >&2
   FAIL=1
+  "$(dirname "$0")/growth-signal.sh" append guard_block pre-commit "main への直 commit" || true
 fi
 
 # staged ファイル一覧（追加・変更・名前変更後のパス）
@@ -38,6 +39,7 @@ if [ -n "$REMOTE_HITS" ]; then
   echo "  これは commit してはいけません（pull/publish で再生成される）。unstage してください:" >&2
   echo "$REMOTE_HITS" | sed 's/^/    git restore --staged /' >&2
   FAIL=1
+  "$(dirname "$0")/growth-signal.sh" append guard_block pre-commit "Qiita/public/.remote/ の混入 on ${BRANCH}" || true
 fi
 
 # --- 3. AGENTS.md の claude-mem ブロック混入ガード ---------------------------
@@ -47,6 +49,7 @@ if echo "$STAGED" | grep -qx "AGENTS.md"; then
     echo "  claude-mem の transient 記憶であり commit 禁止。破棄してから commit してください:" >&2
     echo "    git restore --staged AGENTS.md && git checkout -- AGENTS.md" >&2
     FAIL=1
+    "$(dirname "$0")/growth-signal.sh" append guard_block pre-commit "AGENTS.md の claude-mem ブロック混入 on ${BRANCH}" || true
   fi
 fi
 
