@@ -334,8 +334,14 @@ function findLastPublishOnRelease() {
 //   'fail'    … 明確に危険。minHours の半分未満（＝ danger 帯）、または
 //               「必要間隔未満なのにこの deploy で新規公開がある（or 件数が不明）」＝ policy 違反の実行そのもの
 //   'warn'    … minHours 未満（新規公開を伴わない update deploy 等）
+//   'update-only' … minHours 未満だが、diff モードで新規公開 0 件と計測できた（既存 update のみ）。
+//               Zenn の rate-limit は新規 publish にしか掛からないため、経過時間ではブロックしない
+//               （2026-08-28 PR #551 の deploy で、18h 後でも既存 update 2 件は反映され新規 1 件だけ弾かれた）
 //   'ok'      … minHours 以上経過
-function evaluateInterval({ lastPublishAt, now, minHours, pendingPublishCount = 0, refStale = false }) {
+//
+// updateOnly: diff モードで pendingPublishCount === 0 を計測できたときだけ true にする。
+//   date モードの 0 件は「過去 24h の参考値」で、この deploy の新規公開数ではないため対象外。
+function evaluateInterval({ lastPublishAt, now, minHours, pendingPublishCount = 0, refStale = false, updateOnly = false }) {
   if (!minHours || !lastPublishAt || Number.isNaN(new Date(lastPublishAt).getTime())) {
     return { severity: 'unknown', elapsedHours: null, minHours: minHours || null, reason: 'no-data' };
   }
@@ -345,6 +351,9 @@ function evaluateInterval({ lastPublishAt, now, minHours, pendingPublishCount = 
   const dangerHours = minHours / 2;
   const countUnknown = pendingPublishCount === null;
 
+  if (updateOnly && pendingPublishCount === 0 && elapsedHours < minHours) {
+    return { severity: 'update-only', elapsedHours, minHours, dangerHours, countUnknown };
+  }
   if (elapsedHours < dangerHours) {
     return { severity: 'fail', elapsedHours, minHours, dangerHours, countUnknown };
   }
@@ -381,7 +390,7 @@ function formatAt(d) {
 }
 
 // 間隔モードを実行して出力する。返り値 true = fatal 相当（STRICT 時に exit 1）。
-function runIntervalCheck({ pendingPublishCount, strict, now = new Date() }) {
+function runIntervalCheck({ pendingPublishCount, strict, updateOnly = false, now = new Date() }) {
   const policyMd = readPolicyMd();
   const minHours = policyMd === null ? null : parseMinIntervalHours(policyMd);
   const candidates = policyMd === null ? [] : listMinIntervalCandidates(policyMd);
@@ -410,6 +419,7 @@ function runIntervalCheck({ pendingPublishCount, strict, now = new Date() }) {
     minHours,
     pendingPublishCount,
     refStale: freshness.stale,
+    updateOnly,
   });
 
   // 何を根拠に判定したかを必ず出す（今回の事故は根拠が出力から読めなかったことも一因）。
@@ -427,6 +437,9 @@ function runIntervalCheck({ pendingPublishCount, strict, now = new Date() }) {
       `[check:zenn-pace] 注意: 正本から必要間隔の記述を ${candidates.length} 件検出 (${candidates.join('h, ')}h)。` +
         `最も厳しい ${minHours}h を採用した。正本の古い記述を整理すること`,
     );
+  }
+  if (updateOnly && pendingPublishCount === 0) {
+    console.log('[check:zenn-pace] INFO: この deploy は既存 update のみ（新規公開 0 件・rate-limit 対象外）');
   }
   if (verdict.countUnknown) {
     console.warn('[check:zenn-pace] 注意: この deploy の新規公開件数が不明。安全側（新規公開ありとみなす）で判定した');
@@ -463,6 +476,14 @@ function runIntervalCheck({ pendingPublishCount, strict, now = new Date() }) {
     );
     console.error('  実績: 2026-08-28 08:58 の deploy は前回公開 18h 後で rate-limit に hit した');
     return true;
+  }
+
+  if (verdict.severity === 'update-only') {
+    console.log(
+      `[check:zenn-pace] OK: 前回公開から ${formatHours(verdict.elapsedHours)}（必要 ${verdict.minHours}h 未満）だが、` +
+        '新規公開を伴わないため経過時間ではブロックしない',
+    );
+    return false;
   }
 
   if (verdict.severity === 'warn') {
@@ -525,7 +546,12 @@ function main() {
   }
 
   // 件数が閾値内でも 24 時間ルール違反は起こりうる（2026-08-28 の事故）。件数判定とは独立に必ず走らせる。
-  const intervalFatal = runIntervalCheck({ pendingPublishCount, strict: STRICT, now: new Date() });
+  const intervalFatal = runIntervalCheck({
+    pendingPublishCount,
+    strict: STRICT,
+    updateOnly: Boolean(BASE_REF) && pendingPublishCount === 0,
+    now: new Date(),
+  });
 
   if (STRICT && (countFatal || intervalFatal)) process.exit(1);
 }
@@ -762,6 +788,37 @@ function hermeticCases(eq) {
     }
   }
 
+  // ── fixture H: diff モードで既存 update のみ（新規公開 0 件）。前回公開から 0.1h ──
+  //   既存 update は rate-limit 対象外なので、経過時間だけでは STRICT でも落とさない（PR #833 の誤ブロック）。
+  //   同じ 0.1h でも新規公開が 1 件あれば従来どおり exit 1。
+  {
+    const dir = makeFixtureRepo();
+    try {
+      writeArticle(dir, 'k', 'false');
+      writeArticle(dir, 'l', 'false');
+      commitAt(dir, 'seed', 96);
+      git(dir, ['switch', '-q', '-c', 'release/zenn']);
+      writeArticle(dir, 'k', 'true');
+      commitAt(dir, 'publish k', 0.1);
+
+      git(dir, ['switch', '-q', '-c', 'update-only']);
+      writeArticle(dir, 'k', 'true', 'updated body');
+      commitAt(dir, 'update k (no flip)', 0.05);
+      const upd = runMain(dir, { STRICT: '1', BASE_REF: 'release/zenn' });
+      eq('[git] diff モード新規 0 件・経過 0.1h は STRICT でも exit 0', upd.code, 0);
+      eq('[git] 既存 update のみであることを出力する', /既存 update のみ（新規公開 0 件・rate-limit 対象外）/.test(upd.out), true);
+
+      git(dir, ['switch', '-q', '-c', 'new-publish', 'release/zenn']);
+      writeArticle(dir, 'l', 'true');
+      commitAt(dir, 'publish l', 0.05);
+      const pub = runMain(dir, { STRICT: '1', BASE_REF: 'release/zenn' });
+      eq('[git] diff モード新規 1 件・経過 0.1h は STRICT で exit 1（従来どおり）', pub.code, 1);
+      eq('[git] 新規 1 件のときは update-only 表示を出さない', /既存 update のみ/.test(pub.out), false);
+    } finally {
+      rmrf(dir);
+    }
+  }
+
   // ── fixture E: 24h 内に 2 件公開 → 件数側の FAIL_THRESHOLD が効く ──
   {
     const dir = makeFixtureRepo();
@@ -855,6 +912,23 @@ function selfTest() {
     }).severity,
     'warn',
   );
+  // 既存 update のみ（diff モードで新規 0 件）は経過時間でブロックしない
+  eq(
+    'update-only: diff モード新規 0 件は danger 帯でも fail にしない',
+    evaluateInterval({ lastPublishAt: at('2026-08-27T00:00:00+09:00'), now: at('2026-08-27T00:06:00+09:00'), minHours: MIN, pendingPublishCount: 0, updateOnly: true }).severity,
+    'update-only',
+  );
+  eq(
+    'update-only: 新規 1 件なら updateOnly 指定でも fail のまま',
+    evaluateInterval({ lastPublishAt: at('2026-08-27T00:00:00+09:00'), now: at('2026-08-27T00:06:00+09:00'), minHours: MIN, pendingPublishCount: 1, updateOnly: true }).severity,
+    'fail',
+  );
+  eq(
+    'update-only: 件数不明(null)は updateOnly 指定でも fail のまま',
+    evaluateInterval({ lastPublishAt: at('2026-08-27T00:00:00+09:00'), now: at('2026-08-27T00:06:00+09:00'), minHours: MIN, pendingPublishCount: null, updateOnly: true }).severity,
+    'fail',
+  );
+
   // M-1: 件数不明は 0 扱いにしない（12〜24h 帯で fail に倒す）
   eq(
     'M-1: 件数不明(null)は 18h 帯で FAIL',
