@@ -47,6 +47,7 @@
 | 公開ペースの判定 | `npm run check:zenn-pace` で過去 24h の publish 切替を集計。**1 件で WARN / 2 件で FAIL**（`STRICT=1` 時は exit 1）|
 | Zenn PR 間隔 | 前回の release/zenn 公開から **24 時間以上**あけてマージ |
 | 既存 update と新規 publish | 別 PR に分割（update が rate-limit に巻き込まれて公開済記事が古いままになる事故を防ぐ） |
+| 既存 update のみの deploy | 新規の `published: false → true` が 0 件の deploy は「Zenn PR 間隔」の制約を受けない（rate-limit は新規 publish にだけ掛かる。根拠: 2026-08-28 の PR #551 の deploy で、前回公開から約 18h でも既存 update 2 件は反映され、新規 1 件だけが弾かれた） |
 | rate-limit hit 時 | リポジトリ側に追加 commit を作らず、[Zenn お問い合わせ](https://zenn.dev/inquiry) で緩和申請 |
 
 根拠: `AGENT_LEARNINGS.md` 2026-05-22「Zenn rate-limit は実効 24h/2本でも hit する」。release/zenn 運用フロー（ブランチ単方向・sync 手順）は [`AGENTS.md`](../AGENTS.md) §「Zenn 公開フロー」を参照。
