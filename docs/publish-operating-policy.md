@@ -18,7 +18,7 @@
 | publish-queue / 戦略ドキュメントの更新 | `docs/publish-queue.md` / `docs/content-channel-strategy.md` 等 |
 | WXR 生成（note インポート用ファイル） | `articles_note/build/*.xml`（gitignored） |
 | メトリクス取得・分析 | GA4 / 各媒体 API |
-| PR 作成・CI 通過後のマージ（**ただし以下の停止条件に該当しない場合のみ**） | `docs/` 系・`reviews/` 系・`ignorePublish:true` 維持の Qiita 系・`published:false` 維持の Zenn 系 |
+| PR 作成（**マージはしない**。ユーザーがセッション内で当該 PR を指して指示したときだけマージする。AGENTS.md §禁止事項） | `docs/` 系・`reviews/` 系・`ignorePublish:true` 維持の Qiita 系・`published:false` 維持の Zenn 系 |
 
 ## 著者ゲート（agent 単独では実行しない・停止条件）
 

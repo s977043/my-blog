@@ -462,6 +462,8 @@ Review
 
 Review Judgment as Codeが「**何を判断するか**」を資産化する考え方なら、Judgment Placementは「**その判断をどこで実行するか**」を決める原則です。
 
+この判断基準を中心に置いたとき、その周りの責務をどう分けているかは「[River Reviewのコア設計：AIレビューではなく、チームの判断を再現しやすい形で残す](/articles/river-review-core-design)」で書きました。
+
 ## 4層にはそれぞれ別の失敗モードがある
 
 Judgment Placementは「Deterministicへ寄せるほど成熟している」というモデルではありません。
