@@ -171,18 +171,32 @@ function sessionSince(env, input, now) {
   return now.getTime() - DEFAULT_LOOKBACK_MS;
 }
 
+function unpushedTargets(heads) {
+  const targets = [];
+  for (const line of (heads || "").split("\n").filter(Boolean)) {
+    const [mark, branch, upstream = "", track = ""] = line.split("\t");
+    if (!branch) continue;
+    if (upstream) {
+      if (!track.includes("gone")) targets.push(`refs/heads/${branch}`);
+    } else if (mark === "*") {
+      targets.push(`refs/heads/${branch}`);
+    }
+  }
+  return targets;
+}
+
 // ローカル git だけでやり直しの痕跡を集める。ネットワークは使わない。
 // SessionEnd の待ち時間を抑えるため、git は並列に起動する。失敗した git の結果は記録しない。
 async function collectGitSignals(cwd, sinceMs) {
   const found = [];
   const sinceSec = Math.floor(sinceMs / 1000);
-  const [log, reflog, unpushed, status] = await Promise.all([
+  const [log, reflog, heads, status] = await Promise.all([
     // revert / fixup! / やり直しを示す commit（ローカルブランチ上、セッション開始以降）
     gitAsync(cwd, ["log", "--branches", `--since=@${sinceSec}`, "--format=%H%x09%s"]),
     // このワークツリーの HEAD reflog 上の reset
     gitAsync(cwd, ["reflog", "show", "--date=unix", "--format=%gd%x09%H%x09%gs", "HEAD"]),
-    // 未 push の commit（どの remote-tracking ref にも含まれないローカルブランチ上の commit）
-    gitAsync(cwd, ["log", "--branches", "--not", "--remotes", "--format=%H%x09%D", "--decorate-refs=refs/heads/"]),
+    // 未 push の判定対象を選ぶためのローカルブランチ一覧（現在ブランチ印・upstream・追跡状態）
+    gitAsync(cwd, ["for-each-ref", "refs/heads", "--format=%(HEAD)%09%(refname:short)%09%(upstream)%09%(upstream:track)"]),
     // 未コミットの変更（1 行目はブランチ名）
     gitAsync(cwd, ["--no-optional-locks", "status", "--porcelain", "--branch"]),
   ]);
@@ -205,6 +219,13 @@ async function collectGitSignals(cwd, sinceMs) {
     }
   }
 
+  // 未 push の commit（どの remote-tracking ref にも含まれない commit）。squash マージ運用ではマージ済みの
+  // ローカルブランチも remote に含まれないため、upstream が [gone]（リモートで削除済み）のブランチは除外し、
+  // upstream の無いブランチは現在のブランチだけを対象にする。
+  const targets = unpushedTargets(heads);
+  const unpushed = targets.length > 0
+    ? await gitAsync(cwd, ["log", ...targets, "--not", "--remotes", "--format=%H%x09%D", "--decorate-refs=refs/heads/", "--"])
+    : "";
   const unpushedLines = (unpushed || "").split("\n").filter(Boolean);
   if (unpushedLines.length > 0) {
     const branches = unpushedLines
@@ -467,6 +488,54 @@ function selfTest() {
     const before = readFile().length;
     run(["hook-session-end"], { input: JSON.stringify({ session_id: "s-git", cwd: repo, reason: "other" }) });
     check("SessionEnd を再実行しても同じ痕跡を重複記録しない", readFile().length === before, `${before} -> ${readFile().length}`);
+
+    // 7b. 未 push の判定: upstream が [gone] のブランチと、upstream の無い現在以外のブランチは記録しない
+    const home2 = path.join(tmp, "home2");
+    fs.mkdirSync(home2);
+    const env2 = { ...baseEnv, HOME: home2 };
+    const sigFile2 = path.join(home2, ".claude", "state", "my-blog-growth", "signals.jsonl");
+    const bare = path.join(tmp, "remote.git");
+    const repo2 = path.join(tmp, "repo2");
+    execFileSync("git", ["init", "-q", "--bare", bare], { stdio: "ignore" });
+    fs.mkdirSync(repo2);
+    const g2 = (args) =>
+      execFileSync("git", ["-c", "core.hooksPath=/dev/null", "-c", "user.name=t", "-c", "user.email=t@example.com", ...args], {
+        cwd: repo2,
+        stdio: "ignore",
+        env: env2,
+      });
+    g2(["init", "-q", "-b", "main"]);
+    g2(["remote", "add", "origin", bare]);
+    fs.writeFileSync(path.join(repo2, "a.txt"), "1");
+    g2(["add", "a.txt"]);
+    g2(["commit", "-q", "-m", "init"]);
+    g2(["push", "-q", "-u", "origin", "main"]);
+    // マージ済み想定のブランチ: push 後にリモート側で削除 → upstream が [gone]
+    g2(["switch", "-q", "-c", "gone-br"]);
+    fs.writeFileSync(path.join(repo2, "a.txt"), "gone");
+    g2(["commit", "-q", "-am", "gone work"]);
+    g2(["push", "-q", "-u", "origin", "gone-br"]);
+    g2(["switch", "-q", "main"]);
+    g2(["commit", "-q", "--allow-empty", "-m", "squash merge of gone-br"]);
+    g2(["push", "-q", "origin", "main"]);
+    g2(["push", "-q", "origin", "--delete", "gone-br"]);
+    // gone-br の commit を remote-tracking ref から外す（リモート削除と同じ状態）
+    g2(["fetch", "-q", "--prune", "origin"]);
+    // upstream の無い、現在ではないブランチ
+    g2(["switch", "-q", "-c", "other-local"]);
+    g2(["commit", "-q", "--allow-empty", "-m", "other local work"]);
+    // upstream の無い現在ブランチ
+    g2(["switch", "-q", "-c", "current-local", "main"]);
+    g2(["commit", "-q", "--allow-empty", "-m", "current local work"]);
+    r = run(["hook-session-end"], { env: env2, input: JSON.stringify({ session_id: "s-up", cwd: repo2 }) });
+    const recs2 = fs.existsSync(sigFile2) ? fs.readFileSync(sigFile2, "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l)) : [];
+    const up = recs2.find((x) => x.kind === "unpushed_commits");
+    check("upstream の無い現在ブランチの未 push commit は記録する", r.status === 0 && up && up.detail.includes("current-local"), up && up.detail);
+    check(
+      "upstream が [gone] のブランチ・upstream の無い現在以外のブランチは記録しない",
+      up && !up.detail.includes("gone-br") && !up.detail.includes("other-local") && up.detail.startsWith("1 commit(s)"),
+      up && up.detail,
+    );
 
     // 8. mark で processed:true と判断理由が残り、全件処理後は SessionStart が無出力
     const ids = readFile().filter((x) => !x.processed).map((x) => x.id);
