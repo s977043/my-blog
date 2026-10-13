@@ -139,6 +139,7 @@ git diff origin/main...HEAD --stat
 - 実装は `scripts/<name>.js` に `--self-test` フラグを生やす（既存の全 self-test がこの形。fixture は `scripts/fixtures/<name>/` に置く）
 - `package.json` に `check:<name>` と `test:<name>`（= `node scripts/<name>.js --self-test`）の 2 本を足す
 - `check:<name>` を `npm run check` の集約ランナーの `checks` リストに足す
+  - 例外: 自己改善 PR（`/self-improve`）では `npm run check` への組み込みは `docs/agent-growth-harness.md` §4 の承認事項。承認後に別 PR で足す
 
 **ただし集約ランナーに足すのは「読むだけの検査」に限る。** ファイルを削除・変更する運用スクリプト
 （`cleanup:pr` / `publish:qiita` など）は `npm run check` に入れない。CI が副作用付きの操作を実行して
