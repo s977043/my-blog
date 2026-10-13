@@ -82,6 +82,7 @@
     "test:due": "node scripts/check-due.js --self-test",
     "report:learnings-promotion": "node scripts/report-learnings-promotion.js",
     "test:learnings-promotion": "node scripts/report-learnings-promotion.js --self-test",
+    "test:growth-signals": "node scripts/growth-signals.js --self-test",
     "check:talk": "node scripts/check-talk.js",
     "test:talk": "node scripts/check-talk.js --self-test",
     "check:article-skill-routing-eval": "node scripts/check-article-skill-routing-eval.js",

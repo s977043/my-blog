@@ -10,6 +10,7 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GUARD="$HERE/claude-gh-account-guard.sh"
 TMPDIR_T="$(mktemp -d)"
 trap 'rm -rf "$TMPDIR_T"' EXIT
+export GROWTH_SIGNALS_DIR="$TMPDIR_T/growth-signals"
 
 PASS=0
 FAIL=0
@@ -122,6 +123,40 @@ else
   echo "FAIL: 空 stdin は fail-open で exit 0"
   FAIL=$((FAIL + 1))
 fi
+
+# --- growth signals への記録（ブロック時）--------------------------------
+ok() {
+  if [ "$2" = "0" ]; then
+    echo "PASS: $1"
+    PASS=$((PASS + 1))
+  else
+    echo "FAIL: $1 ($3)"
+    FAIL=$((FAIL + 1))
+  fi
+}
+
+SIG_DIR="$TMPDIR_T/growth-block"
+SECRET_CMD='git push https://x-access-token:ghp_SECRET123abc@github.com/s977043/my-blog.git main'
+jq -n --arg cmd "$SECRET_CMD" '{session_id:"sess-1", tool_name:"Bash", tool_input:{command:$cmd}}' \
+  | GROWTH_SIGNALS_DIR="$SIG_DIR" GH_GUARD_CHECK_SCRIPT="$STUB_NG" bash "$GUARD" >"$TMPDIR_T/out" 2>/dev/null
+GOT=$?
+LINES=$(wc -l <"$SIG_DIR/signals.jsonl" 2>/dev/null | tr -d ' ')
+[ "$GOT" = 2 ] && [ ! -s "$TMPDIR_T/out" ] && [ "${LINES:-0}" = 1 ]
+ok "ブロック時は exit 2・stdout 空のまま signals.jsonl に 1 行記録する" $? "exit=$GOT lines=${LINES:-0}"
+
+! grep -qE 'ghp_SECRET|x-access-token' "$SIG_DIR/signals.jsonl" 2>/dev/null \
+  && grep -q '"detail":"op=push owner=unknown"' "$SIG_DIR/signals.jsonl" && grep -q '"session_id":"sess-1"' "$SIG_DIR/signals.jsonl"
+ok "記録はコマンド本文でなく操作種別と owner だけ（トークンを残さない）" $? "$(cat "$SIG_DIR/signals.jsonl" 2>/dev/null)"
+
+# node が PATH に無くても、ガードの判定（exit 2・stdout 空）は変わらない
+NONODE_BIN="$TMPDIR_T/nonode-bin"
+mkdir -p "$NONODE_BIN"
+for t in bash jq cat grep sed head dirname touch; do ln -sf "$(command -v "$t")" "$NONODE_BIN/$t"; done
+json_for "git push origin main" \
+  | env PATH="$NONODE_BIN" GROWTH_SIGNALS_DIR="$TMPDIR_T/growth-nonode" GH_GUARD_CHECK_SCRIPT="$STUB_NG" "$NONODE_BIN/bash" "$GUARD" >"$TMPDIR_T/out2" 2>/dev/null
+GOT=$?
+[ "$GOT" = 2 ] && [ ! -s "$TMPDIR_T/out2" ] && [ ! -e "$TMPDIR_T/growth-nonode/signals.jsonl" ]
+ok "node が無くてもブロックは exit 2・stdout 空（記録だけ飛ばす）" $? "exit=$GOT"
 
 echo ""
 echo "RESULT: $PASS passed, $FAIL failed"
