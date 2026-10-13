@@ -47,8 +47,8 @@ gh pr list --repo s977043/my-blog --state all --search "created:>=$(TZ=Asia/Toky
 - **3 本以上なら PR を作らずに止め、ユーザーに報告する**（暴走検知）
 - ブランチ名は `chore/self-improve-<topic>`。worktree を切り、`docs/worker-discipline-template.md` §1・§3 に従う
 - 1 PR あたり **新規ガード 1 本・学びの追記 5 件まで**。超える分は次の PR に回すか、提案に留める
-- `AGENT_LEARNINGS.md` は末尾への追記のみ。§📇 テーマ別インデックスへも足し、`npm run check:learnings-index` を通す
-- ガード案は `scripts/<name>.js` に `--self-test` を同梱する（同 §8）。`npm run check` 集約への組み込み・CI への接続・hook のブロック条件の変更は承認事項なので、PR 本文に「承認後に別 PR」と書く
+- `AGENT_LEARNINGS.md` の本文エントリは末尾へ追記し、テーマ別インデックス（冒頭側の §📇）の該当行にも足す。`npm run check:learnings-index` を通す
+- ガード案は `scripts/<name>.js` に `--self-test` を同梱する（同 §8）。`npm run check` への組み込み・CI の新規ジョブ・hook のブロック条件の変更は承認事項なので、PR 本文に「承認後に別 PR」と書く。既存の self-test 列への 1 行追加は可（設計書 §4）
 - 既存 check の判定を緩める変更（閾値・正規表現・除外パス・`SKIP_*` の既定値）はしない
 - **`.claude/` 配下・`AGENTS.md`・`CLAUDE.md` の変更案は PR にしない**。報告に提案として書くだけにする
 - push / PR 前に `npm run gh:ensure` と `npm run check`。**`gh pr merge` は実行しない**

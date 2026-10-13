@@ -84,7 +84,7 @@ git config core.hooksPath scripts/hooks
 5. `articles_note/published/` を触る場合は ⚠️ 規約を確認（AGENTS.md 禁止事項）
 6. note 記事に画像を追加する場合は AGENTS.md §note 固有の順序（SVG → PNG 変換 → `articles_note/assets/` 配置 → main に先にマージ → `--base-url` 付きで WXR 生成）に従う。配置後に **`file` でサイズ・寸法を確認**してプレースホルダ画像（<10KB）を弾く。`--base-url` 未指定で画像参照が残ると `md_to_wxr.py` は exit 1 で失敗する（意図的にローカル参照を残すなら `--allow-local-images`）
    - **記事に図を入れる場合は `diagram-design` スキルで作る**（全媒体共通。2026-10-08 ユーザー決定）。初回に出る style guide の確認には「(e) keep default」で答える。出力は PNG にして各媒体の画像置き場へ置き、置いた後は `article-visual-review` で確認する。スキルがセッションの一覧に無いときは再起動を依頼する
-7. **Zenn 公開系の作業を進める前に** AGENTS.md の「Zenn 公開フロー（release/zenn ブランチ経由）」を確認する。**release/zenn 系 PR を作る前に `npm run check:zenn-pace` を実行し、その出力で可否を判断する**（rate-limit 数値の正本は `docs/publish-operating-policy.md` §Rate-limit 遵守。閾値はここに書き写さない）。release/zenn への sync PR は `scripts/sync-release-zenn.sh "<commit message>"` で一括実行できる（`articles_note/drafts/` の rename/rename 競合を main 採用で自動解決）
+7. **Zenn 公開系の作業を進める前に** AGENTS.md の「Zenn 公開フロー（release/zenn ブランチ経由）」を確認する。**release/zenn 系 PR を作る前に `BASE_REF=origin/release/zenn npm run check:zenn-pace` を実行し、その出力で可否を判断する**（BASE_REF なしの date モードでは既存 update のみの deploy も WARN になる）（rate-limit 数値の正本は `docs/publish-operating-policy.md` §Rate-limit 遵守。閾値はここに書き写さない）。release/zenn への sync PR は `scripts/sync-release-zenn.sh "<commit message>"` で一括実行できる（`articles_note/drafts/` の rename/rename 競合を main 採用で自動解決）
    - **公開キュー (`docs/publish-queue.md`) と実態の乖離チェック**: queue から記事を公開準備に着手する前に、対象ファイルの `id:` と `curl -s -o /dev/null -w "%{http_code}" "https://qiita.com/s977043/items/<id>"` で web 状態を確認する。**id が null でなく web 200 なら公開済み**なので queue を Done へ移すだけで終わる（2026-05-27 に二重公開準備で10分以上ロス）
 8. **`git switch -c <new>` 直後に `git branch --show-current` で意図ブランチと一致するか確認** — 並列セッション干渉対策。不一致なら commit を作らず停止
 9. 既存 Skill / Agent / Command で対応できないか確認
@@ -188,6 +188,8 @@ AGENTS.md の「Commit Attribution」に従い、**そのコミットを生成�
 ## 学びの追記
 
 本セッションで非自明な落とし穴や成功パターンを発見したら `@AGENT_LEARNINGS.md` に追記する。更新基準とテンプレートは同ファイル冒頭を参照。
+
+SessionStart で未処理の growth signals が表示されたら `/self-improve` で処理する。自己改変の上限は `docs/agent-growth-harness.md` §4。
 
 ## セッション終了時のチェックリスト
 

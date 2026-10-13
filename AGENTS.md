@@ -224,7 +224,7 @@ main                      ← 通常運用（記事執筆、レビュー反映�
 
 > **rate-limit / 公開ペースの数値は `docs/publish-operating-policy.md` §「Rate-limit 遵守」が正本**。ここでは運用フローのみ示す。閾値の判定は `npm run check:zenn-pace` の出力を見る（**数値をこのファイルへ書き写さない**。写した時点で正本と二重管理になり、正本の更新が silent に陳腐化する）。
 
-- **`release/zenn` への merge は 24 時間あけて** 実施（連続バッチを避ける）。公開ペースは `npm run check:zenn-pace` で事前確認
+- **`release/zenn` への merge は 24 時間あけて** 実施（連続バッチを避ける）。既存 update のみ（新規公開 0 件）の deploy は対象外（`docs/publish-operating-policy.md` §Rate-limit 遵守）。公開ペースは `BASE_REF=origin/release/zenn npm run check:zenn-pace` で事前確認
 - **既存公開記事の update は単独 PR で `release/zenn` に流す**（新規 publish と分離。update が rate-limit に巻き込まれて公開済記事が古いままになる事故を防ぐ）
 - main → release/zenn の merge は **squash 推奨**（記事単位での切り戻しを容易に）
 - 緊急時の escape: `release/zenn` への直接 push（事後で main に必ず取り込む）
