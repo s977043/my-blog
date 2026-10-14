@@ -115,6 +115,9 @@ if bash "$CHECK" --fix >&2; then
   exit 0
 fi
 
+# ブロックを growth signals に記録する（コマンド本文は記録しない。トークン入り URL を残さないため操作種別と owner のみ）
+OP=$(printf '%s' "$CMD" | grep -oE 'gh[[:space:]]+pr[[:space:]]+(create|merge|edit)|gh[[:space:]]+api|[[:space:]]push([[:space:]]|$)' | head -1 | sed -E 's/^gh[[:space:]]+//; s/[[:space:]]+/ /g; s/^ //; s/ $//; s/^api$/api merge/')
+"$(dirname "${BASH_SOURCE[0]}")/growth-signal.sh" append guard_block claude-gh-account-guard "op=${OP:-unknown} owner=${OWNER:-unknown}" "$(printf '%s' "$INPUT" | jq -r '.session_id // empty' 2>/dev/null)" >/dev/null 2>&1 || true
 cat >&2 <<'EOM'
 [claude-gh-account-guard] ブロック: gh active account が期待アカウント s977043 でなく、自動切替（check-gh-account.sh --fix）にも失敗しました。
 このまま実行すると push 403 / "must be a collaborator" 失敗が発生します。

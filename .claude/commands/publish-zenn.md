@@ -11,7 +11,7 @@ Zenn 記事 1 本の公開に必要な定型 PR 群を、テンプレ本文付�
 
 - **自動マージ禁止**。flip PR / sync PR のマージは不可逆な著者ゲート。本コマンドは PR 作成まで行い、マージは毎回ユーザーに依頼して**停止**する
 - rate-limit 数値の正本は `docs/publish-operating-policy.md` §Rate-limit 遵守（実効 ~24h/1本。WARN=1 / FAIL=2）
-- **release/zenn への merge は前回公開から 24 時間以上あける**
+- **release/zenn への merge は前回公開から 24 時間以上あける**。既存 update のみ（新規公開 0 件）の deploy は対象外（`docs/publish-operating-policy.md` §Rate-limit 遵守）
 - **既存 update と新規 publish は別 PR・別 deploy**（同一 sync PR に混ぜない）
 
 ## 引数
@@ -42,7 +42,7 @@ npm run gh:ensure                 # active account を s977043 へ（push/PR 直
 git branch --show-current         # 並列セッション干渉チェック
 git status --short
 npm run check                     # 集約チェック。exit 0 必須
-npm run check:zenn-pace           # 過去24hのpublish切替。2件以上=FAIL→中止、1件=WARN→前回公開から24h経過をユーザーに確認
+BASE_REF=origin/release/zenn npm run check:zenn-pace   # diff モード。BASE_REF なしの date モードは update のみでも WARN を出す。2件以上=FAIL→中止、1件=WARN→前回公開から24h経過をユーザーに確認
 npm run check:publish-readiness -- $1   # must未解決レビューの検知。blocked なら中止
 gh pr list --state open --json number,title,headRefName   # 同一 slug / release/zenn 宛の重複 open PR がないか
 ```
@@ -50,7 +50,7 @@ gh pr list --state open --json number,title,headRefName   # 同一 slug / releas
 - `check:publish-readiness` は **PR #447 マージ後に有効**（main 未マージの間は script/npm script が存在しないので skip し、その旨をユーザーに報告する）
 - `check:zenn-pace` が FAIL（過去 24h に 2 件以上の publish 切替）なら **ここで中止**。24h 経過後に再実行
 - 重複 open PR（同 slug の flip / sync）があれば作成せず報告して終了（並列セッション衝突回避）
-- update モードのとき: 過去 24h 以内に**新規 publish** の deploy があった場合も 24h あける（update と新規は別 deploy に分離する規約のため）
+- update モードのとき: 新規の `published: false → true` が 0 件の deploy は 24h あける制約の対象外（`docs/publish-operating-policy.md` §Rate-limit 遵守）。新規 publish と同じ sync PR に混ぜない（update と新規は別 deploy に分離する規約のため）
 
 ## フェーズ1: published flip PR（新規 publish モードのみ）
 

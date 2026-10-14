@@ -3,7 +3,7 @@ title: "AIエージェントのチーム設計は「どこで判断するか」�
 emoji: "🧭"
 type: "idea"
 topics: ["ai", "claudecode", "codex", "aiagent", "architecture"]
-published: false
+published: true
 ---
 
 :::message
@@ -492,6 +492,10 @@ AnthropicはSonnet 5.5をwell-scopedな日常タスク、Opus 5.5をcomplex / op
 
 Claude Code側だけ、設計判断を担うArchitectをJudgeと別Roleとして置き、Opus 5.5へ割り当てています。
 
+2026-10-14時点では、AnthropicからClaude Fable 5.1（`claude-fable-5-1`）も出ています。公式のModels overviewは、まずOpus 5.5から始め、Fable 5.1はdemanding reasoningやlong-horizonなagentic work、またはOpus 5.5をhigher effortで評価しても足りない場合に使うと案内しています。価格もOpus 5.5の2.5倍（入力$10 / 出力$50 per MTok）です。
+
+そのため上の表では既定の割り当てを変えていません。評価の結果、JudgeやArchitectをFable 5.1へ寄せると決めた場合も、書き換えるのはこの表のRuntime列だけです。Topologyと、次に挙げる昇格条件はそのまま残ります。
+
 それを現在のProfileへ当てはめるなら、通常経路はSonnet中心にして、次のような条件でOpusへ上げます。
 
 ```text
@@ -716,6 +720,7 @@ Human Judgment
 - [Codex Configuration Reference | OpenAI](https://learn.chatgpt.com/docs/config-file/config-reference)
 - [Introducing Claude Sonnet 5.5 | Anthropic](https://www.anthropic.com/claude-sonnet-5-5)
 - [Introducing Claude Opus 5.5 | Anthropic](https://www.anthropic.com/claude-opus-5-5)
+- [Models overview | Claude Docs](https://platform.claude.com/docs/en/models/overview)
 - [Agent Team Topologies](https://eirwin.github.io/agent-team-topologies/)
 - [River Review: Judgment Placement](https://river-review.the3396.com/explanation/judgment-placement/)
 - [River Review: Human Judgment Focus](https://river-review.the3396.com/explanation/human-judgment-focus/)

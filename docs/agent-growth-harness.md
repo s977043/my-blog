@@ -133,4 +133,12 @@ A を選んだ理由: 規約ファイルに触れず、既存データだけで�
 
 - **決定（2026-10-07）**: 学びの記録の正本は `AGENT_LEARNINGS.md` とする。ai-second-brain の memory は個人の動き方（feedback）に絞る
 - **決定（2026-10-07）**: 最初の 1 手（`scripts/report-learnings-promotion.js`）は実装に進む（別ブランチ・別 PR）。状態タグ（案 B）は、このレポートの集計結果を見てから判断する
-- 未決: ガード発火ログの保存先（リポジトリ外か `.claude/state` か）
+- **決定（2026-10-12）**: ガード発火ログの保存先はリポジトリ外の `~/.claude/state/my-blog-growth/signals.jsonl`。振り返りの起動は「セッション終了ごと」（§2 案 4・案 5 の実装。下記「シグナル収集の仕組み」）
+
+## シグナル収集の仕組み（2026-10-12）
+
+- 記録: `scripts/growth-signals.js`（共通ヘルパー `scripts/hooks/growth-signal.sh`）が `signals.jsonl` に 1 行 1 JSON（`id`・`ts`・`session_id`・`repo`・`kind`・`source`・`detail`・`ref`）で追記する。処理済みの id は `processed.jsonl` に追記し、どちらのファイルも書き換えない（並行追記で行が消えないため）。`detail` はトークン・認証ヘッダをマスクしてから書く。書き込みに失敗しても呼び出し元は止めない（fail-open）
+- ガード発火（`kind: guard_block`）: `claude-gh-account-guard.sh`・`pre-commit`・`pre-push` がブロックしたときに 1 行記録する。コマンド本文は記録せず、gh account guard は操作種別と対象 owner だけを残す。ブロック条件は変えていない
+- セッション終了（`.claude/settings.json` の SessionEnd hook）: `CLAUDE_PROJECT_DIR`（無ければ cwd）で git を実行し、origin が `s977043/my-blog` のときだけ記録する（別リポジトリへ cd していても、その内容は記録しない。§題材と媒体の対応）。ローカル git だけで、セッション中の revert commit・`fixup!` や件名先頭の「やり直し」「再修正」等の commit・HEAD reflog の reset・未 push の commit（upstream が `[gone]` のブランチは除外し、upstream の無いブランチは現在のブランチだけ）・未コミットの変更を記録する。同じ痕跡（`kind` と `ref` が同じもの）は重複記録しない
+- セッション開始（SessionStart hook）: 未処理が 1 件以上のときだけ、件数と `kind` 別内訳（上位 5 種）を表示する
+- 処理: `/self-improve` が未処理分を学び・ガード案に振り分け、`node scripts/growth-signals.js mark <id>... --note "<判断理由>"` で処理済みにする。self-test は `npm run test:growth-signals`（2026-10-13 に `.github/workflows/ci.yml` の既存 self-test 列へ接続。§4 の「既存 CI ジョブの self-test 列への 1 行追加」）
