@@ -17,6 +17,7 @@ if [ ! -x "$CHECK" ]; then
 fi
 
 if ! "$CHECK"; then
+  "$(dirname "$0")/growth-signal.sh" append guard_block pre-push "gh active account が想定外" || true
   echo "" >&2
   echo "[pre-push] gh active account が想定外。s977043 に切り替えてから再 push してください:" >&2
   echo "  gh auth switch --user s977043" >&2
