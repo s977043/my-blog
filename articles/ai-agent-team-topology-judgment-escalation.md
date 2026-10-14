@@ -3,7 +3,7 @@ title: "AIエージェントのチーム設計は「どこで判断するか」�
 emoji: "🧭"
 type: "idea"
 topics: ["ai", "claudecode", "codex", "aiagent", "architecture"]
-published: false
+published: true
 ---
 
 :::message
