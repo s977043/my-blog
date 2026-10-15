@@ -13,7 +13,7 @@ source_url: https://arxiv.org/abs/2610.11559
 source_ref: https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/north-star.md
 evidence_status: verified
 promoted_to:
-  - articles_note/new/swe-journey-requirement-analysis.md
+  - articles_note/published/n514c78b42bf1.md
 article_type_candidates:
   - insight
   - analysis
