@@ -3,8 +3,8 @@
 - 対象: `articles_note/new/swe-journey-requirement-analysis.md`
 - Seed / Plan: `article_seeds/ai-driven-development/2026-10-15-swe-journey-requirements.md`
 - 種別: 個人note / 論文を読んだことを起点にしたオピニオン・考察
-- 状態: **原稿レビュー済み・外部GrokレビューApprove・公開未承認**（初回は本セッション内の複数視点編集レビュー、外部レビューは著者が転記した別モデルの判定として分けて記録）
-- 実行範囲: 原稿の論旨・引用境界・note可読性・静的確認。GitHub ActionsのCIは2026-10-15にContent checks / Dependency reviewともに成功（当時のhead `1c18e41`）。note実機プレビューは未実施。
+- 状態: **独立最終Gate READY・PRマージ準備完了・公開未承認**（初回は本セッション内の複数視点編集レビュー、外部レビューは著者が転記した別モデルの判定として分けて記録）
+- 実行範囲: 原稿の論旨・引用境界・note可読性・静的確認。GitHub ActionsのCIは2026-10-15にContent checks / Dependency reviewともに成功（head `1775f57`）。本追記時にはローカルの全31検査も成功。note実機プレビューは未実施。
 
 ## Article Contract
 
@@ -80,22 +80,37 @@
 ### このレビューが閉じる範囲
 
 - [x] 外部別モデルからの主張境界・原論文照合に関するApproveを記録。
-- [ ] リポジトリの独立Thesis Gateの完了（本レビューはその実行証明ではない）。
+- [x] 独立Thesis Gateは後述の別エージェントによる修正後再確認で完了（Grok転記とは別）。
 - [ ] noteエディタの表示・公開承認。
 - [ ] PRマージの著者承認（この転記は明示的なマージ指示ではない）。
 
-## Final Gate
+## 独立最終レビューと修正（2026-10-15）
 
-- Article Contract保持: **PASS（本文からの目視・静的照合）**
-- 重大な事実誤認: **今回の照合範囲では未検出**
-- 外部Claim Boundaryレビュー: **Approve（著者が転記したGrokの判定）**。正式なGitHub PRレビュー提出ではない。
-- 独立Thesis Gate: **未実施**。Grokのレビューは主張と事実の境界のApproveであり、リポジトリの独立Thesis Gate完了と同一視しない。
-- `note-finalize` / 実際のnote掲載確認: **未実施**
-- マージ・公開: **未承認**。PRは著者のレビュー待ち。
+- 実行者: 改善担当とは別のCodexエージェント（AI上の専門家ペルソナと一次情報照合。実在専門家の監修ではない）。
+- 実行方法: Workflowツールがないため、`note-finalize`の各GateとThesis Gateを手動で独立確認。正式Workflowの実行済み、3ループ完了とは扱わない。
+- 一次情報: [原論文v1](https://arxiv.org/html/2610.11559v1)の§3、Table 2、§4.2、Appendix C.2〜C.4と、[PlanGate公開設計](https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/north-star.md)のHuman Attention / Bounded Discovery / authority境界を照合。arXivのabsページで公開日も確認。
+- official_fact: 30課題・594サブタスク・13モデル、4ペルソナのFinal F2P値、模擬ユーザー条件、3能力を確認。
+- team_practice: PlanGateの要求整理と人間判断の境界は公開設計に対応。成果改善の実証ではない。
+- author_interpretation: 要求分析をAIへ委ねる仮説、調査と人間判断の区別、今後の比較実験は筆者の考察として保持。
+- 初回must指摘1件: Fixing Rightを検証だけで説明し、原論文の「実際に変更を実装する」が抜けていた。説明や完了宣言だけで済ませず実コードを修正する定義へ変更し、独立再確認で解消。
+- 言語修正: 冒頭と要求分析フローを敬体に統一。数値・主張・未実証の境界は変更しない。
+- 任意提案の不採用: 追加図、タイトル変更、論文の網羅的説明は不要。本文の問いを保ち、論点を増やさない。
 
-## 残タスク
+## Final Gate（修正後の独立再確認）
 
-1. 今回のレビュー記録追加によるCI再実行結果を確認する。
-2. 著者が原稿の中心主張・語り口・PlanGate記述を確認。
-3. 公開判断の段階でnoteエディタ表示を確認し、必要ならWXR生成・画像制作を別工程で実施。
-4. noteで公開したらSeedの`promoted_to`に公開URLを追記してArticle Graphを再生成。
+- Article Contract / Independent Thesis Gate: **PASS**。Topic・Claim・Reader Promiseを保持。第二の主題、結論の競合、実証済みへの時制変化なし。
+- Terminology Contract: SWE-Journey / PlanGateと3能力の正式名を維持。日本語説明は初出のみ。
+- Domain Review: **PASS**。blocking findings 0、重要な未検証項目0。
+- Language Review: **PASS**。正式ラベル一覧の英語密度WARN 1件は日本語説明付きのため許容。
+- Visual Review: **N/A（PASS）**。本文画像0、追加図不要、未確認画像なし。
+- Editorial Review: **PASS**。対象読者・問い・根拠・仮例・読後の判断が一貫。
+- Additional Thesis Loop: **not required**。構造上の重大問題はなく、今回の手動Gateでマージ準備を確認。過去の3ループ実施証明にはしない。
+- Verdict: **READY（原稿の手動独立最終Gate）**。
+- 機械検証: `npm ci`、修正後`npm run check`（全31項目）、対象指定の`check:article-sentence-style`（7章で混在なし）、`check:article-humanizer-contract`、`git diff --check`成功。
+- マージ・公開: 未実施。今回の依頼はPRをマージ可能にする作業。note公開の承認とは分ける。
+
+## 公開時の残タスク
+
+1. 著者による本文・タイトルの最終確認と公開判断。
+2. noteエディタの表示・目次・表紙の確認。必要ならWXR生成・画像制作を別工程で実施。
+3. note公開後にSeedの`promoted_to`へ公開URLを追記しArticle Graphを再生成。
