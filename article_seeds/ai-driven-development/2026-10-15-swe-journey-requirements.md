@@ -14,6 +14,7 @@ source_ref: https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/nor
 evidence_status: verified
 promoted_to:
   - articles_note/new/swe-journey-requirement-analysis.md
+  - https://note.com/mine_unilabo/n/n514c78b42bf1
 article_type_candidates:
   - insight
   - analysis
@@ -65,7 +66,13 @@ article_type_candidates:
 - [ ] 同一モデル・課題で、曖昧な依頼そのまま / AIが要求を調査・確認 / 明確な要求の3条件を比較する。
 - [ ] 最終 F2P・回帰テスト・人間の確認回数・トークンと所要時間を記録する。
 - [ ] 著者が実際に経験した要求確認の例を、追加する場合に限り本人の提供情報で記載する。
-- [ ] note公開後に公開URLを `promoted_to` に追記する。
+- [x] note記事を公開（著者報告：2026-10-16）。公開URLを `promoted_to` に追記。Article Graphへの反映は公開記録PRで確認する。
+
+## 公開記録（2026-10-16）
+
+- 公開記事（著者報告）: [AIは専門家でなくても開発できるようにするはずだった。SWE-Journeyを読んで考えたこと](https://note.com/mine_unilabo/n/n514c78b42bf1)
+- 記録区分: 著者から公開URLを受領。noteの公開ページ自体の内容・表示を今回の接続から直接再取得して確認したものではない。
+- リポジトリ上の正本の扱い: `articles_note/new/` の原稿はnote公式エクスポートが `published/<guid>.md` を生成するまで保持。最新エクスポート取り込み後に対応する `new/` を整理する。
 
 ## Approved Article Plan: note/swe-journey-requirement-analysis
 
@@ -80,4 +87,4 @@ article_type_candidates:
 - out_of_scope: モデルの順位・特定モデルの勝敗、論文の網羅的要約、架空の実体験、専門性だけが55.5ポイント差の原因という断定、PlanGateの実装詳細や効果の実証、非エンジニア全般の能力評価、実運用での成功率への一般化。
 - plan_approval: 2026-10-15、ユーザーが「SWE-Journeyを読んで気が付いた」から始める修正案を「良いね」と評価し、note記事化とPR作成を明示した。
 - claim_boundary: required（研究の数値、PlanGateの現在地、効果未検証の区別）。
-- status: 著者による公開承認前。PRの作成は公開・マージの承認を意味しない。
+- status: 2026-10-16、著者からnote公開と公開URLの報告あり。記事公開について著者がHuman Gateを完了。公開ページは今回の環境から直接取得できていないため、URLと公開状態は著者報告を出所として記録。
