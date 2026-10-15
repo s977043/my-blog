@@ -70,9 +70,11 @@ article_type_candidates:
 - channel: note（個人）。技術解説よりも発見・問い・考察を優先。
 - reader_problem: AI駆動開発を実践するテックリード・EM・PdMが、同じモデルでも要求の伝わり方によって成果がぶれる理由と改善の方向を考えたい。
 - central_claim: 専門家との対話でAIの成果が高いなら、専門家が行う要求の確認・調査・検証の一部をAIの仕組みに組み込み、依頼者への過度な依存を減らせないか。
-- Evidence Boundary / Observed: 著者がSWE-Journeyを読んで上記の問いを持ち、noteの切り口として承認した会話上の判断。公開済みPlanGateの設計を著者自身の思考の接続先として扱う。
-- Evidence Boundary / Verified: arXiv:2610.11559 の実験設定と13モデル平均の数値、論文で整理された3能力。PlanGate公開設計の Human authority / Evidence boundary。研究の検証結果と製品・仕組みの効果を混同しない。
-- Evidence Boundary / Hypothesis: AI主体の要求明確化でユーザー条件による結果の差を縮められるのではないか。著者自身の検証実績はまだない。
+### Evidence Boundary
+
+- Observed: 著者がSWE-Journeyを読んで上記の問いを持ち、noteの切り口として承認した会話上の判断。公開済みPlanGateの設計を著者自身の思考の接続先として扱う。
+- Verified: arXiv:2610.11559 の実験設定と13モデル平均の数値、論文で整理された3能力。PlanGate公開設計の Human authority / Evidence boundary。研究の検証結果と製品・仕組みの効果を混同しない。
+- Hypothesis: AI主体の要求明確化でユーザー条件による結果の差を縮められるのではないか。著者自身の検証実績はまだない。
 - out_of_scope: モデルの順位・特定モデルの勝敗、論文の網羅的要約、架空の実体験、専門性だけが55.5ポイント差の原因という断定、PlanGateの実装詳細や効果の実証、非エンジニア全般の能力評価、実運用での成功率への一般化。
 - plan_approval: 2026-10-15、ユーザーが「SWE-Journeyを読んで気が付いた」から始める修正案を「良いね」と評価し、note記事化とPR作成を明示した。
 - claim_boundary: required（研究の数値、PlanGateの現在地、効果未検証の区別）。
