@@ -385,7 +385,8 @@
       "source_ref": "https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/north-star.md",
       "evidence_status": "verified",
       "promoted_to": [
-        "articles_note/new/swe-journey-requirement-analysis.md"
+        "articles_note/new/swe-journey-requirement-analysis.md",
+        "https://note.com/mine_unilabo/n/n514c78b42bf1"
       ],
       "article_type_candidates": [
         "insight",
@@ -572,6 +573,11 @@
       "from": "seed-20261015-swe-journey-requirements",
       "relation": "promoted_to",
       "to": "articles_note/new/swe-journey-requirement-analysis.md"
+    },
+    {
+      "from": "seed-20261015-swe-journey-requirements",
+      "relation": "promoted_to",
+      "to": "https://note.com/mine_unilabo/n/n514c78b42bf1"
     }
   ],
   "warnings": [
