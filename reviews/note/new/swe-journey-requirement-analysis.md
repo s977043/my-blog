@@ -3,8 +3,8 @@
 - 対象: `articles_note/new/swe-journey-requirement-analysis.md`
 - Seed / Plan: `article_seeds/ai-driven-development/2026-10-15-swe-journey-requirements.md`
 - 種別: 個人note / 論文を読んだことを起点にしたオピニオン・考察
-- 状態: **原稿レビュー済み・公開未承認**（別エージェントの独立実行ではなく、本セッション内の複数視点による編集レビュー）
-- 実行範囲: 原稿の論旨・引用境界・note可読性・静的確認。note実機プレビューとリポジトリ全体の`npm run check`は別途CI／著者側で確認する。
+- 状態: **原稿レビュー済み・外部GrokレビューApprove・公開未承認**（初回は本セッション内の複数視点編集レビュー、外部レビューは著者が転記した別モデルの判定として分けて記録）
+- 実行範囲: 原稿の論旨・引用境界・note可読性・静的確認。GitHub ActionsのCIは2026-10-15にContent checks / Dependency reviewともに成功（当時のhead `1c18e41`）。note実機プレビューは未実施。
 
 ## Article Contract
 
@@ -60,21 +60,42 @@
 - [x] noteで崩れやすいMarkdown表を本文に使用していない
 - [x] Approved Article PlanにWhy / What / Evidence / Out of scopeを記録
 - [x] Article Graphは正本Seedから算出、生成器の既存出力とレンダリングが一致することを確認して更新
-- [ ] CIの`npm run check` 31項目：PR後のGitHub Actionsで要確認
+- [x] 初回PR時のGitHub Actions「Content checks」「Dependency review」は成功（[CI run 38735261965](https://github.com/s977043/my-blog/actions/runs/38735261965)）。今回のレビュー記録更新後のCIは別途確認する。
 - [ ] noteエディタ上のスマートフォン表示・表紙画像：公開前に著者確認
 - [ ] 研究が示す効果ではなく筆者の仮説として構成したことへの著者最終承認
+
+## 外部Grokレビュー（著者からの転記、2026-10-15）
+
+> 来歴: 著者が会話へ転載したGrokのレビュー内容。GrokからGitHubに直接提出された正式レビューではなく、モデルの実行ログは添付されていない。以下は提供されたレビューを要約したもので、こちらが別モデルを再実行したと装わない。
+
+- **総合判定: Approve**
+- **Must / High / Medium / Low: 指摘なし**（転記されたレビューにおける判定）
+- **中心主張**: 「専門家が自然に行う要求確認・調査・検証の一部をAIに組み込めないか」という問いを維持。研究結果・仮説・PlanGateの設計を混同しない。
+- **一次情報の数値**: 13モデル平均Final F2Pの78.50%（Software Architect）、23.00%（Non-coder）、差55.50ポイント、30課題・594サブタスク・4模擬ユーザーとの整合が取れているとの評価。
+- **因果関係の境界**: 専門知識だけの効果とは断定せず、シミュレーターの結果を現実の開発成功率として扱っていない。
+- **ケーススタディ**: Asking / Finding / Fixingについて、質問量の単独効果が証明されたかのような記述は避けられている。
+- **PlanGate**: 要求分析・Human-owned判断・Evidenceの分離を設計の接続として記述し、効果実証と取り違えていない。
+- **編集採否**: 追加指摘はないため、本文は変更しない。論文の網羅的な説明や一般論を追加して独自の発見を薄めない。
+
+### このレビューが閉じる範囲
+
+- [x] 外部別モデルからの主張境界・原論文照合に関するApproveを記録。
+- [ ] リポジトリの独立Thesis Gateの完了（本レビューはその実行証明ではない）。
+- [ ] noteエディタの表示・公開承認。
+- [ ] PRマージの著者承認（この転記は明示的なマージ指示ではない）。
 
 ## Final Gate
 
 - Article Contract保持: **PASS（本文からの目視・静的照合）**
 - 重大な事実誤認: **今回の照合範囲では未検出**
-- 独立ReviewerによるThesis Gate: **未実施**。この文書は複数エージェントの独立実行記録を装わない。
+- 外部Claim Boundaryレビュー: **Approve（著者が転記したGrokの判定）**。正式なGitHub PRレビュー提出ではない。
+- 独立Thesis Gate: **未実施**。Grokのレビューは主張と事実の境界のApproveであり、リポジトリの独立Thesis Gate完了と同一視しない。
 - `note-finalize` / 実際のnote掲載確認: **未実施**
 - マージ・公開: **未承認**。PRは著者のレビュー待ち。
 
 ## 残タスク
 
-1. PR CIの結果を確認し、失敗した検査があれば修正。
+1. 今回のレビュー記録追加によるCI再実行結果を確認する。
 2. 著者が原稿の中心主張・語り口・PlanGate記述を確認。
 3. 公開判断の段階でnoteエディタ表示を確認し、必要ならWXR生成・画像制作を別工程で実施。
 4. noteで公開したらSeedの`promoted_to`に公開URLを追記してArticle Graphを再生成。
