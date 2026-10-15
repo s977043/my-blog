@@ -47,7 +47,7 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 - `seed-20260929-river-review-core-design` → articles/river-review-core-design.md
 - `seed-20260930-openspec-plangate-living-spec` → articles/openspec-plangate-living-spec.md
 - `seed-20261001-agent-execution-policy-evidence` → https://x.com/mine_take/status/2105518834686026114
-- `seed-20261015-swe-journey-requirements` → articles_note/new/swe-journey-requirement-analysis.md
+- `seed-20261015-swe-journey-requirements` → articles_note/published/n514c78b42bf1.md
 
 ## Warnings
 
