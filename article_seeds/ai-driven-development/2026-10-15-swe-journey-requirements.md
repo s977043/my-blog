@@ -34,6 +34,8 @@ article_type_candidates:
 
 - 著者がこの研究を読んで興味を持ったのは「専門知識がなければ使えない」という方向ではなく、「専門家が自然に行う要求確認・調査・検証の一部をAIが補えるのではないか」という問い。
 - [PlanGateの公開設計](https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/north-star.md) では、Human-owned の判断と、AIによる調査・Evidence・承認境界の分離を検討している。これは**研究が実証したワークフローではなく、筆者の実践・設計に接続した考察**。
+- 著者の追加一次情報（2026-10-15、会話で本人が報告）: 現在、PBIの記載から開発に必要な要素を抽出し、記載された要件から背後の要求やWhyを問い直し、WhatからHowの候補へつなぐスキルを用意している。またDiscoveryへAIの調査・整理を取り込むためのスキルも用意している。**スキルの存在・準備に関する著者報告であり、成功率改善の実測ではない**。
+- 参考となる公開済み関連資産: [requirement-gap-scan](https://github.com/s977043/PlanGate/blob/main/.claude/skills/requirement-gap-scan/SKILL.md) は抜け漏れ等の洗い出しを定義し、[PBI INPUT PACKAGEテンプレート](https://github.com/s977043/PlanGate/blob/main/docs/working/templates/pbi-input.md) はBounded Discoveryと要求の出所を記録する。ただし、これらを**著者が今回言及した開発中の個々のスキルと同一だとは断定しない**。
 - 「アップロード不具合」は問題理解を説明するための**仮想例**。実際に特定の不具合が発生し、解決したという一次体験ではない。
 
 ## 違和感 / Reader Problem
@@ -72,7 +74,7 @@ article_type_candidates:
 - central_claim: 専門家との対話でAIの成果が高いなら、専門家が行う要求の確認・調査・検証の一部をAIの仕組みに組み込み、依頼者への過度な依存を減らせないか。
 ### Evidence Boundary
 
-- Observed: 著者がSWE-Journeyを読んで上記の問いを持ち、noteの切り口として承認した会話上の判断。公開済みPlanGateの設計を著者自身の思考の接続先として扱う。
+- Observed: 著者がSWE-Journeyを読んで上記の問いを持ち、noteの切り口として承認した会話上の判断。2026-10-15の著者追加報告として、PBIから必要要素を抽出して要求・Why/What・Howを接続するスキル、DiscoveryにAIによる調査・整理を取り込むスキルを用意中という事実を記録。公開済みPlanGateの関連設計も接続先とするが、これらの効果は未実証。
 - Verified: arXiv:2610.11559 の実験設定と13モデル平均の数値、論文で整理された3能力。PlanGate公開設計の Human authority / Evidence boundary。研究の検証結果と製品・仕組みの効果を混同しない。
 - Hypothesis: AI主体の要求明確化でユーザー条件による結果の差を縮められるのではないか。著者自身の検証実績はまだない。
 - out_of_scope: モデルの順位・特定モデルの勝敗、論文の網羅的要約、架空の実体験、専門性だけが55.5ポイント差の原因という断定、PlanGateの実装詳細や効果の実証、非エンジニア全般の能力評価、実運用での成功率への一般化。
