@@ -6,10 +6,10 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 
 ## Summary
 
-- Seeds: 20
-- Explicit provenance contract: 12
+- Seeds: 21
+- Explicit provenance contract: 13
 - Legacy seeds: 8
-- Promotion edges: 7
+- Promotion edges: 8
 - Seeds with open author input gate: 6
 
 ## Seeds
@@ -31,6 +31,7 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 | `seed-20261001-agent-execution-policy-evidence` | 2026-10-01 | published | mixed | verified | 0 | experience, analysis, insight | AIエージェントは「よく考える」より「証拠を取りに行く」で設計する | `article_seeds/ai-driven-development/2026-10-01-agent-execution-policy-evidence.md` | 1 |
 | `seed-20261010-agile-hotl-practice-evolution` | 2026-10-10 | draft | mixed | verified | 0 | experience, insight | AIが賢くなった今、アジャイルの原点に戻ってきた | `article_seeds/ai-driven-development/2026-10-10-agile-hotl-practice-evolution.md` | 0 |
 | `seed-20261011-claude-code-hook-fail-open` | 2026-10-11 | seed | external | verified | 0 | experience, analysis | 危険コマンドを止める Claude Code hook が、検査の手前で素通ししていた | `article_seeds/ai-driven-development/2026-10-11-claude-code-hook-fail-open.md` | 0 |
+| `seed-20261015-swe-journey-requirements` | 2026-10-15 | draft | mixed | verified | 0 | insight, analysis | SWE-Journeyを読んで、専門家が行う要求分析をAIが補えないかと考えた | `article_seeds/ai-driven-development/2026-10-15-swe-journey-requirements.md` | 1 |
 | `seed-20260911-media-operating-system-boundaries` | 2026-09-11 | seed | experience | observed | 0 | experience, analysis | Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった | `article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md` | 1 |
 | `seed-20260923-agent-role-boundaries` | 2026-09-23 | seed | external | verified | 0 | analysis, insight | AIエージェントを増やす前に、役割と委譲境界を分ける | `article_seeds/media-operating-system/2026-09-23-agent-role-boundaries.md` | 0 |
 | `seed-20260923-content-closed-loop` | 2026-09-23 | seed | external | verified | 0 | analysis, insight, experience | 記事作成を自動化するより、Signal→Seed→公開後学習を閉じたい | `article_seeds/media-operating-system/2026-09-23-content-closed-loop.md` | 1 |
@@ -46,6 +47,7 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 - `seed-20260929-river-review-core-design` → articles/river-review-core-design.md
 - `seed-20260930-openspec-plangate-living-spec` → articles/openspec-plangate-living-spec.md
 - `seed-20261001-agent-execution-policy-evidence` → https://x.com/mine_take/status/2105518834686026114
+- `seed-20261015-swe-journey-requirements` → articles_note/new/swe-journey-requirement-analysis.md
 
 ## Warnings
 
