@@ -1,5 +1,42 @@
 # 公開残件実行計画（2026-10-15 JST）
 
+## #858反映後の再検証・実行計画
+
+以下は再検証時点の記録（記録確定: 2026-10-17 05:33 JST）。後続の2026-10-15記録とハッシュ表は当時の履歴として残す。
+
+- GitHub APIでmain `66ff0c82d38b5901d0e922cdf52fbbc5c0496bf1`（[#858](https://github.com/s977043/my-blog/pull/858)）、Open Issueは[#670](https://github.com/s977043/my-blog/issues/670)のみ、Open PRは0件を確認。
+- PRONIは[#856](https://github.com/s977043/my-blog/pull/856)の広報レビュー指摘反映、[#857](https://github.com/s977043/my-blog/pull/857)の多視点レビュー反映、#858の見出し・言い回し修正までmain反映済み。広報レビューの反映は最終承認の証拠とは区別する。#858のContent checks / Dependency reviewは成功。
+- PRONI最新article blobは `28462f53b2c0b1290faa3815023fcacbfde102b1`。下表の10/15 blobと異なるため、**10/15のPRONI WXR・Packetはstale**。既存下書きへ旧Packetの本文を反映しない。Canaryの公開後工程はcanonical公開URL確認まで開始しない。
+- note公開APIの `mine_unilabo` 記事一覧36件ではCanaryの対象タイトルを確認できず、Issue/Seedにも公開URLの進展は未確認。これは公開URL未確認の証拠であり、非公開の断定ではない。
+- [#852](https://github.com/s977043/my-blog/pull/852)には10/16の公式note export取り込み実績が記録されている。したがって「公式exportが存在しない」とは判断しない。一方、今回の再検証時点で現環境から比較用ファイルは未取得。公開PRの取り込み実績と、実ファイルを使った完全比較PASSは別の証拠として扱う。PRONI下書きミラーを公開リポジトリへ追加しないという同PRの扱いも維持する。
+
+今回の再探索では、接続Driveのファイル名検索と `/workspace`・`/tmp` のZIP/XML探索で比較用の公式exportを取得できなかった。対象Docも一意に特定できていない。ブラウザ操作スキルは利用可能だが、今回呼び出せる操作ツールは確認できず、認証済みブラウザへ接続できたとは扱わない。
+
+最新PRONI Packetはローカルの `/workspace/artifacts/publish-followups-current/PRONI-plangate-team-rollout/` と同名ZIPに生成済み（永続保存先・公開URLではない）。manifestのsource commit・article blobを照合し、`sha256sum -c SHA256SUMS` と `verify_wxr.py <対象XML> --structure-only` はPASS。完全比較・最終承認の代替ではなく、本文が再改訂されたら再生成する。
+
+- WXR: `import-PRONI-plangate-team-rollout.xml`、43,145 bytes、SHA-256 `ec7b1c23e12b9a35e9cef91838f36fc6104d928f3a574a2f98efa45acf92ff49`
+- ZIP SHA-256: `47e7cf367ccf8bb699def237f9410280fa696840316ca7ce62444e2ff0182cdd`。README・チェックリストを改訂した場合はmanifest・SHA256SUMS・ZIPも再生成して確認する。
+
+| 順序 | 実行内容 | 完了条件・残件 |
+| --- | --- | --- |
+| 1 | 最新main・Issue/PR・公開APIの独立検証 | 上記の範囲は完了。社内承認・下書き本文は未確認 |
+| 2 | 公式exportと対象Docを再探索 | 比較可能な公式XMLと、編集対象が一意に確定するDocを取得。未取得なら不足入力として残す |
+| 3 | 最新PRONI WXR・Packetを生成して検証 | 最新blobとの一致、構造検証、ファイルハッシュ確認は完了。既存下書きへの直接編集・照合は未完了 |
+| 4 | Canaryの公式export完全比較 | 正式な参照ファイルを明示してPASS。構造検証だけで代替しない |
+| 5 | 検証 → 独立レビュー → 修正 → 再レビュー | 残る指摘・検証結果を記録し、CI成功後に今回のユーザー指示の範囲でPRマージ可否を判断 |
+| 6 | 外部反映・最終承認・公開後工程 | PRONIの社内最終承認、カバー、表示確認とCanaryの公開URL確認は未完了。公開後は既存のSeed → Graph → Metrics → Learning手順を再開 |
+
+### 検証・独立レビュー・修正・再レビュー
+
+- 検証: 残件検証担当がGitHub/公開APIを確認し、Packet担当が最新原稿・WXR・manifest・ZIPを照合。Canaryは原稿不変のため再生成していない。
+- 独立レビュー: 別のレビュー担当が原稿byte一致、WXR/HTML/採用追記、全ファイルSHAとZIPを照合。直接編集にも公式export比較を必須と読めるチェックリストと、WXRのみを再生成するREADME見出しを指摘。
+- 修正: 完全比較・投稿アカウント確認はWXR新規取り込み時のみの条件と明記。既存Doc/noteの直接編集に追加ゲートを課さない。README見出しを「WXR再生成」へ修正しmanifest・SHA256SUMS・ZIPを更新。
+- 再レビュー: 独立レビュー担当が両指摘の解消とハッシュ検証を確認し、Packetは重大指摘なし。追跡docsも独立レビューで重大指摘なし。ローカル31 checks PASS。PRのCI・競合状態・head SHAを確認後にマージする。
+
+新しい本文・ハッシュ・承認記録を得るまでは、当時の完了記録を現在の証拠として流用しない。社内固有情報やPRONI下書きミラーを公開docsへ追加しない。
+
+## 2026-10-15 JST の実行記録（履歴）
+
 対象は [公開キュー](./publish-queue.md)、Issue [#670](https://github.com/s977043/my-blog/issues/670)、直近の公開関連PR。公開操作の契約は [Publish Operating Policy](./publish-operating-policy.md) に従う。今回のユーザー指示は、この対応で作るPRのレビュー・CI成功後のマージを含む。
 
 ## 実行計画と完了条件
