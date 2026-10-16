@@ -1,6 +1,6 @@
 # 公開残件実行計画（2026-10-15 JST）
 
-## 2026-10-16 JST 再検証・実行計画
+## #858反映後の再検証・実行計画
 
 以下は再検証時点の記録。後続の2026-10-15記録とハッシュ表は当時の履歴として残す。
 
@@ -15,7 +15,7 @@
 最新PRONI Packetはローカルの `/workspace/artifacts/publish-followups-current/PRONI-plangate-team-rollout/` と同名ZIPに生成済み（永続保存先・公開URLではない）。manifestのsource commit・article blobを照合し、`sha256sum -c SHA256SUMS` と `verify_wxr.py <対象XML> --structure-only` はPASS。完全比較・最終承認の代替ではなく、本文が再改訂されたら再生成する。
 
 - WXR: `import-PRONI-plangate-team-rollout.xml`、43,145 bytes、SHA-256 `ec7b1c23e12b9a35e9cef91838f36fc6104d928f3a574a2f98efa45acf92ff49`
-- Packet ZIP SHA-256: `99bb26455bca648c7bf9ae91b4cfb475906029a928f177313e48a00d9f3c40e8`
+- PacketのREADME・チェックリストを改訂した場合はZIPを再生成し、最終ZIPのSHA-256を別途記録する。
 
 | 順序 | 実行内容 | 完了条件・残件 |
 | --- | --- | --- |

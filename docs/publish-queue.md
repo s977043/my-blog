@@ -2,9 +2,9 @@
 
 > 週次自動化スケジューラは凍結中（[`archive/README.md`](./archive/README.md)）。これは**人が手動で公開する順番＋締切**のリスト。Codex/Gemini 検証：リストだけでは停滞する→**デッドライン必須・不完全でも締切で公開**（相互リンク完成や2本同時を待たない）。
 
-## 2026-10-16 JST 再検証
+## #858反映後の再検証
 
-最新mainは `66ff0c82`（[#858](https://github.com/s977043/my-blog/pull/858)）。Open Issueは[#670](https://github.com/s977043/my-blog/issues/670)のみ、Open PRは0件。今回の実行順・検証結果・残件は[公開残件実行計画の再検証欄](./publish-followups-2026-10-15.md#2026-10-16-jst-再検証実行計画)を参照する。
+最新mainは `66ff0c82`（[#858](https://github.com/s977043/my-blog/pull/858)）。Open Issueは[#670](https://github.com/s977043/my-blog/issues/670)のみ、Open PRは0件。今回の実行順・検証結果・残件は[公開残件実行計画の再検証欄](./publish-followups-2026-10-15.md#858反映後の再検証実行計画)を参照する。
 
 PRONIは#856〜#858の広報・多視点レビュー指摘と見出し修正まで反映済み。下記Queueの過去日時付き記載は当時の履歴であり、内部数値の扱いや本文は最新mainを正とする。**10/15のPRONI WXR・Packetも本文改訂によりstale**。最新原稿から再生成し、既存note下書きは直接編集で照合する。広報指摘反映と最終承認を同一視せず、社内最終承認・カバー・実表示確認・外部反映は証拠確認まで未完了とする。
 
