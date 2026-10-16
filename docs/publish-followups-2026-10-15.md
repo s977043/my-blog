@@ -2,7 +2,7 @@
 
 ## #858反映後の再検証・実行計画
 
-以下は再検証時点の記録。後続の2026-10-15記録とハッシュ表は当時の履歴として残す。
+以下は再検証時点の記録（記録確定: 2026-10-17 05:33 JST）。後続の2026-10-15記録とハッシュ表は当時の履歴として残す。
 
 - GitHub APIでmain `66ff0c82d38b5901d0e922cdf52fbbc5c0496bf1`（[#858](https://github.com/s977043/my-blog/pull/858)）、Open Issueは[#670](https://github.com/s977043/my-blog/issues/670)のみ、Open PRは0件を確認。
 - PRONIは[#856](https://github.com/s977043/my-blog/pull/856)の広報レビュー指摘反映、[#857](https://github.com/s977043/my-blog/pull/857)の多視点レビュー反映、#858の見出し・言い回し修正までmain反映済み。広報レビューの反映は最終承認の証拠とは区別する。#858のContent checks / Dependency reviewは成功。
@@ -15,7 +15,7 @@
 最新PRONI Packetはローカルの `/workspace/artifacts/publish-followups-current/PRONI-plangate-team-rollout/` と同名ZIPに生成済み（永続保存先・公開URLではない）。manifestのsource commit・article blobを照合し、`sha256sum -c SHA256SUMS` と `verify_wxr.py <対象XML> --structure-only` はPASS。完全比較・最終承認の代替ではなく、本文が再改訂されたら再生成する。
 
 - WXR: `import-PRONI-plangate-team-rollout.xml`、43,145 bytes、SHA-256 `ec7b1c23e12b9a35e9cef91838f36fc6104d928f3a574a2f98efa45acf92ff49`
-- PacketのREADME・チェックリストを改訂した場合はZIPを再生成し、最終ZIPのSHA-256を別途記録する。
+- ZIP SHA-256: `47e7cf367ccf8bb699def237f9410280fa696840316ca7ce62444e2ff0182cdd`。README・チェックリストを改訂した場合はmanifest・SHA256SUMS・ZIPも再生成して確認する。
 
 | 順序 | 実行内容 | 完了条件・残件 |
 | --- | --- | --- |
@@ -25,6 +25,13 @@
 | 4 | Canaryの公式export完全比較 | 正式な参照ファイルを明示してPASS。構造検証だけで代替しない |
 | 5 | 検証 → 独立レビュー → 修正 → 再レビュー | 残る指摘・検証結果を記録し、CI成功後に今回のユーザー指示の範囲でPRマージ可否を判断 |
 | 6 | 外部反映・最終承認・公開後工程 | PRONIの社内最終承認、カバー、表示確認とCanaryの公開URL確認は未完了。公開後は既存のSeed → Graph → Metrics → Learning手順を再開 |
+
+### 検証・独立レビュー・修正・再レビュー
+
+- 検証: 残件検証担当がGitHub/公開APIを確認し、Packet担当が最新原稿・WXR・manifest・ZIPを照合。Canaryは原稿不変のため再生成していない。
+- 独立レビュー: 別のレビュー担当が原稿byte一致、WXR/HTML/採用追記、全ファイルSHAとZIPを照合。直接編集にも公式export比較を必須と読めるチェックリストと、WXRのみを再生成するREADME見出しを指摘。
+- 修正: 完全比較・投稿アカウント確認はWXR新規取り込み時のみの条件と明記。既存Doc/noteの直接編集に追加ゲートを課さない。README見出しを「WXR再生成」へ修正しmanifest・SHA256SUMS・ZIPを更新。
+- 再レビュー: 独立レビュー担当が両指摘の解消とハッシュ検証を確認し、Packetは重大指摘なし。追跡docsも独立レビューで重大指摘なし。ローカル31 checks PASS。PRのCI・競合状態・head SHAを確認後にマージする。
 
 新しい本文・ハッシュ・承認記録を得るまでは、当時の完了記録を現在の証拠として流用しない。社内固有情報やPRONI下書きミラーを公開docsへ追加しない。
 
