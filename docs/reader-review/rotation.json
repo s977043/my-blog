@@ -29,6 +29,10 @@
       "last_reviewed": "2026-10-15",
       "report": "reviews/reader/2026-10-15.md"
     },
+    "https://note.com/mine_unilabo/n/n103182c44979": {
+      "last_reviewed": "2026-10-19",
+      "report": "reviews/reader/2026-10-19.md"
+    },
     "https://qiita.com/s977043/items/05934596111b9065465d": {
       "last_reviewed": "2026-10-02",
       "report": "reviews/reader/2026-10-02.md"
@@ -52,6 +56,14 @@
     "https://qiita.com/s977043/items/4e89a93c2ebfb928e2b1": {
       "last_reviewed": "2026-10-15",
       "report": "reviews/reader/2026-10-15.md"
+    },
+    "https://qiita.com/s977043/items/5a4665e78c4bd1a5c1bc": {
+      "last_reviewed": "2026-10-19",
+      "report": "reviews/reader/2026-10-19.md"
+    },
+    "https://qiita.com/s977043/items/5b137960d2e1c8f64ee9": {
+      "last_reviewed": "2026-10-19",
+      "report": "reviews/reader/2026-10-19.md"
     },
     "https://zenn.dev/minewo/articles/agent-learnings-md-operation": {
       "last_reviewed": "2026-10-02",
@@ -84,6 +96,14 @@
     "https://zenn.dev/minewo/articles/ai-code-review-feedback-ops": {
       "last_reviewed": "2026-10-15",
       "report": "reviews/reader/2026-10-15.md"
+    },
+    "https://zenn.dev/minewo/articles/ai-dev-guardrail-plangate-river-reviewer": {
+      "last_reviewed": "2026-10-19",
+      "report": "reviews/reader/2026-10-19.md"
+    },
+    "https://zenn.dev/minewo/articles/ai-driven-dev-metrics": {
+      "last_reviewed": "2026-10-19",
+      "report": "reviews/reader/2026-10-19.md"
     }
   }
 }
