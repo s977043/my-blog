@@ -46,9 +46,9 @@
     {
       "id": "note-read-loop-week2",
       "due": "2026-10-19T21:00:00+09:00",
-      "what": "note の読む→反応ループ 2 週目の計測（ダッシュボード 7 日間・フォロワー・お返し）と、翌週の候補記事の用意",
+      "what": "note の読む→反応ループ 2 週目の計測（ダッシュボード 7 日間・フォロワー・お返し）と、翌週の候補記事の用意（2026-10-19 に実施、PR #866。10/19 は途中まで。お返しは著者の通知確認待ち）",
       "source": "docs/experiments/2026-10-note-reading-loop.md（EXP-NOTE-READ-202610、2026-10-05 著者決定）",
-      "done": false
+      "done": true
     },
     {
       "id": "note-read-loop-week3",
@@ -81,8 +81,15 @@
     {
       "id": "reader-review-2026-10-23",
       "due": "2026-10-23T17:00:00+09:00",
-      "what": "/reader-review の次回ローカル実行（週次。クラウドの routine は無効化済み）",
+      "what": "/reader-review の次回ローカル実行（週次。クラウドの routine は無効化済み）（2026-10-19 に実施、PR #865）",
       "source": "reader-review-2026-10-16（#845）の次回",
+      "done": true
+    },
+    {
+      "id": "reader-review-2026-10-30",
+      "due": "2026-10-30T17:00:00+09:00",
+      "what": "/reader-review の次回ローカル実行（週次。クラウドの routine は無効化済み）",
+      "source": "reader-review-2026-10-23（#865）の次回",
       "done": false
     }
   ]
