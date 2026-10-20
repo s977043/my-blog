@@ -369,6 +369,33 @@
       "legacy": false
     },
     {
+      "id": "seed-20261015-swe-journey-requirements",
+      "path": "article_seeds/ai-driven-development/2026-10-15-swe-journey-requirements.md",
+      "title": "SWE-Journeyを読んで、専門家が行う要求分析をAIが補えないかと考えた",
+      "date": "2026-10-15",
+      "status": "draft",
+      "topics": [
+        "ai-driven-development",
+        "requirements-analysis",
+        "swe-journey",
+        "human-ai-interaction"
+      ],
+      "source": "mixed",
+      "source_url": "https://arxiv.org/abs/2610.11559",
+      "source_ref": "https://github.com/s977043/PlanGate/blob/main/docs/ai/ai-loop-v2/north-star.md",
+      "evidence_status": "verified",
+      "promoted_to": [
+        "articles_note/published/n514c78b42bf1.md"
+      ],
+      "article_type_candidates": [
+        "insight",
+        "analysis"
+      ],
+      "author_input_required_count": 0,
+      "author_input_gate_open": false,
+      "legacy": false
+    },
+    {
       "id": "seed-20260911-media-operating-system-boundaries",
       "path": "article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md",
       "title": "Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった",
@@ -540,6 +567,11 @@
       "from": "seed-20261001-agent-execution-policy-evidence",
       "relation": "promoted_to",
       "to": "https://x.com/mine_take/status/2105518834686026114"
+    },
+    {
+      "from": "seed-20261015-swe-journey-requirements",
+      "relation": "promoted_to",
+      "to": "articles_note/published/n514c78b42bf1.md"
     }
   ],
   "warnings": [

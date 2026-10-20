@@ -103,11 +103,11 @@
     "test:book-smoke-scope": "node scripts/book-smoke-scope.js --self-test"
   },
   "dependencies": {
-    "zenn-cli": "^0.5.5"
+    "zenn-cli": "^0.5.6"
   },
   "devDependencies": {
     "@qiita/qiita-cli": "^1.10.0",
-    "js-yaml": "^5.4.3",
-    "playwright-core": "1.64.0"
+    "js-yaml": "^5.5.0",
+    "playwright-core": "1.64.1"
   }
 }

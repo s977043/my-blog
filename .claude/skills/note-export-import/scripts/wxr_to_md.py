@@ -7,11 +7,12 @@
 処理内容:
     1. 入力がZIPなら解凍、ディレクトリならそのまま使う
     2. <articles_note>/export/YYYY-MM-DD/ にZIPがまだなければ原本をコピー
-    3. assets/ を <articles_note>/assets/ に上書き反映
+    3. assets/ を <articles_note>/assets/ に反映（既存と画素が同じ画像は書き込まない）
     4. <item> を wp:status で振り分け、published/ drafts/ に <guid>.md を出力
 """
 from __future__ import annotations
 import argparse
+import filecmp
 import os
 import re
 import shutil
@@ -19,6 +20,7 @@ import subprocess
 import sys
 import tempfile
 import zipfile
+import zlib
 from datetime import date
 from pathlib import Path
 from xml.etree import ElementTree as ET
@@ -64,6 +66,34 @@ def find_wxr(root: Path) -> Path:
     return candidates[0]
 
 
+def _png_pixels(path: Path) -> bytes | None:
+    """IHDR/PLTE/tRNS と展開後の IDAT。pHYs 等のメタデータと圧縮率の違いを無視して比べるため。"""
+    data = path.read_bytes()
+    if not data.startswith(b"\x89PNG\r\n\x1a\n"):
+        return None
+    pos, header, idat = 8, b"", b""
+    while pos + 8 <= len(data):
+        length = int.from_bytes(data[pos:pos + 4], "big")
+        ctype, body = data[pos + 4:pos + 8], data[pos + 8:pos + 8 + length]
+        if ctype in (b"IHDR", b"PLTE", b"tRNS"):
+            header += ctype + body
+        elif ctype == b"IDAT":
+            idat += body
+        pos += 12 + length
+    try:
+        return header + zlib.decompress(idat)
+    except zlib.error:
+        return None
+
+
+def same_image(src: Path, dst: Path) -> bool:
+    """note はエクスポートのたびに画像を再書き出しし、見た目が同じでもバイト列が変わる。"""
+    if filecmp.cmp(src, dst, shallow=False):
+        return True
+    a = _png_pixels(src)
+    return a is not None and a == _png_pixels(dst)
+
+
 def convert(xml_path: Path, assets_src: Path, out_root: Path) -> tuple[int, int]:
     pub_dir = out_root / "published"
     draft_dir = out_root / "drafts"
@@ -75,7 +105,9 @@ def convert(xml_path: Path, assets_src: Path, out_root: Path) -> tuple[int, int]
     if assets_src.exists():
         for f in assets_src.iterdir():
             if f.is_file() and not f.name.startswith("."):
-                shutil.copy2(f, assets_dst / f.name)
+                dst = assets_dst / f.name
+                if not (dst.exists() and same_image(f, dst)):
+                    shutil.copy2(f, dst)
 
     pub = draft = 0
     tree = ET.parse(xml_path)

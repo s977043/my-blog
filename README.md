@@ -57,6 +57,7 @@ my-blog/
 - 新規Book: `npm run new:zenn-book -- <slug> --title "..." --summary "..." --topics "AI,開発"`
 - Bookテンプレート: `templates/zenn-book/`
 - Book作成Skill: `.claude/skills/zenn-book-writing/SKILL.md`
+- Book企画・レビュー記録: [PlanGate Agent Governance](docs/books/plangate-agent-governance/BOOK_PLAN.md) / [River Review Guide](docs/books/river-review-guide/BOOK_PLAN.md)
 
 Zennのdeploy対象は `release/zenn` ブランチ。通常の執筆・レビューは `main` で行い、公開判断後に `release/zenn` へ反映する。詳細は `AGENTS.md` のZenn公開フローを正本とする。
 
