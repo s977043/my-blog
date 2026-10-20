@@ -3,7 +3,7 @@ title: "AI駆動開発で「今の仕様」をどう残すか。OpenSpecのDelta
 emoji: "🧩"
 type: "idea"
 topics: ["ai駆動開発", "openspec", "plangate", "sdd", "aiエージェント"]
-published: false
+published: true
 ---
 
 :::message

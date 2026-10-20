@@ -62,6 +62,7 @@ npm ci   # 必須
 - commit の直前に `git branch --show-current` と `git status --short` を確認する（並列セッションのブランチ干渉対策。手順の詳細は `CLAUDE.md` §並列セッション耐性）
 - push は `gh` の active account が `s977043` でないと pre-push hook がブロックする（`scripts/hooks/pre-push`）。事前に `npm run gh:ensure`
 - マージは squash only（`--merge` は GraphQL エラーになる）
+- `uncommitted-restore-guard` hook が `git restore` / `git checkout --` を止めたら、`UNCOMMITTED_RESTORE_GUARD_SKIP=1` で迂回しない。自分の生成物だけなら `git stash push -m <理由> -- <paths>` で退避して完了報告に書き、破棄はオーガナイザー経由でユーザーに確認する（2026-10-16、#854 のワーカーが確認なしで迂回）
 - worktree 内では、隔離ガードが **`&&` / `;` で連結した git コマンド**と、**本文に `git` という語を含む `gh pr create --body "$(cat <<EOF ...)"`** を拒否することがある。git コマンドは1つずつ分けて実行し、PR 本文は scratchpad のファイルに書いて `gh pr create --body-file <path>` で渡す（2026-09-23 のワーカーで観測）
   - パスに `GitHub` を含むだけで（例: `~/Documents/GitHub/...` 配下の scratchpad）、`for` ループや `>` リダイレクトと組み合わせると同じく拒否されることがある。ループやリダイレクトを使う処理は Python スクリプトへ寄せるか、コマンドを分ける。`gh pr create --body-file <path>` 単体は通る（同日、別ワーカーで観測）
 - worktree 内では `gh pr close --delete-branch` が PR を閉じたところで止まり、リモートブランチが残る（本体の checkout が `main` を使用中で、ローカルの main へ切り替えられないため）。ブランチの削除は `git push origin --delete <branch>` を別コマンドで打ち、`git ls-remote --heads origin <branch>` が空であることを確かめる（2026-10-08 の CI probe PR #790 で観測）

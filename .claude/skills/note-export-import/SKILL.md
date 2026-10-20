@@ -79,6 +79,18 @@ articles_note/
 - B方式 — B手順で新下書きを作り、note上で既存記事の本文に上書きコピペ
 - C方式（**非推奨**） — 旧記事削除 + 新規インポート。URL/スキ/コメントが失われる
 
+### D. 公開後の片付け（new/ 原稿を published へ置き換える）
+
+公開後はサーバ状態（`published/<guid>.md`）を正とし、`new/` 原稿は削除する（同題の二重インポートを防ぐ）。先例: #786・#852。
+
+1. 公開 URL が HTTP 200 を返すことを確認し、`<guid>`（`n` + 12桁）を控える
+2. 公式エクスポート ZIP を `articles_note/export/<YYYY-MM-DD>/` に置き、A の手順で `wxr_to_md.py` により取り込む
+3. `git rm articles_note/new/<slug>.md`、`git mv reviews/note/new/<slug>.md reviews/note/published/<guid>.md` し、レビュー成果物の「対象」行を `articles_note/published/<guid>.md`（レビュー時の旧パスと公開日を括弧で併記）へ更新
+4. Seed の `promoted_to` を published パスへ更新し、`npm run build:article-graph`
+5. `grep -rln "<旧パス>" --include="*.md" .` で残存参照を確認（`AGENT_LEARNINGS.md` と計測ログの旧パスは当時の記録なので変えない）
+6. **対象記事のファイルだけを明示して stage する**。取り込みは既存アセットのバイト差分や他記事の本文変更も出すので、入れるものを選ぶ。未公開の会社公式（PRONI-）記事の `drafts/` ミラーとその画像は公開リポジトリへ入れない
+7. `npm run check`。PR 本文冒頭に ⚠️ published バナー（本 PR はサーバ状態を写すだけで note 側の操作は不要、と明記）。PR 作成前に `gh pr list --state open` で同じファイルを触る PR がないか確認
+
 ## 画像の扱い
 
 - **ローカル画像** (`../assets/foo.png`) は note にインポートされない

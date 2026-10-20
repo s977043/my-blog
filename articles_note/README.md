@@ -73,7 +73,7 @@ articles_note/
    - 画像を note に自動取り込みさせる場合は `--base-url https://raw.githubusercontent.com/s977043/my-blog/main/articles_note/assets` を付ける
 7. noteインポート → 下書きとして作成される
 8. noteエディタで確認・画像差し替え → 公開
-9. 公開後は次回バックアップ時に `published/` に反映される
+9. 公開後は次回バックアップ時に `published/` に反映される。`new/` 原稿の削除とレビュー成果物・Seed の付け替えは `note-export-import` スキル §D の手順で行う
 
 ### ③ 既存記事の更新
 
