@@ -450,35 +450,6 @@
       "legacy": false
     },
     {
-      "id": "seed-20260923-content-closed-loop",
-      "path": "article_seeds/media-operating-system/2026-09-23-content-closed-loop.md",
-      "title": "記事作成を自動化するより、Signal→Seed→公開後学習を閉じたい",
-      "date": "2026-09-23",
-      "status": "seed",
-      "topics": [
-        "media-operating-system",
-        "ai-agent",
-        "content-operations",
-        "feedback-loop",
-        "publishing"
-      ],
-      "source": "external",
-      "source_url": "https://note.com/like_tulip76/n/n7548bacaf90b",
-      "source_ref": "",
-      "evidence_status": "verified",
-      "promoted_to": [
-        "articles_note/new/content-closed-loop-note.md"
-      ],
-      "article_type_candidates": [
-        "analysis",
-        "insight",
-        "experience"
-      ],
-      "author_input_required_count": 0,
-      "author_input_gate_open": false,
-      "legacy": false
-    },
-    {
       "id": "seed-20260923-publish-contract",
       "path": "article_seeds/media-operating-system/2026-09-23-publish-contract.md",
       "title": "自動投稿より先に、公開前の契約とfail-closedを固定する",
@@ -542,11 +513,6 @@
       "from": "seed-20260911-media-operating-system-boundaries",
       "relation": "promoted_to",
       "to": "articles_note/new/media-operating-system-boundary-by-change.md"
-    },
-    {
-      "from": "seed-20260923-content-closed-loop",
-      "relation": "promoted_to",
-      "to": "articles_note/new/content-closed-loop-note.md"
     },
     {
       "from": "seed-20260926-agent-team-topology-audit",
