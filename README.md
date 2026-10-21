@@ -107,6 +107,23 @@ Front Matterで次の2軸を使い分ける。
 
 noteのインポートは**常に新規下書き作成**で、既存記事の上書きはできない。運用の詳細とスクリプト（`.claude/skills/note-export-import/scripts/`）は[`articles_note/README.md`](./articles_note/README.md)を参照。
 
+## 一括チェックの範囲
+
+`npm run check`（CI でも実行）は、外部 API に依存せず引数なしで回せる検査を集約している。検査の一覧は `package.json` の `check` を正とする。次の検査は意図的に外しているので、該当する作業のときに個別に実行する。
+
+| 検査 | 外している理由 | 実行するタイミング |
+| --- | --- | --- |
+| `check:qiita-drift` | Qiita API のレート制限（無認証 60req/h） | Qiita 作業の前・複数記事を触った後 |
+| `check:qiita-remote-cache` | `npm run publish:qiita` が publish 直前に自動実行する | 手動で publish 前に確かめたいとき |
+| `check:pr-conflict` | GitHub API を使うため、オフラインで落ちず API も消費しないよう分離 | PR 作成前 |
+| `check:pr-staleness` | 対象の PR 番号かブランチ名を引数に取る | `gh pr merge` の直前 |
+| `check:publish-readiness` | 対象の slug か `BASE_REF` を指定して判定する | Zenn 公開準備のとき |
+| `check:article-language-density`（と、これを含む `check:article-humanizer`） | 出力が多く、集約ランナーの他の FAIL が読めなくなる | 対象記事を指定して記事レビュー時 |
+| `check:due` | 期限切れは時間の経過で起き、無関係な PR の CI まで止まる | 作業開始時 |
+| `check:river-review-book-browser` / `check:zenn-book-browser` | ブラウザと CJK フォントが要る | CI の Book smoke ステップで自動実行 |
+
+外す検査を増やしたときは、この表とスクリプト冒頭のコメントに理由を書く。
+
 ## 登壇資料
 
 登壇資料は記事の派生物に限定せず、テーマ・メモ・調査結果・Issue・既存記事のいずれからでも作成できる。
