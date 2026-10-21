@@ -417,8 +417,8 @@
         "experience",
         "insight"
       ],
-      "author_input_required_count": 1,
-      "author_input_gate_open": true,
+      "author_input_required_count": 0,
+      "author_input_gate_open": false,
       "legacy": false
     },
     {
