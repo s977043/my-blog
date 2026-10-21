@@ -80,6 +80,7 @@ jobs:
           npm run test:talk
           npm run test:article-skill-routing-eval
           npm run test:tech-blog-writing-contract
+          npm run test:izanami-frontmatter
 
       # check:pr-staleness の self-test。bash + 一時 git リポジトリを作るため
       # 他の self-test より重い（ローカル実測 6.0 秒 / exit 0）が、CI 全体の

@@ -9,7 +9,7 @@ izanami 向けに新規執筆する記事の唯一のローカル原稿を管理
 - 既存記事は題材と一次情報を再確認する入口として使う。izanami 原稿は新規に書き、元記事の本文を複製して微修正する運用はしない。
 - プロジェクトの実装・仕様に関する事実は、それぞれの公開リポジトリ、公開ドキュメント、または公開アプリで確認する。既存記事だけを現在の仕様の根拠にしない。
 - Markdown ファイル1つを izanami 記事1本の正本とし、公開後も同じファイルを更新する。公開済み原稿のミラーは作らない。
-- Front Matter に `title`、`summary`、`tags`、`status`（`idea` / `draft` / `published`）、`source_articles`、`project_sources`、`izanami_url`、`published_at` を記録する。URLや公開日が未確定なら空欄にする。雛形:
+- Front Matter に `title`、`summary`、`tags`、`status`（`draft` / `published`）、`source_articles`、`project_sources`、`izanami_url`、`published_at` を記録する。URLや公開日が未確定なら空欄にする。`npm run check:izanami-frontmatter` が検証する。雛形:
 
   ```yaml
   ---
