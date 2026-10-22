@@ -22,12 +22,13 @@ description: 媒体をまたいだ次の公開順と時期を、公開キュー�
      ```bash
      curl -s "https://note.com/api/v2/creators/mine_unilabo/contents?kind=note&page=1"
      ```
-     各記事の `publishAt` を見る。**`publishAt` が下書き作成日を指す場合がある**ため、管理画面や公開 URL で公開日を確かめられないものは「推定」と書く
+     各記事の `publishAt` を見て、その最大値を直近公開日とする（先頭は固定表示の記事のことがあるため、先頭を最新とみなさない）。**`publishAt` が下書き作成日を指す場合がある**ため、管理画面や公開 URL で公開日を確かめられないものは「推定」と書く
    - Zenn:
      ```bash
-     BASE_REF=origin/release/zenn npm run check:zenn-pace
+     curl -s 'https://zenn.dev/api/articles?username=minewo&order=latest'
      ```
-   - Qiita: `Qiita/public/*.md` の front matter（`ignorePublish: false` かつ `id` あり）の `updated_at` を見る
+     先頭記事の `published_at` を直近公開日とする（API は `docs/publish-operating-policy.md` の Web 反映確認と同じもの）。過去 24h の新規 publish 件数は `BASE_REF=origin/release/zenn npm run check:zenn-pace` で見る（直近公開日は出さない）
+   - Qiita: `Qiita/public/*.md` の front matter（`ignorePublish: false` かつ `id` あり）の `id` から Qiita API（`https://qiita.com/api/v2/items/<id>`）の `created_at` を取る。`updated_at` は更新日で公開日ではない。API で取れないものは「推定」と書く
 
 3. **原稿在庫**
    - note: `articles_note/new/`（`PRONI-` は会社公式として別に数える）
