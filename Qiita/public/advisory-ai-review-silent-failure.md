@@ -131,7 +131,7 @@ PR #2414 で、退役したエンドポイントを外しました。
 - `OPENAI_API_KEY` を `secrets.GITHUB_TOKEN` から `secrets.OPENAI_API_KEY` に戻す
 - `models.github.ai` を向けていたベース URL の指定を削除し、既定の OpenAI API に戻す
 
-ただし、**このリポジトリには `OPENAI_API_KEY` を設定していないので、修正後も AI レビューは動いていません**。修正後の run（例: run 35849964450）のログは次のとおりです。
+ただし、**このリポジトリには `OPENAI_API_KEY` を設定していないので、修正後も AI レビューは動いていません**。修正を入れた PR 自身の run（run 35849964450）のログは次のとおりです。
 
 ```text
 - LLM: LLM API key (ANTHROPIC_API_KEY / OPENAI_API_KEY / GOOGLE_API_KEY) not set
