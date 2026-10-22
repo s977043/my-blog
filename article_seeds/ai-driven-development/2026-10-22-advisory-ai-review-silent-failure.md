@@ -62,7 +62,7 @@ advisory のままでよいが、「実行されなかった」を「指摘な�
   - success run の `- LLM:` 行（2026-07-20〜10-21 の 215 件を全数走査）。退役後〜修正前の success run で LLM 成功 0 件
   - 修正後も LLM 未実行（10-21 時点）
 - Verified:
-  - GitHub Models の退役日 2026-07-30 と 07-16・07-23 の brownout（上記 changelog。全文の照合は初稿前に行う）
+  - GitHub Models の退役日 2026-07-30 と 07-16・07-23 の brownout（上記 changelog。2026-10-22 の初稿前に 2 本の本文で照合済み。brownout 日は 07-01 の告知にのみ記載）
 - Hypothesis:
   - 実行失敗を別の状態として出せば早く気づけた（本事例からの推論）
 - Unverified:
