@@ -7,11 +7,11 @@ tags:
   - LLM
   - GitHubModels
 private: false
-updated_at: '2026-10-22T12:00:00+09:00'
+updated_at: '2026-10-23T09:00:00+09:00'
 id: null
 organization_url_name: null
 slide: false
-ignorePublish: true
+ignorePublish: false
 posting_campaign_uuid: null
 agreed_posting_campaign_term: false
 ---
