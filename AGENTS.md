@@ -8,6 +8,7 @@
 - **コンテンツ方針**: `docs/content-channel-strategy.md` — note / Zenn / Qiita / Growth Lab / izanami / GitHub を横断した記事運用方針
 - **ツール使い方**: `CLAUDE.md` — Claude Code固有のSkill/Agent/Commandインデックスと操作
 - **経験則**: `AGENT_LEARNINGS.md` — 過去の失敗・成功パターン（追記型ログ）
+- **著者の思考・価値観**: `docs/author-thinking-compass.md` — 記事を通じて伝えたい考えや、AIとの開発で重視する判断軸（著者未確認の整理仮説を含む）
 
 ## リポジトリ概要
 
@@ -31,6 +32,8 @@ Zenn / Qiita / note / izanami の4プラットフォームで公開する記事�
 - GitHub: OSSのソースオブトゥルース
 
 同じ本文を複数媒体へ転載せず、同じテーマを読者意図と媒体役割に合わせて書き分ける。
+
+記事の企画・初稿・主題レビューでは、`docs/author-thinking-compass.md` を**著者意図を理解する補助資料**として参照する。主張を調査の都合で変えないための参照であり、記事ごとのArticle Plan、本人の明示的な判断、一次情報、既存の権限・公開制約を上書きしない。
 
 新規記事は初稿作成前に対応するSeedへ `Draft Article Plan`（仮のArticle Plan）を残す。ブランチ作成は先に行ってよい。記事・レビュー成果物のPR作成時にWhy・What・一次情報・書かない範囲を確認する。通過条件と「新規記事」の範囲は `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」を参照する。
 
