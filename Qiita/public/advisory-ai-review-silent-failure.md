@@ -3,12 +3,12 @@ title: advisory な AI レビューは「実行失敗」と「指摘なし」を
 tags:
   - GitHubActions
   - CI
-  - CodeReview
+  - codereview
   - LLM
   - GitHubModels
 private: false
-updated_at: '2026-10-23T09:00:00+09:00'
-id: null
+updated_at: '2026-10-23T09:05:09+09:00'
+id: e6ee9784ad2e50d0f6eb
 organization_url_name: null
 slide: false
 ignorePublish: false
