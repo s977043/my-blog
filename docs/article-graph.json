@@ -396,6 +396,29 @@
       "legacy": false
     },
     {
+      "id": "seed-20261022-advisory-ai-review-silent-failure",
+      "path": "article_seeds/ai-driven-development/2026-10-22-advisory-ai-review-silent-failure.md",
+      "title": "CI が green のまま、AI レビューが約 2 か月止まっていた",
+      "date": "2026-10-22",
+      "status": "seed",
+      "topics": [
+        "ai-review",
+        "ci",
+        "github-actions"
+      ],
+      "source": "experience",
+      "source_url": "https://github.com/s977043/river-review/issues/2410",
+      "source_ref": "s977043/river-review 6d378d9b",
+      "evidence_status": "observed",
+      "promoted_to": [],
+      "article_type_candidates": [
+        "experience"
+      ],
+      "author_input_required_count": 0,
+      "author_input_gate_open": false,
+      "legacy": false
+    },
+    {
       "id": "seed-20260911-media-operating-system-boundaries",
       "path": "article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md",
       "title": "Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった",
