@@ -105,6 +105,29 @@ agent が公開関連作業を進める際は、以下を満たすことを明�
    - 出現しない場合は **rate-limit hit を疑う**（参照: `AGENT_LEARNINGS.md` 2026-05-22 エントリ）
 10. **Qiita publish 後（必須）**: Web 反映確認。`https://qiita.com/s977043/items/<id>` で 200 応答することを確認
 
+## 公開後にやること（全媒体共通）
+
+記事を公開し、公開 URL が 200 を返すことを確かめたら、次を行う。Zenn / Qiita / note / izanami で共通。
+
+1. **リポジトリへの反映**: 公開で変わった値（Qiita の `id`・`updated_at`、note の公開状態など）を main へ PR で反映する
+2. **告知の材料をまとめる**: 次の 9 項目を書く
+   - URL
+   - 中心の主張
+   - 対比（2〜4 個）
+   - 想定読者
+   - 関連記事
+   - 公開日時
+   - commit SHA
+   - 根拠の節
+   - 書けないもの（本文が断定していないこと・未検証のこと）
+3. **ai-marketing-os へ依頼する**: 9 項目を添えて、次の 3 つを依頼する
+   - SNS シェア
+   - 数値の把握（取得時刻を決めてもらい、`docs/due-items.json` に登録する）
+   - 拡散の施策の検討（結果と学びを返してもらう）
+   - ai-marketing-os のセッションが動いていなければ、9 項目をまとめたものを著者へ渡す
+   - 投稿の承認は ai-marketing-os 側の運用に従う
+4. **公開キューを更新する**: `docs/publish-queue.md` の該当行を Done にする（載っている場合）
+
 ## メトリクス再計測サイクル
 
 > **現在凍結中**: 定期（月次）の再計測は行わない。凍結の範囲と解除条件は [`content-channel-strategy.md`](./content-channel-strategy.md) の Rolling 運用の注記と [`archive/README.md`](./archive/README.md) を正とする。以下は凍結解除後、または単発で計測するときの手順。
