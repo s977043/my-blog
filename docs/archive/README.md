@@ -50,6 +50,5 @@
 
 - `docs/content-channel-strategy.md` — 媒体役割の正本（思考の軸）
 - `docs/publish-queue.md` — 公開順＋デッドラインの手動リスト
-- `docs/rollout-ai-implementation-boundary-series.md` — 次に出す記事の公開手順
 - 各記事内「公開当日チェックリスト」
 - `scripts/check-note-tables.js`（軽量・肥大リスク低）/ `AGENT_LEARNINGS.md`
