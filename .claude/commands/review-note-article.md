@@ -167,7 +167,7 @@ gh pr create \
   ```
 
 - `new` / `published`: レビューPRのレビューとマージはユーザーが判断する（Human Gate）。既定では自動続行しない。案内: 「レビューPRをマージ後、`/apply-review-note <state>/<slug>` を実行してください」
-- ユーザーが `--auto-apply` を明示した場合のみ、`new` / `published` でレビューPRのマージを確認してから `/apply-review-note $1` へ続行してよい
+- ユーザーが `--auto-apply` を明示した場合のみ、`new` / `published` でレビューPRのマージを確認してから `/apply-review-note $1` へ続行してよい（非推奨）
   - `published` は `--auto-apply` 指定時も、公開済み記事の修正であることを追加確認する
   - マージとnote側への反映は自動化しない
 - レビュー成果物のマージ前に記事本文を触らない
