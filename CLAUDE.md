@@ -62,7 +62,7 @@ npm run publish:qiita -- <slug>   # Qiita公開はこのproject標準scriptで�
 
 - 初回に `git config core.hooksPath scripts/hooks` で pre-commit / pre-push hook を有効にする
 - branch を触る操作（`git add` / `commit` / `push` / `reset` / `switch` / `gh pr create`）の前に毎回 `git branch --show-current` で現在地を確認する
-- マージ前に `npm run check:pr-staleness -- <PR番号またはブランチ名>` を実行する（exit 1 ならマージ中止）
+- マージ前に `npm run check:pr-staleness -- <PR番号またはブランチ名>` を実行する（exit 1 ならマージ中止。WARN のときは pr-operations.md の手動 3 点確認へ）
 - マージは `gh pr merge <n> --squash --delete-branch`（squash only の規約は AGENTS.md §Git 運用）
 - `M AGENTS.md` の `<claude-mem-context>` ブロックは commit しない（`git add -A` を使わず対象ファイルを明示する）
 - セッション終了時は stash・stale ブランチ（`npm run clean:merged-branches`）・open PR を片付ける
@@ -71,7 +71,8 @@ npm run publish:qiita -- <slug>   # Qiita公開はこのproject標準scriptで�
 
 1. 並列セッション衝突を回避するため `gh pr list --state open` で重複 PR がないか確認
 2. **DRAFT PR の存在確認** — `gh pr list --state open --search "is:draft"` で未完了の Codex / 並列セッション PR を把握
-3. **active account の確認** — `git push` / `gh pr create` / `gh pr merge` は `s977043` で行う（他アカウントだと `must be a collaborator` で失敗する）。`.claude/settings.json` の PreToolUse hook（`scripts/hooks/claude-gh-account-guard.sh`）が `git push` / `gh pr create|merge|edit` / `gh api ...merge` の直前に `check-gh-account.sh --fix` を自動実行し、切替不能時のみブロックする（fail-open）。手動の **`npm run gh:ensure`** は hook が補正しない経路（別 owner の repo を操作した後、`gh auth setup-git` で active account が切り替わった後など）に限って使う
+3. **active account の確認** — `git push` / `gh pr create` / `gh pr merge` の **直前すべて** で `s977043` になっている必要がある（他アカウントのままだと PR 操作が `must be a collaborator` で失敗する）。**`gh auth setup-git` の直後は active account が切り替わる副作用がある**ので再確認する。push/PR 操作の直前に **`npm run gh:ensure`**（= `check-gh-account.sh --fix`）を走らせる
+   - 補足: `.claude/settings.json` の PreToolUse hook（`scripts/hooks/claude-gh-account-guard.sh`）も `git push` / `gh pr create|merge|edit` / `gh api ...merge` の直前に `check-gh-account.sh --fix` を自動実行し、切替不能時のみブロックする（fail-open 設計）
    - ⚠️ **my-blog では `gh-account-guard` / `growth-core:gh-account-guard` スキルを使わない**。これらは Growth-Teams-Agent 用で期待アカウントが **kominem-unilabo**（このリポジトリの正である s977043 と逆）。起動すると「kominem-unilabo への反転」を逆に強制しうる。アカウント検証は `npm run gh:ensure` を使う
    - **逆向きにも注意**: 上記 hook は操作先の owner（`gh -R` / `git -C` / `cd` 先の origin）が s977043 以外なら補正しない（#689）。owner を判定できないコマンドでは s977043 へ戻すので、別アカウントの repo（例: unilabo）へ push / PR するときは `gh auth switch` を **push と同じ Bash コマンド内**で行い、最後に s977043 へ戻す（AGENT_LEARNINGS 2026-09-24）
 4. 対象ファイルがどのプラットフォームか確認（AGENTS.md の配置規約表）
