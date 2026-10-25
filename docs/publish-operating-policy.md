@@ -48,9 +48,37 @@
 | Zenn PR 間隔 | 前回の release/zenn 公開から **24 時間以上**あけてマージ |
 | 既存 update と新規 publish | 別 PR に分割（update が rate-limit に巻き込まれて公開済記事が古いままになる事故を防ぐ） |
 | 既存 update のみの deploy | 新規の `published: false → true` が 0 件の deploy は「Zenn PR 間隔」の制約を受けない（rate-limit は新規 publish にだけ掛かる。根拠: 2026-08-28 の PR #551 の deploy で、前回公開から約 18h でも既存 update 2 件は反映され、新規 1 件だけが弾かれた） |
-| rate-limit hit 時 | リポジトリ側に追加 commit を作らず、[Zenn お問い合わせ](https://zenn.dev/inquiry) で緩和申請 |
+| rate-limit hit 時 | 下記「Zenn 公開フローの手順」§rate-limit hit 時の対処 |
 
-根拠: `AGENT_LEARNINGS.md` 2026-05-22「Zenn rate-limit は実効 24h/2本でも hit する」。release/zenn 運用フロー（ブランチ単方向・sync 手順）は [`AGENTS.md`](../AGENTS.md) §「Zenn 公開フロー」を参照。
+根拠: `AGENT_LEARNINGS.md` 2026-05-22「Zenn rate-limit は実効 24h/2本でも hit する」。release/zenn 運用フローの規約（ブランチ単方向・merge 間隔）は [`AGENTS.md`](../AGENTS.md) §「Zenn 公開フロー」を参照。
+
+## Zenn 公開フローの手順
+
+規約（release/zenn は main 単方向、update は単独 PR 等）は [`AGENTS.md`](../AGENTS.md) §「Zenn 公開フロー（release/zenn ブランチ経由）」が正本。本節は手順のみ示す。
+
+```text
+main                      ← 通常運用（記事執筆、レビュー反映、修正、note/Qiita 編集すべて）
+  └─ release/zenn         ← Zenn deploy 対象。このブランチへの push のみ deploy 発火
+       ← cherry-pick / merge       ← 公開準備が整った記事だけ意図的に流す
+```
+
+### 公開フロー例
+
+```text
+[新規記事公開]
+1. PR1: docs/foo → main（記事執筆・レビュー反映、Zenn deploy 発火しない）
+2. PR2: release/zenn-publish-YYYY-MM-DD → release/zenn（公開対象記事だけを cherry-pick or filtered merge）
+
+[既存公開記事の update]
+1. PR1: docs/fix-typo → main（修正反映、Zenn deploy 発火しない）
+2. PR2: release/zenn-update-<slug> → release/zenn（単独 PR で update を流す。新規 publish と同 PR にしない）
+```
+
+### rate-limit hit 時の対処
+
+- リポジトリ側に追加 commit を **作らない**（被害拡大を防ぐ）
+- [Zenn お問い合わせフォーム](https://zenn.dev/inquiry) で緩和申請（公式が「移行・特殊用途では緩和可」と明言している正規ルート）
+- 詳細仕様と緩和申請文案テンプレは Claude Code の auto-memory `reference_zenn_rate_limit_spec.md`（リポジトリ外）
 
 ## 媒体をまたいだ公開間隔
 
