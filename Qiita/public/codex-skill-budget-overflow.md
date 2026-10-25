@@ -31,7 +31,7 @@ Codex にプラグインを導入して有効化したのに、そのプラグ�
 3. `skills.max_context_tokens` を変えて比べる
 
 :::note info
-数値と挙動は、codex-cli 0.160.1 で 2026-10-25〜26 に確認したものです。バージョンが変わると挙動も変わる可能性があります。
+数値と挙動は codex-cli 0.160.1 で確認したものです（実測日は各節に記載、公式ドキュメントは 2026-10-25 に確認）。バージョンが変わると挙動も変わる可能性があります。
 :::
 
 ## 症状
@@ -44,7 +44,7 @@ River Review の場合、配布しているスキルは 12 個あります。手
 
 ## 切り分け1: モデルに渡るスキル一覧を見る
 
-`codex debug prompt-input` は、モデルに渡す入力を JSON で表示します。末尾の `test` は、セッションの文脈のあとに付け足す仮のプロンプトです。出力をプラグイン名で絞り込むと、一覧に入っているかが分かります。
+`codex debug prompt-input` は、モデルに渡す入力を JSON で表示します。末尾の `test` は確認用の仮のプロンプトです（`codex debug prompt-input --help` では、セッションの文脈のあとに付け足す任意のプロンプトと説明されています）。出力をプラグイン名で絞り込むと、一覧に入っているかが分かります。
 
 ```bash
 codex debug prompt-input test | grep 'river-review:'
@@ -67,7 +67,7 @@ CODEX_HOME="$ISOLATED" codex plugin add river-review@river-review-marketplace
 CODEX_HOME="$ISOLATED" codex debug prompt-input test | grep 'river-review:'
 ```
 
-自分のプラグインで試すときは、2・3 行目をそのプラグインの導入コマンドに、`river-review:` をプラグイン名に置き換えてください。
+2・3 行目はそれぞれ `Added marketplace ...` と `Added plugin ...` が表示されたのを確かめてから次へ進みます。自分のプラグインで試すときは、2・3 行目をそのプラグインの導入コマンドに、`river-review:` をプラグイン名に置き換えてください。確かめ終わったら `rm -rf "$ISOLATED"` で削除できます。
 
 手元では、`debug prompt-input` を実行するだけならログインは要りませんでした。この状態では 12 個すべてが出ました。
 
@@ -137,7 +137,7 @@ max_context_tokens = 10000
 codex debug prompt-input test | grep 'river-review:'
 ```
 
-目的のスキルが出ていれば完了です。`grep` で分かるのは一覧に入っているかどうかまでです。何個出たかを数えるときは、切り分け3の表と同じく `river-review:<name>` の異なりを数えます。
+目的のスキルが出ていれば完了です。`grep` で分かるのは一覧に入っているかどうかまでです。何個出たかを数えるときは、切り分け3の表と同じく、`<プラグイン名>:<name>` の異なりを数えます。
 
 ## まとめ
 
