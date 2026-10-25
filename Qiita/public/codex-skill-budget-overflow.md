@@ -94,10 +94,10 @@ codex -c skills.max_context_tokens=10000 debug prompt-input test | grep 'river-r
 | 条件 | 一覧に出た River Review のスキル（12 個中） |
 | --- | --- |
 | 実環境・既定の予算 | 0 |
-| 隔離した `CODEX_HOME`（River Review のみ） | 12 |
+| 隔離した `CODEX_HOME`（River Review のみ）※ | 12 |
 | 実環境・`skills.max_context_tokens=10000` | 12 |
 
-数え方は、出力に現れた `river-review:<name>` の異なり数です（コマンド由来の項目は除いています）。codex-cli 0.160.1、2026-10-25 の測定です。
+数え方は、出力に現れた `river-review:<name>` の異なり数です（コマンド由来の項目は除いています）。codex-cli 0.160.1 での測定で、実環境の 2 行は 2026-10-25 に測りました。※の行は River Review の PR（#2782）に記録された値です。
 
 予算を上げると出るなら、原因は予算超過と判断できます。
 
