@@ -228,6 +228,7 @@ Zenn は **`release/zenn` ブランチ** をデプロイ対象とする運用に
 - **既存公開記事の update は単独 PR で `release/zenn` に流す**（新規 publish と分離。update が rate-limit に巻き込まれて公開済記事が古いままになる事故を防ぐ）
 - main → release/zenn の merge は **squash 推奨**（記事単位での切り戻しを容易に）
 - 緊急時の escape: `release/zenn` への直接 push（事後で main に必ず取り込む）
+- rate-limit に当たったら、リポジトリ側に追加の commit を作らない（対処の手順は `docs/publish-operating-policy.md`）
 
 ### release/zenn は main 単方向（独自コンテンツ禁止）
 
