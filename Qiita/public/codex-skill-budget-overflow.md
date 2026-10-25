@@ -58,14 +58,16 @@ River Review のガイドでは、リポジトリの外で実行する手順に�
 
 ## 切り分け2: 隔離した CODEX_HOME で比べる
 
-空のディレクトリを `CODEX_HOME` にして、目的のプラグインだけを入れます。River Review の場合は次のとおりです。
+新しく作った空のディレクトリを `CODEX_HOME` にして、目的のプラグインだけを入れます。以前の設定が残らないよう、ディレクトリは毎回 `mktemp -d` で作ります。River Review の場合は次のとおりです。
 
 ```bash
-mkdir -p /tmp/codex-isolated
-CODEX_HOME=/tmp/codex-isolated codex plugin marketplace add s977043/river-review
-CODEX_HOME=/tmp/codex-isolated codex plugin add river-review@river-review-marketplace
-CODEX_HOME=/tmp/codex-isolated codex debug prompt-input test | grep 'river-review:'
+ISOLATED=$(mktemp -d)
+CODEX_HOME="$ISOLATED" codex plugin marketplace add s977043/river-review
+CODEX_HOME="$ISOLATED" codex plugin add river-review@river-review-marketplace
+CODEX_HOME="$ISOLATED" codex debug prompt-input test | grep 'river-review:'
 ```
+
+自分のプラグインで試すときは、2・3 行目をそのプラグインの導入コマンドに、`river-review:` をプラグイン名に置き換えてください。
 
 手元では、`debug prompt-input` を実行するだけならログインは要りませんでした。この状態では 12 個すべてが出ました。
 
@@ -73,7 +75,7 @@ CODEX_HOME=/tmp/codex-isolated codex debug prompt-input test | grep 'river-revie
 
 ## 切り分け3: 予算を変えて比べる
 
-実環境に戻り、`-c` で設定を一時的に上書きして、スキル一覧の予算を上げた状態で同じコマンドを実行します。
+実環境（`CODEX_HOME` を指定しない通常の環境）で、`-c` で設定を一時的に上書きして、スキル一覧の予算を上げた状態で同じコマンドを実行します。
 
 ```bash
 codex -c skills.max_context_tokens=10000 debug prompt-input test | grep 'river-review:'
@@ -129,17 +131,17 @@ max_context_tokens = 10000
 
 ## 確認
 
-設定したあと、もう一度一覧を見ます。
+設定したあと、切り分け1と同じように、プラグイン名を置き換えてもう一度一覧を見ます。
 
 ```bash
 codex debug prompt-input test | grep 'river-review:'
 ```
 
-目的のスキルが出ていれば完了です。
+目的のスキルが出ていれば完了です。`grep` で分かるのは一覧に入っているかどうかまでです。何個出たかを数えるときは、切り分け3の表と同じく `river-review:<name>` の異なりを数えます。
 
 ## まとめ
 
-- Codex でプラグインのスキルが出てこないときは、manifest より先にスキル一覧の予算超過を疑う
+- Codex でプラグインのスキルが出てこないときは、manifest の書き方だけでなく、スキル一覧の予算超過も疑う
 - `codex debug prompt-input` で一覧を見て、隔離した `CODEX_HOME` と予算の変更で切り分ける
 - 対処は、使っていないプラグインを外すか、`skills.max_context_tokens` を 10,000 以内で上げる
 
