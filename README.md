@@ -148,7 +148,7 @@ Slash Command:
 - `/review-article <slug>` — Zenn記事をレビュー → `reviews/zenn/<slug>.md`
 - `/review-note-article <slug>` — note記事をレビュー → `reviews/note/<slug>.md`
 - `/apply-review <slug>` — `reviews/zenn/<slug>.md`の指摘を`articles/<slug>.md`に選別反映
-- `/article-pipeline <slug>` — レビュー生成→反映を連続実行（2PR運用）
+- 旧 `/article-pipeline`・`/article-pipeline-note` は廃止。レビュー（`/review-article` / `/review-note-article`）→ レビュー PR のマージ → 反映（`/apply-review` / `/apply-review-note`）の順に実行する
 
 関連Agent: `.claude/agents/article-reviewer.md` `.claude/agents/note-article-reviewer.md` `.claude/agents/review-applier.md`
 
