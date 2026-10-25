@@ -59,7 +59,7 @@ npm ci   # 必須
 - **`git push --force` を `main` に対して使わない**（`AGENTS.md` §禁止事項）
 - **自動マージ禁止**。`gh pr merge` は人間ゲート。ワーカーは PR 作成までで止める
 - `git add -A` を使わず**対象ファイルを明示**して stage する（`AGENTS.md` の claude-mem ブロックを巻き込まないため）
-- commit の直前に `git branch --show-current` と `git status --short` を確認する（並列セッションのブランチ干渉対策。手順の詳細は `CLAUDE.md` §並列セッション耐性）
+- commit の直前に `git branch --show-current` と `git status --short` を確認する（並列セッションのブランチ干渉対策。手順の詳細は `docs/pr-operations.md` §並列セッション耐性）
 - push は `gh` の active account が `s977043` でないと pre-push hook がブロックする（`scripts/hooks/pre-push`）。事前に `npm run gh:ensure`
 - マージは squash only（`--merge` は GraphQL エラーになる）
 - `uncommitted-restore-guard` hook が `git restore` / `git checkout --` を止めたら、`UNCOMMITTED_RESTORE_GUARD_SKIP=1` で迂回しない。自分の生成物だけなら `git stash push -m <理由> -- <paths>` で退避して完了報告に書き、破棄はオーガナイザー経由でユーザーに確認する（2026-10-16、#854 のワーカーが確認なしで迂回）
@@ -177,11 +177,11 @@ git worktree list
 ```
 
 `status --porcelain` が 1 行でも出たら**消さない**。中身を確認し、必要ならブランチを切って commit
-するか、`git stash push -u -m "<sentinel>"` で退避してから判断する（`CLAUDE.md` §並列セッション耐性）。
+するか、`git stash push -u -m "<sentinel>"` で退避してから判断する（`docs/pr-operations.md` §並列セッション耐性）。
 `--force` が要るのは gitignore 対象ファイルが残っているためで、**未コミット変更を握り潰す許可ではない**。
 判定を飛ばして `--force` を打たない。
 
-掃除は `git worktree list` が期待どおりになるまで確認する（`CLAUDE.md` §セッション終了時のチェックリスト
+掃除は `git worktree list` が期待どおりになるまで確認する（`docs/pr-operations.md` §セッション終了時のチェックリスト
 の stash / ブランチ / open PR の確認と合わせて実施する）。
 
 ---
