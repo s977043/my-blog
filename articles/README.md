@@ -70,7 +70,7 @@ npm run check            # articles / books / Qiita CLIのまとめ確認
 
 - レビュー生成: `/review-article <slug>` → `reviews/zenn/<slug>.md`
 - レビュー反映: `/apply-review <slug>` → `articles/<slug>.md`に反映
-- 一括実行: `/article-pipeline <slug>`
+- レビューPRと反映PRは分ける（2PR運用）。手順は `/review-article` の「次の一手」節
 
 `/review-article` は `docs/article-guides/zenn-structure-best-practices.md` を読んだうえで、既存の `article-reviewer` の観点と組み合わせ、再現性・技術的正確性・一次情報・読者の検索意図を確認する。
 
