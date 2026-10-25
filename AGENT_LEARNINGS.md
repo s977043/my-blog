@@ -59,7 +59,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-08-20 — Zenn `/api/articles` は約23件しか返さない。全件突合は `zenn.dev/<user>` の `articlesCount`
 - 2026-08-27 — Zenn は SVG を配信できない（Cloudinary `/image/fetch/` が 400）。図版は PNG 1600x900 で置く
 ### B. Qiita publish / drift / 重複公開
-**現行正本**: `CLAUDE.md` §公開前ガード（`check:qiita-remote-cache` / `publish:qiita` wrapper）
+**現行正本**: `docs/pr-operations.md` §公開前ガード（`check:qiita-remote-cache` / `publish:qiita` wrapper）
 - 2026-06-03 — `qiita publish` は冒頭で全記事 pull。`.remote/` 手編集でローカル改変が巻き戻る
 - 2026-05-18 — Qiita 公開は `npm run publish:qiita`（documented script）で叩く
 - 2026-05-18 — Qiita slug↔id 乖離は重複公開を生む／dedup はリモート削除まで `qiita pull` 禁止
@@ -82,7 +82,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-09-14 — エクスポート取り込みで出る画像の `M` はメタデータ数バイトの churn。検体1点を測ってから一括 revert（新規は `??` で出る）
 
 ### D. 並列セッション / ブランチ干渉 / commit
-**現行正本**: `CLAUDE.md` §並列セッション耐性 / `scripts/hooks/pre-commit`
+**現行正本**: `docs/pr-operations.md` §並列セッション耐性 / `scripts/hooks/pre-commit`
 - 2026-09-03 — 長時間ワークフローは実行中にベースごと入れ替わる
 - 2026-09-05 — Workflow のエージェントは相対パスをメインセッションの cwd 基準で解決する。cwd 移動で成果物が2箇所に分裂する
 - 2026-04-20 — 並列セッション干渉で commit が意図せず main に着地する
