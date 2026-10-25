@@ -6,8 +6,8 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 
 ## Summary
 
-- Seeds: 21
-- Explicit provenance contract: 13
+- Seeds: 22
+- Explicit provenance contract: 14
 - Legacy seeds: 8
 - Promotion edges: 7
 - Seeds with open author input gate: 6
@@ -33,6 +33,7 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 | `seed-20261011-claude-code-hook-fail-open` | 2026-10-11 | seed | external | verified | 0 | experience, analysis | 危険コマンドを止める Claude Code hook が、検査の手前で素通ししていた | `article_seeds/ai-driven-development/2026-10-11-claude-code-hook-fail-open.md` | 0 |
 | `seed-20261015-swe-journey-requirements` | 2026-10-15 | draft | mixed | verified | 0 | insight, analysis | SWE-Journeyを読んで、専門家が行う要求分析をAIが補えないかと考えた | `article_seeds/ai-driven-development/2026-10-15-swe-journey-requirements.md` | 1 |
 | `seed-20261022-advisory-ai-review-silent-failure` | 2026-10-22 | seed | experience | observed | 0 | experience | CI が green のまま、AI レビューが約 2 か月止まっていた | `article_seeds/ai-driven-development/2026-10-22-advisory-ai-review-silent-failure.md` | 0 |
+| `seed-20261025-codex-skill-budget-overflow` | 2026-10-25 | seed | experience | observed | 0 | tips | Codex でプラグインのスキルが出てこない原因は、スキル一覧の予算超過 | `article_seeds/ai-driven-development/2026-10-25-codex-skill-budget-overflow.md` | 0 |
 | `seed-20260911-media-operating-system-boundaries` | 2026-09-11 | seed | experience | observed | 0 | experience, analysis | Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった | `article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md` | 1 |
 | `seed-20260923-agent-role-boundaries` | 2026-09-23 | seed | external | verified | 0 | analysis, insight | AIエージェントを増やす前に、役割と委譲境界を分ける | `article_seeds/media-operating-system/2026-09-23-agent-role-boundaries.md` | 0 |
 | `seed-20260923-publish-contract` | 2026-09-23 | seed | external | verified | 0 | analysis, tutorial, insight | 自動投稿より先に、公開前の契約とfail-closedを固定する | `article_seeds/media-operating-system/2026-09-23-publish-contract.md` | 0 |
