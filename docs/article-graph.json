@@ -442,6 +442,30 @@
       "legacy": false
     },
     {
+      "id": "seed-20261027-riskmap-first-match-shadow",
+      "path": "article_seeds/ai-driven-development/2026-10-27-riskmap-first-match-shadow.md",
+      "title": "先に一致したルールが、後ろの厳しいルールを隠す：river-review の risk-map の first-match を診断する",
+      "date": "2026-10-27",
+      "status": "seed",
+      "topics": [
+        "code-review",
+        "ai-review",
+        "glob",
+        "river-review"
+      ],
+      "source": "experience",
+      "source_url": "https://github.com/s977043/river-review/pull/2784",
+      "source_ref": "s977043/river-review 8db74959",
+      "evidence_status": "observed",
+      "promoted_to": [],
+      "article_type_candidates": [
+        "deep-dive"
+      ],
+      "author_input_required_count": 0,
+      "author_input_gate_open": false,
+      "legacy": false
+    },
+    {
       "id": "seed-20260911-media-operating-system-boundaries",
       "path": "article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md",
       "title": "Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった",
