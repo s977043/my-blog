@@ -1,17 +1,17 @@
 ---
 title: Codex でプラグインのスキルが出てこないときは、スキル一覧の予算超過を疑う
 tags:
-  - Codex
+  - codex
   - OpenAI
   - AgentSkills
   - 生成AI
   - トラブルシューティング
 private: false
-updated_at: ''
-id: null
+updated_at: '2026-10-27T05:32:06+09:00'
+id: a608df866f86dcfb3874
 organization_url_name: null
 slide: false
-ignorePublish: true
+ignorePublish: false
 posting_campaign_uuid: null
 agreed_posting_campaign_term: false
 ---
