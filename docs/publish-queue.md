@@ -76,6 +76,7 @@ Zenn の公開は2段階である。`main` へ `published: true` をマージし
 
 ## Done
 
+- 2026-10-27 qiita codex-skill-budget-overflow https://qiita.com/s977043/items/a608df866f86dcfb3874 （queue 外。**HTTP 200 を確認済み**〔id a608df866f86dcfb3874〕。一次情報は river-review #2782。Seed #900 → Plan 反映 #901 → 初稿・レビュー 3 回 #902 → `npm run publish:qiita` で公開。Qiita 側でタグ `Codex` が `codex` に正規化された。公開後の drift は本記事 0 件〔既存の sdd-tdd-nonblocking-agent の drift 1 件は別件〕）
 - 2026-10-21 note 個人のAI開発ナレッジを、チームの改善ループへ育てるまで https://note.com/mine_unilabo/n/nf85851cf7f48 （queue #12、会社公式 PRONI。**HTTP 200・og:title を確認済み**。広報チェック OK〔2026-10-20〕・エンジニア 2 名のプレビュー再確認を経て公開。マガジン追加済み。最終反映: #871〔広報コメント 2 件・図 3 枚〕→ #872〔公開前レビュー 2 点〕。note 下書きはエディタで直接編集し、2026-10-21 の公式エクスポートで published/ へ取り込み）
 - 2026-10-20 zenn openspec-plangate-living-spec https://zenn.dev/minewo/articles/openspec-plangate-living-spec （queue 外。**HTTP 200・og:title・Zenn API 出現を確認済み**〔id 663451、published_at 2026-10-20 23:41 JST〕。前回公開〔2026-10-14 15:30〕から約 148 時間空けたため rate-limit に触れず、マージ直後に反映。readiness は `blocked=false mustHigh=0 verified=true`〔reviewedAt 2026-10-11〕。公開チェーン: flip #873 main 段 → sync #875 release/zenn）
 - 2026-10-14 zenn ai-agent-team-topology-judgment-escalation https://zenn.dev/minewo/articles/ai-agent-team-topology-judgment-escalation （queue 外。**HTTP 200・Zenn API 出現を確認済み**〔id 663450、published_at 2026-10-14 15:30 JST〕。前回公開〔2026-10-13 07:21〕から 24h 以上空けて公開。公開チェーン: Fable 5.1 追記 #836 → flip #837 main 段 → sync #838 release/zenn。`river-review-judgment-placement` からの張り返しは #840 → #842〔release/zenn update もマージ済み。2026-10-15 JST に公開ページでリンクを確認〕）
