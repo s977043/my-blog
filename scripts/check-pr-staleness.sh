@@ -207,14 +207,21 @@ REMOVED=$(git diff "$BASE_REF" "$MERGED_TREE" -- "${PR_FILES_ARR[@]}" | grep '^-
 LB_BASE=$(git rev-parse -q --verify "$BASE_REF~$MAIN_LOOKBACK" 2>/dev/null || git rev-list --max-parents=0 "$BASE_REF" | tail -1)
 MAIN_ADDED_MB=$(git diff "$MB" "$BASE_REF" -- "${PR_FILES_ARR[@]}" | grep '^+' | grep -v '^+++' | normalize | sort -u || true)
 MAIN_ADDED_LB=$(git diff "$LB_BASE" "$BASE_REF" -- "${PR_FILES_ARR[@]}" | grep '^+' | grep -v '^+++' | normalize | sort -u || true)
-MAIN_REMOVED_LB=$(git diff "$LB_BASE" "$BASE_REF" -- "${PR_FILES_ARR[@]}" | grep '^-' | grep -v '^---' | normalize | sort -u || true)
-MERGE_ADDED=$(git diff "$BASE_REF" "$MERGED_TREE" -- "${PR_FILES_ARR[@]}" | grep '^+' | grep -v '^+++' | normalize | sort -u || true)
 
-# resurrection: マージ結果が追加する行のうち、main が lookback 内で削除した行と一致するもの
+# resurrection: ファイルごとに、マージ結果が追加する行のうち、main が lookback 内で削除し、
+# かつ BASE_REF の同じファイルにもう残っていない行を数える。BASE_REF に同一行が残っている行は
+# JSON のキー行のような構造・定型行の重複で、古い内容の復活ではない（2026-10-27 #910 の誤検知:
+# main が Seed エントリを削除し、PR が別エントリを追加しただけで「復活行 6 行」と数えた）。
 RESURRECTED=0
-if [ -n "$MERGE_ADDED" ] && [ -n "$MAIN_REMOVED_LB" ]; then
-  RESURRECTED=$(comm -12 <(printf '%s\n' "$MERGE_ADDED") <(printf '%s\n' "$MAIN_REMOVED_LB") | wc -l | tr -d ' ')
-fi
+for f in "${PR_FILES_ARR[@]}"; do
+  n=$(comm -12 \
+    <(git diff "$BASE_REF" "$MERGED_TREE" -- "$f" | grep '^+' | grep -v '^+++' | normalize | sort -u || true) \
+    <(comm -23 \
+      <(git diff "$LB_BASE" "$BASE_REF" -- "$f" | grep '^-' | grep -v '^---' | normalize | sort -u || true) \
+      <(git show "$BASE_REF:$f" 2>/dev/null | normalize | sort -u || true)) \
+    | sed '/^$/d' | wc -l | tr -d ' ')
+  RESURRECTED=$((RESURRECTED + n))
+done
 
 if [ "$RESURRECTED" -ge "$RESURRECT_MIN" ]; then
   MAIN_ADDED=$(printf '%s\n%s\n' "$MAIN_ADDED_MB" "$MAIN_ADDED_LB" | sed '/^$/d' | sort -u)
