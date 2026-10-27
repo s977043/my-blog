@@ -22,7 +22,7 @@ npm run report:learnings-promotion
 
 ### 2. 既存の学びと突合して分類する
 
-シグナルごとに `AGENT_LEARNINGS.md` を `kind`・`detail` の語（ブランチ名、ガード名、コミット件名）で grep し、次の 3 つに分ける。
+シグナルごとに `AGENT_LEARNINGS.md` と `docs/agent-learnings/archive/`（2026-07 以前のエントリ本文）を `kind`・`detail` の語（ブランチ名、ガード名、コミット件名）で grep し、次の 3 つに分ける。
 
 | 分類 | 条件 | やること |
 |---|---|---|
