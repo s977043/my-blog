@@ -26,7 +26,7 @@ git config core.hooksPath scripts/hooks
 - commit 前に `git status --short` も併用（未意図のファイルが staging に混入していないか確認）
 - ブランチが期待と異なる場合は `git stash push -u -m "<sentinel>"` で退避 → `git switch main` → `git pull --ff-only` で復旧
 - 誤配置 commit は `reflog` で探し、`git cherry-pick <sha>` で目的ブランチに移動して救出できる
-- 詳細事例: `@AGENT_LEARNINGS.md` の「並列セッションによるブランチ干渉」エントリ
+- 詳細事例: `docs/agent-learnings/archive/2026.md` の 2026-04-20「並列セッションによるブランチ干渉」エントリ
 
 ### `M AGENTS.md`（claude-mem 自動注入ブロック）は WIP ではない
 
@@ -74,7 +74,7 @@ git diff origin/main...origin/<branch> --stat         # 3点比較。現 main �
 - `state != OPEN` の場合は何もしない（並列セッションが先行マージ済み）
 - 3点 diff（`...`）が PR 本文の想定範囲を超える場合は stale の疑い。**`gh pr` 上の diff は head の base に対する差分なので、base が現 main からズレていると実害（巻き戻し）を隠す**（2026-06-10: #404 が squash 済み記事を巻き戻した。同型の #405 は 3点 diff で気づいてマージ前に close）
 - **マージは常に `gh pr merge <n> --squash --delete-branch`**。このリポジトリは merge commit 禁止で、`--merge` は `GraphQL: Merge commits are not allowed` で失敗する
-- 詳細事例: `@AGENT_LEARNINGS.md` の「Stale PR は `git diff main..branch` で事前にリグレッション検出する」「並列セッションが squash 済み記事を別 base で再マージ」エントリ
+- 詳細事例: `docs/agent-learnings/archive/2026.md` の 2026-04-20「Stale PR は `git diff main..branch` で事前にリグレッション検出する」・2026-06-10「並列セッションが squash 済み記事を別 base で再マージ」エントリ
 
 ## セッション終了時のチェックリスト
 

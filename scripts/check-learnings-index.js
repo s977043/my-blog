@@ -24,6 +24,11 @@
 //       あり、ゆるくすると意図的な再掲を誤検知する。完全一致なら「コピペ由来の事故的な
 //       重複」だけが残る。
 //
+//   [3] アーカイブ（2026-10-27 追加）
+//     古いエントリ本文は `docs/agent-learnings/archive/*.md` に移してあり、索引は本体に残す。
+//     - アーカイブ側の `### YYYY-MM-DD —` 見出しも [1] と同じ登録漏れ WARN の対象にする
+//     - 同じ見出し行が本体とアーカイブの両方にあれば FAIL（移設時のコピー残り）
+//
 // 集約 `npm run check` に組み込み。登録漏れは WARN のみ、重複は exit 1。
 //
 // 使い方:
@@ -32,6 +37,8 @@
 
 const fs = require("fs");
 const path = require("path");
+
+const { ENTRY_HEADING_RE, readArchives } = require("./learnings-archive");
 
 const FILE_NAME = "AGENT_LEARNINGS.md";
 const LABEL = "[check:learnings-index]";
@@ -97,7 +104,8 @@ function findDuplicateEntries(sections) {
 }
 
 // 本文エントリのうち、インデックスに日付が一度も出てこないものを返す。
-function findUnindexedEntries(lines, bodyStart, sections) {
+// file は報告用に各要素へ付ける（本体かアーカイブか）。
+function findUnindexedEntries(lines, bodyStart, sections, file) {
   const indexDates = new Set();
   for (const s of sections)
     for (const e of s.entries) {
@@ -108,29 +116,51 @@ function findUnindexedEntries(lines, bodyStart, sections) {
   const missing = [];
   for (let i = bodyStart; i < lines.length; i++) {
     const line = lines[i];
-    const m = line.match(/^### (\d{4}-\d{2}-\d{2})\s+—\s+(.+)$/);
-    if (!m) continue;
+    const h = line.match(ENTRY_HEADING_RE);
+    if (!h) continue;
+    const m = [line, h[1], line.slice(h[0].length).replace(/^\s*—\s*/, "")];
     // テンプレート行（`### YYYY-MM-DD —` プレースホルダ）はスキップ
     if (line.includes("YYYY-MM-DD")) continue;
     if (indexDates.has(m[1])) continue;
-    missing.push({ date: m[1], title: m[2].trim(), line: i + 1 });
+    missing.push({ date: m[1], title: m[2].trim(), line: i + 1, file });
   }
   return missing;
 }
 
+// 本体とアーカイブの両方にある見出し行を返す。
+function findInBoth(lines, bodyStart, archives) {
+  const heads = new Set(
+    lines.slice(bodyStart).filter((l) => ENTRY_HEADING_RE.test(l)),
+  );
+  const both = [];
+  for (const a of archives)
+    a.content.split("\n").forEach((l, i) => {
+      if (heads.has(l)) both.push({ file: a.file, line: i + 1, text: l });
+    });
+  return both;
+}
+
 // content 全体を評価する。skip の場合 { skip: 理由 }。
-function evaluate(content) {
+// archives: [{ file, content }]（アーカイブの Markdown）
+function evaluate(content, archives = []) {
   const lines = content.split("\n");
   const loc = locateSections(lines);
   if (!loc) return { skip: "インデックス or 学びエントリ見出しが無い" };
   const sections = parseIndexSections(lines, loc.indexStart, loc.indexEnd);
+  const missing = findUnindexedEntries(lines, loc.bodyStart, sections, FILE_NAME);
+  for (const a of archives)
+    missing.push(
+      ...findUnindexedEntries(a.content.split("\n"), 0, sections, a.file),
+    );
   return {
     sections,
     duplicates: findDuplicateEntries(sections),
-    missing: findUnindexedEntries(lines, loc.bodyStart, sections),
+    missing,
+    inBoth: findInBoth(lines, loc.bodyStart, archives),
     entryCount: sections.reduce((n, s) => n + s.entries.length, 0),
   };
 }
+
 
 // ---- self-test ----
 
@@ -262,6 +292,72 @@ function selfTest() {
     0,
   );
 
+  // 9) アーカイブの未登録エントリも WARN 対象。登録済みなら出さない
+  const arcResult = evaluate(
+    fixture(["### F. review", "- 2026-04-16 — 索引に残した学び"]),
+    [
+      {
+        file: "docs/agent-learnings/archive/2026.md",
+        content: [
+          "# アーカイブ",
+          "### 2026-04-16 — 索引に残した学び [Platform]",
+          "### 2026-04-17 — 索引から漏れた学び [Gotcha]",
+        ].join("\n"),
+      },
+    ],
+  );
+  eq(
+    "アーカイブの未登録エントリを報告する",
+    arcResult.missing.map((m) => [m.file, m.date]),
+    [["docs/agent-learnings/archive/2026.md", "2026-04-17"]],
+  );
+  eq("本体と重ならなければ inBoth は空", arcResult.inBoth, []);
+
+  // 10) 同じ見出しが本体とアーカイブの両方にあれば検出する
+  const head = "### 2026-04-16 — 移し忘れ [Platform]";
+  eq(
+    "本体とアーカイブの両方にある見出しを検出する",
+    evaluate(fixture(["### F. review", "- 2026-04-16 — 移し忘れ"], [head]), [
+      { file: "a.md", content: head },
+    ]).inBoth.length,
+    1,
+  );
+
+  // 11) アーカイブが読めないときはパスと原因を示す Error にする（ディレクトリ無しは空）
+  const fakeFs = (readFail) => ({
+    existsSync: () => true,
+    readdirSync: () => {
+      if (!readFail) throw new Error("EACCES");
+      return ["2026.md"];
+    },
+    readFileSync: () => {
+      throw new Error("EISDIR");
+    },
+  });
+  const errOf = (f) => {
+    try {
+      readArchives("/r", f);
+      return "";
+    } catch (e) {
+      return e.message;
+    }
+  };
+  eq(
+    "アーカイブを一覧できなければ原因つきで投げる",
+    /アーカイブを一覧できない: .*archive.*EACCES/.test(errOf(fakeFs(false))),
+    true,
+  );
+  eq(
+    "アーカイブを読めなければパスと原因つきで投げる",
+    /アーカイブを読めない: .*2026\.md.*EISDIR/.test(errOf(fakeFs(true))),
+    true,
+  );
+  eq(
+    "アーカイブのディレクトリが無ければ空",
+    readArchives("/r", { existsSync: () => false }),
+    [],
+  );
+
   // 8) 見出しが無いファイルは skip
   eq("見出しが無ければ skip", Boolean(evaluate("# 何もない\n").skip), true);
 
@@ -287,7 +383,14 @@ function main() {
     return 0;
   }
 
-  const result = evaluate(fs.readFileSync(file, "utf8"));
+  let archives;
+  try {
+    archives = readArchives(process.cwd());
+  } catch (e) {
+    console.error(`${LABEL} FAIL: ${e.message}`);
+    return 1;
+  }
+  const result = evaluate(fs.readFileSync(file, "utf8"), archives);
   if (result.skip) {
     console.log(`${LABEL} skip: ${result.skip}`);
     return 0;
@@ -302,7 +405,18 @@ function main() {
       "  ※ rank8 のテーマ別インデックス（A〜G）に該当日付の登録を追加すると発見性が上がります（非ブロッキング）",
     );
     for (const e of result.missing)
-      console.warn(`  ${FILE_NAME}:${e.line}  ${e.date} — ${e.title}`);
+      console.warn(`  ${e.file}:${e.line}  ${e.date} — ${e.title}`);
+  }
+
+  // 本体とアーカイブの二重存在（FAIL・ブロッキング）
+  if (result.inBoth.length > 0) {
+    console.error(
+      `${LABEL} FAIL: 本体とアーカイブの両方にある見出し ${result.inBoth.length} 件`,
+    );
+    for (const d of result.inBoth)
+      console.error(`  ${d.file}:${d.line}  ${d.text}`);
+    console.error("  ※ どちらか一方だけに残すこと（移設時のコピー残り）");
+    return 1;
   }
 
   // 重複（FAIL・ブロッキング）

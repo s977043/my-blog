@@ -79,6 +79,7 @@ npm run publish:qiita -- <slug>   # Qiita公開はこのproject標準scriptで�
 5. `articles_note/published/` を触る場合は ⚠️ 規約を確認（AGENTS.md 禁止事項）
 6. note 記事に画像を追加する場合は AGENTS.md §note 固有の順序に従う。配置後に **`file` でサイズ・寸法を確認**してプレースホルダ画像（<10KB）を弾く。`--base-url` 未指定で画像参照が残ると `md_to_wxr.py` は exit 1 で失敗する（意図的にローカル参照を残すなら `--allow-local-images`）
    - **記事に図を入れる場合は `diagram-design` スキルで作る**（全媒体共通。2026-10-08 ユーザー決定）。初回に出る style guide の確認には「(e) keep default」で答える。出力は PNG にして各媒体の画像置き場へ置き、置いた後は `article-visual-review` で確認する。スキルがセッションの一覧に無いときは再起動を依頼する
+   - **note 記事の表紙（見出し画像）は `note-cover-image` スキルで設計・作成・レビューする**。保存先は `articles_note/assets/<slug>-cover.png`
 7. **release/zenn 系 PR を作る前に `BASE_REF=origin/release/zenn npm run check:zenn-pace` を実行し、その出力で可否を判断する**（BASE_REF なしの date モードでは既存 update のみの deploy も WARN になる）。rate-limit の規則と数値は `docs/publish-operating-policy.md` §Rate-limit 遵守 を正とする。release/zenn への sync PR は `scripts/sync-release-zenn.sh "<commit message>"` で一括実行できる（`articles_note/drafts/` の rename/rename 競合を main 採用で自動解決）
    - **公開キュー (`docs/publish-queue.md`) と実態の乖離チェック**: queue から記事を公開準備に着手する前に、対象ファイルの `id:` と `curl -s -o /dev/null -w "%{http_code}" "https://qiita.com/s977043/items/<id>"` で web 状態を確認する。**id が null でなく web 200 なら公開済み**なので queue を Done へ移すだけで終わる（2026-05-27 に二重公開準備で10分以上ロス）
 8. **`git switch -c <new>` 直後に `git branch --show-current` で意図ブランチと一致するか確認** — 並列セッション干渉対策。不一致なら commit を作らず停止
@@ -108,7 +109,7 @@ npm run publish:qiita -- <slug>   # Qiita公開はこのproject標準scriptで�
 
 ## 新規 Agent / Skill / Command 作成時の注意
 
-作成直後はハーネスが未リロードで `Agent type not found` エラーが出る。ユーザーに再起動を依頼してから使うか、即時実行したいときは `general-purpose` エージェントに仕様書の Read を指示してインライン委譲する（`@AGENT_LEARNINGS.md` の該当エントリ）。
+作成直後はハーネスが未リロードで `Agent type not found` エラーが出る。ユーザーに再起動を依頼してから使うか、即時実行したいときは `general-purpose` エージェントに仕様書の Read を指示してインライン委譲する（`docs/agent-learnings/archive/2026.md` の 2026-04-16 エントリ）。
 
 ## Permissions 指針
 
