@@ -208,19 +208,24 @@ LB_BASE=$(git rev-parse -q --verify "$BASE_REF~$MAIN_LOOKBACK" 2>/dev/null || gi
 MAIN_ADDED_MB=$(git diff "$MB" "$BASE_REF" -- "${PR_FILES_ARR[@]}" | grep '^+' | grep -v '^+++' | normalize | sort -u || true)
 MAIN_ADDED_LB=$(git diff "$LB_BASE" "$BASE_REF" -- "${PR_FILES_ARR[@]}" | grep '^+' | grep -v '^+++' | normalize | sort -u || true)
 
-# resurrection: ファイルごとに、マージ結果が追加する行のうち、main が lookback 内で削除し、
-# かつ BASE_REF の同じファイルにもう残っていない行を数える。BASE_REF に同一行が残っている行は
-# JSON のキー行のような構造・定型行の重複で、古い内容の復活ではない（2026-10-27 #910 の誤検知:
-# main が Seed エントリを削除し、PR が別エントリを追加しただけで「復活行 6 行」と数えた）。
+# resurrection: ファイルごとに、マージ結果が追加する行のうち main が lookback 内で削除した行を数え、
+# BASE_REF の同じファイルにもう残っていない行（強い復活）と、まだ残っている行（弱い復活）に分ける。
+# 弱い復活は JSON のキー行のような構造・定型行の重複でも起きるため、STALE の根拠にはしない
+# （2026-10-27 #910 の誤検知: main が Seed エントリを削除し、PR が別エントリを追加しただけで
+# 「復活行 6 行」と数えた）。ただし古い行が同じファイルの別の場所に残る巻き戻しもこちらに入るので、
+# 弱い復活があれば lookback 一致 1 行から WARN にする。
 RESURRECTED=0
+WEAK_RESURRECTED=0
 for f in "${PR_FILES_ARR[@]}"; do
-  n=$(comm -12 \
+  revived=$(comm -12 \
     <(git diff "$BASE_REF" "$MERGED_TREE" -- "$f" | grep '^+' | grep -v '^+++' | normalize | sort -u || true) \
-    <(comm -23 \
-      <(git diff "$LB_BASE" "$BASE_REF" -- "$f" | grep '^-' | grep -v '^---' | normalize | sort -u || true) \
-      <(git show "$BASE_REF:$f" 2>/dev/null | normalize | sort -u || true)) \
-    | sed '/^$/d' | wc -l | tr -d ' ')
+    <(git diff "$LB_BASE" "$BASE_REF" -- "$f" | grep '^-' | grep -v '^---' | normalize | sort -u || true))
+  [ -n "$revived" ] || continue
+  base_lines=$(git show "$BASE_REF:$f" 2>/dev/null | normalize | sort -u || true)
+  n=$(comm -23 <(printf '%s\n' "$revived") <(printf '%s\n' "$base_lines") | sed '/^$/d' | wc -l | tr -d ' ')
+  w=$(comm -12 <(printf '%s\n' "$revived") <(printf '%s\n' "$base_lines") | sed '/^$/d' | wc -l | tr -d ' ')
   RESURRECTED=$((RESURRECTED + n))
+  WEAK_RESURRECTED=$((WEAK_RESURRECTED + w))
 done
 
 if [ "$RESURRECTED" -ge "$RESURRECT_MIN" ]; then
@@ -261,8 +266,10 @@ fi
 # 閾値以上消えるなら CLEAN とは断定しない。PR による意図的な削除・改稿（#456/#459 型 = 問題なし）と、
 # main が純追記した後の古い作業コピー上書き（#404 変種 = 巻き戻し）は機械判別できないため、
 # exit 0 のまま WARN で目視確認を促す。
-if [ "$RESURRECTED" -lt "$RESURRECT_MIN" ] && [ "$LB_MATCHES" -ge "$ROLLBACK_FAIL_MATCHES" ]; then
-  echo "$TAG ⚠️ 判定: WARN（マージで main の直近追加行（lookback 内）が ${LB_MATCHES} 行消える。復活行なし）" >&2
+LB_WARN_MIN="$ROLLBACK_FAIL_MATCHES"
+[ "$WEAK_RESURRECTED" -ge 1 ] && LB_WARN_MIN=1
+if [ "$RESURRECTED" -lt "$RESURRECT_MIN" ] && [ "$LB_MATCHES" -ge "$LB_WARN_MIN" ]; then
+  echo "$TAG ⚠️ 判定: WARN（マージで main の直近追加行（lookback 内）が ${LB_MATCHES} 行消える。強い復活行なし・弱い復活行 ${WEAK_RESURRECTED} 行）" >&2
   echo "$TAG   この削除・改稿が PR の意図どおりか目視確認してください。PR が古い作業コピーで" >&2
   echo "$TAG   ファイルを丸ごと上書きしていないか（特に main 側が追記のみの場合）に注意。" >&2
   echo "$TAG   確認コマンド: git diff $BASE_REF...$HEAD_REF" >&2

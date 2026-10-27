@@ -408,6 +408,41 @@ run_check "$R" stale-crossfile
 assert "case13 stale (別ファイルに同一行が残っても #404型を検知)" 1 "$CHECK_STATUS" "STALE" "$CHECK_OUT"
 
 # ---------------------------------------------------------------------------
+# Case 14: WARN（検出力維持回帰）— frontmatter の `published: true` を初版の false へ戻す巻き戻し。
+#   同じ `published: false` 行が本文のコードブロックに残るため強い復活行は 0 だが、
+#   弱い復活があるので lookback 一致 1 行でも CLEAN にしない。
+# ---------------------------------------------------------------------------
+R="$TMPDIR_ROOT/case14"; new_repo "$R"
+fm_doc() { printf -- '---\npublished: %s\n---\n本文の説明です。\n\n```yaml\npublished: false\n```\n' "$1"; }
+fm_doc false >"$R/e.md"
+git -C "$R" add e.md && git -C "$R" commit -qm "v1"
+fm_doc true >"$R/e.md"
+git -C "$R" add e.md && git -C "$R" commit -qm "publish"
+git -C "$R" switch -qc revert-published
+fm_doc false >"$R/e.md"
+git -C "$R" add e.md && git -C "$R" commit -qm "old working copy"
+git -C "$R" switch -q main
+run_check "$R" revert-published
+assert "case14 warn (公開フラグの巻き戻しを CLEAN にしない)" 0 "$CHECK_STATUS" "WARN" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
+# Case 15: WARN 以上（検出力維持回帰）— 戻される古い行が同じファイルの別の場所にも残る #404 型。
+#   強い復活にならないため STALE ではなく WARN（exit 0）止まり。既知の後退として固定する。
+# ---------------------------------------------------------------------------
+R="$TMPDIR_ROOT/case15"; new_repo "$R"
+dup_doc() { printf '# 記事\n\n## はじめに\n%s\n%s\n\n## 付録: 改訂前の文\n古い表現の段落その1。\n古い表現の段落その2。\n' "$1" "$2"; }
+dup_doc "古い表現の段落その1。" "古い表現の段落その2。" >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "v1"
+dup_doc "磨き込み後の段落その1です。" "磨き込み後の段落その2です。" >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "polish"
+git -C "$R" switch -qc stale-dup
+dup_doc "古い表現の段落その1。" "古い表現の段落その2。" >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "old working copy"
+git -C "$R" switch -q main
+run_check "$R" stale-dup
+assert "case15 warn (古い行が同じファイルに残る巻き戻しを CLEAN にしない)" 0 "$CHECK_STATUS" "WARN" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
 # Case 10/11: 外部 I/O が返らなくても NET_TIMEOUT で打ち切って判定を返す
 #   （2026-10-01 #732: gh / fetch のどちらかで止まり、30 分の上限まで返らなかった）
 # ---------------------------------------------------------------------------
