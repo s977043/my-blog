@@ -79,7 +79,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-04-26 — エクスポートZIP取り込み後にローカル修正が上書きされる（→ `wxr_to_md.py` の git-dirty ガードで防止）
 - 2026-04-18 — WXR の著者フィールドと CDATA エスケープ規則 / 必須フィールド
 - 2026-04-19 — note インポートの運用制約と 2 スペース改行の罠
-- 2026-04-27 — note WXR の画像は GitHub Raw URL / `<figure>` タグ必須（`<p><img>` は省略される）
+- 2026-04-27 — note WXR の画像は GitHub Raw URL / `<figure>` タグ必須（`<p><img>` は省略される） / macOS で日本語を含む SVG は Chrome headless を使う
 - 2026-04-30 — `md_to_wxr.py` は `--base-url` 未指定なら exit 1 / 画像サイズ検証 / URLテキスト化 v2 / HTMLパターン整合
 - 2026-05-15 — note 用 SVG は Chrome headless + font-family 注入 / WXR round-trip はテーブル平坦化
 - 2026-05-04 — note公式由来の小容量PNGは false positive として許容
@@ -95,6 +95,7 @@ AIエージェント（Claude Code / Codex / その他）がこのリポジト�
 - 2026-04-20 — 並列セッションによるブランチ干渉と復旧手順 / 切替頻度の観測データ
 - 2026-04-20 — 並列エージェント起動前に書き込み許可を事前確認する
 - 2026-04-17 — commit 直前にカレントブランチを確認
+- 2026-04-26 — マージ競合PRのリベースパターン
 - 2026-05-17 — `git mv` と Edit を同一コミットにすると未staging編集を取りこぼす
 - 2026-05-16 — `M AGENTS.md` は claude-mem 自動注入ブロックで WIP ではない
 - 2026-06-10 — 並列セッションが squash 済み記事を別 base で再マージし磨き込みを巻き戻す（`git diff main...branch` 3点比較で実害確認）
