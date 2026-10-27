@@ -358,6 +358,227 @@ run_check "$R" stale-append-rollback
 assert "case9 warn/exit0 (#404変種 append-only 巻き戻しをサイレント CLEAN にしない)" 0 "$CHECK_STATUS" "WARN" "$CHECK_OUT"
 
 # ---------------------------------------------------------------------------
+# Case 12: exit 0（誤検知回帰 / #910 型）— main がエントリを削除した JSON に、PR が同じキー構成の
+#   別エントリを追加し、件数行を更新するだけ。追加されるキー行は base に同一行が残っているので
+#   復活行ではない。STALE（exit 1）にしないのが正。
+# ---------------------------------------------------------------------------
+R="$TMPDIR_ROOT/case12"; new_repo "$R"
+graph_entry() { printf '  {\n    "id": "%s",\n    "status": "seed",\n    "legacy": false,\n    "topics": [\n    ]\n  },\n' "$1"; }
+{ echo "["; graph_entry alpha-seed; graph_entry beta-seed; echo "]"; } >"$R/graph.json"
+printf '# Graph\n' >"$R/graph.md"
+git -C "$R" add graph.json graph.md && git -C "$R" commit -qm "v1"
+{ echo "["; graph_entry alpha-seed; echo "]"; } >"$R/graph.json"
+git -C "$R" add graph.json && git -C "$R" commit -qm "withdraw beta seed"
+printf '# Graph\n\n- Seeds: 1\n- Explicit: 1\n' >"$R/graph.md"
+git -C "$R" add graph.md && git -C "$R" commit -qm "add counters"
+git -C "$R" switch -qc add-gamma
+{ echo "["; graph_entry alpha-seed; graph_entry gamma-seed; echo "]"; } >"$R/graph.json"
+printf '# Graph\n\n- Seeds: 2\n- Explicit: 2\n' >"$R/graph.md"
+git -C "$R" add graph.json graph.md && git -C "$R" commit -qm "add gamma seed"
+git -C "$R" switch -q main
+run_check "$R" add-gamma
+assert "case12 exit0 (#910型 構造行の重複を復活行に数えない)" 0 "$CHECK_STATUS" "復活行なし" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
+# Case 13: STALE（検出力維持回帰）— main が記事から削除した古い行が「別ファイル」には残っていても、
+#   その記事で復活させる #404 型は検知する（同一行の残存はファイル単位で判定する）。
+# ---------------------------------------------------------------------------
+R="$TMPDIR_ROOT/case13"; new_repo "$R"
+article_v1 >"$R/article.md"
+article_v1 >"$R/archive.md"
+git -C "$R" add article.md archive.md && git -C "$R" commit -qm "v1"
+cat >"$R/article.md" <<'EOF'
+# サンプル記事
+
+## はじめに
+これは検証用の本文です。
+磨き込み後の表現の段落その1です。
+磨き込み後の表現の段落その2です。
+
+## まとめ
+改訂版のまとめ文（レビュー反映済み）。
+EOF
+git -C "$R" add article.md && git -C "$R" commit -qm "polish article"
+git -C "$R" switch -qc stale-crossfile
+article_v1 >"$R/article.md"
+echo "PR 側の追記" >>"$R/archive.md"
+git -C "$R" add article.md archive.md && git -C "$R" commit -qm "overwrite with old copy"
+git -C "$R" switch -q main
+run_check "$R" stale-crossfile
+assert "case13 stale (別ファイルに同一行が残っても #404型を検知)" 1 "$CHECK_STATUS" "STALE" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
+# Case 14: WARN（検出力維持回帰）— frontmatter の `published: true` を初版の false へ戻す巻き戻し。
+#   同じ `published: false` 行が本文のコードブロックに残るため強い復活行は 0 だが、
+#   弱い復活があるので lookback 一致 1 行でも CLEAN にしない。
+# ---------------------------------------------------------------------------
+R="$TMPDIR_ROOT/case14"; new_repo "$R"
+fm_doc() { printf -- '---\npublished: %s\n---\n本文の説明です。\n\n```yaml\npublished: false\n```\n' "$1"; }
+fm_doc false >"$R/e.md"
+git -C "$R" add e.md && git -C "$R" commit -qm "v1"
+fm_doc true >"$R/e.md"
+git -C "$R" add e.md && git -C "$R" commit -qm "publish"
+git -C "$R" switch -qc revert-published
+fm_doc false >"$R/e.md"
+git -C "$R" add e.md && git -C "$R" commit -qm "old working copy"
+git -C "$R" switch -q main
+run_check "$R" revert-published
+assert "case14 warn (公開フラグの巻き戻しを CLEAN にしない)" 0 "$CHECK_STATUS" "WARN" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
+# Case 15: WARN 以上（検出力維持回帰）— 戻される古い行が同じファイルの別の場所にも残る #404 型。
+#   強い復活にならないため STALE ではなく WARN（exit 0）止まり。既知の後退として固定する。
+# ---------------------------------------------------------------------------
+R="$TMPDIR_ROOT/case15"; new_repo "$R"
+dup_doc() { printf '# 記事\n\n## はじめに\n%s\n%s\n\n## 付録: 改訂前の文\n古い表現の段落その1。\n古い表現の段落その2。\n' "$1" "$2"; }
+dup_doc "古い表現の段落その1。" "古い表現の段落その2。" >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "v1"
+dup_doc "磨き込み後の段落その1です。" "磨き込み後の段落その2です。" >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "polish"
+git -C "$R" switch -qc stale-dup
+dup_doc "古い表現の段落その1。" "古い表現の段落その2。" >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "old working copy"
+git -C "$R" switch -q main
+run_check "$R" stale-dup
+assert "case15 warn (古い行が同じファイルに残る巻き戻しを CLEAN にしない)" 0 "$CHECK_STATUS" "WARN" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
+# Case 16: WARN/exit 0（誤検知回帰 / #915 型）— PR ベースに既にある直近コード（lookback 内に main へ
+#   入った関数）を PR が書き換え、新しいコードが main の直近コミットで消えた定型行を 1 行だけ偶然含む。
+#   復活 1 行に対して消える lookback 行が多いので STALE にせず、lookback 一致の WARN に落とす。
+# ---------------------------------------------------------------------------
+R="$TMPDIR_ROOT/case16"; new_repo "$R"
+printf 'function scan(lines) {\n  for (const line of lines) {\n    const m = line.match(RE);\n    if (!m) continue;\n    out.push(m[1]);\n  }\n}\n' >"$R/index.js"
+git -C "$R" add index.js && git -C "$R" commit -qm "v1"
+printf 'function scan(lines, file) {\n  for (const line of lines) {\n    const h = line.match(HEADING_RE);\n    if (!h) continue;\n    const parts = [line, h[1], line.slice(h[0].length)];\n    missing.push({ date: parts[1], file });\n    console.warn(`  ${file}: ${parts[1]}`);\n  }\n}\n' >"$R/index.js"
+git -C "$R" add index.js && git -C "$R" commit -qm "rewrite scan (recent)"
+git -C "$R" switch -qc rewrite-recent
+printf 'function scan(lines, counts) {\n  for (const line of lines) {\n    const m = line.match(DATE_RE);\n    if (!m) continue;\n    counts.set(m[1], (counts.get(m[1]) || 0) + 1);\n  }\n  return counts;\n}\n' >"$R/index.js"
+git -C "$R" add index.js && git -C "$R" commit -qm "count per date (intentional rewrite)"
+git -C "$R" switch -q main
+echo "unrelated" >"$R/other.md"
+git -C "$R" add other.md && git -C "$R" commit -qm "advance main"
+run_check "$R" rewrite-recent
+assert "case16 warn/exit0 (#915型 定型行 1 行の一致で STALE にしない)" 0 "$CHECK_STATUS" "WARN" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
+# Case 17: WARN/exit 0（誤検知回帰 / #911 型）— PR ベースに既にある直近エントリを、本文を変えずに
+#   別ファイルへ移す。消える行は lookback 一致になるが、復活は無いので STALE にしない。
+# ---------------------------------------------------------------------------
+R="$TMPDIR_ROOT/case17"; new_repo "$R"
+printf '# Learnings\n\n### 2026-07-01 — 古いエントリ\n古いエントリの本文です。\n' >"$R/L.md"
+printf '# Archive\n' >"$R/archive.md"
+git -C "$R" add L.md archive.md && git -C "$R" commit -qm "v1"
+printf '# Learnings\n\n### 2026-07-01 — 古いエントリ\n古いエントリの本文です。\n\n### 2026-07-02 — 直近エントリ\n直近エントリの本文その1です。\n直近エントリの本文その2です。\n' >"$R/L.md"
+git -C "$R" add L.md && git -C "$R" commit -qm "add entry"
+git -C "$R" switch -qc move-to-archive
+printf '# Learnings\n\n- 2026-07-01 — 古いエントリ\n- 2026-07-02 — 直近エントリ\n' >"$R/L.md"
+printf '# Archive\n\n### 2026-07-01 — 古いエントリ\n古いエントリの本文です。\n\n### 2026-07-02 — 直近エントリ\n直近エントリの本文その1です。\n直近エントリの本文その2です。\n' >"$R/archive.md"
+git -C "$R" add L.md archive.md && git -C "$R" commit -qm "move bodies to archive"
+git -C "$R" switch -q main
+run_check "$R" move-to-archive
+assert "case17 warn/exit0 (#911型 本文不変の移動を STALE にしない)" 0 "$CHECK_STATUS" "WARN" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
+# Case 18: STALE（検出力維持回帰）— 段落 1 つだけを古い版に戻す部分的な巻き戻し。
+#   戻る古い行と消える新しい行が同程度なので、比率条件を満たし STALE のまま。
+# ---------------------------------------------------------------------------
+R="$TMPDIR_ROOT/case18"; new_repo "$R"
+article_v1 >"$R/article.md"
+git -C "$R" add article.md && git -C "$R" commit -qm "v1"
+sed -e 's/古い表現の段落その1。/磨き込み後の段落その1です。/' -e 's/古い表現の段落その2。/磨き込み後の段落その2です。/' \
+  -e 's/初版のまとめ文。/改訂版のまとめ文です。/' "$R/article.md" >"$R/tmp" && mv "$R/tmp" "$R/article.md"
+git -C "$R" add article.md && git -C "$R" commit -qm "polish"
+git -C "$R" switch -qc partial-revert
+sed -e 's/磨き込み後の段落その1です。/古い表現の段落その1。/' -e 's/磨き込み後の段落その2です。/古い表現の段落その2。/' \
+  "$R/article.md" >"$R/tmp" && mv "$R/tmp" "$R/article.md"
+printf '\n## 追記\nPR で追加した新しい段落その1です。\nPR で追加した新しい段落その2です。\n' >>"$R/article.md"
+git -C "$R" add article.md && git -C "$R" commit -qm "old paragraph + new section"
+git -C "$R" switch -q main
+run_check "$R" partial-revert
+assert "case18 stale (段落 1 つの部分的な巻き戻しを検知)" 1 "$CHECK_STATUS" "STALE" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
+# Case 19: STALE（検出力維持回帰）— 比率はファイル単位で見る。別ファイルで大量の直近行を
+#   意図的に書き換えていても、巻き戻したファイルの復活行は打ち消されない。
+# ---------------------------------------------------------------------------
+R="$TMPDIR_ROOT/case19"; new_repo "$R"
+article_v1 >"$R/article.md"
+printf 'const a = 1;\n' >"$R/code.js"
+git -C "$R" add article.md code.js && git -C "$R" commit -qm "v1"
+cat >"$R/article.md" <<'EOF'
+# サンプル記事
+
+## はじめに
+これは検証用の本文です。
+磨き込み後の表現の段落その1です。
+磨き込み後の表現の段落その2です。
+
+## まとめ
+改訂版のまとめ文（レビュー反映済み）。
+EOF
+for i in 1 2 3 4 5 6 7 8 9 10 11 12; do echo "const recent$i = compute($i);"; done >"$R/code.js"
+git -C "$R" add article.md code.js && git -C "$R" commit -qm "polish + recent code"
+git -C "$R" switch -qc mixed
+article_v1 >"$R/article.md"
+for i in 1 2 3 4 5 6 7 8 9 10 11 12; do echo "const rewritten$i = other($i);"; done >"$R/code.js"
+git -C "$R" add article.md code.js && git -C "$R" commit -qm "old article copy + rewrite code"
+git -C "$R" switch -q main
+run_check "$R" mixed
+assert "case19 stale (別ファイルの大量書き換えで比率が薄まらない)" 1 "$CHECK_STATUS" "STALE" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
+# Case 20〜22: STALE（検出力維持回帰）— 比率が低くても #915 型の降格に当たらない巻き戻し。
+#   20: 2 行を 10 行に分けた磨き込みを丸ごと戻す（復活 2 行 / 消える 10 行）
+#   21: 文章 1 行の差し戻し + 同じファイルの直近 8 行を改稿（復活 1 行 / 消える 9 行）
+#   22: `published: true → false` の差し戻し + 本文 6 行の改稿（復活 1 行 / 消える 7 行）
+# ---------------------------------------------------------------------------
+R="$TMPDIR_ROOT/case20"; new_repo "$R"
+printf '# 記事\n\n古い段落その1です。\n古い段落その2です。\n\n## まとめ\nまとめです。\n' >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "v1"
+{ printf '# 記事\n\n'; for i in 1 2 3 4 5 6 7 8 9 10; do echo "磨き込んだ詳細な説明の行その${i} です。"; done; printf '\n## まとめ\nまとめです。\n'; } >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "polish"
+git -C "$R" switch -qc revert-split
+printf '# 記事\n\n古い段落その1です。\n古い段落その2です。\n\n## まとめ\nまとめです。\n' >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "old copy"
+git -C "$R" switch -q main
+run_check "$R" revert-split
+assert "case20 stale (分割した磨き込みの丸ごと差し戻し)" 1 "$CHECK_STATUS" "STALE" "$CHECK_OUT"
+
+R="$TMPDIR_ROOT/case21"; new_repo "$R"
+{ echo '# 記事'; echo '古い段落その1。'; for i in 1 2 3 4 5 6 7 8; do echo "初版の本文行その${i}。"; done; } >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "v1"
+{ echo '# 記事'; echo '磨き込み段落その1です。'; for i in 1 2 3 4 5 6 7 8; do echo "直近の改稿行その${i} です。"; done; } >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "polish"
+git -C "$R" switch -qc revert-one-sentence
+{ echo '# 記事'; echo '古い段落その1。'; for i in 1 2 3 4 5 6 7 8; do echo "PR での新しい行その${i} です。"; done; } >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "old sentence + rewrite"
+git -C "$R" switch -q main
+run_check "$R" revert-one-sentence
+assert "case21 stale (文章 1 行の差し戻しは比率が低くても検知)" 1 "$CHECK_STATUS" "STALE" "$CHECK_OUT"
+
+R="$TMPDIR_ROOT/case22"; new_repo "$R"
+{ printf -- '---\ntitle: "t"\npublished: false\n---\n'; for i in 1 2 3 4 5 6; do echo "初版本文その${i}。"; done; } >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "v1"
+{ printf -- '---\ntitle: "t"\npublished: true\n---\n'; for i in 1 2 3 4 5 6; do echo "公開後の改稿その${i} です。"; done; } >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "publish"
+git -C "$R" switch -qc revert-flag
+{ printf -- '---\ntitle: "t"\npublished: false\n---\n'; for i in 1 2 3 4 5 6; do echo "PR独自の改稿その${i} です。"; done; } >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "old flag + rewrite"
+git -C "$R" switch -q main
+run_check "$R" revert-flag
+assert "case22 stale (公開フラグの差し戻しは比率が低くても検知)" 1 "$CHECK_STATUS" "STALE" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
+# Case 23: 不正な RESURRECT_RATIO は既定値に戻して警告する
+# ---------------------------------------------------------------------------
+set +e
+CHECK_OUT=$(cd "$TMPDIR_ROOT/case16" && RESURRECT_RATIO=150 NO_FETCH=1 BASE_BRANCH=main bash "$SCRIPT" rewrite-recent 2>&1)
+CHECK_STATUS=$?
+set -e
+assert "case23 RESURRECT_RATIO 範囲外は既定値で判定" 0 "$CHECK_STATUS" "既定値 25" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
 # Case 10/11: 外部 I/O が返らなくても NET_TIMEOUT で打ち切って判定を返す
 #   （2026-10-01 #732: gh / fetch のどちらかで止まり、30 分の上限まで返らなかった）
 # ---------------------------------------------------------------------------

@@ -149,7 +149,7 @@ Draftには `Draft Article Plan` の **Reader Problem / Central Claim / Evidence
 
 Draft作成後は、新しいレビュー系を作らず既存フローへ渡す。
 
-- Zenn: `/review-article <slug>` または `/article-pipeline <slug>`
-- note: `/review-note-article new/<slug>` または `/article-pipeline-note new/<slug>`
+- Zenn: `/review-article <slug>` （反映は `/apply-review <slug>`）
+- note: `/review-note-article new/<slug>` （反映は `/apply-review-note new/<slug>`）
 - Qiita: 現行のQiitaレビュー運用へ委譲し、正式コマンドがないことを理由にZenn用コマンドを流用しない
 - izanami: 専用レビューコマンドなし。`/check-tech-blog articles_izanami/<slug>.md` で確認し、PR 前に `docs/article-lifecycle-contract.md` の作成ゲートを確認する

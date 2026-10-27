@@ -22,7 +22,7 @@ description: Zenn記事のレビュー成果物を記事本文に反映するワ
 
 ## Zenn 公開フロー上の位置づけ（2026-05-07 以降）
 
-本スキルは **記事本文修正の PR を `main` ブランチに作成**するもので、Zenn deploy のトリガーではない。`main` への PR マージ後、**Zenn 上に反映するには別途 `release/zenn` ブランチへ流す**必要がある（`AGENTS.md` §「Zenn 公開フロー」、`docs/zenn-release-rollout-plan.md`）。
+本スキルは **記事本文修正の PR を `main` ブランチに作成**するもので、Zenn deploy のトリガーではない。`main` への PR マージ後、**Zenn 上に反映するには別途 `release/zenn` ブランチへ流す**必要がある（`AGENTS.md` §「Zenn 公開フロー」、`docs/archive/zenn-release-rollout-plan.md`）。
 
 | シナリオ | 本スキルの動作 | 後段で必要な操作 |
 |---|---|---|
@@ -133,7 +133,7 @@ PR本文は `review-applier` エージェントの採否テンプレートを使
 - `memory/reference_zenn_rate_limit_spec.md` — rate-limit 仕様、Inquiry 申請手順
 - `AGENT_LEARNINGS.md` 2026-05-07「Zenn rate-limit はアカウント単位...」
 - `AGENTS.md` §「Zenn 公開フロー（release/zenn ブランチ経由）」
-- `docs/zenn-release-rollout-plan.md` — 段階公開計画書
+- `docs/archive/zenn-release-rollout-plan.md` — 段階公開計画書
 
 ## 拡張オプション
 

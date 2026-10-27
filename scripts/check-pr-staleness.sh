@@ -47,6 +47,9 @@
 #   MIN_LINE_LEN           一致判定に使う行の最小文字数（デフォルト: 4。短い定型行のノイズ除去）
 #   MAIN_LOOKBACK          「main の直近追加行」を集める遡りコミット数（デフォルト: 30）
 #   RESURRECT_MIN          lookback 由来の一致を巻き戻しに数えるのに必要な「復活行」数（デフォルト: 1）
+#   RESURRECT_RATIO        強い復活行が定型コード 1 行だけのファイルで、「復活行数 / そのファイルで消える
+#                          lookback 行数」がこの値（%）を下回ると弱い復活として扱う（デフォルト: 25。0〜100 の整数）。
+#                          既定値の根拠は実例 1 件（#915: 1/11 ≒ 9%）だけ
 #   NET_TIMEOUT            gh pr view / git fetch それぞれの打ち切り秒数（デフォルト: 15）。
 #                          ネットワーク待ちや認証の対話待ちで止まると、判定が返らないまま
 #                          呼び出し側のタイムアウトまで占有する（2026-10-01 #732 で 30 分）
@@ -67,9 +70,15 @@ ROLLBACK_FAIL_MATCHES="${ROLLBACK_FAIL_MATCHES:-2}"
 MIN_LINE_LEN="${MIN_LINE_LEN:-4}"
 MAIN_LOOKBACK="${MAIN_LOOKBACK:-30}"
 RESURRECT_MIN="${RESURRECT_MIN:-1}"
+RESURRECT_RATIO="${RESURRECT_RATIO:-25}"
 NET_TIMEOUT="${NET_TIMEOUT:-15}"
 
 TAG="[check-pr-staleness]"
+
+if ! [[ "$RESURRECT_RATIO" =~ ^[0-9]+$ ]] || [ "$RESURRECT_RATIO" -gt 100 ]; then
+  echo "$TAG ⚠️ RESURRECT_RATIO='$RESURRECT_RATIO' は 0〜100 の整数ではないため既定値 25 を使います" >&2
+  RESURRECT_RATIO=25
+fi
 
 usage() {
   echo "usage: $0 <PR番号 | ブランチ名>" >&2
@@ -207,14 +216,43 @@ REMOVED=$(git diff "$BASE_REF" "$MERGED_TREE" -- "${PR_FILES_ARR[@]}" | grep '^-
 LB_BASE=$(git rev-parse -q --verify "$BASE_REF~$MAIN_LOOKBACK" 2>/dev/null || git rev-list --max-parents=0 "$BASE_REF" | tail -1)
 MAIN_ADDED_MB=$(git diff "$MB" "$BASE_REF" -- "${PR_FILES_ARR[@]}" | grep '^+' | grep -v '^+++' | normalize | sort -u || true)
 MAIN_ADDED_LB=$(git diff "$LB_BASE" "$BASE_REF" -- "${PR_FILES_ARR[@]}" | grep '^+' | grep -v '^+++' | normalize | sort -u || true)
-MAIN_REMOVED_LB=$(git diff "$LB_BASE" "$BASE_REF" -- "${PR_FILES_ARR[@]}" | grep '^-' | grep -v '^---' | normalize | sort -u || true)
-MERGE_ADDED=$(git diff "$BASE_REF" "$MERGED_TREE" -- "${PR_FILES_ARR[@]}" | grep '^+' | grep -v '^+++' | normalize | sort -u || true)
 
-# resurrection: マージ結果が追加する行のうち、main が lookback 内で削除した行と一致するもの
+# resurrection: ファイルごとに、マージ結果が追加する行のうち main が lookback 内で削除した行を数え、
+# BASE_REF の同じファイルにもう残っていない行（強い復活）と、まだ残っている行（弱い復活）に分ける。
+# 弱い復活は JSON のキー行のような構造・定型行の重複でも起きるため、STALE の根拠にはしない
+# （2026-10-27 #910 の誤検知: main が Seed エントリを削除し、PR が別エントリを追加しただけで
+# 「復活行 6 行」と数えた）。ただし古い行が同じファイルの別の場所に残る巻き戻しもこちらに入るので、
+# 弱い復活があれば lookback 一致 1 行から WARN にする。
+# 強い復活が 1 行だけで、それが定型コード行（非 .md ファイル・ASCII のみ・`key:` 形式でない）であり、
+# そのファイルで消える lookback 行に比べて少ない（RESURRECT_RATIO% 未満）ときだけ弱い復活に回す。
+# PR ベースに既にある直近コードを書き換え、新しいコードが偶然 `if (!m) continue;` を含んだだけの
+# 誤検知（2026-10-27 #915: 復活 1 行 / 消える lookback 行 11 行）を外すため。比率だけで降格すると、
+# 2 行を 10 行に分けた磨き込みの差し戻しや、文章 1 行・`published:` 1 行の差し戻しまで WARN に下がる。
 RESURRECTED=0
-if [ -n "$MERGE_ADDED" ] && [ -n "$MAIN_REMOVED_LB" ]; then
-  RESURRECTED=$(comm -12 <(printf '%s\n' "$MERGE_ADDED") <(printf '%s\n' "$MAIN_REMOVED_LB") | wc -l | tr -d ' ')
-fi
+WEAK_RESURRECTED=0
+for f in "${PR_FILES_ARR[@]}"; do
+  revived=$(comm -12 \
+    <(git diff "$BASE_REF" "$MERGED_TREE" -- "$f" | grep '^+' | grep -v '^+++' | normalize | sort -u || true) \
+    <(git diff "$LB_BASE" "$BASE_REF" -- "$f" | grep '^-' | grep -v '^---' | normalize | sort -u || true))
+  [ -n "$revived" ] || continue
+  base_lines=$(git show "$BASE_REF:$f" 2>/dev/null | normalize | sort -u || true)
+  strong=$(comm -23 <(printf '%s\n' "$revived") <(printf '%s\n' "$base_lines") | sed '/^$/d')
+  n=$(printf '%s\n' "$strong" | sed '/^$/d' | wc -l | tr -d ' ')
+  w=$(comm -12 <(printf '%s\n' "$revived") <(printf '%s\n' "$base_lines") | sed '/^$/d' | wc -l | tr -d ' ')
+  gone=$(comm -12 \
+    <(git diff "$BASE_REF" "$MERGED_TREE" -- "$f" | grep '^-' | grep -v '^---' | normalize | sort -u || true) \
+    <(git diff "$LB_BASE" "$BASE_REF" -- "$f" | grep '^+' | grep -v '^+++' | normalize | sort -u || true) \
+    | sed '/^$/d' | wc -l | tr -d ' ')
+  if [ "$n" -eq 1 ] && [[ "$f" != *.md ]] \
+    && ! printf '%s' "$strong" | grep -q '[^ -~]' \
+    && ! printf '%s' "$strong" | grep -qE '^[A-Za-z_][A-Za-z0-9_-]*:' \
+    && [ $((n * 100)) -lt $((gone * RESURRECT_RATIO)) ]; then
+    w=$((w + n))
+    n=0
+  fi
+  RESURRECTED=$((RESURRECTED + n))
+  WEAK_RESURRECTED=$((WEAK_RESURRECTED + w))
+done
 
 if [ "$RESURRECTED" -ge "$RESURRECT_MIN" ]; then
   MAIN_ADDED=$(printf '%s\n%s\n' "$MAIN_ADDED_MB" "$MAIN_ADDED_LB" | sed '/^$/d' | sort -u)
@@ -254,8 +292,10 @@ fi
 # 閾値以上消えるなら CLEAN とは断定しない。PR による意図的な削除・改稿（#456/#459 型 = 問題なし）と、
 # main が純追記した後の古い作業コピー上書き（#404 変種 = 巻き戻し）は機械判別できないため、
 # exit 0 のまま WARN で目視確認を促す。
-if [ "$RESURRECTED" -lt "$RESURRECT_MIN" ] && [ "$LB_MATCHES" -ge "$ROLLBACK_FAIL_MATCHES" ]; then
-  echo "$TAG ⚠️ 判定: WARN（マージで main の直近追加行（lookback 内）が ${LB_MATCHES} 行消える。復活行なし）" >&2
+LB_WARN_MIN="$ROLLBACK_FAIL_MATCHES"
+[ "$WEAK_RESURRECTED" -ge 1 ] && LB_WARN_MIN=1
+if [ "$RESURRECTED" -lt "$RESURRECT_MIN" ] && [ "$LB_MATCHES" -ge "$LB_WARN_MIN" ]; then
+  echo "$TAG ⚠️ 判定: WARN（マージで main の直近追加行（lookback 内）が ${LB_MATCHES} 行消える。強い復活行なし・弱い復活行 ${WEAK_RESURRECTED} 行）" >&2
   echo "$TAG   この削除・改稿が PR の意図どおりか目視確認してください。PR が古い作業コピーで" >&2
   echo "$TAG   ファイルを丸ごと上書きしていないか（特に main 側が追記のみの場合）に注意。" >&2
   echo "$TAG   確認コマンド: git diff $BASE_REF...$HEAD_REF" >&2

@@ -165,7 +165,7 @@ ls -1 articles/<slug>.md reviews/zenn/<slug>.md
 詳細:
 
 - `AGENTS.md` §「Zenn 公開フロー（release/zenn ブランチ経由）」
-- `docs/zenn-release-rollout-plan.md`
+- `docs/archive/zenn-release-rollout-plan.md`
 - `.claude/skills/article-review-apply/SKILL.md`
 
 ## 関連
