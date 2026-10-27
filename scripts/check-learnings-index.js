@@ -38,8 +38,9 @@
 const fs = require("fs");
 const path = require("path");
 
+const { ENTRY_HEADING_RE, readArchives } = require("./learnings-archive");
+
 const FILE_NAME = "AGENT_LEARNINGS.md";
-const ARCHIVE_DIR = path.join("docs", "agent-learnings", "archive");
 const LABEL = "[check:learnings-index]";
 
 // ---- 純関数（self-test 対象） ----
@@ -115,8 +116,9 @@ function findUnindexedEntries(lines, bodyStart, sections, file) {
   const missing = [];
   for (let i = bodyStart; i < lines.length; i++) {
     const line = lines[i];
-    const m = line.match(/^### (\d{4}-\d{2}-\d{2})\s+—\s+(.+)$/);
-    if (!m) continue;
+    const h = line.match(ENTRY_HEADING_RE);
+    if (!h) continue;
+    const m = [line, h[1], line.slice(h[0].length).replace(/^\s*—\s*/, "")];
     // テンプレート行（`### YYYY-MM-DD —` プレースホルダ）はスキップ
     if (line.includes("YYYY-MM-DD")) continue;
     if (indexDates.has(m[1])) continue;
@@ -128,7 +130,7 @@ function findUnindexedEntries(lines, bodyStart, sections, file) {
 // 本体とアーカイブの両方にある見出し行を返す。
 function findInBoth(lines, bodyStart, archives) {
   const heads = new Set(
-    lines.slice(bodyStart).filter((l) => /^### \d{4}-\d{2}-\d{2}\s/.test(l)),
+    lines.slice(bodyStart).filter((l) => ENTRY_HEADING_RE.test(l)),
   );
   const both = [];
   for (const a of archives)
@@ -159,18 +161,6 @@ function evaluate(content, archives = []) {
   };
 }
 
-function readArchives(root) {
-  const dir = path.join(root, ARCHIVE_DIR);
-  if (!fs.existsSync(dir)) return [];
-  return fs
-    .readdirSync(dir)
-    .filter((f) => f.endsWith(".md"))
-    .sort()
-    .map((f) => ({
-      file: path.join(ARCHIVE_DIR, f),
-      content: fs.readFileSync(path.join(dir, f), "utf8"),
-    }));
-}
 
 // ---- self-test ----
 
@@ -333,6 +323,41 @@ function selfTest() {
     1,
   );
 
+  // 11) アーカイブが読めないときはパスと原因を示す Error にする（ディレクトリ無しは空）
+  const fakeFs = (readFail) => ({
+    existsSync: () => true,
+    readdirSync: () => {
+      if (!readFail) throw new Error("EACCES");
+      return ["2026.md"];
+    },
+    readFileSync: () => {
+      throw new Error("EISDIR");
+    },
+  });
+  const errOf = (f) => {
+    try {
+      readArchives("/r", f);
+      return "";
+    } catch (e) {
+      return e.message;
+    }
+  };
+  eq(
+    "アーカイブを一覧できなければ原因つきで投げる",
+    /アーカイブを一覧できない: .*archive.*EACCES/.test(errOf(fakeFs(false))),
+    true,
+  );
+  eq(
+    "アーカイブを読めなければパスと原因つきで投げる",
+    /アーカイブを読めない: .*2026\.md.*EISDIR/.test(errOf(fakeFs(true))),
+    true,
+  );
+  eq(
+    "アーカイブのディレクトリが無ければ空",
+    readArchives("/r", { existsSync: () => false }),
+    [],
+  );
+
   // 8) 見出しが無いファイルは skip
   eq("見出しが無ければ skip", Boolean(evaluate("# 何もない\n").skip), true);
 
@@ -358,10 +383,14 @@ function main() {
     return 0;
   }
 
-  const result = evaluate(
-    fs.readFileSync(file, "utf8"),
-    readArchives(process.cwd()),
-  );
+  let archives;
+  try {
+    archives = readArchives(process.cwd());
+  } catch (e) {
+    console.error(`${LABEL} FAIL: ${e.message}`);
+    return 1;
+  }
+  const result = evaluate(fs.readFileSync(file, "utf8"), archives);
   if (result.skip) {
     console.log(`${LABEL} skip: ${result.skip}`);
     return 0;

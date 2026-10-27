@@ -30,8 +30,9 @@ const fs = require("fs");
 const path = require("path");
 
 const LABEL = "[report:learnings-promotion]";
+const { DATE, ENTRY_HEADING_RE, readArchives } = require("./learnings-archive");
+
 const DEFAULT_PATH = "AGENT_LEARNINGS.md";
-const ARCHIVE_DIR = path.join("docs", "agent-learnings", "archive");
 const INDEX_MARKER = "## 📇";
 const CANDIDATE_MIN = 3;
 
@@ -115,7 +116,7 @@ function splitEntries(text) {
   const idx = text.indexOf(INDEX_MARKER);
   const body = idx >= 0 ? text.slice(idx + INDEX_MARKER.length) : text;
   return body
-    .split(/\n### (?=\d{4}-\d\d-\d\d)/)
+    .split(new RegExp(`\\n### (?=${DATE}\\s)`))
     .slice(1)
     .map((e) => ({
       date: e.slice(0, 10),
@@ -263,20 +264,10 @@ function formatText(r) {
 function joinArchives(text, archives) {
   let out = text;
   for (const a of archives) {
-    const at = a.search(/^### \d{4}-\d\d-\d\d/m);
+    const at = a.search(new RegExp(ENTRY_HEADING_RE.source, "m"));
     if (at >= 0) out += "\n" + a.slice(at);
   }
   return out;
-}
-
-function readArchives(root) {
-  const dir = path.join(root, ARCHIVE_DIR);
-  if (!fs.existsSync(dir)) return [];
-  return fs
-    .readdirSync(dir)
-    .filter((f) => f.endsWith(".md"))
-    .sort()
-    .map((f) => fs.readFileSync(path.join(dir, f), "utf8"));
 }
 
 function parseArgs(argv) {
@@ -301,7 +292,12 @@ function main(argv) {
   const a = parseArgs(argv);
   const text = fs.readFileSync(path.resolve(process.cwd(), a.file), "utf8");
   const r = analyze(
-    a.archives ? joinArchives(text, readArchives(process.cwd())) : text,
+    a.archives
+      ? joinArchives(
+          text,
+          readArchives(process.cwd()).map((x) => x.content),
+        )
+      : text,
   );
   if (a.json) console.log(JSON.stringify(r, null, 2));
   else for (const l of formatText(r)) console.log(l);

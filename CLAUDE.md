@@ -109,7 +109,7 @@ npm run publish:qiita -- <slug>   # Qiita公開はこのproject標準scriptで�
 
 ## 新規 Agent / Skill / Command 作成時の注意
 
-作成直後はハーネスが未リロードで `Agent type not found` エラーが出る。ユーザーに再起動を依頼してから使うか、即時実行したいときは `general-purpose` エージェントに仕様書の Read を指示してインライン委譲する（`@AGENT_LEARNINGS.md` の該当エントリ）。
+作成直後はハーネスが未リロードで `Agent type not found` エラーが出る。ユーザーに再起動を依頼してから使うか、即時実行したいときは `general-purpose` エージェントに仕様書の Read を指示してインライン委譲する（`docs/agent-learnings/archive/2026.md` の 2026-04-16 エントリ）。
 
 ## Permissions 指針
 
