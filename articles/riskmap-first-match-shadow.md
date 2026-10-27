@@ -72,7 +72,7 @@ console.log(evaluateRisk(riskMap, files));
 }
 ```
 
-`src/auth/login.ts` は `src/auth/**` にも一致しますが、先に `src/**` に当たって評価が止まります。`humanReviewFiles` は空で、認証まわりの変更がコメントだけのレビューに振り分けられました。
+`src/auth/login.ts` は `src/auth/**` にも一致しますが、先に `src/**` に当たって評価が止まります。`evaluateRisk` の結果では、認証パスの `action` が `comment_only` になり、`humanReviewFiles` は空でした。
 
 設定ファイルを見ただけでは、この誤りは目立ちません。`src/auth/**` の行は確かに書いてあるからです。表に出るのは「AI レビューの分類が甘い」という結果のほうで、原因が規則の順序だと気づくには、評価の仕組みまで降りる必要があります。
 
@@ -80,7 +80,7 @@ console.log(evaluateRisk(riskMap, files));
 
 この例に限れば、直し方は単純です。2 つの規則を入れ替えると `aggregateAction` は `require_human_review` になりました。
 
-問題は、入れ替えるべきだと気づく手段が無いことです。規則が増え、複数人が足していくと、新しい厳しい規則を末尾に足す書き方は自然に起きます。順序を直す前に、まず「いま隠れている厳しい規則があるか」を見えるようにしたい。そこで PR #2784 が追加したのが `diagnoseShadowedRiskRules(riskMap, filePaths)` です。
+問題は、この例のような隠れ方を `evaluateRisk` の出力だけから見つけるのは難しいことです。規則が増え、複数人が足していくと、新しい厳しい規則を末尾に足す書き方は自然に起きます。順序を直す前に、まず「いま隠れている厳しい規則があるか」を見えるようにしたい。そこで PR #2784 が追加したのが `diagnoseShadowedRiskRules(riskMap, filePaths)` です。
 
 ## 診断関数を読む
 
@@ -133,14 +133,14 @@ for (const [ruleIndex, rule] of riskMap.rules.entries()) {
 
 ### 3. 分からないときは unknown と言う
 
-risk map が無いときと、変更ファイルが空のときは、`findings` を空配列で返しつつ `status: 'unknown'` と理由コードを付けます。
+risk map が無いときと、変更ファイルが空のときは、`findings` を空配列で返しつつ `status: 'unknown'` と理由コードを付けます（`kind` などの共通フィールドは省いた抜粋です）。
 
 ```json
 { "status": "unknown", "reasonCodes": ["missing-risk-map"], "findings": [] }
 { "status": "unknown", "reasonCodes": ["no-changed-files"], "findings": [] }
 ```
 
-規則の `action` が既知の 3 値でない、`pattern` が文字列でない、といった不正な入力は `RiskMapError` を投げます。どちらも、空の `findings` を「問題なし」に見せないための分岐です。
+規則の `action` が既知の 3 値でない、`pattern` が文字列でない、といった不正な入力は `RiskMapError` を投げます。欠損・空入力は `unknown`、不正入力は `RiskMapError` として区別し、空の `findings` を「問題なし」に見せないようにしています。
 
 ### 4. 承認の根拠にしない
 
