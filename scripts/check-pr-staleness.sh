@@ -47,6 +47,8 @@
 #   MIN_LINE_LEN           一致判定に使う行の最小文字数（デフォルト: 4。短い定型行のノイズ除去）
 #   MAIN_LOOKBACK          「main の直近追加行」を集める遡りコミット数（デフォルト: 30）
 #   RESURRECT_MIN          lookback 由来の一致を巻き戻しに数えるのに必要な「復活行」数（デフォルト: 1）
+#   RESURRECT_RATIO        ファイルごとの「強い復活行数 / そのファイルで消える lookback 行数」の下限（%）。
+#                          下回るファイルの復活行は弱い復活として扱う（デフォルト: 25）
 #   NET_TIMEOUT            gh pr view / git fetch それぞれの打ち切り秒数（デフォルト: 15）。
 #                          ネットワーク待ちや認証の対話待ちで止まると、判定が返らないまま
 #                          呼び出し側のタイムアウトまで占有する（2026-10-01 #732 で 30 分）
@@ -67,6 +69,7 @@ ROLLBACK_FAIL_MATCHES="${ROLLBACK_FAIL_MATCHES:-2}"
 MIN_LINE_LEN="${MIN_LINE_LEN:-4}"
 MAIN_LOOKBACK="${MAIN_LOOKBACK:-30}"
 RESURRECT_MIN="${RESURRECT_MIN:-1}"
+RESURRECT_RATIO="${RESURRECT_RATIO:-25}"
 NET_TIMEOUT="${NET_TIMEOUT:-15}"
 
 TAG="[check-pr-staleness]"
@@ -214,6 +217,10 @@ MAIN_ADDED_LB=$(git diff "$LB_BASE" "$BASE_REF" -- "${PR_FILES_ARR[@]}" | grep '
 # （2026-10-27 #910 の誤検知: main が Seed エントリを削除し、PR が別エントリを追加しただけで
 # 「復活行 6 行」と数えた）。ただし古い行が同じファイルの別の場所に残る巻き戻しもこちらに入るので、
 # 弱い復活があれば lookback 一致 1 行から WARN にする。
+# 強い復活も、そのファイルで消える lookback 行に比べて少なすぎる（RESURRECT_RATIO% 未満）なら弱い復活に回す。
+# #404 型は古い版への差し戻しなので、消える新しい行と戻る古い行が同程度の量になる。PR ベースに既にある
+# 直近コードを PR が書き換え、新しいコードが偶然 `if (!m) continue;` のような定型行を含むだけの場合は、
+# 消える行が多く戻る行は 1 行程度になる（2026-10-27 #915 の誤検知: 復活 1 行 / 消える lookback 行 11 行）。
 RESURRECTED=0
 WEAK_RESURRECTED=0
 for f in "${PR_FILES_ARR[@]}"; do
@@ -224,6 +231,14 @@ for f in "${PR_FILES_ARR[@]}"; do
   base_lines=$(git show "$BASE_REF:$f" 2>/dev/null | normalize | sort -u || true)
   n=$(comm -23 <(printf '%s\n' "$revived") <(printf '%s\n' "$base_lines") | sed '/^$/d' | wc -l | tr -d ' ')
   w=$(comm -12 <(printf '%s\n' "$revived") <(printf '%s\n' "$base_lines") | sed '/^$/d' | wc -l | tr -d ' ')
+  gone=$(comm -12 \
+    <(git diff "$BASE_REF" "$MERGED_TREE" -- "$f" | grep '^-' | grep -v '^---' | normalize | sort -u || true) \
+    <(git diff "$LB_BASE" "$BASE_REF" -- "$f" | grep '^+' | grep -v '^+++' | normalize | sort -u || true) \
+    | sed '/^$/d' | wc -l | tr -d ' ')
+  if [ $((n * 100)) -lt $((gone * RESURRECT_RATIO)) ]; then
+    w=$((w + n))
+    n=0
+  fi
   RESURRECTED=$((RESURRECTED + n))
   WEAK_RESURRECTED=$((WEAK_RESURRECTED + w))
 done
