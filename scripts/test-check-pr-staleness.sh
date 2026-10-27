@@ -528,6 +528,57 @@ run_check "$R" mixed
 assert "case19 stale (別ファイルの大量書き換えで比率が薄まらない)" 1 "$CHECK_STATUS" "STALE" "$CHECK_OUT"
 
 # ---------------------------------------------------------------------------
+# Case 20〜22: STALE（検出力維持回帰）— 比率が低くても #915 型の降格に当たらない巻き戻し。
+#   20: 2 行を 10 行に分けた磨き込みを丸ごと戻す（復活 2 行 / 消える 10 行）
+#   21: 文章 1 行の差し戻し + 同じファイルの直近 8 行を改稿（復活 1 行 / 消える 9 行）
+#   22: `published: true → false` の差し戻し + 本文 6 行の改稿（復活 1 行 / 消える 7 行）
+# ---------------------------------------------------------------------------
+R="$TMPDIR_ROOT/case20"; new_repo "$R"
+printf '# 記事\n\n古い段落その1です。\n古い段落その2です。\n\n## まとめ\nまとめです。\n' >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "v1"
+{ printf '# 記事\n\n'; for i in 1 2 3 4 5 6 7 8 9 10; do echo "磨き込んだ詳細な説明の行その${i} です。"; done; printf '\n## まとめ\nまとめです。\n'; } >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "polish"
+git -C "$R" switch -qc revert-split
+printf '# 記事\n\n古い段落その1です。\n古い段落その2です。\n\n## まとめ\nまとめです。\n' >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "old copy"
+git -C "$R" switch -q main
+run_check "$R" revert-split
+assert "case20 stale (分割した磨き込みの丸ごと差し戻し)" 1 "$CHECK_STATUS" "STALE" "$CHECK_OUT"
+
+R="$TMPDIR_ROOT/case21"; new_repo "$R"
+{ echo '# 記事'; echo '古い段落その1。'; for i in 1 2 3 4 5 6 7 8; do echo "初版の本文行その${i}。"; done; } >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "v1"
+{ echo '# 記事'; echo '磨き込み段落その1です。'; for i in 1 2 3 4 5 6 7 8; do echo "直近の改稿行その${i} です。"; done; } >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "polish"
+git -C "$R" switch -qc revert-one-sentence
+{ echo '# 記事'; echo '古い段落その1。'; for i in 1 2 3 4 5 6 7 8; do echo "PR での新しい行その${i} です。"; done; } >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "old sentence + rewrite"
+git -C "$R" switch -q main
+run_check "$R" revert-one-sentence
+assert "case21 stale (文章 1 行の差し戻しは比率が低くても検知)" 1 "$CHECK_STATUS" "STALE" "$CHECK_OUT"
+
+R="$TMPDIR_ROOT/case22"; new_repo "$R"
+{ printf -- '---\ntitle: "t"\npublished: false\n---\n'; for i in 1 2 3 4 5 6; do echo "初版本文その${i}。"; done; } >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "v1"
+{ printf -- '---\ntitle: "t"\npublished: true\n---\n'; for i in 1 2 3 4 5 6; do echo "公開後の改稿その${i} です。"; done; } >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "publish"
+git -C "$R" switch -qc revert-flag
+{ printf -- '---\ntitle: "t"\npublished: false\n---\n'; for i in 1 2 3 4 5 6; do echo "PR独自の改稿その${i} です。"; done; } >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "old flag + rewrite"
+git -C "$R" switch -q main
+run_check "$R" revert-flag
+assert "case22 stale (公開フラグの差し戻しは比率が低くても検知)" 1 "$CHECK_STATUS" "STALE" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
+# Case 23: 不正な RESURRECT_RATIO は既定値に戻して警告する
+# ---------------------------------------------------------------------------
+set +e
+CHECK_OUT=$(cd "$TMPDIR_ROOT/case16" && RESURRECT_RATIO=150 NO_FETCH=1 BASE_BRANCH=main bash "$SCRIPT" rewrite-recent 2>&1)
+CHECK_STATUS=$?
+set -e
+assert "case23 RESURRECT_RATIO 範囲外は既定値で判定" 0 "$CHECK_STATUS" "既定値 25" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
 # Case 10/11: 外部 I/O が返らなくても NET_TIMEOUT で打ち切って判定を返す
 #   （2026-10-01 #732: gh / fetch のどちらかで止まり、30 分の上限まで返らなかった）
 # ---------------------------------------------------------------------------
