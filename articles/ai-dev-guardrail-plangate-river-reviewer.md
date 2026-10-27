@@ -394,4 +394,5 @@ PlanGate は着手前のゲートを作り、River Review はレビューの再�
 - [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow)
 - [AIエージェントを"投げっぱなし"にしない：Agent Skillsと自由度の設計で実現する「評価駆動の開発エコシステム」](https://zenn.dev/minewo/articles/zenn-river-reviewer-architecture)
 - [Next.js App Router時代のAI-driven TDD：実践的な最小ループと具体的な実装パターン](https://zenn.dev/minewo/articles/ai-driven-tdd-nextjs)
+- [先に一致したルールが後ろの厳しいルールを隠す。River Reviewのrisk mapのfirst-matchを診断する](/articles/riskmap-first-match-shadow)
 :::
