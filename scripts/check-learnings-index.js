@@ -110,6 +110,8 @@ function findDuplicateEntries(sections) {
 // その日付の見出しをすべて候補として返す。
 // 索引項目: 各行を ` / ` で分割し、全テーマ節を通して日付ごとに完全一致で重複排除したもの。
 // 節ごとに言い換えた再掲やタイトル中の ` / ` は項目数を水増しし、見逃し側に倒れる。
+// 実データの索引でも ` / ` を別エントリの区切りだけでなく 1 件の学びの中の列挙に使う行があり
+// （例: 2026-04-20 の「reviewer / applier」）、その日付は項目を多く数えて見逃し側に倒れる。
 // sources: [{ lines, start, file }]（本体とアーカイブ。件数は合算する）
 function findUnindexedEntries(sources, sections) {
   const items = new Map();
