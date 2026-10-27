@@ -358,6 +358,91 @@ run_check "$R" stale-append-rollback
 assert "case9 warn/exit0 (#404変種 append-only 巻き戻しをサイレント CLEAN にしない)" 0 "$CHECK_STATUS" "WARN" "$CHECK_OUT"
 
 # ---------------------------------------------------------------------------
+# Case 12: exit 0（誤検知回帰 / #910 型）— main がエントリを削除した JSON に、PR が同じキー構成の
+#   別エントリを追加し、件数行を更新するだけ。追加されるキー行は base に同一行が残っているので
+#   復活行ではない。STALE（exit 1）にしないのが正。
+# ---------------------------------------------------------------------------
+R="$TMPDIR_ROOT/case12"; new_repo "$R"
+graph_entry() { printf '  {\n    "id": "%s",\n    "status": "seed",\n    "legacy": false,\n    "topics": [\n    ]\n  },\n' "$1"; }
+{ echo "["; graph_entry alpha-seed; graph_entry beta-seed; echo "]"; } >"$R/graph.json"
+printf '# Graph\n' >"$R/graph.md"
+git -C "$R" add graph.json graph.md && git -C "$R" commit -qm "v1"
+{ echo "["; graph_entry alpha-seed; echo "]"; } >"$R/graph.json"
+git -C "$R" add graph.json && git -C "$R" commit -qm "withdraw beta seed"
+printf '# Graph\n\n- Seeds: 1\n- Explicit: 1\n' >"$R/graph.md"
+git -C "$R" add graph.md && git -C "$R" commit -qm "add counters"
+git -C "$R" switch -qc add-gamma
+{ echo "["; graph_entry alpha-seed; graph_entry gamma-seed; echo "]"; } >"$R/graph.json"
+printf '# Graph\n\n- Seeds: 2\n- Explicit: 2\n' >"$R/graph.md"
+git -C "$R" add graph.json graph.md && git -C "$R" commit -qm "add gamma seed"
+git -C "$R" switch -q main
+run_check "$R" add-gamma
+assert "case12 exit0 (#910型 構造行の重複を復活行に数えない)" 0 "$CHECK_STATUS" "復活行なし" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
+# Case 13: STALE（検出力維持回帰）— main が記事から削除した古い行が「別ファイル」には残っていても、
+#   その記事で復活させる #404 型は検知する（同一行の残存はファイル単位で判定する）。
+# ---------------------------------------------------------------------------
+R="$TMPDIR_ROOT/case13"; new_repo "$R"
+article_v1 >"$R/article.md"
+article_v1 >"$R/archive.md"
+git -C "$R" add article.md archive.md && git -C "$R" commit -qm "v1"
+cat >"$R/article.md" <<'EOF'
+# サンプル記事
+
+## はじめに
+これは検証用の本文です。
+磨き込み後の表現の段落その1です。
+磨き込み後の表現の段落その2です。
+
+## まとめ
+改訂版のまとめ文（レビュー反映済み）。
+EOF
+git -C "$R" add article.md && git -C "$R" commit -qm "polish article"
+git -C "$R" switch -qc stale-crossfile
+article_v1 >"$R/article.md"
+echo "PR 側の追記" >>"$R/archive.md"
+git -C "$R" add article.md archive.md && git -C "$R" commit -qm "overwrite with old copy"
+git -C "$R" switch -q main
+run_check "$R" stale-crossfile
+assert "case13 stale (別ファイルに同一行が残っても #404型を検知)" 1 "$CHECK_STATUS" "STALE" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
+# Case 14: WARN（検出力維持回帰）— frontmatter の `published: true` を初版の false へ戻す巻き戻し。
+#   同じ `published: false` 行が本文のコードブロックに残るため強い復活行は 0 だが、
+#   弱い復活があるので lookback 一致 1 行でも CLEAN にしない。
+# ---------------------------------------------------------------------------
+R="$TMPDIR_ROOT/case14"; new_repo "$R"
+fm_doc() { printf -- '---\npublished: %s\n---\n本文の説明です。\n\n```yaml\npublished: false\n```\n' "$1"; }
+fm_doc false >"$R/e.md"
+git -C "$R" add e.md && git -C "$R" commit -qm "v1"
+fm_doc true >"$R/e.md"
+git -C "$R" add e.md && git -C "$R" commit -qm "publish"
+git -C "$R" switch -qc revert-published
+fm_doc false >"$R/e.md"
+git -C "$R" add e.md && git -C "$R" commit -qm "old working copy"
+git -C "$R" switch -q main
+run_check "$R" revert-published
+assert "case14 warn (公開フラグの巻き戻しを CLEAN にしない)" 0 "$CHECK_STATUS" "WARN" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
+# Case 15: WARN 以上（検出力維持回帰）— 戻される古い行が同じファイルの別の場所にも残る #404 型。
+#   強い復活にならないため STALE ではなく WARN（exit 0）止まり。既知の後退として固定する。
+# ---------------------------------------------------------------------------
+R="$TMPDIR_ROOT/case15"; new_repo "$R"
+dup_doc() { printf '# 記事\n\n## はじめに\n%s\n%s\n\n## 付録: 改訂前の文\n古い表現の段落その1。\n古い表現の段落その2。\n' "$1" "$2"; }
+dup_doc "古い表現の段落その1。" "古い表現の段落その2。" >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "v1"
+dup_doc "磨き込み後の段落その1です。" "磨き込み後の段落その2です。" >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "polish"
+git -C "$R" switch -qc stale-dup
+dup_doc "古い表現の段落その1。" "古い表現の段落その2。" >"$R/a.md"
+git -C "$R" add a.md && git -C "$R" commit -qm "old working copy"
+git -C "$R" switch -q main
+run_check "$R" stale-dup
+assert "case15 warn (古い行が同じファイルに残る巻き戻しを CLEAN にしない)" 0 "$CHECK_STATUS" "WARN" "$CHECK_OUT"
+
+# ---------------------------------------------------------------------------
 # Case 10/11: 外部 I/O が返らなくても NET_TIMEOUT で打ち切って判定を返す
 #   （2026-10-01 #732: gh / fetch のどちらかで止まり、30 分の上限まで返らなかった）
 # ---------------------------------------------------------------------------
