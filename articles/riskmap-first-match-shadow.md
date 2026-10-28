@@ -1,5 +1,5 @@
 ---
-title: "先に一致したルールが後ろの厳しいルールを隠す。River Reviewのrisk mapのfirst-matchを診断する"
+title: "「書いたはずのルールが効かない」first-matchの落とし穴と、River Reviewの検出方法"
 emoji: "🌊"
 type: "tech"
 topics: ["codereview", "aiレビュー", "glob", "riverreview", "ai駆動開発"]
