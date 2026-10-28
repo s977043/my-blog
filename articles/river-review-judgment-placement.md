@@ -466,6 +466,8 @@ Review Judgment as Codeが「**何を判断するか**」を資産化する考�
 
 判断をどこに置くかという同じ問いを、レビューの外側にあるAIエージェントのチーム構成へ広げた話は「[AIエージェントのチーム設計は「どこで判断するか」で決める。Claude Code / Codexのマルチエージェント構成](/articles/ai-agent-team-topology-judgment-escalation)」に書きました。
 
+人の確認へ回すかどうかをパスごとに決める risk map では、ルールの順序を誤ると厳しいルールが効かなくなります。その見つけ方は [「書いたはずのルールが効かない」first-matchの落とし穴と、River Reviewの診断ロジック](/articles/riskmap-first-match-shadow) で書きました。
+
 ## 4層にはそれぞれ別の失敗モードがある
 
 Judgment Placementは「Deterministicへ寄せるほど成熟している」というモデルではありません。
