@@ -1,5 +1,5 @@
 ---
-title: "「書いたはずのルールが効かない」first-matchの落とし穴と、River Reviewの検出方法"
+title: "「書いたはずのルールが効かない」first-matchの落とし穴と、River Reviewの診断ロジック"
 emoji: "🌊"
 type: "tech"
 topics: ["codereview", "aiレビュー", "glob", "riverreview", "ai駆動開発"]
