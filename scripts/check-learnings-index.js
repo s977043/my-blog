@@ -10,10 +10,11 @@
 //
 // 判定ロジック（誤検知ゼロ優先）:
 //   [1] 登録漏れ（WARN・非ブロッキング）
-//     1. 本文の `### YYYY-MM-DD —` 見出しから日付を抽出
-//     2. インデックス（A〜G テーマ）配下の `- YYYY-MM-DD —` 行から日付を抽出
-//     3. 本文の日付が**一切**インデックスに登場しなければ WARN
-//     4. 同日複数エントリが 1 行に圧縮されている場合は OK 判定（実運用パターン）
+//     1. 本文の `### YYYY-MM-DD —` 見出しを日付ごとに数える
+//     2. インデックス（A〜G テーマ）配下の `- YYYY-MM-DD —` 行を ` / ` で項目に分割し、
+//        日付ごとに重複排除して数える（同日複数エントリを 1 行に圧縮する運用に対応）
+//     3. 見出しの件数が項目の件数を上回る日付の見出しを WARN（日付だけの照合では、
+//        同日別タイトルの一方だけが索引にあるときに見逃していた）
 //   [2] 重複行（FAIL・ブロッキング）
 //     - **同一テーマ節の中**で、**行全体（trim 後）が完全一致**する `- YYYY-MM-DD —`
 //       行が 2 回以上現れたら FAIL。
@@ -24,6 +25,11 @@
 //       あり、ゆるくすると意図的な再掲を誤検知する。完全一致なら「コピペ由来の事故的な
 //       重複」だけが残る。
 //
+//   [3] アーカイブ（2026-10-27 追加）
+//     古いエントリ本文は `docs/agent-learnings/archive/*.md` に移してあり、索引は本体に残す。
+//     - アーカイブ側の `### YYYY-MM-DD —` 見出しも [1] と同じ登録漏れ WARN の対象にする
+//     - 同じ見出し行が本体とアーカイブの両方にあれば FAIL（移設時のコピー残り）
+//
 // 集約 `npm run check` に組み込み。登録漏れは WARN のみ、重複は exit 1。
 //
 // 使い方:
@@ -32,6 +38,8 @@
 
 const fs = require("fs");
 const path = require("path");
+
+const { ENTRY_HEADING_RE, readArchives } = require("./learnings-archive");
 
 const FILE_NAME = "AGENT_LEARNINGS.md";
 const LABEL = "[check:learnings-index]";
@@ -96,41 +104,86 @@ function findDuplicateEntries(sections) {
   return dups;
 }
 
-// 本文エントリのうち、インデックスに日付が一度も出てこないものを返す。
-function findUnindexedEntries(lines, bodyStart, sections) {
-  const indexDates = new Set();
+// 日付ごとに「見出しの件数」が「索引項目の件数」を上回る日付の見出しを返す。
+// 索引は見出しを短縮・言い換えて載せるためタイトルでは突き合わせられない
+// （2026-10-27 実測で完全一致は 111 件中 14 件）。どの見出しが漏れたかは特定できないので、
+// その日付の見出しをすべて候補として返す。
+// 索引項目: 各行を ` / ` で分割し、全テーマ節を通して日付ごとに完全一致で重複排除したもの。
+// 節ごとに言い換えた再掲やタイトル中の ` / ` は項目数を水増しし、見逃し側に倒れる。
+// 実データの索引でも ` / ` を別エントリの区切りだけでなく 1 件の学びの中の列挙に使う行があり
+// （例: 2026-04-20 の「reviewer / applier」）、その日付は項目を多く数えて見逃し側に倒れる。
+// sources: [{ lines, start, file }]（本体とアーカイブ。件数は合算する）
+function findUnindexedEntries(sources, sections) {
+  const items = new Map();
   for (const s of sections)
     for (const e of s.entries) {
-      const m = e.text.match(/^-\s+(\d{4}-\d{2}-\d{2})\s/);
-      if (m) indexDates.add(m[1]);
+      const m = e.text.match(/^-\s+(\d{4}-\d{2}-\d{2})\s+—?\s*(.*)$/);
+      if (!m) continue;
+      if (!items.has(m[1])) items.set(m[1], new Set());
+      for (const p of m[2].split(/\s+\/\s+/)) items.get(m[1]).add(p.trim());
+    }
+
+  const heads = new Map();
+  for (const { lines, start, file } of sources)
+    for (let i = start; i < lines.length; i++) {
+      const line = lines[i];
+      const h = line.match(ENTRY_HEADING_RE);
+      // テンプレート行（`### YYYY-MM-DD —` プレースホルダ）はスキップ
+      if (!h || line.includes("YYYY-MM-DD")) continue;
+      const title = line.slice(h[0].length).replace(/^\s*—\s*/, "").trim();
+      if (!heads.has(h[1])) heads.set(h[1], []);
+      heads.get(h[1]).push({ date: h[1], title, line: i + 1, file });
     }
 
   const missing = [];
-  for (let i = bodyStart; i < lines.length; i++) {
-    const line = lines[i];
-    const m = line.match(/^### (\d{4}-\d{2}-\d{2})\s+—\s+(.+)$/);
-    if (!m) continue;
-    // テンプレート行（`### YYYY-MM-DD —` プレースホルダ）はスキップ
-    if (line.includes("YYYY-MM-DD")) continue;
-    if (indexDates.has(m[1])) continue;
-    missing.push({ date: m[1], title: m[2].trim(), line: i + 1 });
+  for (const [date, hs] of heads) {
+    const indexed = items.has(date) ? items.get(date).size : 0;
+    if (hs.length > indexed)
+      for (const e of hs) missing.push({ ...e, heads: hs.length, indexed });
   }
   return missing;
 }
 
+// 本体とアーカイブの両方にある見出し行を返す。
+function findInBoth(lines, bodyStart, archives) {
+  const heads = new Set(
+    lines.slice(bodyStart).filter((l) => ENTRY_HEADING_RE.test(l)),
+  );
+  const both = [];
+  for (const a of archives)
+    a.content.split("\n").forEach((l, i) => {
+      if (heads.has(l)) both.push({ file: a.file, line: i + 1, text: l });
+    });
+  return both;
+}
+
 // content 全体を評価する。skip の場合 { skip: 理由 }。
-function evaluate(content) {
+// archives: [{ file, content }]（アーカイブの Markdown）
+function evaluate(content, archives = []) {
   const lines = content.split("\n");
   const loc = locateSections(lines);
   if (!loc) return { skip: "インデックス or 学びエントリ見出しが無い" };
   const sections = parseIndexSections(lines, loc.indexStart, loc.indexEnd);
+  const missing = findUnindexedEntries(
+    [
+      { lines, start: loc.bodyStart, file: FILE_NAME },
+      ...archives.map((a) => ({
+        lines: a.content.split("\n"),
+        start: 0,
+        file: a.file,
+      })),
+    ],
+    sections,
+  );
   return {
     sections,
     duplicates: findDuplicateEntries(sections),
-    missing: findUnindexedEntries(lines, loc.bodyStart, sections),
+    missing,
+    inBoth: findInBoth(lines, loc.bodyStart, archives),
     entryCount: sections.reduce((n, s) => n + s.entries.length, 0),
   };
 }
+
 
 // ---- self-test ----
 
@@ -250,6 +303,48 @@ function selfTest() {
     "2026-09-09",
   );
 
+  // 6b) 同日・別タイトルで一方だけ索引にあれば、その日付の見出しを候補として WARN
+  eq(
+    "同日別タイトルの一方だけ索引にあれば WARN する",
+    evaluate(
+      fixture(
+        ["### F. review", "- 2026-09-03 — 索引にある学び"],
+        [
+          "### 2026-09-03 — 索引にある学び [Workflow]",
+          "### 2026-09-03 — 索引から漏れた学び [Gotcha]",
+        ],
+      ),
+    ).missing.map((m) => [m.title, m.heads, m.indexed]),
+    [
+      ["索引にある学び [Workflow]", 2, 1],
+      ["索引から漏れた学び [Gotcha]", 2, 1],
+    ],
+  );
+
+  // 6c) ` / ` で 1 行に圧縮した同日エントリは件数を満たせば WARN しない
+  eq(
+    "` / ` 区切りで同日 2 件を 1 行に載せていれば WARN しない",
+    evaluate(
+      fixture(
+        ["### F. review", "- 2026-09-03 — 学び A / 学び B"],
+        ["### 2026-09-03 — 学び A [x]", "### 2026-09-03 — 学び B [x]"],
+      ),
+    ).missing.length,
+    0,
+  );
+
+  // 6d) 節をまたぐ完全一致の再掲は 1 件として数える
+  eq(
+    "節をまたぐ同一行の再掲で件数を水増ししない",
+    evaluate(
+      fixture(
+        ["### A. x", "- 2026-09-03 — 学び A", "### B. y", "- 2026-09-03 — 学び A"],
+        ["### 2026-09-03 — 学び A [x]", "### 2026-09-03 — 学び B [x]"],
+      ),
+    ).missing.length,
+    2,
+  );
+
   // 7) テンプレート行は本文エントリとして数えない
   eq(
     "`YYYY-MM-DD` プレースホルダはスキップ",
@@ -260,6 +355,72 @@ function selfTest() {
       ),
     ).missing.length,
     0,
+  );
+
+  // 9) アーカイブの未登録エントリも WARN 対象。登録済みなら出さない
+  const arcResult = evaluate(
+    fixture(["### F. review", "- 2026-04-16 — 索引に残した学び"]),
+    [
+      {
+        file: "docs/agent-learnings/archive/2026.md",
+        content: [
+          "# アーカイブ",
+          "### 2026-04-16 — 索引に残した学び [Platform]",
+          "### 2026-04-17 — 索引から漏れた学び [Gotcha]",
+        ].join("\n"),
+      },
+    ],
+  );
+  eq(
+    "アーカイブの未登録エントリを報告する",
+    arcResult.missing.map((m) => [m.file, m.date]),
+    [["docs/agent-learnings/archive/2026.md", "2026-04-17"]],
+  );
+  eq("本体と重ならなければ inBoth は空", arcResult.inBoth, []);
+
+  // 10) 同じ見出しが本体とアーカイブの両方にあれば検出する
+  const head = "### 2026-04-16 — 移し忘れ [Platform]";
+  eq(
+    "本体とアーカイブの両方にある見出しを検出する",
+    evaluate(fixture(["### F. review", "- 2026-04-16 — 移し忘れ"], [head]), [
+      { file: "a.md", content: head },
+    ]).inBoth.length,
+    1,
+  );
+
+  // 11) アーカイブが読めないときはパスと原因を示す Error にする（ディレクトリ無しは空）
+  const fakeFs = (readFail) => ({
+    existsSync: () => true,
+    readdirSync: () => {
+      if (!readFail) throw new Error("EACCES");
+      return ["2026.md"];
+    },
+    readFileSync: () => {
+      throw new Error("EISDIR");
+    },
+  });
+  const errOf = (f) => {
+    try {
+      readArchives("/r", f);
+      return "";
+    } catch (e) {
+      return e.message;
+    }
+  };
+  eq(
+    "アーカイブを一覧できなければ原因つきで投げる",
+    /アーカイブを一覧できない: .*archive.*EACCES/.test(errOf(fakeFs(false))),
+    true,
+  );
+  eq(
+    "アーカイブを読めなければパスと原因つきで投げる",
+    /アーカイブを読めない: .*2026\.md.*EISDIR/.test(errOf(fakeFs(true))),
+    true,
+  );
+  eq(
+    "アーカイブのディレクトリが無ければ空",
+    readArchives("/r", { existsSync: () => false }),
+    [],
   );
 
   // 8) 見出しが無いファイルは skip
@@ -287,7 +448,14 @@ function main() {
     return 0;
   }
 
-  const result = evaluate(fs.readFileSync(file, "utf8"));
+  let archives;
+  try {
+    archives = readArchives(process.cwd());
+  } catch (e) {
+    console.error(`${LABEL} FAIL: ${e.message}`);
+    return 1;
+  }
+  const result = evaluate(fs.readFileSync(file, "utf8"), archives);
   if (result.skip) {
     console.log(`${LABEL} skip: ${result.skip}`);
     return 0;
@@ -296,13 +464,26 @@ function main() {
   // 登録漏れ（WARN・非ブロッキング）
   if (result.missing.length > 0) {
     console.warn(
-      `${LABEL} WARN: インデックス未登録の日付を持つエントリ ${result.missing.length} 件`,
+      `${LABEL} WARN: 見出しの件数が索引項目の件数を上回る日付のエントリ ${result.missing.length} 件（どれが未登録かは日付単位の候補）`,
     );
     console.warn(
-      "  ※ rank8 のテーマ別インデックス（A〜G）に該当日付の登録を追加すると発見性が上がります（非ブロッキング）",
+      "  ※ rank8 のテーマ別インデックス（A〜G）に未登録の見出しを追加すると発見性が上がります（非ブロッキング）",
     );
     for (const e of result.missing)
-      console.warn(`  ${FILE_NAME}:${e.line}  ${e.date} — ${e.title}`);
+      console.warn(
+        `  ${e.file}:${e.line}  ${e.date} — ${e.title}  （見出し ${e.heads} 件 / 索引項目 ${e.indexed} 件）`,
+      );
+  }
+
+  // 本体とアーカイブの二重存在（FAIL・ブロッキング）
+  if (result.inBoth.length > 0) {
+    console.error(
+      `${LABEL} FAIL: 本体とアーカイブの両方にある見出し ${result.inBoth.length} 件`,
+    );
+    for (const d of result.inBoth)
+      console.error(`  ${d.file}:${d.line}  ${d.text}`);
+    console.error("  ※ どちらか一方だけに残すこと（移設時のコピー残り）");
+    return 1;
   }
 
   // 重複（FAIL・ブロッキング）

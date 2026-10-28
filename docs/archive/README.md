@@ -32,6 +32,8 @@
 | `zenn-book-plangate-publish-readiness.md` | docs/ | 同 Book の公開前チェックリスト。公開意思決定は完了済み | 次の Zenn Book を公開するとき、cover 要件・通し校正観点を写して使う |
 | `zenn-book-plangate-style.md` | docs/ | 同 Book 専用の執筆スタイルシート（検証バージョン v8.10.0 に固定） | 次の Zenn Book の執筆規約を書くとき、雛形として写す |
 | `share-drafts/2026-05-27.md` | docs/share-drafts/ | 2026-05-27〜05-30 の投下スケジュールに紐づく単発の SNS ドラフト。以降 `docs/share-drafts/` に新しい日付は追加されておらず、運用は継続していない | SNS シェア運用を再開するとき、A型／B型／C型の書き分けの実例として読む |
+| `rollout-ai-implementation-boundary-series.md` | docs/ | Qiita「AI実装境界シリーズ」の公開手順。2026-10 の棚卸しで役割終了と判断 | 同種の連載を多記事で公開するとき、公開手順の実例として読む |
+| `zenn-release-rollout-plan.md` | docs/ | 2026-05-07 rate-limit 解消後の一時的な運用計画。運用は `AGENTS.md` §Zenn 公開フローへ移行済み | rate-limit で複数記事が詰まったとき、復旧手順の実例として読む |
 
 > 凍結資産と違い、こちらは **読むこと自体は禁止しない**（凍結の意味を壊さないため、上の凍結表とは表を分けている）。ただし live の `docs/` へ戻すのは「再利用する条件」を満たしたときだけにする。
 
@@ -48,6 +50,5 @@
 
 - `docs/content-channel-strategy.md` — 媒体役割の正本（思考の軸）
 - `docs/publish-queue.md` — 公開順＋デッドラインの手動リスト
-- `docs/rollout-ai-implementation-boundary-series.md` — 次に出す記事の公開手順
 - 各記事内「公開当日チェックリスト」
 - `scripts/check-note-tables.js`（軽量・肥大リスク低）/ `AGENT_LEARNINGS.md`

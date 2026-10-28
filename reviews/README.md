@@ -30,10 +30,8 @@ Slash Command 経由で生成・反映する（Claude Code）。
 |---------|------|-------|
 | `/review-article <slug>` | Zenn 記事をレビュー | `reviews/zenn/<slug>.md` |
 | `/apply-review <slug>` | Zenn レビューを本文に反映 | `articles/<slug>.md` 更新 |
-| `/article-pipeline <slug>` | Zenn レビュー生成 → 反映（2 PR 分割） | 上記 2 件を順次 |
 | `/review-note-article <state>/<slug>` | note 記事をレビュー | `reviews/note/<state>/<slug>.md` |
 | `/apply-review-note <state>/<slug>` | note レビューを本文に反映 | `articles_note/<state>/<slug>.md` 更新 |
-| `/article-pipeline-note <state>/<slug>` | note レビュー生成 → 反映 | 上記 2 件を順次 |
 
 規約・フォーマット詳細は `@AGENTS.md` と各プラットフォームの README を参照。
 

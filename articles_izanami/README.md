@@ -9,7 +9,7 @@ izanami 向けに新規執筆する記事の唯一のローカル原稿を管理
 - 既存記事は題材と一次情報を再確認する入口として使う。izanami 原稿は新規に書き、元記事の本文を複製して微修正する運用はしない。
 - プロジェクトの実装・仕様に関する事実は、それぞれの公開リポジトリ、公開ドキュメント、または公開アプリで確認する。既存記事だけを現在の仕様の根拠にしない。
 - Markdown ファイル1つを izanami 記事1本の正本とし、公開後も同じファイルを更新する。公開済み原稿のミラーは作らない。
-- Front Matter に `title`、`summary`、`tags`、`status`（`idea` / `draft` / `published`）、`source_articles`、`project_sources`、`izanami_url`、`published_at` を記録する。URLや公開日が未確定なら空欄にする。雛形:
+- Front Matter に `title`、`summary`、`tags`、`status`（`draft` / `published`）、`source_articles`、`project_sources`、`izanami_url`、`published_at` を記録する。URLや公開日が未確定なら空欄にする。`npm run check:izanami-frontmatter` が検証する。雛形:
 
   ```yaml
   ---
@@ -57,6 +57,15 @@ izanami 向けに新規執筆する記事の唯一のローカル原稿を管理
 - 観測: policy の [Search, links, and measurement](../docs/content-channel-strategy.md#search-links-and-measurement) に従う
 
 公開後約30日（2026-10-24 頃）に上記の観測項目を確認する。
+
+**2026-10-24 観測結果**:
+
+- 記事の閲覧数: 未計測。マイページの記事一覧（`/mypage/posts`）に閲覧数の表示がなく、取得できる画面が見つからなかった
+- 反応: 記事ページに「1件の意見があります」と表示（内容は未取得）。フィードバック欄は「まだ、フィードバックはありません」
+- プロジェクト遷移: River Review の GitHub traffic（直近14日、2026-10-24 取得）の参照元は github.com 3・Google 1 で、izanami.dev は 0。表示 138（ユニーク 35）。GitHub traffic は14日分しか残らないため、公開直後の流入は未計測
+- 採用シグナル・第三者からの引用: 未計測
+
+継続・調整・停止の判断は、2本目・3本目の観測（10-28・10-29 頃）とあわせて行う。
 
 ## 2本目: AIレビューの責務分担
 

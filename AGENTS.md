@@ -8,6 +8,7 @@
 - **コンテンツ方針**: `docs/content-channel-strategy.md` — note / Zenn / Qiita / Growth Lab / izanami / GitHub を横断した記事運用方針
 - **ツール使い方**: `CLAUDE.md` — Claude Code固有のSkill/Agent/Commandインデックスと操作
 - **経験則**: `AGENT_LEARNINGS.md` — 過去の失敗・成功パターン（追記型ログ）
+- **著者の思考・価値観**: `docs/author-thinking-compass.md` — 記事を通じて伝えたい考えや、AIとの開発で重視する判断軸（著者未確認の整理仮説を含む）
 
 ## リポジトリ概要
 
@@ -31,6 +32,8 @@ Zenn / Qiita / note / izanami の4プラットフォームで公開する記事�
 - GitHub: OSSのソースオブトゥルース
 
 同じ本文を複数媒体へ転載せず、同じテーマを読者意図と媒体役割に合わせて書き分ける。
+
+記事の企画・初稿・主題レビューでは、`docs/author-thinking-compass.md` を**著者意図を理解する補助資料**として参照する。主張を調査の都合で変えないための参照であり、記事ごとのArticle Plan、本人の明示的な判断、一次情報、既存の権限・公開制約を上書きしない。
 
 新規記事は初稿作成前に対応するSeedへ `Draft Article Plan`（仮のArticle Plan）を残す。ブランチ作成は先に行ってよい。記事・レビュー成果物のPR作成時にWhy・What・一次情報・書かない範囲を確認する。通過条件と「新規記事」の範囲は `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」を参照する。
 
@@ -116,6 +119,7 @@ gh repo view <owner>/<repo> --json owner --jq .owner.login   # s977043 なら個
 - `reviews/note/<state>/<slug>.md` は記事の slug に対応させる規約なので、記事をリネームしたら**レビュー成果物のファイル名と、その中身が参照している対象パスの両方**を更新する。ファイル名だけ直して中身を旧パスのまま残す漏れが実際に起きている（#641 → #642）。リネーム後に `grep -rln "<旧パス>" --include="*.md" .` で残存を確認する（`AGENT_LEARNINGS.md` と計測ログの旧パスは当時の事実の記録なので変更しない）
 - 大文字を含む slug は note ツールチェーン（`md_to_wxr.py` / `clean-note-build.js`）で安全に扱える
 - 会社公式記事は公開前に**社内のテックブログ投稿レギュレーション**（エンジニアレビュー2名 → note執筆ガイドライン適用 → 広報の事前確認依頼ワークフロー → デザイン室テンプレートのカバー画像）を通す。`/publish-zenn` `/publish-qiita` のような自動化パスは使えない
+- 広報へ出す前に `proni-official-precheck` スキル（`.claude/skills/proni-official-precheck/`）で確認する
 
 ## クロスポスト時のリンク方針
 
@@ -214,11 +218,7 @@ Zenn 記事の場合、`note.com/mine_unilabo` へのリンクは `npm run check
 
 Zenn は **`release/zenn` ブランチ** をデプロイ対象とする運用に変更（rate-limit 対策）。`main` への push は Zenn deploy をトリガーしない。
 
-```
-main                      ← 通常運用（記事執筆、レビュー反映、修正、note/Qiita 編集すべて）
-  └─ release/zenn         ← Zenn deploy 対象。このブランチへの push のみ deploy 発火
-       ← cherry-pick / merge       ← 公開準備が整った記事だけ意図的に流す
-```
+ブランチ図・公開フロー例・rate-limit hit 時の対処は [`docs/publish-operating-policy.md`](docs/publish-operating-policy.md) §「Zenn 公開フローの手順」を参照。
 
 ### 公開ルール
 
@@ -228,6 +228,7 @@ main                      ← 通常運用（記事執筆、レビュー反映�
 - **既存公開記事の update は単独 PR で `release/zenn` に流す**（新規 publish と分離。update が rate-limit に巻き込まれて公開済記事が古いままになる事故を防ぐ）
 - main → release/zenn の merge は **squash 推奨**（記事単位での切り戻しを容易に）
 - 緊急時の escape: `release/zenn` への直接 push（事後で main に必ず取り込む）
+- rate-limit に当たったら、リポジトリ側に追加の commit を作らない（対処の手順は `docs/publish-operating-policy.md`）
 
 ### release/zenn は main 単方向（独自コンテンツ禁止）
 
@@ -239,24 +240,6 @@ main                      ← 通常運用（記事執筆、レビュー反映�
 - 乖離が起きた疑い（main → release/zenn merge で本文衝突が出る等）があれば、衝突は原則 **main 側（theirs）を採用** して release/zenn を main に追従させる。release/zenn 独自版を残さない
 
 **なぜ**: release/zenn に独自コミットが溜まると main との双方向乖離が発生し、sync 時に無関係記事で衝突 → 機械的解決で他記事の公開状態をリグレッションさせる事故につながる（PR #278 で main 72 / release/zenn 独自 5 commits の乖離・4ファイル衝突を実際に観測）。release/zenn は「main の公開ビューを写すだけのミラー」に保つ。
-
-### 公開フロー例
-
-```
-[新規記事公開]
-1. PR1: docs/foo → main（記事執筆・レビュー反映、Zenn deploy 発火しない）
-2. PR2: release/zenn-publish-YYYY-MM-DD → release/zenn（公開対象記事だけを cherry-pick or filtered merge）
-
-[既存公開記事の update]
-1. PR1: docs/fix-typo → main（修正反映、Zenn deploy 発火しない）
-2. PR2: release/zenn-update-<slug> → release/zenn（単独 PR で update を流す。新規 publish と同 PR にしない）
-```
-
-### rate-limit hit 時の対処
-
-- リポジトリ側に追加 commit を **作らない**（被害拡大を防ぐ）
-- [Zenn お問い合わせフォーム](https://zenn.dev/inquiry) で緩和申請（公式が「移行・特殊用途では緩和可」と明言している正規ルート）
-- 詳細仕様と緩和申請文案テンプレは Claude Code の auto-memory `reference_zenn_rate_limit_spec.md`（リポジトリ外）
 
 ## Commit Attribution
 

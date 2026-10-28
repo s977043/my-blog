@@ -25,7 +25,7 @@ Zenn 向けツールを以下の対応で流用できる:
 | `reviews/zenn/<slug>.md` | `reviews/qiita/<slug>.md` |
 | `.claude/agents/article-reviewer.md` | 出力パスと「Web エンジニア読者視点」の Qiita 文化差分（ハンズオン寄り・個人体験寄りの評価）を加味して運用 |
 
-正式なコマンド化が必要になったら、Zenn 用コマンド（`/review-article` `/apply-review` `/article-pipeline`）を Qiita 向けに複製して `.claude/commands/` に配置する。
+正式なコマンド化が必要になったら、Zenn 用コマンド（`/review-article` `/apply-review`）を Qiita 向けに複製して `.claude/commands/` に配置する。
 
 ## 参考
 
