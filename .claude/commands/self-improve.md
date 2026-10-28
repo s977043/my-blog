@@ -22,7 +22,7 @@ npm run report:learnings-promotion
 
 ### 2. 既存の学びと突合して分類する
 
-シグナルごとに `AGENT_LEARNINGS.md` を `kind`・`detail` の語（ブランチ名、ガード名、コミット件名）で grep し、次の 3 つに分ける。
+シグナルごとに `AGENT_LEARNINGS.md` と `docs/agent-learnings/archive/`（2026-07 以前のエントリ本文）を `kind`・`detail` の語（ブランチ名、ガード名、コミット件名）で grep し、次の 3 つに分ける。
 
 | 分類 | 条件 | やること |
 |---|---|---|
@@ -30,7 +30,7 @@ npm run report:learnings-promotion
 | (b) 新しい学び | 既存エントリに無い落とし穴・成功パターン | `AGENT_LEARNINGS.md` 冒頭のテンプレートでエントリ案を書く |
 | (c) ガード案 | 同テーマが 3 件目以上（report のテーマ別記録数で数える）、またはガード導入済みテーマで再発した | 新規 check の案を書く。初期は WARN（exit 0）で 2 週間運用し、バイパス用の `SKIP_*` 環境変数を持たせる前提 |
 
-- 未 push・未コミットの残り（`unpushed_commits` / `uncommitted_changes`）は、まず現物を確認する（`git log --branches --not --remotes`、`git -C <worktree> status --short`）。放置ブランチなら CLAUDE.md §セッション終了時のチェックリストで片付け、(a) として処理する
+- 未 push・未コミットの残り（`unpushed_commits` / `uncommitted_changes`）は、まず現物を確認する（`git log --branches --not --remotes`、`git -C <worktree> status --short`）。放置ブランチなら docs/pr-operations.md §セッション終了時のチェックリストで片付け、(a) として処理する
 - `redo_commit` は件名の語で拾っているので誤検知がある。やり直しではないもの（例: 単なる「再度確認」の文言）は (a) として理由を残す
 - シグナルの `repo` が `s977043/my-blog` でないもの、会社リポジトリ由来の内容は学びにしない（`AGENTS.md` §題材と媒体の対応。my-blog は公開リポジトリ）。処理済みにして理由を残す
 - `AGENT_LEARNINGS.md` 冒頭のテンプレート（規約部分）は変えない。変更が要ると判断したら提案に留める（設計書 §4 で承認必須）

@@ -207,9 +207,9 @@ SEO提案をするためだけにタイトルや本文を不自然にしない�
 
 ## 実行例
 
-入力: `articles_note/new/ai_agent_operations_opinion_note.md`
+入力: `articles_note/new/<slug>.md`
 
-出力: `reviews/note/new/ai_agent_operations_opinion_note.md`
+出力: `reviews/note/new/<slug>.md`
 
 入力: `articles_note/drafts/<guid>.md`
 

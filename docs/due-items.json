@@ -18,9 +18,9 @@
     {
       "id": "izanami-ai-review-coverage-observe",
       "due": "2026-10-24T09:00:00+09:00",
-      "what": "izanami 1 本目（Review Coverage）の公開後約30日の観測（2026-10-24 頃）",
+      "what": "izanami 1 本目（Review Coverage）の公開後約30日の観測（2026-10-24 頃）（2026-10-24 に実施、README §初回試行案に記録）",
       "source": "articles_izanami/README.md §初回試行案",
-      "done": false
+      "done": true
     },
     {
       "id": "izanami-ai-review-responsibility-observe",

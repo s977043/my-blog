@@ -396,6 +396,76 @@
       "legacy": false
     },
     {
+      "id": "seed-20261022-advisory-ai-review-silent-failure",
+      "path": "article_seeds/ai-driven-development/2026-10-22-advisory-ai-review-silent-failure.md",
+      "title": "CI が green のまま、AI レビューが約 2 か月止まっていた",
+      "date": "2026-10-22",
+      "status": "seed",
+      "topics": [
+        "ai-review",
+        "ci",
+        "github-actions"
+      ],
+      "source": "experience",
+      "source_url": "https://github.com/s977043/river-review/issues/2410",
+      "source_ref": "s977043/river-review 6d378d9b",
+      "evidence_status": "observed",
+      "promoted_to": [],
+      "article_type_candidates": [
+        "experience"
+      ],
+      "author_input_required_count": 0,
+      "author_input_gate_open": false,
+      "legacy": false
+    },
+    {
+      "id": "seed-20261025-codex-skill-budget-overflow",
+      "path": "article_seeds/ai-driven-development/2026-10-25-codex-skill-budget-overflow.md",
+      "title": "Codex でプラグインのスキルが出てこない原因は、スキル一覧の予算超過",
+      "date": "2026-10-25",
+      "status": "seed",
+      "topics": [
+        "codex",
+        "agent-skills",
+        "plugin"
+      ],
+      "source": "experience",
+      "source_url": "https://github.com/s977043/river-review/pull/2782",
+      "source_ref": "s977043/river-review 653cc7ca",
+      "evidence_status": "observed",
+      "promoted_to": [],
+      "article_type_candidates": [
+        "tips"
+      ],
+      "author_input_required_count": 0,
+      "author_input_gate_open": false,
+      "legacy": false
+    },
+    {
+      "id": "seed-20261027-riskmap-first-match-shadow",
+      "path": "article_seeds/ai-driven-development/2026-10-27-riskmap-first-match-shadow.md",
+      "title": "先に一致したルールが、後ろの厳しいルールを隠す：river-review の risk-map の first-match を診断する",
+      "date": "2026-10-27",
+      "status": "seed",
+      "topics": [
+        "code-review",
+        "ai-review",
+        "glob",
+        "river-review"
+      ],
+      "source": "experience",
+      "source_url": "https://github.com/s977043/river-review/pull/2784",
+      "source_ref": "s977043/river-review 8db74959",
+      "evidence_status": "observed",
+      "promoted_to": [],
+      "article_type_candidates": [
+        "deep-dive"
+      ],
+      "author_input_required_count": 0,
+      "author_input_gate_open": false,
+      "legacy": false
+    },
+    {
       "id": "seed-20260911-media-operating-system-boundaries",
       "path": "article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md",
       "title": "Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった",
@@ -444,35 +514,6 @@
       "article_type_candidates": [
         "analysis",
         "insight"
-      ],
-      "author_input_required_count": 0,
-      "author_input_gate_open": false,
-      "legacy": false
-    },
-    {
-      "id": "seed-20260923-content-closed-loop",
-      "path": "article_seeds/media-operating-system/2026-09-23-content-closed-loop.md",
-      "title": "記事作成を自動化するより、Signal→Seed→公開後学習を閉じたい",
-      "date": "2026-09-23",
-      "status": "seed",
-      "topics": [
-        "media-operating-system",
-        "ai-agent",
-        "content-operations",
-        "feedback-loop",
-        "publishing"
-      ],
-      "source": "external",
-      "source_url": "https://note.com/like_tulip76/n/n7548bacaf90b",
-      "source_ref": "",
-      "evidence_status": "verified",
-      "promoted_to": [
-        "articles_note/new/content-closed-loop-note.md"
-      ],
-      "article_type_candidates": [
-        "analysis",
-        "insight",
-        "experience"
       ],
       "author_input_required_count": 0,
       "author_input_gate_open": false,
@@ -542,11 +583,6 @@
       "from": "seed-20260911-media-operating-system-boundaries",
       "relation": "promoted_to",
       "to": "articles_note/new/media-operating-system-boundary-by-change.md"
-    },
-    {
-      "from": "seed-20260923-content-closed-loop",
-      "relation": "promoted_to",
-      "to": "articles_note/new/content-closed-loop-note.md"
     },
     {
       "from": "seed-20260926-agent-team-topology-audit",

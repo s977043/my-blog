@@ -8,6 +8,7 @@
 //   正規表現による粗い計数なので、閾値判断ではなく推移の比較に使う。
 //
 // ■ 数え方（設計書 §3 と一致させる）
+//   - 既定では `docs/agent-learnings/archive/*.md`（古いエントリの移設先）のエントリも本体の後ろにつないで数える。`--file` 指定時はそのファイルだけ
 //   - `## 📇` 見出しより後ろを `\n### YYYY-MM-DD` で区切った各ブロックを 1 エントリとする
 //   - ガード語への言及（文字列一致。昇格の確定ではない）/ 再発明記 / テーマは、下の表の正規表現がエントリ本文に 1 回でも当たれば数える
 //   - 昇格候補: テーマに当たったエントリのうち、機械ガードに触れていないものが 3 件以上あるテーマ
@@ -29,6 +30,8 @@ const fs = require("fs");
 const path = require("path");
 
 const LABEL = "[report:learnings-promotion]";
+const { DATE, ENTRY_HEADING_RE, readArchives } = require("./learnings-archive");
+
 const DEFAULT_PATH = "AGENT_LEARNINGS.md";
 const INDEX_MARKER = "## 📇";
 const CANDIDATE_MIN = 3;
@@ -113,7 +116,7 @@ function splitEntries(text) {
   const idx = text.indexOf(INDEX_MARKER);
   const body = idx >= 0 ? text.slice(idx + INDEX_MARKER.length) : text;
   return body
-    .split(/\n### (?=\d{4}-\d\d-\d\d)/)
+    .split(new RegExp(`\\n### (?=${DATE}\\s)`))
     .slice(1)
     .map((e) => ({
       date: e.slice(0, 10),
@@ -256,8 +259,19 @@ function formatText(r) {
   ];
 }
 
+// アーカイブ本文の先頭（最初の日付見出し）から後ろを本体の後ろへつなぐ。
+// アーカイブの冒頭説明が本体の最終エントリに混ざって数えられないようにする。
+function joinArchives(text, archives) {
+  let out = text;
+  for (const a of archives) {
+    const at = a.search(new RegExp(ENTRY_HEADING_RE.source, "m"));
+    if (at >= 0) out += "\n" + a.slice(at);
+  }
+  return out;
+}
+
 function parseArgs(argv) {
-  const a = { json: false, file: DEFAULT_PATH };
+  const a = { json: false, file: DEFAULT_PATH, archives: true };
   for (let i = 0; i < argv.length; i++) {
     const x = argv[i];
     if (x === "--json") a.json = true;
@@ -268,6 +282,7 @@ function parseArgs(argv) {
           "--file にはファイルパスを指定してください（例: --file AGENT_LEARNINGS.md）",
         );
       a.file = v;
+      a.archives = false;
     } else throw new Error(`unknown option ${x}`);
   }
   return a;
@@ -275,8 +290,14 @@ function parseArgs(argv) {
 
 function main(argv) {
   const a = parseArgs(argv);
+  const text = fs.readFileSync(path.resolve(process.cwd(), a.file), "utf8");
   const r = analyze(
-    fs.readFileSync(path.resolve(process.cwd(), a.file), "utf8"),
+    a.archives
+      ? joinArchives(
+          text,
+          readArchives(process.cwd()).map((x) => x.content),
+        )
+      : text,
   );
   if (a.json) console.log(JSON.stringify(r, null, 2));
   else for (const l of formatText(r)) console.log(l);
@@ -340,10 +361,22 @@ function selfTest() {
     count: 0,
     ratio: 0,
   });
-  eq("引数を読む", parseArgs(["--json", "--file", "x.md"]), {
+  eq("引数を読む（--file 指定時はアーカイブを足さない）", parseArgs(["--json", "--file", "x.md"]), {
     json: true,
     file: "x.md",
+    archives: false,
   });
+  eq("既定ではアーカイブも数える", parseArgs([]).archives, true);
+  const joined = analyze(
+    joinArchives("## 📇\n### 2026-09-01 本体\nx", [
+      "# アーカイブ\nnpm run check:x\n### 2026-04-01 移した\ny",
+    ]),
+  );
+  eq(
+    "アーカイブの冒頭説明は数えず、エントリだけを本体につなぐ",
+    [joined.total, joined.guard.count],
+    [2, 0],
+  );
   let threw = false;
   try {
     parseArgs(["--nope"]);

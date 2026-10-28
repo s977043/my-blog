@@ -6,10 +6,10 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 
 ## Summary
 
-- Seeds: 21
-- Explicit provenance contract: 13
+- Seeds: 23
+- Explicit provenance contract: 15
 - Legacy seeds: 8
-- Promotion edges: 8
+- Promotion edges: 7
 - Seeds with open author input gate: 6
 
 ## Seeds
@@ -32,9 +32,11 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 | `seed-20261010-agile-hotl-practice-evolution` | 2026-10-10 | draft | mixed | verified | 0 | experience, insight | AIが賢くなった今、アジャイルの原点に戻ってきた | `article_seeds/ai-driven-development/2026-10-10-agile-hotl-practice-evolution.md` | 0 |
 | `seed-20261011-claude-code-hook-fail-open` | 2026-10-11 | seed | external | verified | 0 | experience, analysis | 危険コマンドを止める Claude Code hook が、検査の手前で素通ししていた | `article_seeds/ai-driven-development/2026-10-11-claude-code-hook-fail-open.md` | 0 |
 | `seed-20261015-swe-journey-requirements` | 2026-10-15 | draft | mixed | verified | 0 | insight, analysis | SWE-Journeyを読んで、専門家が行う要求分析をAIが補えないかと考えた | `article_seeds/ai-driven-development/2026-10-15-swe-journey-requirements.md` | 1 |
+| `seed-20261022-advisory-ai-review-silent-failure` | 2026-10-22 | seed | experience | observed | 0 | experience | CI が green のまま、AI レビューが約 2 か月止まっていた | `article_seeds/ai-driven-development/2026-10-22-advisory-ai-review-silent-failure.md` | 0 |
+| `seed-20261025-codex-skill-budget-overflow` | 2026-10-25 | seed | experience | observed | 0 | tips | Codex でプラグインのスキルが出てこない原因は、スキル一覧の予算超過 | `article_seeds/ai-driven-development/2026-10-25-codex-skill-budget-overflow.md` | 0 |
+| `seed-20261027-riskmap-first-match-shadow` | 2026-10-27 | seed | experience | observed | 0 | deep-dive | 先に一致したルールが、後ろの厳しいルールを隠す：river-review の risk-map の first-match を診断する | `article_seeds/ai-driven-development/2026-10-27-riskmap-first-match-shadow.md` | 0 |
 | `seed-20260911-media-operating-system-boundaries` | 2026-09-11 | seed | experience | observed | 0 | experience, analysis | Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった | `article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md` | 1 |
 | `seed-20260923-agent-role-boundaries` | 2026-09-23 | seed | external | verified | 0 | analysis, insight | AIエージェントを増やす前に、役割と委譲境界を分ける | `article_seeds/media-operating-system/2026-09-23-agent-role-boundaries.md` | 0 |
-| `seed-20260923-content-closed-loop` | 2026-09-23 | seed | external | verified | 0 | analysis, insight, experience | 記事作成を自動化するより、Signal→Seed→公開後学習を閉じたい | `article_seeds/media-operating-system/2026-09-23-content-closed-loop.md` | 1 |
 | `seed-20260923-publish-contract` | 2026-09-23 | seed | external | verified | 0 | analysis, tutorial, insight | 自動投稿より先に、公開前の契約とfail-closedを固定する | `article_seeds/media-operating-system/2026-09-23-publish-contract.md` | 0 |
 | `seed-20260924-note-hub-plangate-river-skills` | 2026-09-24 | seed | external | verified | 0 | insight, analysis | 計画を止める・判断を残す・手順を渡す：PlanGate / River Review / Agent Skills の入口 | `article_seeds/note-hub-plangate-river-skills/2026-09-24-note-hub-plangate-river-skills.md` | 0 |
 
@@ -42,7 +44,6 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 
 - `legacy:article_seeds/ai-driven-development/2026-09-10-flow-efficiency` → https://x.com/mine_take/status/2097800316070855017
 - `seed-20260911-media-operating-system-boundaries` → articles_note/new/media-operating-system-boundary-by-change.md
-- `seed-20260923-content-closed-loop` → articles_note/new/content-closed-loop-note.md
 - `seed-20260926-agent-team-topology-audit` → articles/ai-agent-team-topology-judgment-escalation.md
 - `seed-20260929-river-review-core-design` → articles/river-review-core-design.md
 - `seed-20260930-openspec-plangate-living-spec` → articles/openspec-plangate-living-spec.md

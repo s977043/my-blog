@@ -60,6 +60,6 @@ argument-hint: <article-slug> [loops]
 
 - `/humanize-review <article-path>` — 記事を変更しないHumanize単独レビュー
 - `/review-article <slug>` — 単発の3ペルソナレビュー生成（PR 化あり）
-- `/article-pipeline <slug>` — レビュー生成→反映を 2PR に分割
+- `/apply-review <slug>` — レビュー成果物の選別反映（レビューPRとは別PR）
 - `.claude/skills/article-humanizer-ja/SKILL.md`
 - `docs/article-humanizer-rollout.md`

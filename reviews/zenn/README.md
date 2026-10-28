@@ -16,7 +16,6 @@ reviews/zenn/<slug>.md
 |------|---------|-------|
 | レビュー生成 | `/review-article <slug>` | `reviews/zenn/<slug>.md`（新規または上書き） |
 | 本文反映 | `/apply-review <slug>` | `articles/<slug>.md` への採用分 Edit + PR |
-| 連続実行（2 PR 分割） | `/article-pipeline <slug>` | 生成 → （ユーザー確認）→ 反映 |
 
 ## 3 ペルソナ観点（概要）
 
