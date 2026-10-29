@@ -33,6 +33,10 @@
       "last_reviewed": "2026-10-19",
       "report": "reviews/reader/2026-10-19.md"
     },
+    "https://note.com/mine_unilabo/n/n23ec87da4cdb": {
+      "last_reviewed": "2026-10-29",
+      "report": "reviews/reader/2026-10-29.md"
+    },
     "https://qiita.com/s977043/items/05934596111b9065465d": {
       "last_reviewed": "2026-10-02",
       "report": "reviews/reader/2026-10-02.md"
@@ -64,6 +68,14 @@
     "https://qiita.com/s977043/items/5b137960d2e1c8f64ee9": {
       "last_reviewed": "2026-10-19",
       "report": "reviews/reader/2026-10-19.md"
+    },
+    "https://qiita.com/s977043/items/5ebff79112ecf1af872c": {
+      "last_reviewed": "2026-10-29",
+      "report": "reviews/reader/2026-10-29.md"
+    },
+    "https://qiita.com/s977043/items/6041bbc2659412341d54": {
+      "last_reviewed": "2026-10-29",
+      "report": "reviews/reader/2026-10-29.md"
     },
     "https://zenn.dev/minewo/articles/agent-learnings-md-operation": {
       "last_reviewed": "2026-10-02",
@@ -104,6 +116,14 @@
     "https://zenn.dev/minewo/articles/ai-driven-dev-metrics": {
       "last_reviewed": "2026-10-19",
       "report": "reviews/reader/2026-10-19.md"
+    },
+    "https://zenn.dev/minewo/articles/ai-driven-tdd-nextjs": {
+      "last_reviewed": "2026-10-29",
+      "report": "reviews/reader/2026-10-29.md"
+    },
+    "https://zenn.dev/minewo/articles/ai-generated-skill-md-reality-check": {
+      "last_reviewed": "2026-10-29",
+      "report": "reviews/reader/2026-10-29.md"
     }
   }
 }
