@@ -25,16 +25,16 @@
     {
       "id": "izanami-ai-review-responsibility-observe",
       "due": "2026-10-28T09:00:00+09:00",
-      "what": "izanami 2 本目（AIレビューの責務分担）の公開後約30日の観測（2026-10-28 頃）",
+      "what": "izanami 2 本目（AIレビューの責務分担）の公開後約30日の観測（2026-10-28 頃）（2026-10-29 に実施、README §2本目に記録）",
       "source": "articles_izanami/README.md §2本目",
-      "done": false
+      "done": true
     },
     {
       "id": "izanami-ai-review-too-many-findings-observe",
       "due": "2026-10-29T09:00:00+09:00",
-      "what": "izanami 3 本目（指摘が多すぎるときの絞り方）の公開後約30日の観測（2026-10-29 頃）",
+      "what": "izanami 3 本目（指摘が多すぎるときの絞り方）の公開後約30日の観測（2026-10-29 頃）（2026-10-29 に実施、README §3本目に記録）",
       "source": "articles_izanami/README.md §3本目",
-      "done": false
+      "done": true
     },
     {
       "id": "note-read-loop-week1",
@@ -53,9 +53,9 @@
     {
       "id": "note-read-loop-week3",
       "due": "2026-10-26T21:00:00+09:00",
-      "what": "note の読む→反応ループ 3 週目の計測（ダッシュボード 7 日間・フォロワー・お返し）と、翌週の候補記事の用意",
+      "what": "note の読む→反応ループ 3 週目の計測（ダッシュボード 7 日間・フォロワー・お返し）と、翌週の候補記事の用意（2026-10-29 に実施。お返しは著者の通知確認待ち）",
       "source": "docs/experiments/2026-10-note-reading-loop.md（EXP-NOTE-READ-202610、2026-10-05 著者決定）",
-      "done": false
+      "done": true
     },
     {
       "id": "note-read-loop-week4",
@@ -88,8 +88,15 @@
     {
       "id": "reader-review-2026-10-30",
       "due": "2026-10-30T17:00:00+09:00",
-      "what": "/reader-review の次回ローカル実行（週次。クラウドの routine は無効化済み）",
+      "what": "/reader-review の次回ローカル実行（週次。クラウドの routine は無効化済み）（2026-10-29 に実施、PR #928）",
       "source": "reader-review-2026-10-23（#865）の次回",
+      "done": true
+    },
+    {
+      "id": "reader-review-2026-11-06",
+      "due": "2026-11-06T17:00:00+09:00",
+      "what": "/reader-review の次回ローカル実行（週次。クラウドの routine は無効化済み）",
+      "source": "reader-review-2026-10-30（#928）の次回",
       "done": false
     }
   ]

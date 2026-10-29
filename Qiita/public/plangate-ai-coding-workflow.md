@@ -223,6 +223,13 @@ AIにいきなり実装させず、まず人間が入力を揃えます。
 ## 3コマンド運用
 
 実際の操作はこの3つに絞ると運用しやすいです。
+`/working-context` と `/ai-dev-workflow` は、PlanGate の Claude Code Plugin に含まれるスラッシュコマンドです。Claude Code のセッション内で次の2行を実行すると使えるようになります（Codex での導入など、ほかの方法は [PlanGate の README](https://github.com/s977043/plangate#readme) を参照してください）。
+
+```text
+/plugin marketplace add s977043/PlanGate
+/plugin install plangate
+```
+
 `plan` の中で `plan.md / todo.md / test-cases.md / review-self.md / status.md` まで作り、人間レビューの前に `review-external.md` を追加してから `exec` に進みます。
 
 ```text
