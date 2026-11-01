@@ -67,7 +67,14 @@
     {
       "id": "learnings-promotion-2026-11",
       "due": "2026-11-07T21:00:00+09:00",
-      "what": "学びの昇格レポートの月次実行（npm run report:learnings-promotion）。基準値（docs/agent-growth-harness.md §3）と比べ、未言及 3 件以上のテーマが減ったかを記録する。2 か月連続で減らなければ案 B を提案。次月分の項目を足す",
+      "what": "学びの昇格レポートの月次実行（npm run report:learnings-promotion）。基準値（docs/agent-growth-harness.md §3）と比べ、未言及 3 件以上のテーマが減ったかを記録する。2 か月連続で減らなければ案 B を提案。次月分の項目を足す（2026-11-02 に実施。候補テーマ 6 で基準と同数、減らず 1 か月目。docs/agent-growth-harness.md §3 月次の記録）",
+      "source": "docs/agent-growth-harness.md §5（#779、2026-10-07 ユーザー決定）",
+      "done": true
+    },
+    {
+      "id": "learnings-promotion-2026-12",
+      "due": "2026-12-07T21:00:00+09:00",
+      "what": "学びの昇格レポートの月次実行（npm run report:learnings-promotion）。§3 月次の記録に 1 行足し、候補テーマ数（11 月: 6）が減ったかを記録する。減っていなければ 2 か月連続になるので案 B（状態タグ）を提案する。次月分の項目を足す",
       "source": "docs/agent-growth-harness.md §5（#779、2026-10-07 ユーザー決定）",
       "done": false
     },
