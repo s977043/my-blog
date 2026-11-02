@@ -100,6 +100,10 @@ Figma や Penpot のようなデザインツールはもちろん必要です。
 
 初期導入では、まずこれくらいの薄い入口で十分です。
 
+以下は構成を示す例です。`design-tokens` などの参照名は、導入先に実在するファイルへのパスやリンクへ置き換えてください。`Source of truth` にも、正本となるファイルの場所を書きます。
+
+Growth Lab の `pnpm penpot:verify` は、同リポジトリの `package.json` に定義した検証スクリプトです。別のリポジトリでは、検証手順をその環境のコマンドや確認項目に置き換えます。
+
 ```md
 # DESIGN.md
 
@@ -119,7 +123,7 @@ Figma や Penpot のようなデザインツールはもちろん必要です。
 
 - Do not introduce external UI vocabulary directly
 - Normalize requested UI patterns before implementation
-- Verify design-related changes with `pnpm penpot:verify`
+- Verify design-related changes using the checks documented in the operation guide
 ```
 
 重要なのは、ここに詳細を書き込みすぎないことです。`DESIGN.md` は辞書や図鑑ではなく、入口と参照順を固定するためのファイルとして扱うほうが運用しやすくなります。
