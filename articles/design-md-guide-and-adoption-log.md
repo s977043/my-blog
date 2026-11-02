@@ -100,6 +100,10 @@ Figma や Penpot のようなデザインツールはもちろん必要です。
 
 初期導入では、まずこれくらいの薄い入口で十分です。
 
+以下は構成を示す例です。`design-tokens` などの参照名は、導入先に実在するファイルへのパスやリンクへ置き換えてください。`Source of truth` にも、正本となるファイルの場所を書きます。
+
+Growth Lab の `pnpm penpot:verify` は、同リポジトリの `package.json` に定義した検証スクリプトです。別のリポジトリでは、検証手順をその環境のコマンドや確認項目に置き換えます。
+
 ```md
 # DESIGN.md
 
@@ -119,7 +123,7 @@ Figma や Penpot のようなデザインツールはもちろん必要です。
 
 - Do not introduce external UI vocabulary directly
 - Normalize requested UI patterns before implementation
-- Verify design-related changes with `pnpm penpot:verify`
+- Verify design-related changes using the checks documented in the operation guide
 ```
 
 重要なのは、ここに詳細を書き込みすぎないことです。`DESIGN.md` は辞書や図鑑ではなく、入口と参照順を固定するためのファイルとして扱うほうが運用しやすくなります。
@@ -405,7 +409,7 @@ Growth Lab の構成から見ても、つまずきやすい点はあります。
 
 価値があるのは、AI と人間の両方に対して「どこを見て、どのルールに従い、どう検証するか」を共有できることです。
 
-Growth Lab では、`DESIGN.md` を軽量な入口に絞り、詳細を関連ドキュメント群、対応関係を component mapping、検証を `pnpm penpot:verify` に分ける構成を採用しました。結果として、デザインシステムを説明だけで終わらせず、日々の実装と結びつけやすくなっています。
+Growth Lab では、`DESIGN.md` を軽量な入口に絞り、詳細は関連ドキュメント群、対応関係を component mapping、検証を `pnpm penpot:verify` に分ける構成を採用しました。結果として、デザインシステムを説明だけで終わらせず、日々の実装と結びつけやすくなっています。
 
 `DESIGN.md` はルール集ではなく、AI と人間の判断順序を固定するための入口です。
 
