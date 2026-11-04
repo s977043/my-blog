@@ -37,6 +37,10 @@
       "last_reviewed": "2026-10-29",
       "report": "reviews/reader/2026-10-29.md"
     },
+    "https://note.com/mine_unilabo/n/n27a5594f65a4": {
+      "last_reviewed": "2026-11-04",
+      "report": "reviews/reader/2026-11-04.md"
+    },
     "https://qiita.com/s977043/items/05934596111b9065465d": {
       "last_reviewed": "2026-10-02",
       "report": "reviews/reader/2026-10-02.md"
@@ -76,6 +80,14 @@
     "https://qiita.com/s977043/items/6041bbc2659412341d54": {
       "last_reviewed": "2026-10-29",
       "report": "reviews/reader/2026-10-29.md"
+    },
+    "https://qiita.com/s977043/items/607d78c35745b17f9bc8": {
+      "last_reviewed": "2026-11-04",
+      "report": "reviews/reader/2026-11-04.md"
+    },
+    "https://qiita.com/s977043/items/842fc63efee66158af7d": {
+      "last_reviewed": "2026-11-04",
+      "report": "reviews/reader/2026-11-04.md"
     },
     "https://zenn.dev/minewo/articles/agent-learnings-md-operation": {
       "last_reviewed": "2026-10-02",
@@ -124,6 +136,14 @@
     "https://zenn.dev/minewo/articles/ai-generated-skill-md-reality-check": {
       "last_reviewed": "2026-10-29",
       "report": "reviews/reader/2026-10-29.md"
+    },
+    "https://zenn.dev/minewo/articles/ai-legible-repository-design": {
+      "last_reviewed": "2026-11-04",
+      "report": "reviews/reader/2026-11-04.md"
+    },
+    "https://zenn.dev/minewo/articles/ai-merge-ready-state-machine": {
+      "last_reviewed": "2026-11-04",
+      "report": "reviews/reader/2026-11-04.md"
     }
   }
 }
