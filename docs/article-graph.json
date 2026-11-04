@@ -492,6 +492,30 @@
       "legacy": false
     },
     {
+      "id": "seed-20261103-omikuji-lockfile-repair",
+      "path": "article_seeds/app-development/2026-11-03-omikuji-lockfile-repair.md",
+      "title": "pnpmの重複lock修復と検証範囲を分ける",
+      "date": "2026-11-03",
+      "status": "seed",
+      "topics": [
+        "pnpm",
+        "CI"
+      ],
+      "source": "external",
+      "source_url": "https://github.com/s977043/digital-omikuji/pull/466",
+      "source_ref": "s977043/digital-omikuji@03cbb89b00051c052058ff07e85bc800a47ab48f",
+      "evidence_status": "verified",
+      "promoted_to": [
+        "Qiita/public/pnpm-duplicate-lockfile-repair.md"
+      ],
+      "article_type_candidates": [
+        "analysis"
+      ],
+      "author_input_required_count": 0,
+      "author_input_gate_open": false,
+      "legacy": false
+    },
+    {
       "id": "seed-20260911-media-operating-system-boundaries",
       "path": "article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md",
       "title": "Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった",
@@ -639,6 +663,11 @@
       "from": "seed-20261102-sakura-agent-review-comparison",
       "relation": "promoted_to",
       "to": "articles/sakura-ai-engine-agent-review-comparison.md"
+    },
+    {
+      "from": "seed-20261103-omikuji-lockfile-repair",
+      "relation": "promoted_to",
+      "to": "Qiita/public/pnpm-duplicate-lockfile-repair.md"
     }
   ],
   "warnings": [

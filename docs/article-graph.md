@@ -6,10 +6,10 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 
 ## Summary
 
-- Seeds: 24
-- Explicit provenance contract: 16
+- Seeds: 25
+- Explicit provenance contract: 17
 - Legacy seeds: 8
-- Promotion edges: 8
+- Promotion edges: 9
 - Seeds with open author input gate: 6
 
 ## Seeds
@@ -36,6 +36,7 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 | `seed-20261025-codex-skill-budget-overflow` | 2026-10-25 | seed | experience | observed | 0 | tips | Codex でプラグインのスキルが出てこない原因は、スキル一覧の予算超過 | `article_seeds/ai-driven-development/2026-10-25-codex-skill-budget-overflow.md` | 0 |
 | `seed-20261027-riskmap-first-match-shadow` | 2026-10-27 | seed | experience | observed | 0 | deep-dive | 先に一致したルールが、後ろの厳しいルールを隠す：river-review の risk-map の first-match を診断する | `article_seeds/ai-driven-development/2026-10-27-riskmap-first-match-shadow.md` | 0 |
 | `seed-20261102-sakura-agent-review-comparison` | 2026-11-02 | seed | mixed | verified | 0 | evidence, tutorial | Zennfes Autumn 2026: さくらのAI Engineで単独レビューとVerifier付きレビューを比較する | `article_seeds/ai-driven-development/2026-11-02-sakura-agent-review-comparison.md` | 1 |
+| `seed-20261103-omikuji-lockfile-repair` | 2026-11-03 | seed | external | verified | 0 | analysis | pnpmの重複lock修復と検証範囲を分ける | `article_seeds/app-development/2026-11-03-omikuji-lockfile-repair.md` | 1 |
 | `seed-20260911-media-operating-system-boundaries` | 2026-09-11 | seed | experience | observed | 0 | experience, analysis | Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった | `article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md` | 1 |
 | `seed-20260923-agent-role-boundaries` | 2026-09-23 | seed | external | verified | 0 | analysis, insight | AIエージェントを増やす前に、役割と委譲境界を分ける | `article_seeds/media-operating-system/2026-09-23-agent-role-boundaries.md` | 0 |
 | `seed-20260923-publish-contract` | 2026-09-23 | seed | external | verified | 0 | analysis, tutorial, insight | 自動投稿より先に、公開前の契約とfail-closedを固定する | `article_seeds/media-operating-system/2026-09-23-publish-contract.md` | 0 |
@@ -51,6 +52,7 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 - `seed-20261001-agent-execution-policy-evidence` → https://x.com/mine_take/status/2105518834686026114
 - `seed-20261015-swe-journey-requirements` → articles_note/published/n514c78b42bf1.md
 - `seed-20261102-sakura-agent-review-comparison` → articles/sakura-ai-engine-agent-review-comparison.md
+- `seed-20261103-omikuji-lockfile-repair` → Qiita/public/pnpm-duplicate-lockfile-repair.md
 
 ## Warnings
 
