@@ -31,6 +31,7 @@ PlanGateでは、AIが制御する状態機械を `MERGE_READY` で停止させ�
 
 - 「マージ可能」と「マージする」を分離する理由
 - `MERGE_READY` で止まる状態機械、fail-closed、allowlist、intent／receiptの設計
+- 限定条件で自動マージする運用と比べたときの使い分け
 
 PlanGateは、筆者が開発しているAIコーディングエージェント向けの軽量ガバナンス基盤（OSS）です。
 :::
