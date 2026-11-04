@@ -144,6 +144,10 @@
     "https://zenn.dev/minewo/articles/ai-merge-ready-state-machine": {
       "last_reviewed": "2026-11-04",
       "report": "reviews/reader/2026-11-04.md"
+    },
+    "https://zenn.dev/minewo/articles/ai-review-gate-not-called": {
+      "last_reviewed": "2026-11-05",
+      "report": "reviews/reader/2026-11-05.md"
     }
   }
 }
