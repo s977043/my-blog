@@ -46,20 +46,20 @@ article_type_candidates:
 | `rework.count` | 4 | - | - |
 | `reviews` | 1 | 38 | - |
 | `humanInterventions` | 1 | 18 | - |
-| `artifacts` | 0 | 5 | - |
+| `artifacts` | - | 5 | - |
 | `outcomeReason`（任意） | - | - | 35 |
 
 ### 時間
 
 - `startedAt` と `endedAt` の両方が分かる記録は40件。`wallClockMs` が数値の記録は25件で、残る15件は差を計算すれば埋められた。
 - `wallClockMs` の `unknown` はファイル名の日付で10-22が0/5、10-23〜10-27が29/39、10-28〜11-05が55/65。
-- リポジトリ別の `wallClockMs` の `unknown` は river-review 15/25、plangate 11/14、private 6件は3/8〜9/9。
+- リポジトリ別の `wallClockMs` の `unknown` は river-review 15/25、plangate 11/14、privateの6リポジトリは3/8〜9/9。
 - 手順の版の差: `endedAt` に記録時刻を入れる規則は、DATリポジトリのadapterと個人用 `/dat` Skillにあり、導入済み0.3.0のadapterにはない。後者の時刻取得は「未確認の機能」と書かれ、DATは自動取得を実装しない方針（設計 §9）。
 
 ### 判断の根拠
 
 - `outcomeReason` なしは35件。ただし設計上は「中断・失敗の理由」の項目で、仕様上の不足と言えるのは `interrupted` の4/16件だけ。`completed` の31/93件は不足と扱わない。
-- リポジトリ別の `outcomeReason` なしは river-review 0/25、plangate 6/14、private 6件は0/8〜20/21。同じ仕様でも書き方が揃っていない。
+- リポジトリ別の `outcomeReason` なしは river-review 0/25、plangate 6/14、privateの6リポジトリは0/8〜20/21。同じ仕様でも書き方が揃っていない。
 - `interruptionKind`、`rework.triggers`、`taskDifficulty`、`usage` はいずれも0/109件。**これは書き漏れではない。** 4項目は2026-10-24のDAT #250でスキーマに入ったが、導入済み0.3.0のスキーマにはなく、`additionalProperties: false` のため書いても保存を拒否される。
 - 手戻りのある59件の記録に、きっかけを残す場所はなかった（0.3.0の `rework` は `count` のみ）。
 - `reviews[].decision` は同義の表記が3通り（`request-changes` 85、`changes-requested` 2、`request_changes` 2）。`request_changes` は現行の正規化表にない。
