@@ -59,5 +59,5 @@ PR マージ直後に実施する事後検証ルーチン。AGENT_LEARNINGS で�
 ユーザーには上記項目を**1メッセージ**で要約報告。✅ 通った項目 / 🚩 要対応項目を明示。
 
 ## 関連
-- `CLAUDE.md` §セッション終了時のチェックリスト
+- `docs/pr-operations.md` §セッション終了時のチェックリスト
 - `AGENT_LEARNINGS.md` §A Zenn / §B Qiita / §C note

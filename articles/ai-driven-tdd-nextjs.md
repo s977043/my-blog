@@ -194,7 +194,7 @@ Next.js App Routerで多言語ECサイトを開発中です。
 まず失敗する最小実装から始めて、その後正しい実装を提案してください。
 ```
 
-### Step 2: Green - 最小実装
+### Step 2: Red を確認する - 意図的に失敗する実装
 
 ```typescript
 // app/lib/formatCurrency.ts（最初の失敗実装）
@@ -416,7 +416,7 @@ export default function SearchBox({
         // URLを更新（App Router）
         const params = new URLSearchParams(searchParams);
         params.set("q", trimmedQuery);
-        router.replace(`?${params.toString()}`);
+        router.replace(`/search?${params.toString()}`);
       }
     },
     [query, router, searchParams]

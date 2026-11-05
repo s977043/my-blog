@@ -19,7 +19,6 @@ reviews/note/
 |------|---------|-------|
 | レビュー生成 | `/review-note-article <state>/<slug>` | `reviews/note/<state>/<slug>.md` |
 | 本文反映 | `/apply-review-note <state>/<slug>` | `articles_note/<state>/<slug>.md` への採用分 Edit + PR |
-| 連続実行（2 PR 分割） | `/article-pipeline-note <state>/<slug>` | 生成 → （ユーザー確認）→ 反映 |
 
 ## 3 ペルソナ観点（概要）
 

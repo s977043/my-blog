@@ -161,6 +161,14 @@ SEO提案をするためだけにタイトルや本文を不自然にしない�
 | 事実・リンク確認 | OK / 要改善 / 未検証 | ... |
 | 主張境界（該当時） | OK / 要改善 / 未検証 / 対象外 | Plan・本文による判定理由と最小指摘 |
 
+## 根拠一覧
+
+（事実・数値・因果の主張ごとに1行。記事にリンクを載せるかどうかとは別に、確かめた一次情報を残す。方針は `docs/content-channel-strategy.md`「検証と掲載を分ける」）
+
+| 記事の箇所 | 主張 | 一次情報（PR・issue・path@sha・ログ） | 確認結果 | 記事に掲載 |
+| --- | --- | --- | --- | --- |
+| L.. | ... | ... | 一致 / 不一致 / 未検証 | する / しない |
+
 ## 指摘コメント
 
 ### P1/P2/P3: <短いタイトル>
@@ -207,9 +215,9 @@ SEO提案をするためだけにタイトルや本文を不自然にしない�
 
 ## 実行例
 
-入力: `articles_note/new/ai_agent_operations_opinion_note.md`
+入力: `articles_note/new/<slug>.md`
 
-出力: `reviews/note/new/ai_agent_operations_opinion_note.md`
+出力: `reviews/note/new/<slug>.md`
 
 入力: `articles_note/drafts/<guid>.md`
 

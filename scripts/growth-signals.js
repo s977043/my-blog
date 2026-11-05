@@ -294,7 +294,7 @@ async function collectGitSignals(dir, sinceMs) {
   if (status !== null) {
     const [head = "", ...rest] = status.split("\n");
     let lines = rest.filter(Boolean);
-    // claude-mem の自動注入だけの AGENTS.md は除く（CLAUDE.md §並列セッション耐性）
+    // claude-mem の自動注入だけの AGENTS.md は除く（docs/pr-operations.md §並列セッション耐性）
     if (lines.some((l) => l.slice(3) === "AGENTS.md")) {
       const diff = (await gitAsync(dir, ["diff", "--", "AGENTS.md"])) || "";
       const removesLines = diff.split("\n").some((l) => l.startsWith("-") && !l.startsWith("---"));

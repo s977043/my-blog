@@ -94,6 +94,6 @@ PR本文にはエージェント生成の採否一覧を含め、`published: tru
 詳細:
 
 - `AGENTS.md` §「Zenn 公開フロー（release/zenn ブランチ経由）」
-- `docs/zenn-release-rollout-plan.md`
+- `docs/archive/zenn-release-rollout-plan.md`
 - `memory/feedback_zenn_publish_rate_pacing.md`
 - `memory/reference_zenn_rate_limit_spec.md`

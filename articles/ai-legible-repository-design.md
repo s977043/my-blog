@@ -7,7 +7,7 @@ published: true
 ---
 
 :::message
-この記事は、[Growth Lab](https://the3396.com/articles) の「AIが迷わないリポジトリ設計」メモをもとに、Zenn向けに最小構成へ落とし込んだ下書きです。
+この記事は、[Growth Lab](https://the3396.com/articles) の「AIが迷わないリポジトリ設計」メモをもとに、Zenn向けに最小構成へまとめた記事です。
 :::
 
 Claude Code や Codex を使い始めると、最初にやりたくなるのは「AI向けの長い指示ファイル」を作ることです。

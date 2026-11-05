@@ -7,11 +7,13 @@ tags:
   - マルチエージェント
   - ClaudeCode
 private: false
-updated_at: '2026-10-02T19:05:02+09:00'
+updated_at: '2026-10-28T06:40:59+09:00'
 id: 05934596111b9065465d
 organization_url_name: null
 slide: false
 ignorePublish: false
+posting_campaign_uuid: 9d632f51614ebd7b333c
+agreed_posting_campaign_term: true
 ---
 
 > TL;DR

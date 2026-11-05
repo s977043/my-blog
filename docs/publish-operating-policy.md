@@ -48,9 +48,49 @@
 | Zenn PR 間隔 | 前回の release/zenn 公開から **24 時間以上**あけてマージ |
 | 既存 update と新規 publish | 別 PR に分割（update が rate-limit に巻き込まれて公開済記事が古いままになる事故を防ぐ） |
 | 既存 update のみの deploy | 新規の `published: false → true` が 0 件の deploy は「Zenn PR 間隔」の制約を受けない（rate-limit は新規 publish にだけ掛かる。根拠: 2026-08-28 の PR #551 の deploy で、前回公開から約 18h でも既存 update 2 件は反映され、新規 1 件だけが弾かれた） |
-| rate-limit hit 時 | リポジトリ側に追加 commit を作らず、[Zenn お問い合わせ](https://zenn.dev/inquiry) で緩和申請 |
+| rate-limit hit 時 | 下記「Zenn 公開フローの手順」§rate-limit hit 時の対処 |
 
-根拠: `AGENT_LEARNINGS.md` 2026-05-22「Zenn rate-limit は実効 24h/2本でも hit する」。release/zenn 運用フロー（ブランチ単方向・sync 手順）は [`AGENTS.md`](../AGENTS.md) §「Zenn 公開フロー」を参照。
+根拠: `AGENT_LEARNINGS.md` 2026-05-22「Zenn rate-limit は実効 24h/2本でも hit する」。release/zenn 運用フローの規約（ブランチ単方向・merge 間隔）は [`AGENTS.md`](../AGENTS.md) §「Zenn 公開フロー」を参照。
+
+## Zenn 公開フローの手順
+
+規約（release/zenn は main 単方向、update は単独 PR 等）は [`AGENTS.md`](../AGENTS.md) §「Zenn 公開フロー（release/zenn ブランチ経由）」が正本。本節は手順のみ示す。
+
+```text
+main                      ← 通常運用（記事執筆、レビュー反映、修正、note/Qiita 編集すべて）
+  └─ release/zenn         ← Zenn deploy 対象。このブランチへの push のみ deploy 発火
+       ← cherry-pick / merge       ← 公開準備が整った記事だけ意図的に流す
+```
+
+### 公開フロー例
+
+```text
+[新規記事公開]
+1. PR1: docs/foo → main（記事執筆・レビュー反映、Zenn deploy 発火しない）
+2. PR2: release/zenn-publish-YYYY-MM-DD → release/zenn（公開対象記事だけを cherry-pick or filtered merge）
+
+[既存公開記事の update]
+1. PR1: docs/fix-typo → main（修正反映、Zenn deploy 発火しない）
+2. PR2: release/zenn-update-<slug> → release/zenn（単独 PR で update を流す。新規 publish と同 PR にしない）
+```
+
+### rate-limit hit 時の対処
+
+- リポジトリ側に追加 commit を **作らない**（被害拡大を防ぐ）
+- [Zenn お問い合わせフォーム](https://zenn.dev/inquiry) で緩和申請（公式が「移行・特殊用途では緩和可」と明言している正規ルート）
+- 詳細仕様と緩和申請文案テンプレは Claude Code の auto-memory `reference_zenn_rate_limit_spec.md`（リポジトリ外）
+
+## 媒体をまたいだ公開間隔
+
+媒体をまたいだ公開順と間隔の目安。**公開間隔の正本は本セクション**。`/editorial-meeting` はここを参照し、数値を書き写さない。Zenn の公開制約（rate-limit）は前節が正本で、本節はそれを変えない。
+
+| 項目 | 目安 |
+| --- | --- |
+| note（個人） | **2〜3 週に 1 本** |
+| note の間 | **Zenn または Qiita を 1 本**入れる |
+| 同テーマの近接 | 直近公開記事とテーマが近い記事は、媒体が違っても間隔を空ける |
+
+**暫定値**（2026-10-22 設定）。公開実績と反応を見て調整する。会社公式（PRONI）の記事は本表の対象外の別枠で、本数の目標と企画の決め方は [`AGENTS.md`](../AGENTS.md) §名義と企画の入口 を正とする。
 
 ## ブラウザ経由の投稿・更新（Playwright）
 
@@ -92,6 +132,29 @@ agent が公開関連作業を進める際は、以下を満たすことを明�
    - Zenn 管理画面の deploy log（rate-limit hit メッセージの有無）
    - 出現しない場合は **rate-limit hit を疑う**（参照: `AGENT_LEARNINGS.md` 2026-05-22 エントリ）
 10. **Qiita publish 後（必須）**: Web 反映確認。`https://qiita.com/s977043/items/<id>` で 200 応答することを確認
+
+## 公開後にやること（全媒体共通）
+
+記事を公開し、公開 URL が 200 を返すことを確かめたら、次を行う。Zenn / Qiita / note / izanami で共通。
+
+1. **リポジトリへの反映**: 公開で変わった値（Qiita の `id`・`updated_at`、note の公開状態など）を main へ PR で反映する
+2. **告知の材料をまとめる**: 次の 9 項目を書く
+   - URL
+   - 中心の主張
+   - 対比（2〜4 個）
+   - 想定読者
+   - 関連記事
+   - 公開日時
+   - commit SHA
+   - 根拠の節
+   - 書けないもの（本文が断定していないこと・未検証のこと）
+3. **ai-marketing-os へ依頼する**: 依頼の冒頭に、その記事が「シェアしたい記事」か「残しておく記事（アーカイブ用で SNS では広めない）」かを書く。分からなければ著者に確認する。「残しておく記事」なら SNS シェアは依頼しない。そのうえで 9 項目を添えて、次の 3 つを依頼する
+   - SNS シェア
+   - 数値の把握（取得時刻を決めてもらい、`docs/due-items.json` に登録する）
+   - 拡散の施策の検討（結果と学びを返してもらう）
+   - ai-marketing-os のセッションが動いていなければ、9 項目をまとめたものを著者へ渡す
+   - 投稿の承認は ai-marketing-os 側の運用に従う
+4. **公開キューを更新する**: `docs/publish-queue.md` の該当行を Done にする（載っている場合）
 
 ## メトリクス再計測サイクル
 

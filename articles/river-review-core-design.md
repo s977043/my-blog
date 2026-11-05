@@ -405,3 +405,4 @@ River Reviewのコアは、そのためのReview Judgment as Codeです。判断
 ## 関連記事
 
 - [AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計](/articles/river-review-judgment-placement)
+- [「書いたはずのルールが効かない」first-matchの落とし穴と、River Reviewの診断ロジック](/articles/riskmap-first-match-shadow)

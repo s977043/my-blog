@@ -209,6 +209,8 @@ function validate(files) {
     '字数・文字数を推測で書かない',
     'deterministic checkから与えられている場合だけ',
     'custom Agent定義をRead',
+    // content-closed-loop-note が規約違反の題材のまま READY になった（#670 / #882）
+    '§題材の出どころ',
     'findings:',
     'claims:',
     'images:',
@@ -302,7 +304,7 @@ function selfTest() {
     "{ title: 'Extract' } { title: 'DomainReview' } { title: 'LanguageReview' } { title: 'VisualReview' } { title: 'EditorialReview' } { title: 'FinalGate' }",
     "phase('Extract') phase('DomainReview') phase('LanguageReview') phase('VisualReview') phase('EditorialReview') phase('FinalGate')",
     "enum: ['available', 'partial', 'unavailable']",
-    'Terminology Contract READY NEEDS_CHANGES UNVERIFIED review-only requiresThesisLoop drafts-readonly-mirror primarySourceAccess custom Agent定義をRead findings: claims: images: addCandidates: --figure-inventory blockClassification visual-inspection-gap visual-self-contradiction 必要最小限（最大3つ） 枠を埋めるために3人へ増やさない 字数・文字数を推測で書かない deterministic checkから与えられている場合だけ',
+    'Terminology Contract READY NEEDS_CHANGES UNVERIFIED review-only requiresThesisLoop drafts-readonly-mirror primarySourceAccess custom Agent定義をRead §題材の出どころ findings: claims: images: addCandidates: --figure-inventory blockClassification visual-inspection-gap visual-self-contradiction 必要最小限（最大3つ） 枠を埋めるために3人へ増やさない 字数・文字数を推測で書かない deterministic checkから与えられている場合だけ',
     "required: ['applicable', 'images', 'addCandidates', 'scan', 'passed', 'unverified', 'summary']",
     'if (visual.unverified || visualReconciliation.unverified) {}',
     fs.readFileSync(path.join(ROOT, PATHS.workflow), 'utf8').slice(
