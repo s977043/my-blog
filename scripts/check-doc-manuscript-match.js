@@ -32,20 +32,41 @@ function collectStrings(value, out) {
   return out;
 }
 
+// Google Docs API 形式なら textRun の content だけを拾う（リンク URL や書式値が本文の間に挟まらないように）。
+function collectContents(value, out) {
+  if (Array.isArray(value)) value.forEach((v) => collectContents(v, out));
+  else if (value && typeof value === "object") {
+    for (const [k, v] of Object.entries(value)) {
+      if (k === "content" && typeof v === "string") out.push(v);
+      else collectContents(v, out);
+    }
+  }
+  return out;
+}
+
 function docTextFrom(raw) {
+  let parsed;
   try {
-    return collectStrings(JSON.parse(raw), []).join("\n");
+    parsed = JSON.parse(raw);
   } catch {
     return raw;
   }
+  const contents = collectContents(parsed, []);
+  return contents.length ? contents.join("") : collectStrings(parsed, []).join("\n");
 }
 
+// 空白と全角コロンを除く（原稿の「A：B」と Doc の表セル「A」「B」を同一視する）。
 function normalize(s) {
-  return s.replace(/\s+/g, "");
+  return s.replace(/[\s：]+/g, "");
 }
+
+// md_to_wxr.py の META_LINE_RE と同じ規則。WXR に出ない行なので突合しない。
+const META_LINE_RE = /^>\s*(?:出典|公開状態|更新|区分)\s*[:：]/;
 
 function stripMarkdown(line) {
   return line
+    .replace(/<(https?:\/\/[^>]+)>/g, "$1")
+    .replace(/\\([\\`*_{}\[\]()#+\-.!>])/g, "$1")
     .replace(/^#{1,6}\s+/, "")
     .replace(/^>\s?/, "")
     .replace(/^\s*(?:[-*+]|\d+\.)\s+/, "")
@@ -70,7 +91,7 @@ function manuscriptLines(md) {
       inFence = !inFence;
       continue;
     }
-    if (inFence) continue;
+    if (inFence || META_LINE_RE.test(raw)) continue;
     if (/^\s*\|?\s*:?-{3,}/.test(raw) || /^\s*-{3,}\s*$/.test(raw)) continue;
     const cells = raw.trim().startsWith("|")
       ? raw.split("|").map((c) => stripMarkdown(c)).filter(Boolean)
@@ -113,6 +134,18 @@ function selfTest() {
   const missing = findMissing(md, JSON.stringify({ body: "見出し 本文の強調とリンクです。 列A 列B 値1 値2" }));
   cases.push(["欠落行を行番号つきで返す", missing.length === 1 && missing[0].line === 7 && missing[0].text === "箇条書き"]);
   cases.push(["frontmatter とコードは対象外", !manuscriptLines(md).some((l) => /title|echo/.test(l.text))]);
+  cases.push(["メタ行は対象外", manuscriptLines("> 区分: 会社公式\n> 更新：2026-11-05\n> 引用です").length === 1]);
+  cases.push(["Markdown エスケープを外す", findMissing("みね（@mine\\_take）です。", "みね（@mine_take）です。").length === 0]);
+  const apiDoc = JSON.stringify({
+    body: { content: [{ paragraph: { elements: [
+      { textRun: { content: "前に", textStyle: {} } },
+      { textRun: { content: "『記事』", textStyle: { link: { url: "https://example.com/a" } } } },
+      { textRun: { content: "を書いた。\n", textStyle: {} } },
+    ] } }] },
+  });
+  cases.push(["リンク行は Doc API の content だけと比べる", findMissing("前に[『記事』](https://example.com/a)を書いた。", apiDoc).length === 0]);
+  cases.push(["自動リンクの山括弧を外す", findMissing("<https://example.com/jobs?x=1>", "https://example.com/jobs?x=1").length === 0]);
+  cases.push(["箇条書きの「A：B」と表セル A・B を同一視", findMissing("- 週1回：繰り返しを探す", JSON.stringify({ body: { content: [{ textRun: { content: "週1回\n" } }, { textRun: { content: "繰り返しを探す\n" } }] } })).length === 0]);
   let failed = 0;
   for (const [name, ok] of cases) {
     console.log(`${ok ? "ok" : "NG"} - ${name}`);
