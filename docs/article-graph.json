@@ -492,6 +492,30 @@
       "legacy": false
     },
     {
+      "id": "seed-20261106-dat-observation-gaps",
+      "path": "article_seeds/ai-driven-development/2026-11-06-dat-observation-gaps.md",
+      "title": "DATの運用記録を約2週間で109件貯めて分かった、記録の取り方の失敗",
+      "date": "2026-11-06",
+      "status": "seed",
+      "topics": [
+        "AIエージェント",
+        "計測",
+        "DAT"
+      ],
+      "source": "mixed",
+      "source_url": "https://github.com/s977043/dynamic-agent-topology/blob/main/docs/OBSERVATION_MEASUREMENT.md",
+      "source_ref": "s977043/dynamic-agent-topology@bac834dcf590ba33f2bec5b758a064e1c848f15f",
+      "evidence_status": "observed",
+      "promoted_to": [],
+      "article_type_candidates": [
+        "experience",
+        "analysis"
+      ],
+      "author_input_required_count": 0,
+      "author_input_gate_open": false,
+      "legacy": false
+    },
+    {
       "id": "seed-20261103-omikuji-lockfile-repair",
       "path": "article_seeds/app-development/2026-11-03-omikuji-lockfile-repair.md",
       "title": "pnpmの重複lock修復と検証範囲を分ける",

@@ -27,6 +27,8 @@
 //     中身が無い（2026-10-02 に ai-review-responsibility で確認）。JSON-LD が無いときだけ div を使い、
 //     欠けた位置に印を残す
 //   - Zenn の body_html はコードの言語指定を含まない（shiki で描画済み）。言語は原稿で確かめる
+//   - Zenn の Mermaid は iframe 埋め込み（embed.zenn.studio/mermaid）で、ソースは `data-content` に入っている。
+//     これを ```mermaid ブロックに戻す。ソースが無いときは `[Mermaid 図: …]` の印を残す（2026-11-05）
 //   取得に失敗した、または抽出本文が短すぎる（MIN_LIVE_CHARS 未満）場合は、リポジトリの原稿で代用し、
 //   `origin: "repo"` と理由を manifest に残す。レポートにはその旨を書く（公開版と差がありうるため）。
 //
@@ -288,6 +290,16 @@ function htmlToText(html) {
     pres.push(`\n\n\`\`\`\n${code.replace(/\n+$/, "")}\n\`\`\`\n\n`);
     return `\u0000PRE${pres.length - 1}\u0000`;
   });
+  // Zenn の Mermaid は iframe 埋め込みで、図のソースは data-content に URL エンコードで入っている
+  s = s.replace(/<iframe\b[^>]*?src="https:\/\/embed\.zenn\.studio\/mermaid[^"]*"[^>]*>(?:\s*<\/iframe>)?/gi, (tag) => {
+    const m = tag.match(/\bdata-content="([^"]*)"/);
+    let src = "";
+    try {
+      src = m ? decodeURIComponent(decodeEntities(m[1])) : "";
+    } catch {}
+    pres.push(src ? `\n\n\`\`\`mermaid\n${src.replace(/\n+$/, "")}\n\`\`\`\n\n` : "\n\n[Mermaid 図: ソース取得できず。原稿で確認]\n\n");
+    return `\u0000PRE${pres.length - 1}\u0000`;
+  });
   // HTML ソース上の改行は空白扱い。和文どうしの間の改行は詰める（英単語は空白で区切る）
   s = s
     .replace(/[ \t]*\n[ \t]*/g, "\n")
@@ -306,8 +318,9 @@ function htmlToText(html) {
     .replace(/<code\b[^>]*>([\s\S]*?)<\/code>/gi, (_, inner) => `\`${inner}\``)
     .replace(/<img\b[^>]*?alt="([^"]*)"[^>]*>/gi, (_, alt) => `[画像: ${alt || "alt なし"}]`)
     .replace(/<img\b[^>]*>/gi, "[画像: alt なし]")
-    .replace(/<ol\b[^>]*>([\s\S]*?)<\/ol>/gi, (_, inner) => {
-      let n = 0;
+    .replace(/<ol\b([^>]*)>([\s\S]*?)<\/ol>/gi, (_, attrs, inner) => {
+      const start = attrs.match(/\bstart="(-?\d+)"/);
+      let n = start ? Number(start[1]) - 1 : 0;
       return `${inner.replace(/<li\b[^>]*>/gi, () => `\n${++n}. `)}\n\n`;
     })
     .replace(/<li\b[^>]*>/gi, "\n- ")
@@ -759,6 +772,23 @@ async function selfTest() {
     "番号付きリストは番号を残す（本文が「1と2」と番号で参照するため）",
     htmlToText("<ol><li>一</li><li>二</li></ol><ul><li>点</li></ul>"),
     "1. 一\n2. 二\n\n- 点",
+  );
+  eq(
+    "番号付きリストは start 属性の番号から数える",
+    htmlToText('<ol start="6"><li>六</li><li>七</li></ol>'),
+    "6. 六\n7. 七",
+  );
+  eq(
+    "Zenn の Mermaid 埋め込みは data-content のソースを mermaid ブロックで残す",
+    htmlToText(
+      '<p>前</p><span class="embed-block zenn-embedded zenn-embedded-mermaid"><iframe src="https://embed.zenn.studio/mermaid#x" data-content="flowchart%20LR%0A%20%20A%20--%3E%20B"></iframe></span><p>後</p>',
+    ),
+    "前\n\n```mermaid\nflowchart LR\n  A --> B\n```\n\n後",
+  );
+  eq(
+    "Mermaid のソースが無いときは図がある印を残す",
+    htmlToText('<iframe src="https://embed.zenn.studio/mermaid#x"></iframe>'),
+    "[Mermaid 図: ソース取得できず。原稿で確認]",
   );
   eq(
     "表の行は | 区切りで 1 行にし、th だけの最初の行の後に区切り行を入れる",
