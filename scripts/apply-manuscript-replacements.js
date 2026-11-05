@@ -107,7 +107,14 @@ function main(argv) {
     console.log(`${LABEL} 一意でない置換が ${result.errors.length} 件あるため書き込まない`);
     process.exit(1);
   }
-  if (!dryRun) fs.writeFileSync(mdPath, result.text);
+  list.forEach((r, i) => {
+    if (r.old === r.new) console.log(`WARN #${i}: old と new が同じ: ${r.old.slice(0, 60)}`);
+  });
+  if (!dryRun) {
+    const tmp = `${mdPath}.tmp-${process.pid}`;
+    fs.writeFileSync(tmp, result.text);
+    fs.renameSync(tmp, mdPath);
+  }
   console.log(`${LABEL} ${list.length} 件を${dryRun ? "適用可能（dry-run）" : "適用"}: ${mdPath}`);
   process.exit(0);
 }
