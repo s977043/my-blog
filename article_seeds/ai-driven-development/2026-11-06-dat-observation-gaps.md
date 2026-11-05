@@ -12,6 +12,7 @@ source_url: https://github.com/s977043/dynamic-agent-topology/blob/main/docs/OBS
 source_ref: s977043/dynamic-agent-topology@bac834dcf590ba33f2bec5b758a064e1c848f15f
 evidence_status: observed
 promoted_to:
+  - articles/dat-observation-gaps.md
 article_type_candidates:
   - experience
   - analysis
@@ -89,6 +90,7 @@ private 6リポジトリのPRは照合に使わない（タイトルや番号を
 - reader_problem: AIエージェントの運用記録を残し始めた、または始めようとしている開発者が、後から集計できない記録を貯めてしまう失敗を、始める前に避けたい。
 - central_claim: 記録は自動化せずに続けると、時間と判断の根拠が抜ける。
 - claim_boundary: required
+- out_of_scope: 下記「書かない範囲」のとおり
 
 ### Evidence Boundary
 
@@ -140,4 +142,4 @@ private 6リポジトリのPRは照合に使わない（タイトルや番号を
 - [ ] 著者確認: 記録の取り方で困った体験は記録にないので、本文に書く前に確かめる。
 - [ ] 公開前に記録を再集計し、対象期間と実行日を更新する。
 
-Lifecycle: PLAN。本文の初稿は未着手。
+Lifecycle: DRAFTED。初稿は `articles/dat-observation-gaps.md`（`published: false`）。
