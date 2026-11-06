@@ -506,7 +506,9 @@
       "source_url": "https://github.com/s977043/dynamic-agent-topology/blob/main/docs/OBSERVATION_MEASUREMENT.md",
       "source_ref": "s977043/dynamic-agent-topology@bac834dcf590ba33f2bec5b758a064e1c848f15f",
       "evidence_status": "observed",
-      "promoted_to": [],
+      "promoted_to": [
+        "articles/dat-observation-gaps.md"
+      ],
       "article_type_candidates": [
         "experience",
         "analysis"
@@ -692,6 +694,11 @@
       "from": "seed-20261103-omikuji-lockfile-repair",
       "relation": "promoted_to",
       "to": "Qiita/public/pnpm-duplicate-lockfile-repair.md"
+    },
+    {
+      "from": "seed-20261106-dat-observation-gaps",
+      "relation": "promoted_to",
+      "to": "articles/dat-observation-gaps.md"
     }
   ],
   "warnings": [
