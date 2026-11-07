@@ -3,7 +3,7 @@
 個人の note 記事を 1 本ずつ改善するための台帳です。累計 PV の多い順に進めます。
 
 - PV とスキ: 2026-11-07 に note のダッシュボードで取得（累計）
-- 全 40 本: PR 作成済み 14、作業中 0、要確認 2、対象外 8、未着手 16
+- 全 40 本: PR 作成済み 18、作業中 0、要確認 2、対象外 8、未着手 12
 - 手順と比較結果: [reviews/note/published/n23ec87da4cdb.design-skill-pilot.md](published/n23ec87da4cdb.design-skill-pilot.md)
 
 ## 状態の意味
@@ -48,13 +48,13 @@
 | [2025年版：プロダクト開発におけるエンジニアリングマネージャー（EM）とテックリード（TL）とPMの役割分担と進化](https://note.com/mine_unilabo/n/na6a620da56d5) | 2025-09-22 | 513 | 12 | PR 作成済み（#989） |
 | [Vibe Kanbanで広がるAI開発の新しい形─複数エージェントを“チーム”化するチャレンジと模](https://note.com/mine_unilabo/n/ne58e3ccad1da) | 2025-08-29 | 477 | 6 | PR 作成済み（#988） |
 | [ユニラボで働くエンジニアの魅力とは？：テックコンパスの活用とその効果](https://note.com/mine_unilabo/n/n3ed52241292c) | 2023-06-30 | 424 | 20 | 対象外（会社の題材） |
-| [プロダクト開発にScrumを導入した話 -導入前夜・準備したこと-](https://note.com/mine_unilabo/n/n288c21a89778) | 2021-12-13 | 341 | 26 | 未着手 |
+| [プロダクト開発にScrumを導入した話 -導入前夜・準備したこと-](https://note.com/mine_unilabo/n/n288c21a89778) | 2021-12-13 | 341 | 26 | PR 作成済み（#992） |
 | [freee社と共同開催したエンジニア勉強会レポート](https://note.com/mine_unilabo/n/n8cec6b1f161e) | 2024-09-30 | 318 | 20 | 対象外（会社の題材） |
-| [AIコーディングの暴走を「仕組み」で止める — PlanGateという開発フロー](https://note.com/mine_unilabo/n/n3aae6b5467b9) | 2026-04-01 | 282 | 8 | 未着手 |
+| [AIコーディングの暴走を「仕組み」で止める — PlanGateという開発フロー](https://note.com/mine_unilabo/n/n3aae6b5467b9) | 2026-04-01 | 282 | 8 | PR 作成済み（#994） |
 | [AI駆動開発でSDDを考え直した。DiscoveryとDeliveryでは「先に定義するもの」が違った](https://note.com/mine_unilabo/n/n062a695d5af9) | 2026-09-11 | 239 | 16 | 対象外（会社公式） |
-| [二層ドキュメント × 複数AIで回す速度改善：アクセスデータで対象選定し、変更提案ドラフトまで最短でつなぐ](https://note.com/mine_unilabo/n/n95c4538af945) | 2025-08-19 | 181 | 10 | 未着手 |
+| [二層ドキュメント × 複数AIで回す速度改善：アクセスデータで対象選定し、変更提案ドラフトまで最短でつなぐ](https://note.com/mine_unilabo/n/n95c4538af945) | 2025-08-19 | 181 | 10 | PR 作成済み（#995） |
 | [この前のカジュアル面談で 「何で興味を持ってくれたのか？」 って聞いたら 「…](https://note.com/mine_unilabo/n/nbfa13a31174b) | 2023-07-27 | 148 | 4 | 対象外（短文の投稿） |
-| [OpenAI Symphonyを見て、AI時代の開発組織は「Agent Loopをどこで止めるか」で差がつくと思った](https://note.com/mine_unilabo/n/n623877eceb88) | 2026-06-01 | 134 | 2 | 未着手 |
+| [OpenAI Symphonyを見て、AI時代の開発組織は「Agent Loopをどこで止めるか」で差がつくと思った](https://note.com/mine_unilabo/n/n623877eceb88) | 2026-06-01 | 134 | 2 | PR 作成済み（#993） |
 | [ChatGPTに賛成ばかりされて困っている人へ：AI 3種を役割分担で議論させる方法](https://note.com/mine_unilabo/n/n5fe2e97b9600) | 2026-05-15 | 131 | 1 | 未着手 |
 | [SEO初心者の最短ルート｜Google公式×AI実務](https://note.com/mine_unilabo/n/nd88a1abc889c) | 2025-08-18 | 128 | 10 | 未着手 |
 | [AIにコードを書かせる前に、人間が承認する場所を作る](https://note.com/mine_unilabo/n/n02992266d622) | 2026-05-06 | 114 | 4 | 未着手 |
