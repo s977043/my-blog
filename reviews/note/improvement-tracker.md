@@ -3,7 +3,7 @@
 個人の note 記事を 1 本ずつ改善するための台帳です。累計 PV の多い順に進めます。
 
 - PV とスキ: 2026-11-07 に note のダッシュボードで取得（累計）
-- 全 40 本: PR 作成済み 2、作業中 4、要確認 7、対象外 3、未着手 24
+- 全 40 本: PR 作成済み 2、作業中 4、要確認 2、対象外 8、未着手 24
 - 手順と比較結果: [reviews/note/published/n23ec87da4cdb.design-skill-pilot.md](published/n23ec87da4cdb.design-skill-pilot.md)
 
 ## 状態の意味
@@ -33,11 +33,11 @@
 | [プロダクト開発におけるエンジニアリングマネージャー（EM）とテックリード（TL）とPMの役割分担](https://note.com/mine_unilabo/n/ab0d71933f35) | 2022-07-10 | 5885 | 40 | PR 作成済み（#976） |
 | [プロジェクトマネージャー（PjM）とプロダクトマネージャー（PdM）、プロダクトオーナー（PO）の違いとは](https://note.com/mine_unilabo/n/23ec87da4cdb) | 2021-12-08 | 4831 | 86 | PR 作成済み（#978） |
 | [webエンジニア採用で面接官が実際に使う質問とその意図まとめ](https://note.com/mine_unilabo/n/38127f1a545f) | 2021-12-28 | 3305 | 49 | 作業中 |
-| [スクラムでの開発チームの生産性の指標について -Four Keys と９つのメトリックス-](https://note.com/mine_unilabo/n/9ecc4957bf52) | 2022-12-08 | 3236 | 39 | 要確認（会社の題材） |
+| [スクラムでの開発チームの生産性の指標について -Four Keys と９つのメトリックス-](https://note.com/mine_unilabo/n/9ecc4957bf52) | 2022-12-08 | 3236 | 39 | 対象外（会社の題材） |
 | [コーチングとティーチングとトレーニングの違い](https://note.com/mine_unilabo/n/7d435642c054) | 2022-01-03 | 1786 | 31 | 作業中 |
-| [CTOとしての就任と、テックカンパニー化への意気込み](https://note.com/mine_unilabo/n/f4917fadb7cf) | 2024-02-08 | 1585 | 77 | 要確認（会社の題材） |
+| [CTOとしての就任と、テックカンパニー化への意気込み](https://note.com/mine_unilabo/n/f4917fadb7cf) | 2024-02-08 | 1585 | 77 | 対象外（会社の題材） |
 | [ソフトウェア開発の見積もりの仕方- 受託・発注・SaaSのシステム開発をしてきたエンジニアの考え -](https://note.com/mine_unilabo/n/0d3833a6044b) | 2022-01-20 | 1274 | 25 | 作業中 |
-| [アイミツSaaS開発チームの開発生産性を数値でふり返る -Four Keys指標-](https://note.com/mine_unilabo/n/926343ee80ce) | 2022-09-27 | 1099 | 54 | 要確認（会社の題材） |
+| [アイミツSaaS開発チームの開発生産性を数値でふり返る -Four Keys指標-](https://note.com/mine_unilabo/n/926343ee80ce) | 2022-09-27 | 1099 | 54 | 対象外（会社の題材） |
 | [「プロンプトを磨けば勝てる」をやめた：AIレビューを運用に乗せる“Agent Skills”設計](https://note.com/mine_unilabo/n/d21c3f1df22e) | 2025-12-25 | 1086 | 5 | 作業中 |
 | [アジャイル開発（スクラム）のバックログ管理：PBLからスプリントへのスムーズな移行法](https://note.com/mine_unilabo/n/40f2574d87dd) | 2023-01-12 | 832 | 31 | 未着手 |
 | [プロダクト開発にScrumを導入した話 -スプリント0をやってみてのふり返り-](https://note.com/mine_unilabo/n/79e2918aa7f4) | 2021-12-27 | 818 | 33 | 未着手 |
@@ -47,9 +47,9 @@
 | [AI駆動開発はアジャイルにフィットするのか](https://note.com/mine_unilabo/n/92b270e91110) | 2026-05-24 | 553 | 7 | 未着手 |
 | [2025年版：プロダクト開発におけるエンジニアリングマネージャー（EM）とテックリード（TL）とPMの役割分担と進化](https://note.com/mine_unilabo/n/a6a620da56d5) | 2025-09-22 | 513 | 12 | 未着手 |
 | [Vibe Kanbanで広がるAI開発の新しい形─複数エージェントを“チーム”化するチャレンジと模](https://note.com/mine_unilabo/n/e58e3ccad1da) | 2025-08-29 | 477 | 6 | 未着手 |
-| [ユニラボで働くエンジニアの魅力とは？：テックコンパスの活用とその効果](https://note.com/mine_unilabo/n/3ed52241292c) | 2023-06-30 | 424 | 20 | 要確認（会社の題材） |
+| [ユニラボで働くエンジニアの魅力とは？：テックコンパスの活用とその効果](https://note.com/mine_unilabo/n/3ed52241292c) | 2023-06-30 | 424 | 20 | 対象外（会社の題材） |
 | [プロダクト開発にScrumを導入した話 -導入前夜・準備したこと-](https://note.com/mine_unilabo/n/288c21a89778) | 2021-12-13 | 341 | 26 | 未着手 |
-| [freee社と共同開催したエンジニア勉強会レポート](https://note.com/mine_unilabo/n/8cec6b1f161e) | 2024-09-30 | 318 | 20 | 要確認（会社の題材） |
+| [freee社と共同開催したエンジニア勉強会レポート](https://note.com/mine_unilabo/n/8cec6b1f161e) | 2024-09-30 | 318 | 20 | 対象外（会社の題材） |
 | [AIコーディングの暴走を「仕組み」で止める — PlanGateという開発フロー](https://note.com/mine_unilabo/n/3aae6b5467b9) | 2026-04-01 | 282 | 8 | 未着手 |
 | [AI駆動開発でSDDを考え直した。DiscoveryとDeliveryでは「先に定義するもの」が違った](https://note.com/mine_unilabo/n/062a695d5af9) | 2026-09-11 | 239 | 16 | 対象外（会社公式） |
 | [二層ドキュメント × 複数AIで回す速度改善：アクセスデータで対象選定し、変更提案ドラフトまで最短でつなぐ](https://note.com/mine_unilabo/n/95c4538af945) | 2025-08-19 | 181 | 10 | 未着手 |
