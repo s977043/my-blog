@@ -3,7 +3,7 @@
 個人の note 記事を 1 本ずつ改善するための台帳です。累計 PV の多い順に進めます。
 
 - PV とスキ: 2026-11-07 に note のダッシュボードで取得（累計）
-- 全 40 本: PR 作成済み 18、作業中 0、要確認 2、対象外 8、未着手 12
+- 全 40 本: PR 作成済み 22、作業中 0、要確認 2、対象外 8、未着手 8
 - 手順と比較結果: [reviews/note/published/n23ec87da4cdb.design-skill-pilot.md](published/n23ec87da4cdb.design-skill-pilot.md)
 
 ## 状態の意味
@@ -55,10 +55,10 @@
 | [二層ドキュメント × 複数AIで回す速度改善：アクセスデータで対象選定し、変更提案ドラフトまで最短でつなぐ](https://note.com/mine_unilabo/n/n95c4538af945) | 2025-08-19 | 181 | 10 | PR 作成済み（#995） |
 | [この前のカジュアル面談で 「何で興味を持ってくれたのか？」 って聞いたら 「…](https://note.com/mine_unilabo/n/nbfa13a31174b) | 2023-07-27 | 148 | 4 | 対象外（短文の投稿） |
 | [OpenAI Symphonyを見て、AI時代の開発組織は「Agent Loopをどこで止めるか」で差がつくと思った](https://note.com/mine_unilabo/n/n623877eceb88) | 2026-06-01 | 134 | 2 | PR 作成済み（#993） |
-| [ChatGPTに賛成ばかりされて困っている人へ：AI 3種を役割分担で議論させる方法](https://note.com/mine_unilabo/n/n5fe2e97b9600) | 2026-05-15 | 131 | 1 | 未着手 |
-| [SEO初心者の最短ルート｜Google公式×AI実務](https://note.com/mine_unilabo/n/nd88a1abc889c) | 2025-08-18 | 128 | 10 | 未着手 |
-| [AIにコードを書かせる前に、人間が承認する場所を作る](https://note.com/mine_unilabo/n/n02992266d622) | 2026-05-06 | 114 | 4 | 未着手 |
-| [失敗をモデルのせいにしない。AI駆動開発を「Model + Harness」で考える](https://note.com/mine_unilabo/n/nd6a5d83d1488) | 2026-08-29 | 109 | 11 | 未着手 |
+| [ChatGPTに賛成ばかりされて困っている人へ：AI 3種を役割分担で議論させる方法](https://note.com/mine_unilabo/n/n5fe2e97b9600) | 2026-05-15 | 131 | 1 | PR 作成済み（#999） |
+| [SEO初心者の最短ルート｜Google公式×AI実務](https://note.com/mine_unilabo/n/nd88a1abc889c) | 2025-08-18 | 128 | 10 | PR 作成済み（#996） |
+| [AIにコードを書かせる前に、人間が承認する場所を作る](https://note.com/mine_unilabo/n/n02992266d622) | 2026-05-06 | 114 | 4 | PR 作成済み（#997） |
+| [失敗をモデルのせいにしない。AI駆動開発を「Model + Harness」で考える](https://note.com/mine_unilabo/n/nd6a5d83d1488) | 2026-08-29 | 109 | 11 | PR 作成済み（#998） |
 | [個人のAI開発ナレッジを、チームの改善ループへ育てるまで](https://note.com/mine_unilabo/n/nf85851cf7f48) | 2026-10-14 | 104 | 20 | 対象外（会社公式） |
 | [AI時代の開発で短くすべきは、Time to CodeではなくTime to Learning](https://note.com/mine_unilabo/n/n5070e13232ce) | 2026-08-20 | 89 | 6 | 未着手 |
 | [AI時代の開発生産性をどう測るか？](https://note.com/mine_unilabo/n/n7c72bc3491a2) | 2026-04-30 | 77 | 1 | 未着手 |
