@@ -3,7 +3,7 @@
 個人の note 記事を 1 本ずつ改善するための台帳です。累計 PV の多い順に進めます。
 
 - PV とスキ: 2026-11-07 に note のダッシュボードで取得（累計）
-- 全 40 本: PR 作成済み 6、作業中 0、要確認 2、対象外 8、未着手 24
+- 全 40 本: PR 作成済み 6、作業中 4、要確認 2、対象外 8、未着手 20
 - 手順と比較結果: [reviews/note/published/n23ec87da4cdb.design-skill-pilot.md](published/n23ec87da4cdb.design-skill-pilot.md)
 
 ## 状態の意味
@@ -39,10 +39,10 @@
 | [ソフトウェア開発の見積もりの仕方- 受託・発注・SaaSのシステム開発をしてきたエンジニアの考え -](https://note.com/mine_unilabo/n/0d3833a6044b) | 2022-01-20 | 1274 | 25 | PR 作成済み（#982） |
 | [アイミツSaaS開発チームの開発生産性を数値でふり返る -Four Keys指標-](https://note.com/mine_unilabo/n/926343ee80ce) | 2022-09-27 | 1099 | 54 | 対象外（会社の題材） |
 | [「プロンプトを磨けば勝てる」をやめた：AIレビューを運用に乗せる“Agent Skills”設計](https://note.com/mine_unilabo/n/d21c3f1df22e) | 2025-12-25 | 1086 | 5 | PR 作成済み（#980） |
-| [アジャイル開発（スクラム）のバックログ管理：PBLからスプリントへのスムーズな移行法](https://note.com/mine_unilabo/n/40f2574d87dd) | 2023-01-12 | 832 | 31 | 未着手 |
-| [プロダクト開発にScrumを導入した話 -スプリント0をやってみてのふり返り-](https://note.com/mine_unilabo/n/79e2918aa7f4) | 2021-12-27 | 818 | 33 | 未着手 |
-| [プロダクト開発にScrumを導入した話](https://note.com/mine_unilabo/n/b068316a12ec) | 2021-11-11 | 596 | 36 | 未着手 |
-| [AITDD実践録：AIエージェント(Claude Code/Gemini CLI)だから「テストが先に動く」開発を日常化する](https://note.com/mine_unilabo/n/c62d478194d3) | 2025-08-05 | 588 | 6 | 未着手 |
+| [アジャイル開発（スクラム）のバックログ管理：PBLからスプリントへのスムーズな移行法](https://note.com/mine_unilabo/n/40f2574d87dd) | 2023-01-12 | 832 | 31 | 作業中 |
+| [プロダクト開発にScrumを導入した話 -スプリント0をやってみてのふり返り-](https://note.com/mine_unilabo/n/79e2918aa7f4) | 2021-12-27 | 818 | 33 | 作業中 |
+| [プロダクト開発にScrumを導入した話](https://note.com/mine_unilabo/n/b068316a12ec) | 2021-11-11 | 596 | 36 | 作業中 |
+| [AITDD実践録：AIエージェント(Claude Code/Gemini CLI)だから「テストが先に動く」開発を日常化する](https://note.com/mine_unilabo/n/c62d478194d3) | 2025-08-05 | 588 | 6 | 作業中 |
 | [個人開発でAIエージェントチームを作るために、Hermes Agentを「依頼窓口」として導入し始めた](https://note.com/mine_unilabo/n/c1ac531190c9) | 2026-06-03 | 572 | 5 | 未着手 |
 | [AI駆動開発はアジャイルにフィットするのか](https://note.com/mine_unilabo/n/92b270e91110) | 2026-05-24 | 553 | 7 | 未着手 |
 | [2025年版：プロダクト開発におけるエンジニアリングマネージャー（EM）とテックリード（TL）とPMの役割分担と進化](https://note.com/mine_unilabo/n/a6a620da56d5) | 2025-09-22 | 513 | 12 | 未着手 |
