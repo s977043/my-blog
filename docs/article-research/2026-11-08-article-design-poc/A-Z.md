@@ -2,7 +2,7 @@
 
 ## 1. 固定した入力
 
-- リポジトリ: /Users/user/Documents/GitHub/my-blog
+- リポジトリ: <repo>/
 - 基準: origin/main = fdc33406836f8ea3642dd385f63fca58a4bbd2a6（`git -C ... show fdc3340:<path>` で読んだ）
 - 対象: `articles/river-review-judgment-placement.md`（593 行、published: true）
 - 共通ルール: `AGENTS.md`、`.claude/skills/tech-blog-writing/SKILL.md`、`docs/content-channel-strategy.md`、`articles/README.md`

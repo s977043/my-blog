@@ -2,7 +2,7 @@
 
 ファイルを編集・commit・push しない。指定の出力ファイル 1 つにだけ書く。scratchpad/poc/ の A-*.md、B-*.md、mapping.txt は読まない（盲検のため）。読むのは scratchpad/poc/blind/ の 4 ファイルと原稿だけ。
 
-原稿（基準 fdc3340、`git -C /Users/user/Documents/GitHub/my-blog show fdc3340:<path>`）:
+原稿（基準 fdc3340、`git -C <repo>/ show fdc3340:<path>`）:
 - N: articles_note/published/nb5d70c30380b.md（note 体験記事）
 - Z: articles/river-review-judgment-placement.md（Zenn 技術記事）
 

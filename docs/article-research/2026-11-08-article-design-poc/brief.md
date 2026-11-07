@@ -3,7 +3,7 @@
 ファイルを編集・commit・push しない。成果は指定の出力ファイル 1 つにだけ書く。他の出力ファイル（scratchpad/poc/ の別名）は読まない。
 
 ## 固定条件（Freeze）
-- リポジトリ: /Users/user/Documents/GitHub/my-blog、基準 origin/main = fdc33406836f8ea3642dd385f63fca58a4bbd2a6。読むときは `git -C /Users/user/Documents/GitHub/my-blog show fdc3340:<path>` を使う
+- リポジトリ: <repo>/、基準 origin/main = fdc33406836f8ea3642dd385f63fca58a4bbd2a6。読むときは `git -C <repo>/ show fdc3340:<path>` を使う
 - Fixture N（note 体験記事）: articles_note/published/nb5d70c30380b.md（公開版のミラー）。履歴参考: commit 9f65b84 の articles_note/new/harness-practice-note.md
 - Fixture Z（Zenn 技術記事）: articles/river-review-judgment-placement.md
 - 共通ルール: AGENTS.md、.claude/skills/tech-blog-writing/SKILL.md、docs/content-channel-strategy.md、媒体別ガイド（note: articles_note/checklists/note-article-quality-checklist.md、Zenn: articles/README.md）

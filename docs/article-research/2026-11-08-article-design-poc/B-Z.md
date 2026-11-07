@@ -4,7 +4,7 @@
 
 | 項目 | 値 |
 | --- | --- |
-| リポジトリ | /Users/user/Documents/GitHub/my-blog |
+| リポジトリ | <repo>/ |
 | 基準 SHA | fdc33406836f8ea3642dd385f63fca58a4bbd2a6（`git show fdc3340:<path>` で読んだ） |
 | 対象記事 | articles/river-review-judgment-placement.md（593 行、published: true） |
 | 共通ルール | AGENTS.md、.claude/skills/tech-blog-writing/SKILL.md、docs/content-channel-strategy.md、articles/README.md |

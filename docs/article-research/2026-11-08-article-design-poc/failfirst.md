@@ -1,8 +1,8 @@
 # 失敗注入の検証（failfirst）
 
 - 基準: fdc3340。原稿は変更していない（read-only）
-- 提案文の正本: `/private/tmp/claude-502/-Users-user-Documents-GitHub-my-blog/ce27a80f-20c4-4186-bb29-fe514b5c8889/scratchpad/poc/failfirst-proposals.md`（P1〜P6 = N01〜N06。Codex に渡したのはこのファイルで、期待判定は含めていない）
-- Codex 出力: `/private/tmp/claude-502/-Users-user-Documents-GitHub-my-blog/ce27a80f-20c4-4186-bb29-fe514b5c8889/scratchpad/poc/failfirst-codex.md`（モデル指定なし。実行ログ上は gpt-6.1-terra）
+- 提案文の正本: `<scratchpad>/poc/failfirst-proposals.md`（P1〜P6 = N01〜N06。Codex に渡したのはこのファイルで、期待判定は含めていない）
+- Codex 出力: `<scratchpad>/poc/failfirst-codex.md`（モデル指定なし。実行ログ上は gpt-6.1-terra）
 - 盲検の崩れ: blind/ の 4 ファイルは 1 行目に方式名がそのまま書かれている（N-X/Z-Y =「方式 B（Treatment）」、N-Y/Z-X =「方式 A（Control）」）。中身から推測するまでもなく判別できる状態。本検証は案の評価ではないため結果への影響はないが、第 2 段の盲検評価としては無効化要因として記録する
 
 ## 結果表

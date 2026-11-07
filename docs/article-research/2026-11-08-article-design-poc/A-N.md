@@ -2,7 +2,7 @@
 
 ## 1. 固定した入力
 
-- リポジトリ: /Users/user/Documents/GitHub/my-blog
+- リポジトリ: <repo>/
 - 基準: origin/main = fdc33406836f8ea3642dd385f63fca58a4bbd2a6（`git show fdc3340:<path>` で読んだ）
 - 対象: `articles_note/published/nb5d70c30380b.md`（公開版ミラー）
 - 共通ルール: `articles_note/checklists/note-article-quality-checklist.md`、`articles_note/guides/note-structure-best-practices.md`（チェックリストが正本として参照するため読んだ）、AGENTS.md（セッション読み込み済み）
