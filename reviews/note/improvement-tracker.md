@@ -3,7 +3,7 @@
 個人の note 記事を 1 本ずつ改善するための台帳です。累計 PV の多い順に進めます。
 
 - PV とスキ: 2026-11-07 に note のダッシュボードで取得（累計）
-- 全 40 本: PR 作成済み 10、作業中 0、要確認 2、対象外 8、未着手 20
+- 全 40 本: PR 作成済み 14、作業中 0、要確認 2、対象外 8、未着手 16
 - 手順と比較結果: [reviews/note/published/n23ec87da4cdb.design-skill-pilot.md](published/n23ec87da4cdb.design-skill-pilot.md)
 
 ## 状態の意味
@@ -43,10 +43,10 @@
 | [プロダクト開発にScrumを導入した話 -スプリント0をやってみてのふり返り-](https://note.com/mine_unilabo/n/n79e2918aa7f4) | 2021-12-27 | 818 | 33 | PR 作成済み（#987） |
 | [プロダクト開発にScrumを導入した話](https://note.com/mine_unilabo/n/nb068316a12ec) | 2021-11-11 | 596 | 36 | PR 作成済み（#984） |
 | [AITDD実践録：AIエージェント(Claude Code/Gemini CLI)だから「テストが先に動く」開発を日常化する](https://note.com/mine_unilabo/n/nc62d478194d3) | 2025-08-05 | 588 | 6 | PR 作成済み（#986） |
-| [個人開発でAIエージェントチームを作るために、Hermes Agentを「依頼窓口」として導入し始めた](https://note.com/mine_unilabo/n/nc1ac531190c9) | 2026-06-03 | 572 | 5 | 未着手 |
-| [AI駆動開発はアジャイルにフィットするのか](https://note.com/mine_unilabo/n/n92b270e91110) | 2026-05-24 | 553 | 7 | 未着手 |
-| [2025年版：プロダクト開発におけるエンジニアリングマネージャー（EM）とテックリード（TL）とPMの役割分担と進化](https://note.com/mine_unilabo/n/na6a620da56d5) | 2025-09-22 | 513 | 12 | 未着手 |
-| [Vibe Kanbanで広がるAI開発の新しい形─複数エージェントを“チーム”化するチャレンジと模](https://note.com/mine_unilabo/n/ne58e3ccad1da) | 2025-08-29 | 477 | 6 | 未着手 |
+| [個人開発でAIエージェントチームを作るために、Hermes Agentを「依頼窓口」として導入し始めた](https://note.com/mine_unilabo/n/nc1ac531190c9) | 2026-06-03 | 572 | 5 | PR 作成済み（#990） |
+| [AI駆動開発はアジャイルにフィットするのか](https://note.com/mine_unilabo/n/n92b270e91110) | 2026-05-24 | 553 | 7 | PR 作成済み（#991） |
+| [2025年版：プロダクト開発におけるエンジニアリングマネージャー（EM）とテックリード（TL）とPMの役割分担と進化](https://note.com/mine_unilabo/n/na6a620da56d5) | 2025-09-22 | 513 | 12 | PR 作成済み（#989） |
+| [Vibe Kanbanで広がるAI開発の新しい形─複数エージェントを“チーム”化するチャレンジと模](https://note.com/mine_unilabo/n/ne58e3ccad1da) | 2025-08-29 | 477 | 6 | PR 作成済み（#988） |
 | [ユニラボで働くエンジニアの魅力とは？：テックコンパスの活用とその効果](https://note.com/mine_unilabo/n/n3ed52241292c) | 2023-06-30 | 424 | 20 | 対象外（会社の題材） |
 | [プロダクト開発にScrumを導入した話 -導入前夜・準備したこと-](https://note.com/mine_unilabo/n/n288c21a89778) | 2021-12-13 | 341 | 26 | 未着手 |
 | [freee社と共同開催したエンジニア勉強会レポート](https://note.com/mine_unilabo/n/n8cec6b1f161e) | 2024-09-30 | 318 | 20 | 対象外（会社の題材） |
