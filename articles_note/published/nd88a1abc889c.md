@@ -44,14 +44,14 @@ Googleが公開している以下のドキュメントは、SEOの基礎を学�
 
 - **SEOスターターガイド**: タイトルタグやメタディスクリプションの書き方、見出し構造の設計、リンクの扱い方など、基本的な最適化方法がまとまっています。
 
-  - 参考：[SEOスターターガイド（Google検索セントラル）](https://developers.google.com/search/docs/fundamentals/seo-starter-guide?hl=ja)
+  - 参考：[Google 公式 SEO スターター ガイド（Google 検索セントラル）](https://developers.google.com/search/docs/fundamentals/seo-starter-guide?hl=ja)
 
 - **検索エッセンシャル（旧ウェブマスターガイドライン）**：検索結果に掲載されるための技術的な要件や、スパムとみなされる行為について解説しています。
 
-  - 参考：[Google 検索の基本事項（検索エッセンシャル）](https://developers.google.com/search/docs/essentials?hl=ja)
+  - 参考：[Google 検索の基本事項（旧ウェブマスター向けガイドライン）](https://developers.google.com/search/docs/essentials?hl=ja)
 - **Helpful Content ガイド**：ユーザー第一のコンテンツとは何か、信頼性と専門性を高めるためのポイントがまとめられています。
 
-  - 参考：[有用で信頼性の高い、ユーザー第一のコンテンツの作成（Google検索セントラル）](https://developers.google.com/search/docs/fundamentals/creating-helpful-content?hl=ja)
+  - 参考：[有用で信頼性の高い、ユーザーを第一に考えたコンテンツの作成（Google 検索セントラル）](https://developers.google.com/search/docs/fundamentals/creating-helpful-content?hl=ja)
 
 これらを読むと「検索エンジンに評価される＝ユーザーに役立つコンテンツである」という基本が理解できるでしょう。具体的には次のような点を意識します。
 
