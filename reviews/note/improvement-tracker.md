@@ -3,7 +3,7 @@
 個人の note 記事を 1 本ずつ改善するための台帳です。累計 PV の多い順に進めます。
 
 - PV とスキ: 2026-11-07 に note のダッシュボードで取得（累計）
-- 全 40 本: PR 作成済み 30、作業中 0、要確認 2、対象外 8、未着手 0
+- 全 40 本: マージ済み 6、PR 作成済み 24、作業中 0、要確認 2、対象外 8、未着手 0
 - 手順と比較結果: [reviews/note/published/n23ec87da4cdb.design-skill-pilot.md](published/n23ec87da4cdb.design-skill-pilot.md)
 
 ## 状態の意味
@@ -39,13 +39,13 @@
 | [ソフトウェア開発の見積もりの仕方- 受託・発注・SaaSのシステム開発をしてきたエンジニアの考え -](https://note.com/mine_unilabo/n/n0d3833a6044b) | 2022-01-20 | 1274 | 25 | PR 作成済み（#982） |
 | [アイミツSaaS開発チームの開発生産性を数値でふり返る -Four Keys指標-](https://note.com/mine_unilabo/n/n926343ee80ce) | 2022-09-27 | 1099 | 54 | 対象外（会社の題材） |
 | [「プロンプトを磨けば勝てる」をやめた：AIレビューを運用に乗せる“Agent Skills”設計](https://note.com/mine_unilabo/n/nd21c3f1df22e) | 2025-12-25 | 1086 | 5 | PR 作成済み（#980） |
-| [アジャイル開発（スクラム）のバックログ管理：PBLからスプリントへのスムーズな移行法](https://note.com/mine_unilabo/n/n40f2574d87dd) | 2023-01-12 | 832 | 31 | PR 作成済み（#985） |
+| [アジャイル開発（スクラム）のバックログ管理：PBLからスプリントへのスムーズな移行法](https://note.com/mine_unilabo/n/n40f2574d87dd) | 2023-01-12 | 832 | 31 | マージ済み（#985） |
 | [プロダクト開発にScrumを導入した話 -スプリント0をやってみてのふり返り-](https://note.com/mine_unilabo/n/n79e2918aa7f4) | 2021-12-27 | 818 | 33 | PR 作成済み（#987） |
-| [プロダクト開発にScrumを導入した話](https://note.com/mine_unilabo/n/nb068316a12ec) | 2021-11-11 | 596 | 36 | PR 作成済み（#984） |
-| [AITDD実践録：AIエージェント(Claude Code/Gemini CLI)だから「テストが先に動く」開発を日常化する](https://note.com/mine_unilabo/n/nc62d478194d3) | 2025-08-05 | 588 | 6 | PR 作成済み（#986） |
-| [個人開発でAIエージェントチームを作るために、Hermes Agentを「依頼窓口」として導入し始めた](https://note.com/mine_unilabo/n/nc1ac531190c9) | 2026-06-03 | 572 | 5 | PR 作成済み（#990） |
+| [プロダクト開発にScrumを導入した話](https://note.com/mine_unilabo/n/nb068316a12ec) | 2021-11-11 | 596 | 36 | マージ済み（#984） |
+| [AITDD実践録：AIエージェント(Claude Code/Gemini CLI)だから「テストが先に動く」開発を日常化する](https://note.com/mine_unilabo/n/nc62d478194d3) | 2025-08-05 | 588 | 6 | マージ済み（#986） |
+| [個人開発でAIエージェントチームを作るために、Hermes Agentを「依頼窓口」として導入し始めた](https://note.com/mine_unilabo/n/nc1ac531190c9) | 2026-06-03 | 572 | 5 | マージ済み（#990） |
 | [AI駆動開発はアジャイルにフィットするのか](https://note.com/mine_unilabo/n/n92b270e91110) | 2026-05-24 | 553 | 7 | PR 作成済み（#991） |
-| [2025年版：プロダクト開発におけるエンジニアリングマネージャー（EM）とテックリード（TL）とPMの役割分担と進化](https://note.com/mine_unilabo/n/na6a620da56d5) | 2025-09-22 | 513 | 12 | PR 作成済み（#989） |
+| [2025年版：プロダクト開発におけるエンジニアリングマネージャー（EM）とテックリード（TL）とPMの役割分担と進化](https://note.com/mine_unilabo/n/na6a620da56d5) | 2025-09-22 | 513 | 12 | マージ済み（#989） |
 | [Vibe Kanbanで広がるAI開発の新しい形─複数エージェントを“チーム”化するチャレンジと模](https://note.com/mine_unilabo/n/ne58e3ccad1da) | 2025-08-29 | 477 | 6 | PR 作成済み（#988） |
 | [ユニラボで働くエンジニアの魅力とは？：テックコンパスの活用とその効果](https://note.com/mine_unilabo/n/n3ed52241292c) | 2023-06-30 | 424 | 20 | 対象外（会社の題材） |
 | [プロダクト開発にScrumを導入した話 -導入前夜・準備したこと-](https://note.com/mine_unilabo/n/n288c21a89778) | 2021-12-13 | 341 | 26 | PR 作成済み（#992） |
@@ -58,7 +58,7 @@
 | [ChatGPTに賛成ばかりされて困っている人へ：AI 3種を役割分担で議論させる方法](https://note.com/mine_unilabo/n/n5fe2e97b9600) | 2026-05-15 | 131 | 1 | PR 作成済み（#999） |
 | [SEO初心者の最短ルート｜Google公式×AI実務](https://note.com/mine_unilabo/n/nd88a1abc889c) | 2025-08-18 | 128 | 10 | PR 作成済み（#996） |
 | [AIにコードを書かせる前に、人間が承認する場所を作る](https://note.com/mine_unilabo/n/n02992266d622) | 2026-05-06 | 114 | 4 | PR 作成済み（#997） |
-| [失敗をモデルのせいにしない。AI駆動開発を「Model + Harness」で考える](https://note.com/mine_unilabo/n/nd6a5d83d1488) | 2026-08-29 | 109 | 11 | PR 作成済み（#998） |
+| [失敗をモデルのせいにしない。AI駆動開発を「Model + Harness」で考える](https://note.com/mine_unilabo/n/nd6a5d83d1488) | 2026-08-29 | 109 | 11 | マージ済み（#998） |
 | [個人のAI開発ナレッジを、チームの改善ループへ育てるまで](https://note.com/mine_unilabo/n/nf85851cf7f48) | 2026-10-14 | 104 | 20 | 対象外（会社公式） |
 | [AI時代の開発で短くすべきは、Time to CodeではなくTime to Learning](https://note.com/mine_unilabo/n/n5070e13232ce) | 2026-08-20 | 89 | 6 | PR 作成済み（#1002） |
 | [AI時代の開発生産性をどう測るか？](https://note.com/mine_unilabo/n/n7c72bc3491a2) | 2026-04-30 | 77 | 1 | PR 作成済み（#1004） |
