@@ -3,7 +3,7 @@
 個人の note 記事を 1 本ずつ改善するための台帳です。累計 PV の多い順に進めます。
 
 - PV とスキ: 2026-11-07 に note のダッシュボードで取得（累計）
-- 全 40 本: PR 作成済み 22、作業中 0、要確認 2、対象外 8、未着手 8
+- 全 40 本: PR 作成済み 26、作業中 0、要確認 2、対象外 8、未着手 4
 - 手順と比較結果: [reviews/note/published/n23ec87da4cdb.design-skill-pilot.md](published/n23ec87da4cdb.design-skill-pilot.md)
 
 ## 状態の意味
@@ -60,10 +60,10 @@
 | [AIにコードを書かせる前に、人間が承認する場所を作る](https://note.com/mine_unilabo/n/n02992266d622) | 2026-05-06 | 114 | 4 | PR 作成済み（#997） |
 | [失敗をモデルのせいにしない。AI駆動開発を「Model + Harness」で考える](https://note.com/mine_unilabo/n/nd6a5d83d1488) | 2026-08-29 | 109 | 11 | PR 作成済み（#998） |
 | [個人のAI開発ナレッジを、チームの改善ループへ育てるまで](https://note.com/mine_unilabo/n/nf85851cf7f48) | 2026-10-14 | 104 | 20 | 対象外（会社公式） |
-| [AI時代の開発で短くすべきは、Time to CodeではなくTime to Learning](https://note.com/mine_unilabo/n/n5070e13232ce) | 2026-08-20 | 89 | 6 | 未着手 |
-| [AI時代の開発生産性をどう測るか？](https://note.com/mine_unilabo/n/n7c72bc3491a2) | 2026-04-30 | 77 | 1 | 未着手 |
-| [AIがコードを書くほど、エンジニアリングは「何を作るか」に戻っていく](https://note.com/mine_unilabo/n/n103182c44979) | 2026-07-31 | 67 | 3 | 未着手 |
-| [コードを1行も書かずに、子供と見たクラゲ水槽をAIと作った話](https://note.com/mine_unilabo/n/n27a5594f65a4) | 2026-06-18 | 62 | 9 | 未着手 |
+| [AI時代の開発で短くすべきは、Time to CodeではなくTime to Learning](https://note.com/mine_unilabo/n/n5070e13232ce) | 2026-08-20 | 89 | 6 | PR 作成済み（#1002） |
+| [AI時代の開発生産性をどう測るか？](https://note.com/mine_unilabo/n/n7c72bc3491a2) | 2026-04-30 | 77 | 1 | PR 作成済み（#1004） |
+| [AIがコードを書くほど、エンジニアリングは「何を作るか」に戻っていく](https://note.com/mine_unilabo/n/n103182c44979) | 2026-07-31 | 67 | 3 | PR 作成済み（#1003） |
+| [コードを1行も書かずに、子供と見たクラゲ水槽をAIと作った話](https://note.com/mine_unilabo/n/n27a5594f65a4) | 2026-06-18 | 62 | 9 | PR 作成済み（#1001） |
 | [いま本当に重要なAIエージェント論は、モデル性能より運用設計だと私は考えている](https://note.com/mine_unilabo/n/n050f094c021d) | 2026-05-19 | 61 | 2 | 未着手 |
 | [AIアプリはLLMを呼ぶだけでは作れない：本番構成の全体像を整理する](https://note.com/mine_unilabo/n/n39e50842b7e9) | 2026-05-24 | 55 | 2 | 未着手 |
 | [（ミラーなし）](https://note.com/mine_unilabo/n/n2e2d723d5c22) | - | 54 | 7 | 要確認（ミラーなし） |
