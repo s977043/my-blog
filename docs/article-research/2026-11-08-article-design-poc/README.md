@@ -4,7 +4,7 @@ LT 制作のスキル（talk-story、talk-design）を記事の構成設計に�
 
 ## 判定
 
-**UNVERIFIED（PARTIAL 寄り）**
+**NO-GO 寄りの UNVERIFIED**（初回は PARTIAL 寄りとしたが、再採点で改めた。末尾の「再採点」を参照）
 
 - 両記事とも B（新方式）の構成案が A（現行方式）を 1 点上回った
 - ただし盲検が崩れ、読者理解タスクでも差は出なかったため、効果を確かめたとは言えない
@@ -78,3 +78,21 @@ N01〜N06 の 6 件すべてで、Claude・Codex（期待判定を伏せて依�
 - `reader.md`: 読者理解タスク
 - `failfirst.md` `failfirst-proposals.md` `failfirst-codex.md`: 失敗注入
 - `brief.md` `stage2-brief.md`: 依頼内容
+
+## 再採点（2026-11-08）
+
+盲検をやり直した。各案の 1 行目と方式名・スキル名を伏せ字にし、採点の対象を構成案・Keep/Move/Cut・著者判断に限った。B 案の設計欄と、各案の自己申告欄（読んだファイル）は残ったため、採点者は 2 人とも作り方を推測できた。完全な盲検ではない。G4 は機密・公開ポリシー違反に限ると定義した。
+
+| 採点 | N（A／B） | Z（A／B） |
+| --- | --- | --- |
+| 初回（Claude、方式名が見えた） | 9／10 | 10／11 |
+| 再採点（Claude） | 10／9 | 9／11 |
+| 再採点（Codex） | 11／9 | 12／11 |
+
+- 4 案ともハードゲートは全 PASS
+- N は再採点の 2 回とも A が上。Z は採点者で割れた
+- B を足すと一貫して良くなるとは言えない
+
+**判定を NO-GO 寄りの UNVERIFIED に改める。** 既存スキル（tech-blog-writing）への統合は見送る。
+
+ファイル: `rescore-claude.md`、`rescore-codex.md`、`stage3-brief.md`
