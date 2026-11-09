@@ -105,7 +105,7 @@
     "test:book-smoke-scope": "node scripts/book-smoke-scope.js --self-test"
   },
   "dependencies": {
-    "zenn-cli": "^0.5.11"
+    "zenn-cli": "^0.5.14"
   },
   "devDependencies": {
     "@qiita/qiita-cli": "^1.12.0",
