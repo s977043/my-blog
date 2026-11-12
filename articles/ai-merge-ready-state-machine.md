@@ -481,3 +481,4 @@ AIエージェントの自律性を高める設計では、「何をできるよ
 - [アジャイルでAI駆動開発をどう回すか：PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow)
 - [PlanGate v3からv8.6までの設計変遷](https://zenn.dev/minewo/articles/plangate-design-evolution-v3-to-v8)
 - [AIコーディングを「比較で改善」できる土台にする：PlanGate v8.6.0のMetrics v1とGovernance](https://zenn.dev/minewo/articles/plangate-v86-hook-enforcement)
+- [DESIGN.md 導入ガイド: AI実装のための入口・契約・検証をどう整えるか](/articles/design-md-guide-and-adoption-log)
