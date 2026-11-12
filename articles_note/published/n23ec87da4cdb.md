@@ -77,7 +77,7 @@
 
 ### プロジェクトマネージャーとプロダクトマネージャーの違い
 
-![](../assets/n23ec87da4cdb-pjm-pdm-fig1.png)
+![](../assets/n23ec87da4cdb_1794272515-0V1C3mFD4h8s6n7vjQEbXkIA.png)
 
 PjMは実行を、PdMは結果を担保する（成果・業務・視点の比較）
 
@@ -90,7 +90,7 @@ PjMは実行を、PdMは結果を担保する（成果・業務・視点の比�
 - **プロジェクトマネージャー**：**いつまでに作るか、どう作るか**に責任を持つ
 - **プロダクトマネージャー**：**何を作るか、なぜ作るか**に責任を持つ
 
-![](../assets/n23ec87da4cdb-pjm-pdm-fig2.png)
+![](../assets/n23ec87da4cdb_1794272596-peT6dcgFlr24Q3aNL8hVfGA7.png)
 
 PjMはWhenとHow、PdMはWhatとWhyを担う
 
