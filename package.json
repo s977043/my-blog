@@ -17,6 +17,7 @@
     "check:note-ref": "node scripts/check-note-reference.js",
     "check:note-images": "node scripts/check-note-images.js",
     "check:note-tables": "node scripts/check-note-tables.js",
+    "check:note-live": "node scripts/check-note-live.js",
     "check:qiita-publish-hygiene": "node scripts/check-qiita-publish-hygiene.js",
     "check:doc-freshness": "node scripts/check-doc-freshness.js",
     "check:zenn-pace": "node scripts/check-zenn-publish-pace.js",
