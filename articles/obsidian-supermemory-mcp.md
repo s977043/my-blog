@@ -61,13 +61,9 @@ published: true
 | **ChatGPT Memory**  | ◎                     | ChatGPT 専用の記憶                           | ChatGPT 中心なら自然に利用可能             | 他クライアントと共有不可           |
 | **Mem.ai**          | ○                     | メモアプリ＋ AI                              | 個人メモ重視、UX に優れる                  | 開発ツール連携は弱め               |
 
-### 関連記事
+### Serena と Cipher の違い
 
-Serena と Cipher の詳細比較は、別記事で整理しています。
-
-👉 [2分で決まる：Serena vs Cipher　思想とアーキテクチャ](https://zenn.dev/minewo/articles/serena-vs-cipher-comparison)
-
-要点:
+詳細比較は末尾の関連記事にまとめています。要点:
 
 - **Serena** は「Claude Code に特化した効率化」
 - **Cipher** は「OSS MCP サーバとしての永続メモリ」
@@ -101,6 +97,10 @@ Serena と Cipher の詳細比較は、別記事で整理しています。
 
 ## 導入のステップ
 
+:::message
+Step2 のコマンドは公開時（2025-08）の手順です。Step2 の補足と Step2.5 は 2026-11 時点の[公式ドキュメント](https://supermemory.ai/docs/supermemory-mcp/introduction)で確かめた内容です。最新の挙動は公式で確認してください。
+:::
+
 ### Step1: Obsidian を用意
 
 - Vault を作成し、仕様・テスト設計・実装ノートを保存
@@ -111,6 +111,29 @@ Serena と Cipher の詳細比較は、別記事で整理しています。
 npx install-mcp https://mcp.supermemory.ai/xxxx/sse --client claude
 npx install-mcp https://mcp.supermemory.ai/xxxx/sse --client cursor
 ```
+
+`xxxx` は公開時にユーザーごとに発行されていた URL の一部です。2026-11 時点の公式ドキュメントでは、サーバ URL は `https://mcp.supermemory.ai/mcp` の 1 本で、`xxxx` の部分はありません。クライアントに登録するとブラウザが開き、サインインして参照させるスペースを選びます（OAuth なので API キーは不要）。Cursor の場合は `~/.cursor/mcp.json` に次を書きます。
+
+```json
+{
+  "mcpServers": {
+    "supermemory": {
+      "url": "https://mcp.supermemory.ai/mcp"
+    }
+  }
+}
+```
+
+ほかのクライアントの手順は[公式のセットアップガイド](https://supermemory.ai/docs/supermemory-mcp/setup)を参照してください。
+
+### Step2.5: Obsidian のノートを Supermemory に入れる
+
+公式ドキュメントにある取り込み方は次の 2 つです。
+
+- `upload-file` ウィジェットでファイルを 1 つずつアップロードする。Markdown に対応しているので、Vault 内の `.md` ファイルをそのまま選べます
+- AI クライアントに本文を渡し、`add_memory` で保存させる（保存前に内容を確認したいときは `guided-save` ウィジェット）
+
+Obsidian と直接同期する機能は、公式ドキュメントでは確認できませんでした。
 
 ### Step3: Claude / Cursor で利用
 
@@ -135,7 +158,6 @@ supermemory に保存した設計ノートを呼び出して
 - [Supermemory MCP 公式](https://mcp.supermemory.ai/)
 - [Cipher GitHub](https://github.com/byterover/cipher)
 - [Serena 解説記事](https://zenn.dev/aki_think/articles/c4f5b2a75ff4d4)
-- [Serena vs Cipher 比較記事](https://zenn.dev/minewo/articles/serena-vs-cipher-comparison)
 - [Obsidian](https://obsidian.md/)
 
 ## 自社メディア
@@ -147,7 +169,7 @@ supermemory に保存した設計ノートを呼び出して
 ## 関連記事
 
 :::message
-- [2分で決まる：Serena vs Cipher　思想とアーキテクチャ——CLIオンデマンドか常駐メモリか](https://zenn.dev/minewo/articles/serena-vs-cipher-comparison) - AIエージェント開発における文脈管理と常駐メモリの違いを比較した記事です。
+- [2分で決まる：Serena vs Cipher　思想とアーキテクチャ——CLIオンデマンドか常駐メモリか](/articles/serena-vs-cipher-comparison) - AIエージェント開発における文脈管理と常駐メモリの違いを比較した記事です。
 - [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow) - 仕様駆動開発と承認フローをAI実行に接続する運用設計です。
 - [仕様を揃えて止めない：マルチエージェント開発の3原則（SDD・TDD・ノンブロッキング）](https://zenn.dev/minewo/articles/sdd-tdd-nonblocking-agent) - マルチエージェント開発で仕様の揺れを減らす基本原則です。
 :::
