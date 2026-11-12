@@ -4,7 +4,8 @@
 // 使い方:
 //   node scripts/check-note-live.js <guid> --absent <文字列>... --present <文字列>...
 //
-// https://note.com/api/v3/notes/<guid> の data.body を取得し、
+// https://note.com/api/v3/notes/<guid> の data.body を取得し、タグを除いて実体参照を戻した
+// 読者に見える文字列で、
 // --absent の文字列が 0 件、--present の文字列が 1 件以上なら exit 0。
 // どれかを満たさない・取得できない場合は各条件の結果を出して exit 1。
 //
@@ -56,6 +57,22 @@ function fetchBody(guid) {
   });
 }
 
+// 読者に見える文字列で照合する。HTML のままだと、実体参照（&gt; など）やタグをまたぐ文言が
+// 見かけ上 0 件になり、消えていない旧文言を「消えた」と判定してしまう。
+function visibleText(html) {
+  const named = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
+  return html
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (m, e) => {
+      if (e[0] === '#') {
+        const cp = e[1].toLowerCase() === 'x' ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10);
+        return Number.isFinite(cp) ? String.fromCodePoint(cp) : m;
+      }
+      return named[e.toLowerCase()] ?? m;
+    });
+}
+
 function count(haystack, needle) {
   return haystack.split(needle).length - 1;
 }
@@ -79,7 +96,7 @@ async function main() {
 
   let body;
   try {
-    body = await fetchBody(args.guid);
+    body = visibleText(await fetchBody(args.guid));
   } catch (e) {
     console.error(`[check-note-live] ${args.guid} の取得に失敗: ${e.message}`);
     process.exit(1);
