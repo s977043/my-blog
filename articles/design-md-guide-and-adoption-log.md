@@ -413,6 +413,7 @@ Growth Lab では、`DESIGN.md` を軽量な入口に絞り、詳細を関連ド
 
 - `DESIGN.md` と同じ「入口＋正本」の考え方をリポジトリ全体へ広げる: [AIが迷わないリポジトリ設計：長いプロンプトより先に整える4つの置き場所](/articles/ai-legible-repository-design)
 - AI 向けの入口を複数エージェントで共有する: [Codex と Claude Code を同じリポジトリで回す — AGENTS.md / CLAUDE.md の 2 層規約](/articles/dual-agent-repo-codex-and-claude-code)
+- 書いたルールに頼らず、仕組みで境界を守る: [AIエージェントのPR自動化はどこで止めるか。マージを人間に残すGitHub運用](/articles/ai-merge-ready-state-machine)
 
 ## 関連ページ
 
