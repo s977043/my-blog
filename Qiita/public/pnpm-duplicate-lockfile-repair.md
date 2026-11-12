@@ -1,22 +1,24 @@
 ---
-title: "pnpmのlockfile重複を8行で修復した事例と、CIで残った失敗"
+title: pnpmのlockfile重複を8行で修復した事例と、CIで残った失敗
 tags:
   - pnpm
   - CI
-  - Expo
-private: true
-updated_at: null
-id: null
+  - expo
+private: false
+updated_at: '2026-11-05T18:03:28+09:00'
+id: 43e56cbb1bc22e0ff533
 organization_url_name: null
 slide: false
-ignorePublish: true
+ignorePublish: false
+posting_campaign_uuid: null
+agreed_posting_campaign_term: false
 ---
 
 `pnpm install --frozen-lockfile` が止まると、型チェックやテストの結果までたどり着けません。lockfileを修復して導入が通ったあとも、別の失敗が残ることがあります。
 
 デジタルおみくじの[公開PR #466](https://github.com/s977043/digital-omikuji/pull/466)では、`acorn@8.17.0` の重複を取り除く8行の削除で、後続の検証を実行できる状態になりました。ただし、CI全体は成功していません。小さな修復で何が確かめられ、どこからが別の課題なのかを整理します。
 
-この記事は2026-11-03時点の公開差分とCIログを読んだ記録です。修復前は `a93721414c12643280e65359b101b7fa1e750c85`、修復案は `03cbb89b00051c052058ff07e85bc800a47ab48f` を対象にしています。確認時点でPRはDraft・未マージです。
+この記事は2026-11-03時点の公開差分とCIログを読んだ記録です。修復前は `a93721414c12643280e65359b101b7fa1e750c85`、修復案は `03cbb89b00051c052058ff07e85bc800a47ab48f` を対象にしています。確認時点でPRはDraft・未マージです。その後、このPRはdevelopを取り込んだうえでマージされました。マージ時点のCI結果は、この記事の対象外です。
 
 ## 同じパッケージ名でも、見る場所が違う
 
