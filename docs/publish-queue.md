@@ -76,6 +76,7 @@ Zenn の公開は2段階である。`main` へ `published: true` をマージし
 
 ## Done
 
+- 2026-11-05 qiita pnpm-duplicate-lockfile-repair https://qiita.com/s977043/items/43e56cbb1bc22e0ff533 （queue 外。**HTTP 200 を確認済み**〔id 43e56cbb1bc22e0ff533〕。一次情報は digital-omikuji #466〔記事は 03cbb89 時点に固定、公開前に同 PR が develop 取り込み後マージ済みと判明したため一文追記〕。草稿 #957 → `npm run publish:qiita` で公開。タグ `Expo` が `expo` に正規化。公開後の drift 0）
 - 2026-10-29 zenn riskmap-first-match-shadow https://zenn.dev/minewo/articles/riskmap-first-match-shadow （queue 外。**HTTP 200・og:title を確認済み**〔Zenn API の一覧には記録時点で未出現〕。一次情報は river-review #2784。前回公開〔2026-10-20 23:41〕から約 200 時間空けたため rate-limit に触れず。公開チェーン: 初稿 #917 → Antigravity リライト #919 → flip #920 main 段 → タイトル変更 #923〔Codex・Antigravity のレビューで「検出方法」を「診断ロジック」へ〕→ sync #924 release/zenn。旧 sync #922 はタイトル変更のため close。既存 3 記事からの張り返しは #921 → #925〔release/zenn update〕）
 - 2026-10-27 qiita codex-skill-budget-overflow https://qiita.com/s977043/items/a608df866f86dcfb3874 （queue 外。**HTTP 200 を確認済み**〔id a608df866f86dcfb3874〕。一次情報は river-review #2782。Seed #900 → Plan 反映 #901 → 初稿・レビュー 3 回 #902 → `npm run publish:qiita` で公開。Qiita 側でタグ `Codex` が `codex` に正規化された。公開後の drift は本記事 0 件〔既存の sdd-tdd-nonblocking-agent の drift 1 件は別件〕）
 - 2026-10-21 note 個人のAI開発ナレッジを、チームの改善ループへ育てるまで https://note.com/mine_unilabo/n/nf85851cf7f48 （queue #12、会社公式 PRONI。**HTTP 200・og:title を確認済み**。広報チェック OK〔2026-10-20〕・エンジニア 2 名のプレビュー再確認を経て公開。マガジン追加済み。最終反映: #871〔広報コメント 2 件・図 3 枚〕→ #872〔公開前レビュー 2 点〕。note 下書きはエディタで直接編集し、2026-10-21 の公式エクスポートで published/ へ取り込み）
