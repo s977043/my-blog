@@ -55,7 +55,7 @@
 | 原稿 | 見出しのみ | ○ | △ | △ | Z1: H3「Deterministic：証明できるならAIに聞かない」（型）／「実例：temporary codeの撤去条件をHeuristicへ切り出す」／「Agentic Review：意味理解が必要になってからLLMを使う」（Plan の意味）／「Human Judgment：責任までAIへ渡さない」（不可逆な承認）。Z2:「検証結果：どこまで実装済みか」は答えの場所を示すが、答えはない。Z3:「実装3：Deterministic CommandにもTrust Boundaryを置く」は必要だとは言うが、理由がない |
 | 原稿 | 導入＋見出し＋図 | ○ | ○ | △ | Z1: TL;DR の判定フロー（機械的に証明→Det、意味→Agentic、不可逆性→Human）と例文（依存方向・Plan と Diff・課金）。Z2: TL;DR「自動で Lint Rule を生成・昇格するパイプラインまで完成しているわけではありません」。Z3: :::message は「Deterministic Gate を安全に実行する Trust Boundary」と書くだけで、PR 側が実行条件を書き換えうるという理由は本文まで出ない |
 | 原稿 | 全文 | ○ | ○ | ○ | Z1: 121・135・147・165 行付近。Z2: 434 行・表 512 行。Z3: 274・294・312 行 |
-| X 案 | 見出しのみ | △ | △ | △ | Z1: 案の H3 は層名だけ（副題が書かれていない）。temporary→Heuristic は 9.1「実例：temporary code を Heuristic へ」で分かるが、型・Plan 整合・不可逆承認をどの層へ置くかは層名だけでは判断できない。Z2・Z3 は原稿と同じ理由 |
+| X 案 | 見出しのみ | △ | △ | △ | Z1: 案の H3 は層名だけ（副題が書かれていない）。temporary→Heuristic は 9.1「実例：temporary code を Heuristic へ」で分かるが、型・Plan 整合・不可逆承認をどの層へ置くかは層名だけでは判断できない。Z2・Z3 は原稿と同じ理由。注: A-Z.md では Deterministic・Agentic Review・Human Judgment の見出しは NO_CHANGE なので、副題の欠落は材料の問題で、原稿の副題を復元すれば Z1 は ○ になりうる（未再採点） |
 | X 案 | 導入＋見出し＋図 | ○ | ○ | △ | TL;DR が NO_CHANGE なので原稿と同じ。temporary は 9.1 の見出しで補える |
 | Y 案 | 見出しのみ | ○ | △ | △ | 副題付きの H3 が案に全文あり、原稿と同じ判断ができる。4 層を制約より前に置いても、Z2・Z3 の答えは見出しに出てこない |
 | Y 案 | 導入＋見出し＋図 | ○ | ○ | △ | TL;DR は NO_CHANGE。Z3 は原稿と同じ理由で保留 |
