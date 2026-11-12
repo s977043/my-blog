@@ -557,3 +557,7 @@ OpenSpecから持ち帰りたいのは、Current WhatとChanged Whatをmain spec
 - [PlanGate review contract](https://github.com/s977043/PlanGate/blob/4995ad626825492914c6152c92f65849584dff60/docs/ai/contracts/review.md)
 - [PlanGate verify contract](https://github.com/s977043/PlanGate/blob/4995ad626825492914c6152c92f65849584dff60/docs/ai/contracts/verify.md)
 - [PlanGate C-3' artifact contract](https://github.com/s977043/PlanGate/blob/4995ad626825492914c6152c92f65849584dff60/docs/workflows/ai-loop/c3-prime-contract.md)
+
+## 関連記事
+
+- [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](/articles/plangate-ai-coding-workflow) - 本記事で比べた PlanGate の、計画と承認を先に置く開発フローの記事です。
