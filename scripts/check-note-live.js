@@ -63,6 +63,7 @@ function visibleText(html) {
   const named = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
   return html
     .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/?(p|h[1-6]|li|ul|ol|blockquote|pre|figure|figcaption|div|table|tr|td|th)\b[^>]*>/gi, '\n')
     .replace(/<[^>]+>/g, '')
     .replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (m, e) => {
       if (e[0] === '#') {
