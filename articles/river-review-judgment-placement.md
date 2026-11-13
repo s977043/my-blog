@@ -588,6 +588,10 @@ River Reviewで取り組んでいるJudgment Placementは、その問いをも�
 - [Phase 1b fixture / evaluation設計](https://github.com/s977043/river-review/blob/main/docs/development/1978-phase1b-fixtures.md)
 - [「プロンプトを磨けば勝てる」をやめた：AIレビューを運用に乗せる“Agent Skills”設計 - note](https://note.com/mine_unilabo/n/nd21c3f1df22e)
 
+## 関連記事
+
+- [品質ゲートは効かなかったのではなく、「呼ばれたか」を測れていなかった](/articles/ai-review-gate-not-called) - 置いたレビューゲートが実際に呼ばれたかを、実行証跡から測り直した記事です。
+
 ---
 
 普段は X（[@mine_take](https://x.com/mine_take)）で、AIコーディングをチーム開発に乗せる運用設計について発信している。
