@@ -266,7 +266,9 @@ A. 1タスクあたりの初動は確かに遅くなります。ただし「ス�
 - [いつ会話を捨てて、新しいセッションで始めるか：区切りで切り、正本から再開する](/articles/plangate-fresh-context-restart) - 長い作業でいつ会話を切り、PlanGate の正本からどう再開するかの記事です。
 - [PlanGate v3 から v8.6 までの設計変遷：AI コーディング統制ハーネスはどう育ったか](https://zenn.dev/minewo/articles/plangate-design-evolution-v3-to-v8) - この記事の考え方がバージョンを重ねてどう育ったかの設計変遷です。
 - [AIコーディングを「比較で改善」できる土台にする：PlanGate v8.6.0のMetrics v1とGovernance](https://zenn.dev/minewo/articles/plangate-v86-hook-enforcement) - 最新版で入れた計測と統制の話です。
+- [AI駆動開発で「今の仕様」をどう残すか。OpenSpecのDelta Specから考えた](/articles/openspec-plangate-living-spec) - 計画づくりの後に、今の仕様と今回の変更をどう分けて残すかを OpenSpec から考えた記事です。
 - [仕様を揃えて止めない：マルチエージェント開発の3原則（SDD・TDD・ノンブロッキング）](https://zenn.dev/minewo/articles/sdd-tdd-nonblocking-agent) - 仕様駆動開発の考え方をAI運用の制御点に落とし込む記事です。
 - [Next.js App Router時代のAI-driven TDD：実践的な最小ループと具体的な実装パターン](https://zenn.dev/minewo/articles/ai-driven-tdd-nextjs) - 実装前にテストを固めるAI-driven TDDの具体例です。
 - [GitHubにAI開発チームメイトを迎えよう — Gemini CLIでレビュー時間を1/3に短縮する方法](https://zenn.dev/minewo/articles/gemini-cli-github-actions-zenn-article) - レビューとIssue対応をAIに任せる運用例です。
+- [AI時代に、なぜアジャイルの価値はさらに高まるのか](/articles/ai-agile-value-increases) - PlanGate の前提にある、AI 時代でも短いフィードバックループが要る理由を考えた記事です。
 :::

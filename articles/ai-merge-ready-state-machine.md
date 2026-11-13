@@ -6,13 +6,13 @@ topics: ["ai駆動開発", "aiagent", "github", "生成ai", "codereview"]
 published: true
 ---
 
-**AIエージェントにPRを任せても、マージまでは任せない。その境界は、プロンプトではなく状態機械で守る。** これがこの記事の主張です。
+**AIエージェントにPRを任せても、マージまでは任せない。その境界は、プロンプトではなく状態機械で守る。** これがこの記事の主張です。ただし、状態機械で守れるのはワークフロー上の**責務境界**までで、強制的な**権限境界**は、認証情報の権限やrulesetとして別に設計が要ります。
 
 Claude Code / Codex CLIのようなAIコーディングエージェントに、GitHubのPR対応を任せる場面が増えています。CIが失敗したら原因を調べて修正する。レビューで指摘されたらコードを直す。コンフリクトが起きたら解消する。ここまでは、AIコーディングエージェントへ任せられる範囲が広がっています。
 
 では、すべてのチェックを通過した後、そのPRをマージするところまでAIに任せるべきでしょうか。
 
-PlanGateでは、次の境界を置きました。
+PlanGateは、筆者が開発しているAIコーディングエージェント向けの軽量ガバナンス基盤（OSS）です。PlanGateでは、次の境界を置きました。
 
 > **PRをマージ可能な状態まで収束させるのは自動化する。  
 > ただし、マージするかを判断し、実際にマージするのは人間に残す。**
@@ -32,8 +32,6 @@ PlanGateでは、AIが制御する状態機械を `MERGE_READY` で停止させ�
 - 「マージ可能」と「マージする」を分離する理由
 - `MERGE_READY` で止まる状態機械、fail-closed、allowlist、intent／receiptの設計
 - 限定条件で自動マージする運用と比べたときの使い分け
-
-PlanGateは、筆者が開発しているAIコーディングエージェント向けの軽量ガバナンス基盤（OSS）です。
 :::
 
 ## 「マージ可能」と「マージする」は別の判断である
@@ -78,7 +76,7 @@ CIとレビューを通す
 
 ## AIが動かす状態機械にMERGEDへの遷移を置かない
 
-PlanGate全体では、Deliveryの状態として `PR_CREATED`、`MERGE_READY`、`MERGED` を扱います。
+PlanGate全体では、PRの作成からマージまでを扱うDelivery工程の状態として `PR_CREATED`、`MERGE_READY`、`MERGED` を扱います。
 
 ただし、AIが担当するのは `PR_CREATED` から `MERGE_READY` までです。その区間を制御する内部状態機械には、`MERGED` への遷移を置いていません。
 
@@ -225,6 +223,7 @@ PlanGateでは、不確実な入力を優先的に評価し、人間へ返しま
 
 ```python
 # 疑似コード: 評価順序を示す（真偽値フラグや定数returnは実装名ではない）
+# CONFLICT・WAITING_FOR_REVIEW への分岐は省略している
 if snapshot_is_invalid:
     stop_with_error()
 
@@ -469,6 +468,7 @@ AIエージェントの自律性を高める設計では、「何をできるよ
 
 ## 実装への参照
 
+- [PlanGateリポジトリ](https://github.com/s977043/PlanGate)
 - [Delivery状態機械](https://github.com/s977043/PlanGate/blob/main/docs/workflows/ai-loop/delivery-state-machine.md)
 - [純粋な状態判定器 delivery.py](https://github.com/s977043/PlanGate/blob/main/scripts/ai-loop/delivery.py)
 - [GitHub CLI実行境界 gh_exec.py](https://github.com/s977043/PlanGate/blob/main/scripts/ai-loop/gh_exec.py)
@@ -481,3 +481,4 @@ AIエージェントの自律性を高める設計では、「何をできるよ
 - [アジャイルでAI駆動開発をどう回すか：PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow)
 - [PlanGate v3からv8.6までの設計変遷](https://zenn.dev/minewo/articles/plangate-design-evolution-v3-to-v8)
 - [AIコーディングを「比較で改善」できる土台にする：PlanGate v8.6.0のMetrics v1とGovernance](https://zenn.dev/minewo/articles/plangate-v86-hook-enforcement)
+- [DESIGN.md 導入ガイド: AI実装のための入口・契約・検証をどう整えるか](/articles/design-md-guide-and-adoption-log)
