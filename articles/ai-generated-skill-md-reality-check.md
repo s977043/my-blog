@@ -164,6 +164,6 @@ AI 協働時代のドキュメントは、「書かれたこと」を自動で�
 
 ### 関連記事
 
-- `engineering-process-improvement` スキルの運用: [開発セッション直後の振り返りを改善フローにつなげる方法](/articles/engineering-process-improvement-skill)
-- AI が読みやすいリポジトリ設計: [AI が迷わないリポジトリ設計：長いプロンプトより先に整える4つの置き場所](/articles/ai-legible-repository-design)
-- SKILL.md と同様に「入口＋検証」で運用する考え方: [DESIGN.md 導入ガイド: AI実装のための入口・契約・検証をどう整えるか](/articles/design-md-guide-and-adoption-log)
+- `engineering-process-improvement` スキルの運用: [開発セッション直後の振り返りを改善フローにつなげる方法](https://zenn.dev/minewo/articles/engineering-process-improvement-skill)
+- AI が読みやすいリポジトリ設計: [AI が迷わないリポジトリ設計：長いプロンプトより先に整える4つの置き場所](https://zenn.dev/minewo/articles/ai-legible-repository-design)
+- SKILL.md と同様に「入口＋検証」で運用する考え方: [DESIGN.md 導入ガイド: AI実装のための入口・契約・検証をどう整えるか](https://zenn.dev/minewo/articles/design-md-guide-and-adoption-log)

@@ -595,7 +595,7 @@ Agentを増やすこと自体を目的にしないことも、v1では重要だ�
 
 River Reviewでは、Reviewを単一のAIの意見として扱わず、Deterministic / Heuristic / Agentic Review / Human Judgmentという評価層に分け、Finding / Evidence / Verdictを扱っています。
 
-設計の詳細は[AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計](/articles/river-review-judgment-placement)に書きました。
+設計の詳細は[AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計](https://zenn.dev/minewo/articles/river-review-judgment-placement)に書きました。
 
 自分がそこで考えていたのは、単に「レビューを増やす」ことではありませんでした。
 

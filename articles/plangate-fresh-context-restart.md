@@ -110,7 +110,7 @@ PlanGate の Context Lifecycle では、区切りを2種類に分けて定めて
 
 ## 正本はいつ古くなり、いつ更新するか
 
-ファイルを正本にして再開する考え方そのものは、[アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](/articles/plangate-ai-coding-workflow)で書きました。ここでは、その正本を「いつ更新するか」と「どの順に読むか」に絞ります。
+ファイルを正本にして再開する考え方そのものは、[アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow)で書きました。ここでは、その正本を「いつ更新するか」と「どの順に読むか」に絞ります。
 
 ### 更新するのは、フェーズが変わるたび
 
@@ -206,6 +206,6 @@ PlanGate では、この考え方を Claude Code / Codex のプラグインの v
 
 ## 関連記事
 
-- [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](/articles/plangate-ai-coding-workflow)
-- [AIエージェントの記憶を1つのObsidian Vaultに集約する — Hermes司令塔のmulti-agent設計](/articles/ai-second-brain-multi-agent-memory)
-- [AIエージェントの『進めて』問題：自走と確認の境界をmemoryで永続化する](/articles/ai-agent-autonomy-boundary-with-memory)
+- [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow)
+- [AIエージェントの記憶を1つのObsidian Vaultに集約する — Hermes司令塔のmulti-agent設計](https://zenn.dev/minewo/articles/ai-second-brain-multi-agent-memory)
+- [AIエージェントの『進めて』問題：自走と確認の境界をmemoryで永続化する](https://zenn.dev/minewo/articles/ai-agent-autonomy-boundary-with-memory)
