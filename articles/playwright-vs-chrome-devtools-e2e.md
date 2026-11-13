@@ -218,3 +218,7 @@ E2E を Playwright で網羅しにいくと、現場でこうなりがちです�
 - [Chrome DevTools MCP（公式リポジトリ）](https://github.com/ChromeDevTools/chrome-devtools-mcp)
 - [Runtime Tools Compared: Playwright MCP, Chrome DevTools MCP（Steve Kinney）](https://stevekinney.com/courses/self-testing-ai-agents/runtime-tools-compared)（コミュニティの整理／個人講座）
 - [Chrome DevTools MCP vs Playwright MCP vs CLI（Test-Lab.ai）](https://www.test-lab.ai/blog/chrome-devtools-mcp-vs-playwright-mcp-cli)（ベンダーブログ）
+
+## 関連記事
+
+- [Next.js App Router時代のAI-driven TDD：実践的な最小ループと具体的な実装パターン](/articles/ai-driven-tdd-nextjs) - Playwright の E2E を含めて、AI にテストを先に書かせる最小ループの記事です。

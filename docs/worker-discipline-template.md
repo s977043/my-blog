@@ -29,6 +29,8 @@ npm ci   # 必須
 
 **Workflow を起動している間はメインセッションの作業ディレクトリを動かさない**（動かすと相対パス解決がズレて成果物が 2 箇所に分裂する。`AGENT_LEARNINGS.md` 2026-09-05）。
 
+**委託側へ**: セッションの cwd が my-blog 以外だと、`isolation: "worktree"` の worktree はそのリポジトリ側に作られ、my-blog の worktree へ `cd` しても引き継がれない。その場合は my-blog 側に worktree を作って渡し、その worktree に限って `git -C <絶対パス>` と `npm --prefix` を許可する（`AGENT_LEARNINGS.md` 2026-11-13）。
+
 ---
 
 ## 2. 触ってはいけない / 注意が要るファイル
