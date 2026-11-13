@@ -137,6 +137,8 @@ agent が公開関連作業を進める際は、以下を満たすことを明�
 
 記事を公開し、公開 URL が 200 を返すことを確かめたら、次を行う。Zenn / Qiita / note / izanami で共通。
 
+共有する目的・SNSの入口・試行と評価の考え方は [content-channel-strategy.md の SNS distribution strategy](content-channel-strategy.md#sns-distribution-strategy) を参照する。下記の引き渡し項目・投稿承認・凍結中の定期計測の扱いは変えない。
+
 1. **リポジトリへの反映**: 公開で変わった値（Qiita の `id`・`updated_at`、note の公開状態など）を main へ PR で反映する
 2. **告知の材料をまとめる**: 次の 9 項目を書く
    - URL

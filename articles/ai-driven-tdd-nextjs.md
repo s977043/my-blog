@@ -1274,4 +1274,5 @@ A. 使えます。本記事のテンプレートはツール非依存で、「�
 - [仕様を揃えて止めない：マルチエージェント開発の3原則（SDD・TDD・ノンブロッキング）](https://zenn.dev/minewo/articles/sdd-tdd-nonblocking-agent) - AI-driven TDD を支える仕様駆動と非ブロッキング運用の土台です。
 - [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow) - テスト前に計画と受入基準を固めるAI開発フローです。
 - [GitHubにAI開発チームメイトを迎えよう — Gemini CLIでレビュー時間を1/3に短縮する方法](https://zenn.dev/minewo/articles/gemini-cli-github-actions-zenn-article) - CI、レビュー、品質チェックを自動化する実践例です。
+- [結局どっち？ E2Eで私が「Chrome DevTools 中心・Playwright 限定」に落ち着いた理由](/articles/playwright-vs-chrome-devtools-e2e) - E2E で Playwright に固定するフローと、Chrome DevTools で観測する範囲の分け方です。
 :::

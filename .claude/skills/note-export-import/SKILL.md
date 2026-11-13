@@ -50,7 +50,7 @@ articles_note/
 5. `scripts/wxr_to_md.py` で `published/` `drafts/` を再生成
    - ⚠️ 取り込みは `published/` `drafts/` を server 状態で**上書き再生成**する。これらに未コミットのローカル編集があると巻き戻る（2026-04-26 で 2 記事巻き戻り事故）。スクリプトは取り込み前に `git status --short` で dirty を検出し、未コミット変更があれば **exit 1 で停止**する。先に commit/stash するか、編集が `new/` にあるべきか確認すること。意図して上書きする場合のみ `--force`
 6. `assets/` は最新エクスポート内容で上書き（ルートの `articles_note/assets/`）
-7. 差分をレビューしてコミット
+7. 差分をレビューしてコミット。`published/` の本文差分は変換劣化なので採らず、画像の差し替え（参照先と新しい画像）だけを採る（`AGENT_LEARNINGS.md` 2026-11-13）
 
 ### B. 新規記事インポート（下書き作成）
 
@@ -78,6 +78,23 @@ articles_note/
 - **推奨: A方式** — `published/<slug>.md` を参照しつつ note上で直接編集
 - B方式 — B手順で新下書きを作り、note上で既存記事の本文に上書きコピペ
 - C方式（**非推奨**） — 旧記事削除 + 新規インポート。URL/スキ/コメントが失われる
+
+**A方式の手順**（公開記事を変える PR のマージ後）:
+
+1. note エディタ `https://editor.note.com/notes/<guid>/edit/` をログイン済みブラウザで開き、文言修正・段落の差し込み・図の差し替えを 1 操作ずつ行う。毎回 URL が `/edit/` のままか確かめる
+2. 一時保存（下書き保存）する
+3. 同じブラウザで `fetch('https://note.com/api/v3/notes/<guid>?draft=true', { credentials: 'include' })` の `data.body` を取り、旧文言 0 件・新文言ありを照合する
+4. 「公開に進む」→「更新する」は**著者が押す**。エージェントは公開設定画面で止め、自動で押さない
+5. 更新後、`npm run check:note-live -- <guid> --absent "<旧文言>" --present "<新文言>"` で公開版を照合する（exit 0 で反映済み）
+
+落とし穴:
+
+- 文言修正は TreeWalker で旧文字列のテキストノードを特定し、Range で選んで `execCommand('insertText')`。本文の一括置換は目次などの note 固有ブロックを消す
+- `focus()` はキャレットを文書先頭へ、`Meta+ArrowLeft` は折り返し行の先頭へ飛ばす。DOM Range でキャレットを置き、位置を確かめてから paste する
+- 段落の差し込みは `ClipboardEvent('paste')` に `text/html` を渡す。段落の先頭・末尾で Enter すると `<br>` になり前後とつながる
+- 図の差し替えメニューはない。新しい図を空段落に挿入してから古い図を消す。「削除」ボタンは 2 つあるので `#desktop-toolbar` 内に絞る
+- figcaption の中で Enter を押すと `<br>` が入る
+- 保存前に別 URL へ移ると beforeunload が出る。保存完了を待ってから移動する
 
 ### D. 公開後の片付け（new/ 原稿を published へ置き換える）
 

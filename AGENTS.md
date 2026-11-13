@@ -33,6 +33,8 @@ Zenn / Qiita / note / izanami の4プラットフォームで公開する記事�
 
 同じ本文を複数媒体へ転載せず、同じテーマを読者意図と媒体役割に合わせて書き分ける。
 
+企画・執筆・レビューでは、[制作方針](docs/content-channel-strategy.md#実体験を読者の判断に変える制作方針) を既存Article Planへの記入と本文の照合に使う。記事ごとの読者課題・経験と根拠・読後の持ち帰りを具体化する方法は、そちらを正本とする。
+
 記事の企画・初稿・主題レビューでは、`docs/author-thinking-compass.md` を**著者意図を理解する補助資料**として参照する。主張を調査の都合で変えないための参照であり、記事ごとのArticle Plan、本人の明示的な判断、一次情報、既存の権限・公開制約を上書きしない。
 
 新規記事は初稿作成前に対応するSeedへ `Draft Article Plan`（仮のArticle Plan）を残す。ブランチ作成は先に行ってよい。記事・レビュー成果物のPR作成時にWhy・What・一次情報・書かない範囲を確認する。通過条件と「新規記事」の範囲は `docs/article-lifecycle-contract.md` の「4. Article Planの記録・PR作成ゲート」を参照する。
