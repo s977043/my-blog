@@ -466,6 +466,32 @@
       "legacy": false
     },
     {
+      "id": "seed-20261102-sakura-agent-review-comparison",
+      "path": "article_seeds/ai-driven-development/2026-11-02-sakura-agent-review-comparison.md",
+      "title": "Zennfes Autumn 2026: さくらのAI Engineで単独レビューとVerifier付きレビューを比較する",
+      "date": "2026-11-02",
+      "status": "seed",
+      "topics": [
+        "ai",
+        "agent",
+        "evaluation"
+      ],
+      "source": "mixed",
+      "source_url": "https://www.sakura.ad.jp/corporate/information/announcements/2026/11/02/1968226190/",
+      "source_ref": "https://github.com/s977043/dynamic-agent-topology/blob/main/experiments/EXP-001-t0-vs-t1/DECISION.md",
+      "evidence_status": "verified",
+      "promoted_to": [
+        "articles/sakura-ai-engine-agent-review-comparison.md"
+      ],
+      "article_type_candidates": [
+        "evidence",
+        "tutorial"
+      ],
+      "author_input_required_count": 0,
+      "author_input_gate_open": false,
+      "legacy": false
+    },
+    {
       "id": "seed-20261106-dat-observation-gaps",
       "path": "article_seeds/ai-driven-development/2026-11-06-dat-observation-gaps.md",
       "title": "DATの運用記録を約2週間で109件貯めて分かった、記録の取り方の失敗",
@@ -658,6 +684,11 @@
       "from": "seed-20261015-swe-journey-requirements",
       "relation": "promoted_to",
       "to": "articles_note/published/n514c78b42bf1.md"
+    },
+    {
+      "from": "seed-20261102-sakura-agent-review-comparison",
+      "relation": "promoted_to",
+      "to": "articles/sakura-ai-engine-agent-review-comparison.md"
     },
     {
       "from": "seed-20261103-omikuji-lockfile-repair",
