@@ -419,6 +419,6 @@ Humanizeレビューの検出ロジックは、実際に根拠の薄い数値を
 
 - [AIエージェントを勝手に成長させない — 記録・棚卸し・機械化・剪定の自己改善ループ](https://zenn.dev/minewo/articles/ai-agent-self-improvement-loop-design)：記録したガードを棚卸し・剪定まで回す設計を知りたいとき
 - [AIにマージさせない。PRをMERGE_READYまで運ぶ状態機械の設計](https://zenn.dev/minewo/articles/ai-merge-ready-state-machine)：人間の判断を状態として残す設計を PR 運用で見たいとき
-- [AIエージェントの並列運用、PRリードタイムだけでは在庫の増加が見えない](/articles/agent-utilization-vs-flow-efficiency)：ゲートの外側で何を数えるかを別の指標で考えたいとき
-- [AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計](/articles/river-review-judgment-placement)：レビューの判断をどの層に置くかを、ゲートを置く前の設計として見たいとき
-- [AIに開発フローを採点させたら、採点基準のほうが壊れていた](/articles/loop-maturity-rubric-audit)：仕組みが「ある」ことと「動いている」ことを、開発フロー全体の採点で分けて測りたいとき
+- [AIエージェントの並列運用、PRリードタイムだけでは在庫の増加が見えない](https://zenn.dev/minewo/articles/agent-utilization-vs-flow-efficiency)：ゲートの外側で何を数えるかを別の指標で考えたいとき
+- [AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計](https://zenn.dev/minewo/articles/river-review-judgment-placement)：レビューの判断をどの層に置くかを、ゲートを置く前の設計として見たいとき
+- [AIに開発フローを採点させたら、採点基準のほうが壊れていた](https://zenn.dev/minewo/articles/loop-maturity-rubric-audit)：仕組みが「ある」ことと「動いている」ことを、開発フロー全体の採点で分けて測りたいとき

@@ -221,4 +221,4 @@ E2E を Playwright で網羅しにいくと、現場でこうなりがちです�
 
 ## 関連記事
 
-- [Next.js App Router時代のAI-driven TDD：実践的な最小ループと具体的な実装パターン](/articles/ai-driven-tdd-nextjs) - Playwright の E2E を含めて、AI にテストを先に書かせる最小ループの記事です。
+- [Next.js App Router時代のAI-driven TDD：実践的な最小ループと具体的な実装パターン](https://zenn.dev/minewo/articles/ai-driven-tdd-nextjs) - Playwright の E2E を含めて、AI にテストを先に書かせる最小ループの記事です。

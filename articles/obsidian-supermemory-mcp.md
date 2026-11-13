@@ -169,8 +169,8 @@ supermemory に保存した設計ノートを呼び出して
 ## 関連記事
 
 :::message
-- [2分で決まる：Serena vs Cipher　思想とアーキテクチャ——CLIオンデマンドか常駐メモリか](/articles/serena-vs-cipher-comparison) - AIエージェント開発における文脈管理と常駐メモリの違いを比較した記事です。
+- [2分で決まる：Serena vs Cipher　思想とアーキテクチャ——CLIオンデマンドか常駐メモリか](https://zenn.dev/minewo/articles/serena-vs-cipher-comparison) - AIエージェント開発における文脈管理と常駐メモリの違いを比較した記事です。
 - [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow) - 仕様駆動開発と承認フローをAI実行に接続する運用設計です。
 - [仕様を揃えて止めない：マルチエージェント開発の3原則（SDD・TDD・ノンブロッキング）](https://zenn.dev/minewo/articles/sdd-tdd-nonblocking-agent) - マルチエージェント開発で仕様の揺れを減らす基本原則です。
-- [AIエージェントの記憶を1つのObsidian Vaultに集約する — Hermes司令塔のmulti-agent設計](/articles/ai-second-brain-multi-agent-memory) - 外部 MCP ではなく自前の Obsidian Vault を正本にして、複数エージェントの記憶を集約する設計です。
+- [AIエージェントの記憶を1つのObsidian Vaultに集約する — Hermes司令塔のmulti-agent設計](https://zenn.dev/minewo/articles/ai-second-brain-multi-agent-memory) - 外部 MCP ではなく自前の Obsidian Vault を正本にして、複数エージェントの記憶を集約する設計です。
 :::

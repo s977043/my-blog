@@ -170,7 +170,7 @@ risk map の設定自体が存在しない場合や、変更ファイルの一�
 
 どちらの評価方式であっても、「設定ファイルにルールが記述されていること」と「そのルールが実際に評価へ到達すること」は別問題です。順序に依存する判定ルールを AI レビューや CI のリスク制御に用いる場合は、実際の変更ファイルに対して「本来はより厳格に検査すべきルールが潜んでいないか」を監視する仕組みが役立ちます。本来の判定とは独立した読み取り専用の経路で結果を提示すれば、意図しない判定の甘さに早い段階で気づけます。その結果を承認の根拠にしないことまで含めて、診断の設計です。
 
-River Review における判定責務の配置設計については、[AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計](/articles/river-review-judgment-placement) で整理しています。チームの判断を再現可能な形で保持するコア設計については [River Reviewのコア設計：AIレビューではなく、チームの判断を再現しやすい形で残す](/articles/river-review-core-design) を、実装後ガードにおける位置づけについては [AI駆動開発の2層ガード設計：PlanGateとRiver Reviewで実装前後を守る](/articles/ai-dev-guardrail-plangate-river-reviewer) をあわせてご参照ください。
+River Review における判定責務の配置設計については、[AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計](https://zenn.dev/minewo/articles/river-review-judgment-placement) で整理しています。チームの判断を再現可能な形で保持するコア設計については [River Reviewのコア設計：AIレビューではなく、チームの判断を再現しやすい形で残す](https://zenn.dev/minewo/articles/river-review-core-design) を、実装後ガードにおける位置づけについては [AI駆動開発の2層ガード設計：PlanGateとRiver Reviewで実装前後を守る](https://zenn.dev/minewo/articles/ai-dev-guardrail-plangate-river-reviewer) をあわせてご参照ください。
 
 ## 参考
 

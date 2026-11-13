@@ -560,4 +560,4 @@ OpenSpecから持ち帰りたいのは、Current WhatとChanged Whatをmain spec
 
 ## 関連記事
 
-- [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](/articles/plangate-ai-coding-workflow) - 本記事で比べた PlanGate の、計画と承認を先に置く開発フローの記事です。
+- [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow) - 本記事で比べた PlanGate の、計画と承認を先に置く開発フローの記事です。

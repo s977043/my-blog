@@ -75,7 +75,7 @@ River Reviewの出発点は、レビューの判断基準をモデルやプロ�
 
 これがReview Judgment as Codeで、River Reviewのコンセプトのページ（`pages/explanation/concept.md`）も中核の考え方としています。「判断のインフラ」（Engineering Judgment Infrastructure）という語は、同じドキュメントでは現在の機能ではなく長期の方向を指すものとされています。
 
-判断基準の中身や、判断を決定論的なチェックからAIレビュー、人の判断まで4層に置き分ける考え方は「[AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計](/articles/river-review-judgment-placement)」で詳しく書きました。この記事では、この判断基準を中心に置いたとき、その周りの責務をどう分けているかを扱います。
+判断基準の中身や、判断を決定論的なチェックからAIレビュー、人の判断まで4層に置き分ける考え方は「[AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計](https://zenn.dev/minewo/articles/river-review-judgment-placement)」で詳しく書きました。この記事では、この判断基準を中心に置いたとき、その周りの責務をどう分けているかを扱います。
 
 ## 2. 会話ではなくArtifactを境界にする
 
@@ -404,5 +404,5 @@ River Reviewのコアは、そのためのReview Judgment as Codeです。判断
 
 ## 関連記事
 
-- [AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計](/articles/river-review-judgment-placement)
-- [「書いたはずのルールが効かない」first-matchの落とし穴と、River Reviewの診断ロジック](/articles/riskmap-first-match-shadow)
+- [AIコードレビューを4層に分ける。River ReviewのJudgment Placement設計](https://zenn.dev/minewo/articles/river-review-judgment-placement)
+- [「書いたはずのルールが効かない」first-matchの落とし穴と、River Reviewの診断ロジック](https://zenn.dev/minewo/articles/riskmap-first-match-shadow)

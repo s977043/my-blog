@@ -184,4 +184,4 @@ AIはアジャイルを置き換える技術ではありません。アジャイ
 
 ## 関連記事
 
-- [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](/articles/plangate-ai-coding-workflow) - アジャイルの中で AI 駆動開発を回す具体的な型とテンプレートです。
+- [アジャイルでAI駆動開発をどう回すか: PlanGateの考え方とテンプレート](https://zenn.dev/minewo/articles/plangate-ai-coding-workflow) - アジャイルの中で AI 駆動開発を回す具体的な型とテンプレートです。

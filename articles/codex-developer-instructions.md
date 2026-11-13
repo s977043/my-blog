@@ -674,4 +674,4 @@ AGENTS.md:
 
 ## 関連記事
 
-- Claude Code の `CLAUDE.md` や Skills を Codex App へ移す手順: [Claude CodeからCodex Appへ移行する実践ガイド](/articles/claude-code-to-codex-app-migration)
+- Claude Code の `CLAUDE.md` や Skills を Codex App へ移す手順: [Claude CodeからCodex Appへ移行する実践ガイド](https://zenn.dev/minewo/articles/claude-code-to-codex-app-migration)

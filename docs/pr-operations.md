@@ -16,7 +16,7 @@ git config core.hooksPath scripts/hooks
 ### 公開前ガード（自動実行）
 
 - `npm run publish:qiita` は wrapper（`scripts/publish-qiita.sh`）経由で、publish 直前に **`check:qiita-remote-cache`** を走らせ、`.remote/` キャッシュ手編集による pre-sync 巻き戻り（AGENT_LEARNINGS 2026-06-03）を検知して publish を止める。誤検知時のバイパス: `SKIP_REMOTE_CACHE_CHECK=1 npm run publish:qiita -- <slug>`
-- `npm run check` に **`check:internal-links`**（Zenn 記事間リンク `/articles/<slug>` と画像 `/images/...` の実在検証）を統合済み
+- `npm run check` に **`check:internal-links`**（Zenn 記事間リンク `https://zenn.dev/minewo/articles/<slug>` の形式・実在検証と画像 `/images/...` の実在検証）を統合済み
 
 ## 並列セッション耐性
 
