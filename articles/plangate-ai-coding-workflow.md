@@ -270,4 +270,5 @@ A. 1タスクあたりの初動は確かに遅くなります。ただし「ス�
 - [仕様を揃えて止めない：マルチエージェント開発の3原則（SDD・TDD・ノンブロッキング）](https://zenn.dev/minewo/articles/sdd-tdd-nonblocking-agent) - 仕様駆動開発の考え方をAI運用の制御点に落とし込む記事です。
 - [Next.js App Router時代のAI-driven TDD：実践的な最小ループと具体的な実装パターン](https://zenn.dev/minewo/articles/ai-driven-tdd-nextjs) - 実装前にテストを固めるAI-driven TDDの具体例です。
 - [GitHubにAI開発チームメイトを迎えよう — Gemini CLIでレビュー時間を1/3に短縮する方法](https://zenn.dev/minewo/articles/gemini-cli-github-actions-zenn-article) - レビューとIssue対応をAIに任せる運用例です。
+- [AI時代に、なぜアジャイルの価値はさらに高まるのか](/articles/ai-agile-value-increases) - PlanGate の前提にある、AI 時代でも短いフィードバックループが要る理由を考えた記事です。
 :::
