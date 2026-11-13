@@ -50,5 +50,17 @@ A passing local existence check is not proof of live publication or HTTP reachab
 - Aggregate check initially failed for Qiita's default cache write location and a
   pre-existing stale article graph. XDG_CACHE_HOME relocated the disposable Qiita
   cache; that check passed. Graph generation changes seed counts from 26/18 to 27/19
-  on this base; this unrelated generated-file drift is not changed here.
+  on this base. The initial revision left this unrelated drift unchanged; the follow-up
+  below regenerates the required derived view to unblock CI.
 - Local runtime: Node 24.22.1. Hosted CI and publication are pending.
+
+## CI follow-up
+
+Hosted CI on `51a3e5f` passed the content harness self-tests and dependency review,
+but failed the aggregate check solely on the existing article-graph drift.
+Under `docs/article-lifecycle-contract.md`, the graph is a derived view, regenerated
+from existing seeds rather than edited manually. Running the prescribed generator
+changes only two summary counts (26/18 to 27/19), without modifying seeds, provenance,
+article claims, or publication state. A second run reports no changes; graph self-tests
+pass 13/13. This small generated-file correction is included as a CI prerequisite,
+not a new content initiative.
