@@ -93,6 +93,8 @@ Signal / Experience
 
 新規記事は初稿の生成前に、対象記事に対応するSeedの本文へ `## Draft Article Plan: <channel>/<slug>` を記録する。ブランチ作成の前提にはしない。別の台帳は作らない。1つのSeedから複数記事へ派生する場合は `Draft Article Plan` を上書きせず追加する。初稿やレビューで得た情報は同じ `Draft Article Plan` に反映する。
 
+読者の状況・記事の価値・読後の持ち帰りを既存項目へ具体化するときは、[content-channel-strategy.md の制作方針](content-channel-strategy.md#実体験を読者の判断に変える制作方針) を参照する。これは記入の指針であり、本節の必須項目・PR作成条件・Human Gateを追加または変更しない。
+
 ### PR作成ゲート
 
 記事またはレビュー成果物のPRを作る直前に、`Draft Article Plan`（承認済みなら `Approved Article Plan`）で次の記録を確認する。記事本文やレビュー成果物を、この記録の代わりにしない。
