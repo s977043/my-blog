@@ -421,8 +421,8 @@ hook の安全性には層があります。
 
 ## 関連記事
 
-- [品質ゲートは効かなかったのではなく、「呼ばれたか」を測れていなかった](/articles/ai-review-gate-not-called)
-- [AIエージェントの事故・未遂を、次のガードレールに変える — 実運用3ケースから学んだこと](/articles/proceed-driven-agent-session-log)
+- [品質ゲートは効かなかったのではなく、「呼ばれたか」を測れていなかった](https://zenn.dev/minewo/articles/ai-review-gate-not-called)
+- [AIエージェントの事故・未遂を、次のガードレールに変える — 実運用3ケースから学んだこと](https://zenn.dev/minewo/articles/proceed-driven-agent-session-log)
 
 ## 参考
 

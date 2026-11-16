@@ -4,8 +4,8 @@
 //
 // `npm run check` に組み込むため、誤検知ゼロを最優先に保守的設計とする:
 //   FATAL（exit 1）にするのは、リポジトリ内で静的に実在検証できる参照のみ:
-//     1. Zenn 記事間リンク  /articles/<slug>  および  https://zenn.dev/minewo/articles/<slug>
-//        → articles/<slug>.md の実在を検証
+//     1. Zenn 記事間リンク  https://zenn.dev/minewo/articles/<slug>（/minewo/articles/<slug> も可）
+//        → articles/<slug>.md の実在を検証。著者名なし /articles/<slug> は形式エラー
 //     2. Zenn 画像の site-absolute 参照  /images/<path>  → images/<path> の実在を検証
 //   外部URL（qiita.com / note.com / 一般サイト）・相対パス・アンカーは検証対象外（FP 回避）。
 //
@@ -52,26 +52,28 @@ function extractTargets(content) {
   return targets;
 }
 
-function checkTarget(target) {
+function checkTarget(target, root = ROOT) {
   // アンカー・クエリを除去
   const clean = target.split('#')[0].split('?')[0];
   if (!clean) return null;
 
   // 1. Zenn 記事間リンク（site-absolute / フル URL 両対応）
   let slug = null;
-  const abs = clean.match(/^\/articles\/([A-Za-z0-9_-]+)$/);
-  const full = clean.match(/^https?:\/\/zenn\.dev\/minewo\/articles\/([A-Za-z0-9_-]+)$/);
+  const invalid = clean.match(/^(?:https?:\/\/zenn\.dev)?\/articles\/([A-Za-z0-9_-]+)\/?$/);
+  if (invalid) return `Zenn 記事 URL の著者名が欠落: ${target} → https://zenn.dev/minewo/articles/${invalid[1]} を使用`;
+  const abs = clean.match(/^\/minewo\/articles\/([A-Za-z0-9_-]+)\/?$/);
+  const full = clean.match(/^https?:\/\/zenn\.dev\/minewo\/articles\/([A-Za-z0-9_-]+)\/?$/);
   if (abs) slug = abs[1];
   else if (full) slug = full[1];
   if (slug) {
-    const exists = fs.existsSync(path.join(ROOT, 'articles', `${slug}.md`));
+    const exists = fs.existsSync(path.join(root, 'articles', `${slug}.md`));
     return exists ? null : `Zenn 記事リンク切れ: ${target} → articles/${slug}.md が存在しない`;
   }
 
   // 2. Zenn 画像の site-absolute 参照
   const img = clean.match(/^\/(images\/[^)]+)$/);
   if (img) {
-    const exists = fs.existsSync(path.join(ROOT, img[1]));
+    const exists = fs.existsSync(path.join(root, img[1]));
     return exists ? null : `画像リンク切れ: ${target} → ${img[1]} が存在しない`;
   }
 
@@ -121,4 +123,5 @@ function main() {
   return 0;
 }
 
-process.exit(main());
+if (require.main === module) process.exit(main());
+module.exports = { checkTarget, extractTargets };

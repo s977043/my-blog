@@ -294,6 +294,6 @@ gh pr list --state merged --limit 200 \
 
 ## 関連記事
 
-- [AI時代に、なぜアジャイルの価値はさらに高まるのか](/articles/ai-agile-value-increases)
-- [品質ゲートは効かなかったのではなく、「呼ばれたか」を測れていなかった](/articles/ai-review-gate-not-called)
-- [AI駆動開発の成果をどう測るか: 速度ではなく手戻り率を見る](/articles/ai-driven-dev-metrics)
+- [AI時代に、なぜアジャイルの価値はさらに高まるのか](https://zenn.dev/minewo/articles/ai-agile-value-increases)
+- [品質ゲートは効かなかったのではなく、「呼ばれたか」を測れていなかった](https://zenn.dev/minewo/articles/ai-review-gate-not-called)
+- [AI駆動開発の成果をどう測るか: 速度ではなく手戻り率を見る](https://zenn.dev/minewo/articles/ai-driven-dev-metrics)

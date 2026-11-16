@@ -183,5 +183,5 @@ AI エージェントとの「進めて」問題は、**対話中の動的な判
 
 ## 関連記事
 
-- [いつ会話を捨てて、新しいセッションで始めるか：区切りで切り、正本から再開する](/articles/plangate-fresh-context-restart)
-- [AIエージェントの事故・未遂を、次のガードレールに変える — 実運用3ケースから学んだこと](/articles/proceed-driven-agent-session-log) - この境界に実際に触れた事故・未遂から、何をガードレールに変えたかの続編です。
+- [いつ会話を捨てて、新しいセッションで始めるか：区切りで切り、正本から再開する](https://zenn.dev/minewo/articles/plangate-fresh-context-restart)
+- [AIエージェントの事故・未遂を、次のガードレールに変える — 実運用3ケースから学んだこと](https://zenn.dev/minewo/articles/proceed-driven-agent-session-log) - この境界に実際に触れた事故・未遂から、何をガードレールに変えたかの続編です。
