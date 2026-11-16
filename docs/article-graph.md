@@ -6,8 +6,8 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 
 ## Summary
 
-- Seeds: 26
-- Explicit provenance contract: 18
+- Seeds: 27
+- Explicit provenance contract: 19
 - Legacy seeds: 8
 - Promotion edges: 10
 - Seeds with open author input gate: 6
