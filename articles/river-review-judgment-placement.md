@@ -181,7 +181,7 @@ Caller / Human
 GO / NO-GO / Approval / Merge
 ```
 
-この「収束までは自動化し、マージの判断そのものは人間に残す」という境界は、[AIにマージさせない。PRをMERGE_READYまで運ぶ状態機械の設計](/articles/ai-merge-ready-state-machine) で状態機械として整理しています。
+この「収束までは自動化し、マージの判断そのものは人間に残す」という境界は、[AIにマージさせない。PRをMERGE_READYまで運ぶ状態機械の設計](https://zenn.dev/minewo/articles/ai-merge-ready-state-machine) で状態機械として整理しています。
 
 ### 判断層と変更リスクは別の軸
 
@@ -383,7 +383,7 @@ Can it be deterministic?
 
 **AI Reviewerが覚えていなくても、リポジトリ側が守れる状態を増やす**改善です。
 
-どの指摘をPromotionの候補にするかは、レビュー結果の分類と記録がないと決められません。指摘の採否と理由を残し、繰り返し出るものをルールへ戻す運用は [AIコードレビューを仕組みにする: 指摘の分類・記録・改善の回し方](/articles/ai-code-review-feedback-ops) にまとめています。
+どの指摘をPromotionの候補にするかは、レビュー結果の分類と記録がないと決められません。指摘の採否と理由を残し、繰り返し出るものをルールへ戻す運用は [AIコードレビューを仕組みにする: 指摘の分類・記録・改善の回し方](https://zenn.dev/minewo/articles/ai-code-review-feedback-ops) にまとめています。
 
 ### 実例：temporary codeの撤去条件をHeuristicへ切り出す
 
@@ -462,11 +462,11 @@ Review
 
 Review Judgment as Codeが「**何を判断するか**」を資産化する考え方なら、Judgment Placementは「**その判断をどこで実行するか**」を決める原則です。
 
-この判断基準を中心に置いたとき、その周りの責務をどう分けているかは「[River Reviewのコア設計：AIレビューではなく、チームの判断を再現しやすい形で残す](/articles/river-review-core-design)」で書きました。
+この判断基準を中心に置いたとき、その周りの責務をどう分けているかは「[River Reviewのコア設計：AIレビューではなく、チームの判断を再現しやすい形で残す](https://zenn.dev/minewo/articles/river-review-core-design)」で書きました。
 
-判断をどこに置くかという同じ問いを、レビューの外側にあるAIエージェントのチーム構成へ広げた話は「[AIエージェントのチーム設計は「どこで判断するか」で決める。Claude Code / Codexのマルチエージェント構成](/articles/ai-agent-team-topology-judgment-escalation)」に書きました。
+判断をどこに置くかという同じ問いを、レビューの外側にあるAIエージェントのチーム構成へ広げた話は「[AIエージェントのチーム設計は「どこで判断するか」で決める。Claude Code / Codexのマルチエージェント構成](https://zenn.dev/minewo/articles/ai-agent-team-topology-judgment-escalation)」に書きました。
 
-人の確認へ回すかどうかをパスごとに決める risk map では、ルールの順序を誤ると厳しいルールが効かなくなります。その見つけ方は [「書いたはずのルールが効かない」first-matchの落とし穴と、River Reviewの診断ロジック](/articles/riskmap-first-match-shadow) で書きました。
+人の確認へ回すかどうかをパスごとに決める risk map では、ルールの順序を誤ると厳しいルールが効かなくなります。その見つけ方は [「書いたはずのルールが効かない」first-matchの落とし穴と、River Reviewの診断ロジック](https://zenn.dev/minewo/articles/riskmap-first-match-shadow) で書きました。
 
 ## 4層にはそれぞれ別の失敗モードがある
 
@@ -590,7 +590,7 @@ River Reviewで取り組んでいるJudgment Placementは、その問いをも�
 
 ## 関連記事
 
-- [品質ゲートは効かなかったのではなく、「呼ばれたか」を測れていなかった](/articles/ai-review-gate-not-called) - 置いたレビューゲートが実際に呼ばれたかを、実行証跡から測り直した記事です。
+- [品質ゲートは効かなかったのではなく、「呼ばれたか」を測れていなかった](https://zenn.dev/minewo/articles/ai-review-gate-not-called) - 置いたレビューゲートが実際に呼ばれたかを、実行証跡から測り直した記事です。
 
 ---
 

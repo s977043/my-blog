@@ -154,5 +154,5 @@ AI エージェント用の lessons-learned ファイルは、以下 3 点を守
 
 ### 関連記事
 
-- AI が迷わないリポジトリ設計: [AI が迷わないリポジトリ設計：長いプロンプトより先に整える 4 つの置き場所](/articles/ai-legible-repository-design)
-- 振り返りを改善 PR に落とす運用: [開発セッション直後の振り返りを改善フローにつなげる方法](/articles/engineering-process-improvement-skill)
+- AI が迷わないリポジトリ設計: [AI が迷わないリポジトリ設計：長いプロンプトより先に整える 4 つの置き場所](https://zenn.dev/minewo/articles/ai-legible-repository-design)
+- 振り返りを改善 PR に落とす運用: [開発セッション直後の振り返りを改善フローにつなげる方法](https://zenn.dev/minewo/articles/engineering-process-improvement-skill)
