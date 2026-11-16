@@ -120,4 +120,4 @@ PBI、Issue、PR のどれを単位にするかを先に決めます。
 
 ## 関連記事
 
-- [AIエージェントの並列運用、PRリードタイムだけでは在庫の増加が見えない](/articles/agent-utilization-vs-flow-efficiency)
+- [AIエージェントの並列運用、PRリードタイムだけでは在庫の増加が見えない](https://zenn.dev/minewo/articles/agent-utilization-vs-flow-efficiency)
