@@ -282,7 +282,7 @@ Boundaryを維持するコスト
 
 ## LevelとPhaseを混同しない
 
-2026年10月3日時点のmainでは、READMEにLevel 1〜5、staged-adoption-guideにPhase 0〜3、plugin-only-adoptionにLevel 0が併存しています。
+2026年11月18時点のv8.24.0では、READMEにLevel 1〜5、staged-adoption-guideにPhase 0〜3、plugin-only-adoptionにLevel 0が併存しています。
 
 本書では、
 

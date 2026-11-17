@@ -34,12 +34,13 @@ MERGE_READY
 
 PR作成後にCI / review / 修復を収束させる工程を、Deliveryの一部として扱います。
 
-現在のmainでは、ai-loop V2の最初のvertical sliceとしてowner-backed Delivery runtimeが導入されています。
+PlanGateでは、ai-loop V2の最初のvertical sliceとしてowner-backed Delivery runtimeが導入されています。
 
-2026年10月3日時点でGitHub ReleasesのLatestはv8.22.0です。mainのREADMEはv8.23.0をLatestと記載していますが、生成済みChangelogページはv8.23.0をTBDのまま残しています。そのため本章では、このV2実装を **現在のmainにある未リリース差分** として扱います。
+このV2実装はv8.23.0でリリースされました。2026年11月18時点のLatestであるv8.24.0では、Ratchetのdeltaをrepositoryの実差分から観測する形へ改められています。
 
 Sources:
-- https://github.com/s977043/PlanGate/blob/main/docs/changelog.md
+- https://github.com/s977043/PlanGate/releases/tag/v8.23.0
+- https://github.com/s977043/PlanGate/releases/tag/v8.24.0
 
 ## 1つのDelivery loopで見る
 
@@ -259,7 +260,7 @@ Sources:
 
 ## owner-backedという考え方
 
-現在mainのV2 Delivery runtimeでは、RunEvent / RunEvidence / RunStateなどのownershipを分離する方向で実装されています。
+v8.24.0のV2 Delivery runtimeでは、RunEvent / RunEvidence / RunStateなどのownershipを分離する方向で実装されています。
 
 ここで重要なのは、名前そのものではありません。
 
