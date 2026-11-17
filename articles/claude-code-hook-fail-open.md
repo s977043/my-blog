@@ -3,7 +3,7 @@ title: "危険コマンドを止める Claude Code hook を書いたのに、素
 emoji: "🕳️"
 type: "tech"
 topics: ["claudecode", "hooks", "bash", "セキュリティ", "ai駆動開発"]
-published: false
+published: true
 ---
 
 ![危険コマンドを止める hook が、素通ししていた](/images/claude-code-hook-fail-open/hero.png)
