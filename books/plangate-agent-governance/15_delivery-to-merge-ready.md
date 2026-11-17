@@ -36,7 +36,7 @@ PR作成後にCI / review / 修復を収束させる工程を、Deliveryの一�
 
 PlanGateでは、ai-loop V2の最初のvertical sliceとしてowner-backed Delivery runtimeが導入されています。
 
-このV2実装はv8.23.0でリリースされました。2026年11月18時点のLatestであるv8.24.0では、Ratchetのdeltaをrepositoryの実差分から観測する形へ改められています。
+このV2実装はv8.23.0でリリースされました。2026年11月18日時点のLatestであるv8.24.0では、Ratchetのdeltaをrepositoryの実差分から観測する形へ改められています。
 
 Sources:
 - https://github.com/s977043/PlanGate/releases/tag/v8.23.0
