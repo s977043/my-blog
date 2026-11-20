@@ -128,9 +128,9 @@ Handoff
 
 ## Intent Context Packageは「意味」と「スナップショット」を分ける
 
-現在のmainでは、Intent Context Package v1が導入されています。
+PlanGateでは、v8.23.0でIntent Context Package v1が導入されました。
 
-版の扱いは「はじめに」の情報の基準日に従い、ここで扱うv8.23系のContext機能はmain上の未リリース差分として扱います。
+版の扱いは「はじめに」の情報の基準日に従い、ここではv8.24.0の内容で説明します。
 
 ここではContext identityを二つに分けています。
 
