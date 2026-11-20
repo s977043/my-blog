@@ -39,13 +39,11 @@ Artifact、Evidence、Approval Boundary、Verification、Human Judgment、Contex
 
 ## 情報の基準日
 
-PlanGateの具体仕様は、**2026年10月3日時点の現在のmain**を再確認して記述しています。
+PlanGateの具体仕様は、**2026年11月18日時点のLatest releaseであるv8.24.0**のタグを再確認して記述しています。
 
-release状態はGitHub Releasesを優先し、同日時点のLatest releaseは **v8.22.0** です。一方、mainのREADMEにはv8.23.0をLatestとする記述があり、生成済みChangelogページではv8.23.0がTBDのまま残っています。
+release状態はGitHub Releasesを優先しています。本書で扱うContext（Intent Context Package v1 / Context Lifecycle）とai-loop V2（Delivery runtime / Ratchet）は、v8.23.0でリリースされ、v8.24.0にも含まれています。
 
-そのため本書では、v8.23系のContext / ai-loop V2機能を「現在のmainで確認できる実装」として扱い、release済みとは断定しません。
-
-姉妹作はv8.22.0時点の公開情報を基準にしています。本書はそれより新しいmainを基準にしているため、細部の記述が異なることがあります。
+姉妹作はv8.22.0時点の公開情報を基準にしています。本書はそれより新しいv8.24.0を基準にしているため、細部の記述が異なることがあります。
 
 また、段階導入についてもREADMEのLevel 1〜5とstaged-adoption-guideのPhase 0〜3が併存しているため、用途を分けて説明します。
 
