@@ -216,11 +216,11 @@ PlanGateが自身を「AIコーディングエージェントのためのガバ�
 
 PlanGateのai-loopの次の版です。Delivery runtime、HarnessManifest、Evaluation Trust Boundary、Ratchet Traceabilityなどを含みます。
 
-本書では、v8.23系のmainにある未リリース差分として扱います。
+Delivery runtimeとRatchetはv8.23.0でリリースされ、本書ではv8.24.0の内容で扱います。
 
 ## RunState [Official]
 
-ai-loopの実行中の状態を表すruntime stateです。v8.23時点の実装詳細で、最初から名前を覚える必要はありません。
+ai-loopの実行中の状態を表すruntime stateです。v8.24.0時点の実装詳細で、最初から名前を覚える必要はありません。
 
 Context Lifecycle側では、RunStateを新たに追加せず、既存の所有者を参照でつなぎます。
 
