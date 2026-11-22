@@ -8,7 +8,7 @@
 
 この記事は、プロダクト筋トレコミュニティの[アドベントカレンダー](https://qiita.com/advent-calendar/2021/product-kintore-challenge)向けの記事です。
 
-ユニラボで[アイミツCLOUD](https://imitsu-cloud.jp/)というSaaSのプロダクト開発でスクラムマスターをやっています、みね＠ユニラボ（[@mine\_take](https://twitter.com/mine_take)）です。
+ユニラボで[アイミツCLOUD](https://imitsu-cloud.jp/)というSaaSのプロダクト開発でスクラムマスターをやっています、小峯将威＠ユニラボ（[@mine\_take](https://twitter.com/mine_take)）です。
 ※本記事は個人の活動による記事であり、会社の公式見解とは異なる場合があります。
 
 ## はじめに
