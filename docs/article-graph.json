@@ -544,6 +544,28 @@
       "legacy": false
     },
     {
+      "id": "seed-20261120-ai-review-cognitive-load",
+      "path": "article_seeds/ai-driven-development/2026-11-20-ai-review-cognitive-load.md",
+      "title": "AIレビュー疲れの正体を認知負荷で説明する",
+      "date": "2026-11-20",
+      "status": "seed",
+      "topics": [
+        "ai-driven-development",
+        "engineering-management"
+      ],
+      "source": "experience",
+      "source_url": "",
+      "source_ref": "",
+      "evidence_status": "unverified",
+      "promoted_to": [],
+      "article_type_candidates": [
+        "insight"
+      ],
+      "author_input_required_count": 0,
+      "author_input_gate_open": false,
+      "legacy": false
+    },
+    {
       "id": "seed-20261103-omikuji-lockfile-repair",
       "path": "article_seeds/app-development/2026-11-03-omikuji-lockfile-repair.md",
       "title": "pnpmの重複lock修復と検証範囲を分ける",
