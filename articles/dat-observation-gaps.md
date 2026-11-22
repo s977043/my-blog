@@ -3,7 +3,7 @@ title: "DATの運用記録を約2週間で109件貯めて分かった、記録�
 emoji: "📝"
 type: "tech"
 topics: ["aiエージェント", "ai駆動開発", "計測", "運用", "dat"]
-published: false
+published: true
 ---
 
 :::message
