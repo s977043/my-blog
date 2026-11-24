@@ -6,7 +6,7 @@
 
 ![](../assets/nd21c3f1df22e_3dafa3d7334d92f8948446e035fdb2d4.jpeg)
 
-こんにちは、みね[@mine\_take](https://x.com/mine_take)です。
+こんにちは、小峯将威[@mine\_take](https://x.com/mine_take)です。
 
 普段はベンチャー企業でEMとして働きつつ、個人開発でAIを使ったコードレビューの実験的フレームワーク「River Review」を作っています。
 
