@@ -76,6 +76,7 @@ Zenn の公開は2段階である。`main` へ `published: true` をマージし
 
 ## Done
 
+- 2026-11-24 zenn book plangate-agent-governance https://zenn.dev/minewo/books/plangate-agent-governance （queue 外。**HTTP 200・Zenn API 出現を確認済み**〔published_at 2026-11-24 14:44 JST〕。前回公開〔2026-11-23 07:23〕から 31.3h 空けて反映。公開チェーン: v8.24.0 更新 #1052 → flip #1063 main 段 → sync #1064 release/zenn）
 - 2026-11-23 zenn dat-observation-gaps https://zenn.dev/minewo/articles/dat-observation-gaps （queue 外。**HTTP 200・og:title・Zenn API 出現を確認済み**〔published_at 2026-11-23 07:24 JST〕。前回公開〔2026-11-18〕から 120.9h 空けたため rate-limit に触れず、マージ直後に反映。公開チェーン: レビュー #1043 → 図の追加 #1047 → flip #1057 main 段 → sync #1058 release/zenn）
 - 2026-11-18 zenn claude-code-hook-fail-open https://zenn.dev/minewo/articles/claude-code-hook-fail-open （queue 外。**HTTP 200・og:title・Zenn API 出現を確認済み**〔published_at 2026-11-18 06:31 JST。図 2 枚の配信と alt も公開ページで確認〕。前回公開〔2026-10-29〕から 24h 以上空けたため rate-limit に触れず、マージ直後に反映。一次情報は growth-lab の `.claude/hooks/safety.sh`。公開チェーン: レビュー #1044 → 図 2 枚と Codex レビュー反映 #1046 → flip #1048 main 段 → sync #1049 release/zenn。Codex レビューで、本文の `trap EXIT` が実物の hook に入っていないと判明し、「さらに足すなら」の推奨へ書き換えてから公開した）
 - 2026-11-05 qiita pnpm-duplicate-lockfile-repair https://qiita.com/s977043/items/43e56cbb1bc22e0ff533 （queue 外。**HTTP 200 を確認済み**〔id 43e56cbb1bc22e0ff533〕。一次情報は digital-omikuji #466〔記事は 03cbb89 時点に固定、公開前に同 PR が develop 取り込み後マージ済みと判明したため一文追記〕。草稿 #957 → `npm run publish:qiita` で公開。タグ `Expo` が `expo` に正規化。公開後の drift 0）
