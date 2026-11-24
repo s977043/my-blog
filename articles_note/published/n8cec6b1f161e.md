@@ -6,7 +6,7 @@
 
 ![](../assets/n8cec6b1f161e_0568e72bc696e433794d1ca9c7d73839.png)
 
-こんにちは。PRONI株式会社でCTOを務めているみね＠PRONI（[@mine\_take](https://twitter.com/mine_take)）です。
+こんにちは。PRONI株式会社でCTOを務めている小峯将威＠PRONI（[@mine\_take](https://twitter.com/mine_take)）です。
 
 先日、弊社とfreee社が共同でエンジニア向け勉強会を開催しました。この記事では、2社での共同勉強会を開催するにあたっての準備プロセスや、そこから得られた知見を共有したいと思います。
 

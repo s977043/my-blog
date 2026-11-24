@@ -112,6 +112,6 @@
   "devDependencies": {
     "@qiita/qiita-cli": "^1.13.0",
     "js-yaml": "^5.5.0",
-    "playwright-core": "1.65.0"
+    "playwright-core": "1.65.1"
   }
 }
