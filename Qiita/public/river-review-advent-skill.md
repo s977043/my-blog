@@ -16,6 +16,8 @@ posting_campaign_uuid: null
 agreed_posting_campaign_term: false
 ---
 
+[AIが書いたコードのレビュー、どうしてる？ Advent Calendar 2026](https://qiita.com/advent-calendar/2026/coderabbit) の参加記事です。
+
 AI にコードレビューを頼んだ結果、指摘がゼロだったとします。必要な観点を確認して問題がなかったのか、それとも、そもそもその観点を確認しなかったのか。この違いをどう判断していますか。
 
 私が開発している OSS [River Review](https://github.com/s977043/river-review) では、レビュー基準をリポジトリに残す設計を採っています。レビューの指摘だけでなく、**どの基準で何を確認するのか、その基準はどのケースで機能すべきなのか**を扱います。
@@ -60,12 +62,12 @@ try {
 try {
   await save();
 } catch (error) {
-  logger.error("Save failed");
+  logger.error("Save failed", { operation: "save" });
   throw error;
 }
 ```
 
-実際には例外の型、ログに含める情報、上位レイヤーの責務も確認します。ログ出力や再送出を追加することが、すべての例外に対する正解ではありません。
+実際には例外の型、ログに含める情報、上位レイヤーの責務も確認します。機密情報や個人情報を無条件にログへ出さず、既存のマスク方針に従います。ログ出力や再送出を追加することが、すべての例外に対する正解ではありません。
 
 River Review の公開 Skill では、テストで意図的に無視する場合や文脈を伴って再送出する場合などを誤検知しないための条件を定義しています。
 
@@ -128,9 +130,11 @@ Marketplace から取得される版は実行時の配布状態によります�
 
 River Review の Review Coverage は、レビューの実行状況を `complete`、`partial`、`not_executed` に区別する実験的な契約です。v1.139.5 の説明では観測用であり、既定のゲート判定を自動的に変更するものではありません。
 
-- 指摘がなかったこと。
-- 必要なレビューが実行されたこと。
-- 人や呼び出し側が変更を承認したこと。
+| 観測・判断 | 確認する対象 |
+| --- | --- |
+| 指摘がない | findings の件数 |
+| 必要なレビューが実行された | 対象・観点と実行状態（対応する実行経路の記録） |
+| 変更を承認できる | 人または呼び出し側が判断する根拠 |
 
 この3つは別です。期待出力に合った一つのケースがあっても、製品全体の見落としや誤検知がゼロになったとは言えません。逆に、対照ケースで指摘がなかったからといって、そのレビューが未実行だったかどうかは指摘数だけでは判定できません。
 
@@ -142,6 +146,6 @@ River Review の Review Coverage は、レビューの実行状況を `complete`
 
 - [River Review の GitHub](https://github.com/s977043/river-review)
 - [Starter Cookbook](https://river-review.the3396.com/guides/starter-cookbook/)
-- [代表スキルのショーケース](https://github.com/s977043/river-review/blob/v1.139.5/pages/guides/representative-skills.md)
+- [代表スキルのショーケース（固定版）](https://github.com/s977043/river-review/blob/v1.139.5/pages/guides/representative-skills.md)
 
 試して不足した観点があれば、改善提案を歓迎します。
