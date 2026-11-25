@@ -88,10 +88,10 @@ v1.139.5 の Skill ディレクトリには、次の入力と期待出力が存�
 git clone --branch v1.139.5 --depth 1 https://github.com/s977043/river-review.git
 cd river-review
 npm ci
-npm run eval:fixtures -- --phase midstream
+npm run eval:fixtures
 ```
 
-Node.js 22 系が前提です。これは固定版の package.json と評価スクリプトで確認した手順で、ここでの実行結果は未取得です。このコマンドが先ほどの Skill 配下の golden をそのまま一括採点するわけではありません。特に、例示したコメントだけの `catch` と、標準のヒューリスティック評価で扱う `return;` / `return null;` のケースは別です。固定版の [ケース定義](https://github.com/s977043/river-review/blob/v1.139.5/tests/fixtures/review-eval/cases.json) と実行結果を照合してください。コメントだけのケースまで機械的に検出できるとは、この情報からは言えません。
+Node.js 22 系が前提です。これは固定版の package.json と lockfile、評価スクリプトで確認した手順で、ここでの実行結果は未取得です。評価スクリプトは各ケースの `planSkills` を指定し、`dryRun: true`、`includeFallback: false` でレビューを呼び、指摘数や必須の出力要素などを照合します。CLI の `--phase` はケースを絞り込むフィルタではなく評価に渡すフェーズの上書きなので、この例では指定しません。このコマンドが先ほどの Skill 配下の golden をそのまま一括採点するわけではありません。特に、例示したコメントだけの `catch` と、標準のヒューリスティック評価で扱う `return;` / `return null;` のケースは別です。固定版の [ケース定義](https://github.com/s977043/river-review/blob/v1.139.5/tests/fixtures/review-eval/cases.json) と実行結果を照合してください。コメントだけのケースまで機械的に検出できるとは、この情報からは言えません。
 
 ## まず既存のレビューを試す
 
@@ -104,7 +104,7 @@ Claude Code では公開 README に従って、検証用プロジェクトで次
 /river-review:review-local
 ```
 
-Marketplace から取得される版は実行時の配布状態によります。ここで参照した fixture の固定版とは別に、導入版を確認してください。この経路では Claude Code 自身のモデルを利用するため、River Review 専用の LLM API キーは不要です。GitHub Actions などでヘッドレス LLM を利用する経路とは前提が異なります。
+Marketplace から取得される版は実行時の配布状態によります。ここで参照した fixture の固定版とは別に、導入版を確認してください。この経路では Claude Code 自身のモデルを利用するため、River Review 専用の LLM API キーは不要です（Claude Code 自体の利用条件は別です）。GitHub Actions などでヘッドレス LLM を利用する経路とは前提が異なります。
 
 最初から独自 Skill を作る必要はありません。既存のレビュー観点で不足する判断が繰り返し出たときに、まずプロジェクトのルールとして残し、入力・期待出力・誤検知条件を評価したくなったものを Skill に昇格させます。
 
