@@ -507,7 +507,8 @@
       "source_ref": "https://github.com/s977043/dynamic-agent-topology/blob/main/experiments/EXP-001-t0-vs-t1/DECISION.md",
       "evidence_status": "verified",
       "promoted_to": [
-        "articles/sakura-ai-engine-agent-review-comparison.md"
+        "articles/sakura-ai-engine-agent-review-comparison.md",
+        "Qiita/public/dat-exp-001-advent.md"
       ],
       "article_type_candidates": [
         "evidence",
@@ -737,6 +738,11 @@
       "from": "seed-20261102-sakura-agent-review-comparison",
       "relation": "promoted_to",
       "to": "articles/sakura-ai-engine-agent-review-comparison.md"
+    },
+    {
+      "from": "seed-20261102-sakura-agent-review-comparison",
+      "relation": "promoted_to",
+      "to": "Qiita/public/dat-exp-001-advent.md"
     },
     {
       "from": "seed-20261103-omikuji-lockfile-repair",
