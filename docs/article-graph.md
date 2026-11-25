@@ -9,7 +9,7 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 - Seeds: 28
 - Explicit provenance contract: 20
 - Legacy seeds: 8
-- Promotion edges: 10
+- Promotion edges: 11
 - Seeds with open author input gate: 6
 
 ## Seeds
@@ -26,7 +26,7 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 | `legacy:article_seeds/ai-driven-development/2026-09-10-small-team-cant-measure-speed` | 2026-09-10 | seed | experience | legacy | 0 |  | 5人チームでは「改善速度」を安定して測れなかった | `article_seeds/ai-driven-development/2026-09-10-small-team-cant-measure-speed.md` | 0 |
 | `seed-20260926-agent-team-topology-audit` | 2026-09-26 | draft | experience | observed | 0 | experience, insight, analysis | AIにどこまで任せるか、ではなく「どの境界で自律させるか」を考えたい | `article_seeds/ai-driven-development/2026-09-26-agent-team-topology-audit.md` | 1 |
 | `seed-20260929-fresh-context-restart` | 2026-09-29 | seed | external | verified | 0 | analysis, insight | いつ会話を捨てて、新しいセッションで始めるか | `article_seeds/ai-driven-development/2026-09-29-fresh-context-restart.md` | 0 |
-| `seed-20260929-river-review-core-design` | 2026-09-29 | draft | mixed | verified | 0 | analysis, insight | River Reviewのコア設計：AIレビューではなく、チームの判断を再現しやすい形で残す | `article_seeds/ai-driven-development/2026-09-29-river-review-core-design.md` | 1 |
+| `seed-20260929-river-review-core-design` | 2026-09-29 | draft | mixed | verified | 0 | analysis, insight | River Reviewのコア設計：AIレビューではなく、チームの判断を再現しやすい形で残す | `article_seeds/ai-driven-development/2026-09-29-river-review-core-design.md` | 2 |
 | `seed-20260930-openspec-plangate-living-spec` | 2026-09-30 | draft | mixed | verified | 0 | analysis, insight | AI駆動開発で「今の仕様」をどう残すか。OpenSpecのDelta Specから考えた | `article_seeds/ai-driven-development/2026-09-30-openspec-plangate-living-spec.md` | 1 |
 | `seed-20261001-agent-execution-policy-evidence` | 2026-10-01 | published | mixed | verified | 0 | experience, analysis, insight | AIエージェントは「よく考える」より「証拠を取りに行く」で設計する | `article_seeds/ai-driven-development/2026-10-01-agent-execution-policy-evidence.md` | 1 |
 | `seed-20261010-agile-hotl-practice-evolution` | 2026-10-10 | draft | mixed | verified | 0 | experience, insight | AIが賢くなった今、アジャイルの原点に戻ってきた | `article_seeds/ai-driven-development/2026-10-10-agile-hotl-practice-evolution.md` | 0 |
@@ -51,6 +51,7 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 - `seed-20260911-media-operating-system-boundaries` → articles_note/new/media-operating-system-boundary-by-change.md
 - `seed-20260926-agent-team-topology-audit` → articles/ai-agent-team-topology-judgment-escalation.md
 - `seed-20260929-river-review-core-design` → articles/river-review-core-design.md
+- `seed-20260929-river-review-core-design` → Qiita/public/river-review-advent-skill.md
 - `seed-20260930-openspec-plangate-living-spec` → articles/openspec-plangate-living-spec.md
 - `seed-20261001-agent-execution-policy-evidence` → https://x.com/mine_take/status/2105518834686026114
 - `seed-20261015-swe-journey-requirements` → articles_note/published/n514c78b42bf1.md
