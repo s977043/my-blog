@@ -16,6 +16,8 @@ posting_campaign_uuid: null
 agreed_posting_campaign_term: false
 ---
 
+[個人開発・OSS・運用のリアル Advent Calendar 2026](https://qiita.com/advent-calendar/2026/oss) の参加記事です。
+
 AI コーディングで、実装するエージェントとは別に検証するエージェントを用意すれば、品質は上がるのでしょうか。
 
 私が開発している OSS [Dynamic Agent Topology（DAT）](https://github.com/s977043/dynamic-agent-topology) では、この問いを比較実験で扱っています。最初の実験で単独エージェントと独立 Verifier を加えた構成を比較し、18件の受理済み Run を記録しました。
@@ -130,7 +132,17 @@ python -B scripts/summarize_experiment.py "${files[@]}"
 
 タスク選びも重要です。T0 がすべて成功する簡単なタスクだけでなく、改善したい失敗や不足を含むタスクを用意します。品質の差が出ない場合は、すぐに役割が不要と判断せず、評価条件を見直します。
 
-DAT の現行 Skill（2026年11月25日確認時点）は `dat-select` で構成を提案し、`dat-observe` で実行の記録・集計を補助します。ランタイム設定を自動変更するものではありません。日常の観測記録だけから構成の優劣を判断せず、比較実験の記録と分けて扱います。
+DAT の現行 Skill（2026年11月25日確認時点）は `dat-select` で構成を提案し、`dat-observe` で実行の記録・集計を補助します。Claude Code から試す場合の公開 README の手順は次のとおりです。
+
+```text
+/plugin marketplace add s977043/dynamic-agent-topology
+/plugin install dat@dat-marketplace
+/reload-plugins
+```
+
+着手前に「dat-select でこのタスクの構成を選んで」、完了時に「dat-observe で記録して」と依頼します。記録の保存・集計には Python 3、`jsonschema`、`pyyaml` とファイル書き込み・コマンド実行の許可が必要です。今回のセッションではプラグインを実行していません。
+
+Skill は構成を自動実行したりランタイム設定を変更したりするものではありません。記録の保存先は既定でリポジトリ外の `~/.dat/observations` です。日常の観測記録だけから構成の優劣を判断せず、比較実験の記録と分けて扱います。
 
 ## まとめ
 
@@ -140,5 +152,6 @@ AI エージェントを増やすこと自体が成果なのではありませ�
 
 - [DAT の GitHub / Quick Start](https://github.com/s977043/dynamic-agent-topology)
 - [EXP-001 の最終判断記録（固定コミット）](https://github.com/s977043/dynamic-agent-topology/blob/616a56d/experiments/EXP-001-t0-vs-t1/DECISION.md)
+- [実験の採否基準（experiment.yaml）](https://github.com/s977043/dynamic-agent-topology/blob/616a56d/experiments/EXP-001-t0-vs-t1/experiment.yaml)
 
 別の条件で比較した結果や、評価したいタスクの提案も歓迎します。
