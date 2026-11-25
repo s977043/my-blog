@@ -78,7 +78,7 @@ v1.139.5 の Skill ディレクトリには、次の入力と期待出力が存�
 | `01-silent-catch.diff` | 例外の握りつぶしを指摘 |
 | `02-proper-error-handling.diff` | `NO_ISSUES` |
 
-この表は公開されている期待出力であり、今回あらためて LLM を実行した結果ではありません。
+この表は公開されている期待出力であり、今回あらためて LLM を実行した結果ではありません。Skill の指示には、関連する差分や入力がなければ `NO_REVIEW` とする条件もあります。`NO_ISSUES`（対象を確認して指摘なしという期待）とは区別します。
 
 [Skill と fixture / golden の実体](https://github.com/s977043/river-review/tree/v1.139.5/skills/midstream/logging-observability) を読めば、どの入力に対してどの判断を期待しているか確認できます。
 
@@ -91,7 +91,7 @@ npm ci
 npm run eval:fixtures -- --phase midstream
 ```
 
-Node.js 22 系が前提です。これは固定版の package.json と評価スクリプトで確認した手順で、ここでの実行結果は未取得です。このコマンドが先ほどの Skill 配下の golden をそのまま一括採点するわけではありません。評価ケースの定義と実行結果を照合してください。
+Node.js 22 系が前提です。これは固定版の package.json と評価スクリプトで確認した手順で、ここでの実行結果は未取得です。このコマンドが先ほどの Skill 配下の golden をそのまま一括採点するわけではありません。特に、例示したコメントだけの `catch` と、標準のヒューリスティック評価で扱う `return;` / `return null;` のケースは別です。固定版の [ケース定義](https://github.com/s977043/river-review/blob/v1.139.5/tests/fixtures/review-eval/cases.json) と実行結果を照合してください。コメントだけのケースまで機械的に検出できるとは、この情報からは言えません。
 
 ## まず既存のレビューを試す
 
@@ -104,7 +104,7 @@ Claude Code では公開 README に従って、検証用プロジェクトで次
 /river-review:review-local
 ```
 
-この経路では Claude Code 自身のモデルを利用するため、River Review 専用の LLM API キーは不要です。GitHub Actions などでヘッドレス LLM を利用する経路とは前提が異なります。
+Marketplace から取得される版は実行時の配布状態によります。ここで参照した fixture の固定版とは別に、導入版を確認してください。この経路では Claude Code 自身のモデルを利用するため、River Review 専用の LLM API キーは不要です。GitHub Actions などでヘッドレス LLM を利用する経路とは前提が異なります。
 
 最初から独自 Skill を作る必要はありません。既存のレビュー観点で不足する判断が繰り返し出たときに、まずプロジェクトのルールとして残し、入力・期待出力・誤検知条件を評価したくなったものを Skill に昇格させます。
 
