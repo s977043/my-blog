@@ -45,14 +45,37 @@ Claude Code を使っている開発者が、次の一つのタスクで試せ�
 - 既存の依存関係
 
 ## 受入基準
-- AC-01: 新しい表示文言を確認できる。
+- AC-01: 表示に使う文字列が「変更を保存する」である。
 - AC-02: 従来の保存成功・失敗時のテストが通る。
 - AC-03: API契約・依存定義に今回の変更がない。
 ```
 
-重要なのは、Out of scope を書くだけで終わらせないことです。たとえば AC-01 は表示テスト、AC-02 は既存テストの実行、AC-03 は API 契約・依存定義の差分確認に対応させます。変更しないことにも、確認の方法を用意します。
+重要なのは、Out of scope を書くだけで終わらせないことです。変更しないことにも、確認の方法を用意します。
+
+| 受入基準 | 確認方法 |
+| --- | --- |
+| AC-01 | 表示に使う文字列のテスト |
+| AC-02 | 既存の成功・失敗時のテスト |
+| AC-03 | 合意した基準からの変更ファイルと契約・依存定義の差分確認 |
+
+## 合成タスクで受入条件を確かめる
 
 この例は学習用のため、外部依存のない小さな Git リポジトリで確かめました。Node.js v22.16.0 で、保存処理の URL・payload・成功時の戻り値・例外の伝播を確認するテストと、表示文言のテストを用意しました。
+
+たとえば表示に使う定数を変更するなら、実装の変更より先に期待値を決められます。
+
+```javascript
+// test/label.test.mjs
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { saveLabel } from '../src/label.mjs';
+
+test('button label', () => {
+  assert.equal(saveLabel, '変更を保存する');
+});
+```
+
+`src/label.mjs` の `export const saveLabel = '保存する';` は最初の状態です。テストを新しい期待値に変更した後、定数を `変更を保存する` に変更します。
 
 | 段階 | 観測結果 |
 | --- | --- |
@@ -67,11 +90,12 @@ Claude Code を使っている開発者が、次の一つのタスクで試せ�
 
 ```bash
 node --test test/*.test.mjs
-git diff --name-only
-git diff --exit-code -- src/save.mjs test/save.test.mjs
+git status --short
+git diff HEAD --name-only
+git diff HEAD --exit-code -- src/save.mjs test/save.test.mjs
 ```
 
-最後のコマンドは作業ツリーの指定パスに差分がないことを調べます。ステージ済みの変更を含める場合は、合意した基準コミット（この例では `HEAD`）との `git diff HEAD -- ...` を使います。
+ここでは変更前の状態を `HEAD` にコミットしておきます。`git diff HEAD` は追跡済みファイルを基準と比較し、`git status --short` は未追跡ファイルも確認するために併用します。実プロジェクトでは依存定義や API の契約ファイルも、非変更範囲に応じて確認対象へ加えます。
 
 ## PlanGate では何を判断するのか
 
