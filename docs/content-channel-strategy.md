@@ -504,6 +504,7 @@ Use note as the narrative hub.
 - Link to Growth Lab for canonical guides.
 - Link to GitHub for OSS repositories.
 - 2026-09-14の実測を起点に、他媒体から来た読者をBook・Zennへ案内する方法を試す。ただし流入元とボトルネックは未確定。プロフィールでも、その読者の次の問いに必要な導線を選ぶ
+- インプットを考え方として出す記事群（テーマ・企画の分類・頻度・判定・守る線）は [`docs/note-article-series-design.md`](note-article-series-design.md) を正本にする（2026-11-26 著者決定）
 
 ### note profile draft
 
