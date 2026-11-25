@@ -251,7 +251,8 @@
       "source_ref": "https://zenn.dev/tokium_dev/articles/ai-agent-usage-limit-long-sessions",
       "evidence_status": "verified",
       "promoted_to": [
-        "articles/river-review-core-design.md"
+        "articles/river-review-core-design.md",
+        "Qiita/public/river-review-advent-skill.md"
       ],
       "article_type_candidates": [
         "analysis",
@@ -717,6 +718,11 @@
       "from": "seed-20260929-river-review-core-design",
       "relation": "promoted_to",
       "to": "articles/river-review-core-design.md"
+    },
+    {
+      "from": "seed-20260929-river-review-core-design",
+      "relation": "promoted_to",
+      "to": "Qiita/public/river-review-advent-skill.md"
     },
     {
       "from": "seed-20260930-openspec-plangate-living-spec",
