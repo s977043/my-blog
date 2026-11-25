@@ -31,7 +31,7 @@ River Review の中心は Review Judgment as Code です。チームの判断基
 | 項目 | 確認する内容 |
 | --- | --- |
 | 適用範囲 | アプリケーションコードの関連差分 |
-| 検出対象 | ログも再送出もない例外処理 |
+| 検出対象 | 障害原因の追跡や適切な処理を失う例外処理 |
 | 非検出対象 | 適切に処理・伝播される例外 |
 | 対象外 | 可観測性に関係しない変更 |
 | 根拠 | 指摘箇所と理由、修正案 |
@@ -75,12 +75,18 @@ v1.139.5 の Skill ディレクトリには、次の入力と期待出力が存�
 
 | 入力（fixture） | 期待出力（golden） |
 | --- | --- |
-| `01-silent-catch.diff` | 例外の握りつぶしを指摘 |
-| `02-proper-error-handling.diff` | `NO_ISSUES` |
+| `01-silent-catch.diff` | 例外の握りつぶしを指摘（検出ケース） |
+| `02-proper-error-handling.diff` | `NO_ISSUES`（誤検知を防ぐ対照ケース） |
 
 この表は公開されている期待出力であり、今回あらためて LLM を実行した結果ではありません。Skill の指示には、関連する差分や入力がなければ `NO_REVIEW` とする条件もあります。`NO_ISSUES`（対象を確認して指摘なしという期待）とは区別します。
 
 [Skill と fixture / golden の実体](https://github.com/s977043/river-review/tree/v1.139.5/skills/midstream/logging-observability) を読めば、どの入力に対してどの判断を期待しているか確認できます。
+
+- fixture はレビュー対象となる入力です。
+- golden は期待する判断を記録した例です。
+- 実際の出力が期待と合うかは、対象の実行経路で確認します。
+
+## 機械的な検査の評価は別のケースで行う
 
 次に、決定論的な検査の回帰を確認する入口があります。リポジトリには `npm run eval:fixtures` という評価コマンドがあり、標準ケース定義には、ログなしの `return` / `return null` を含む例外処理と、ログを出す非検出ケースが収録されています。
 
@@ -91,7 +97,9 @@ npm ci
 npm run eval:fixtures
 ```
 
-Node.js 22 系が前提です。これは固定版の package.json と lockfile、評価スクリプトで確認した手順で、ここでの実行結果は未取得です。評価スクリプトは各ケースの `planSkills` を指定し、`dryRun: true`、`includeFallback: false` でレビューを呼び、指摘数や必須の出力要素などを照合します。CLI の `--phase` はケースを絞り込むフィルタではなく評価に渡すフェーズの上書きなので、この例では指定しません。このコマンドが先ほどの Skill 配下の golden をそのまま一括採点するわけではありません。特に、例示したコメントだけの `catch` と、標準のヒューリスティック評価で扱う `return;` / `return null;` のケースは別です。固定版の [ケース定義](https://github.com/s977043/river-review/blob/v1.139.5/tests/fixtures/review-eval/cases.json) と実行結果を照合してください。コメントだけのケースまで機械的に検出できるとは、この情報からは言えません。
+Node.js 22 系が前提です。これは固定版の package.json と lockfile、評価スクリプトで確認した手順で、ここでの実行結果は未取得です。評価スクリプトは各ケースの `planSkills` を指定し、`dryRun: true`、`includeFallback: false` でレビューを呼び、指摘数や必須の出力要素などを照合します。CLI の `--phase` はケースを絞り込むフィルタではなく評価に渡すフェーズの上書きなので、この例では指定しません。
+
+このコマンドが先ほどの Skill 配下の golden をそのまま一括採点するわけではありません。特に、例示したコメントだけの `catch` と、標準のヒューリスティック評価で扱う `return;` / `return null;` のケースは別です。固定版の [ケース定義](https://github.com/s977043/river-review/blob/v1.139.5/tests/fixtures/review-eval/cases.json) と実行結果を照合してください。コメントだけのケースまで機械的に検出できるとは、この情報からは言えません。
 
 ## まず既存のレビューを試す
 
