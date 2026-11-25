@@ -687,7 +687,9 @@
       "source_url": "https://github.com/s977043/PlanGate",
       "source_ref": "https://github.com/s977043/river-review / https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview",
       "evidence_status": "verified",
-      "promoted_to": [],
+      "promoted_to": [
+        "Qiita/public/plangate-advent-start.md"
+      ],
       "article_type_candidates": [
         "insight",
         "analysis"
@@ -707,6 +709,11 @@
       "from": "seed-20260911-media-operating-system-boundaries",
       "relation": "promoted_to",
       "to": "articles_note/new/media-operating-system-boundary-by-change.md"
+    },
+    {
+      "from": "seed-20260924-note-hub-plangate-river-skills",
+      "relation": "promoted_to",
+      "to": "Qiita/public/plangate-advent-start.md"
     },
     {
       "from": "seed-20260926-agent-team-topology-audit",
