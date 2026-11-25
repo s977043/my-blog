@@ -13,6 +13,7 @@ source_ref: https://github.com/s977043/dynamic-agent-topology/blob/main/experime
 evidence_status: verified
 promoted_to:
   - articles/sakura-ai-engine-agent-review-comparison.md
+  - Qiita/public/dat-exp-001-advent.md
 article_type_candidates:
   - evidence
   - tutorial
@@ -83,9 +84,9 @@ Agentを分業させる設計は目的ではなくコストに見合う品質改
 - out_of_scope: 全タスク・全モデルでの Single Agent 優位、Verifier やレビュー自体の不要論、トークン数からの料金推計、品質同等性の統計的証明、自動ルーティングや自動構成変更の実装済み主張、未実施のさくらの AI Engine 実験、非公開リポジトリの観測記録、著者の未確認の体験・感情。
 - claim_boundary: required
 - claim_boundary_reason: 公開 OSS の実装範囲、実験件数、実測値、条件付き採否判断を扱うため。
-- lifecycle: PLANNED（企画段階。初稿・公開承認は未実施）
+- lifecycle: DRAFTED（初稿・観点別レビュー3ループ実施。独立レビュー・実行検証・著者承認は残件）
 - provisional_title: マルチエージェントは本当に必要なのか？ 自作OSS「DAT」で18回比較実験して分かったこと
-- publication_target: Qiita 個人開発・OSS・運用のリアル Advent Calendar 2026、シリーズ2、2026-12-19（JST）。参加登録は未完了。 https://qiita.com/advent-calendar/2026/oss
+- publication_target: Qiita 個人開発・OSS・運用のリアル Advent Calendar 2026、シリーズ2、2026-12-19（JST）。参加登録済み（2026-11-25、管理Issue #1067 の確認記録）。 https://qiita.com/advent-calendar/2026/oss
 
 この Plan は既存 Seed に記録済みの DAT EXP-001 を独立した Qiita 記事として扱う。既存の Zenn 向け Plan は変更しない。Qiita は構成の採否判断と読者が自分の環境で比較を始める手順に絞る。別実験である Zennfes 企画、公開済み Zenn 記事 dat-observation-gaps（運用記録109件）の転載・合算はしない。
 
@@ -111,10 +112,17 @@ Agentを分業させる設計は目的ではなくコストに見合う品質改
 
 ### Execution / Review
 
-- [ ] カレンダーの対象枠を再確認し、著者の Qiita アカウントで参加登録する（URL は登録時空欄可）。
+- [x] 参加登録確認済み（#1067、2026-11-25 12:35 JST、記事URL未登録）。
 - [ ] 固定 revision で公式の集計・completeness validation の手順を実行し、結果と制約を記録する。今回の再集計と区別する。
 - [ ] 現行 DAT Quick Start と Skill の操作手順、Qiita のガイドラインを執筆時に再確認する。未実行のコマンドは実行済みと書かない。
 - [ ] Qiita/public/dat-exp-001-advent.md に初稿を追加し、ignorePublish: true を維持する。promoted_to と派生 Article Graph は既存手順で同期する。
 - [ ] 主張境界、技術・数値、読者 UX、編集・重複、公開安全性の各観点でレビューし、可能なら独立エージェントのレビューを取得する。
 - [ ] npm run check、対象記事の Plan/公開制約を検証。レビュー記録と PR を整備する。
 - [ ] 著者承認後にのみ、マージ、Qiita 限定共有・予約設定・公開を別操作で進める。参加枠確保と公開は別の状態として管理する。
+
+### 2026-11-25 執筆・レビュー記録
+
+- 初稿: `Qiita/public/dat-exp-001-advent.md`（ignorePublish: true / private: true）。
+- 3ループ（レビュー→対応→再レビュー→再対応）を同一モデルの観点別レビューで実施。記録: `reviews/qiita/dat-exp-001-advent.md`。
+- 完全checkoutで公式freeze/completeness validationと18/16件集計を実行し結果保存。独立レビュー、現行plugin試用、CI最新head、著者承認は残件。
+- Seed の既存別媒体 Plan と status は維持。マージ・公開操作は行わない。
