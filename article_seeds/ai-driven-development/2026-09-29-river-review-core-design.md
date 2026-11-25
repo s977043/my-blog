@@ -14,6 +14,7 @@ source_ref: "https://zenn.dev/tokium_dev/articles/ai-agent-usage-limit-long-sess
 evidence_status: verified
 promoted_to:
   - articles/river-review-core-design.md
+  - Qiita/public/river-review-advent-skill.md
 article_type_candidates:
   - analysis
   - insight
@@ -114,9 +115,9 @@ River Reviewのコアは、Review Judgment as Codeを中心に、チームのRev
 - out_of_scope: CodeRabbit と River Review の性能・優劣比較、CodeRabbit の未確認の利用実績・提携、レビューの回数だけでの品質保証、見落としゼロ・誤検知ゼロ・工数削減の一般化、全レビューゲートの強制・自動承認・自動マージ、未実施の実験、会社/非公開リポジトリの観測、全機能の網羅。
 - claim_boundary: required
 - claim_boundary_reason: OSS の Skill / fixture / 評価の実装範囲、実行例、レビュー完了と承認の区別を扱うため。
-- lifecycle: PLANNED（企画。実践例の検証・初稿・公開承認は未実施）
-- provisional_title: AIのコードレビューを信用するのではなく、検証する — 自作OSS River Reviewでレビュー基準をテストする
-- publication_target: AIが書いたコードのレビュー、どうしてる？ by CodeRabbit Advent Calendar 2026、シリーズ4、2026-12-15（JST）。参加登録は未完了。 https://qiita.com/advent-calendar/2026/coderabbit
+- lifecycle: DRAFTED（初稿・観点別レビュー3ループ実施。独立レビュー・実行検証・著者承認は残件）
+- provisional_title: AIのコードレビューを信用するのではなく、検証する ― 自作OSS River Reviewでレビュー基準をテストする
+- publication_target: AIが書いたコードのレビュー、どうしてる？ by CodeRabbit Advent Calendar 2026、シリーズ4、2026-12-15（JST）。参加登録済み（2026-11-25、管理Issue #1067 の確認記録）。 https://qiita.com/advent-calendar/2026/coderabbit
 - tracking: https://github.com/s977043/my-blog/issues/1067
 
 既存 Seed の Review Judgment as Code の根拠を再利用するが、Zenn のアーキテクチャ解説や Book の網羅的な構成ではなく、読者が1つのレビュー観点を確かめる入口に絞る。既存 Plan と metadata を変更しない。note review-count-not-safety の体験・主張・非公開作業記録は本記事へ転用しない。
@@ -144,9 +145,16 @@ River Reviewのコアは、Review Judgment as Codeを中心に、チームのRev
 
 ### Execution / Review
 
-- [ ] #1067 の枠を著者の Qiita アカウントで確保する。
+- [x] 参加登録確認済み（#1067、2026-11-25 12:35 JST、記事URL未登録）。
 - [ ] 公開 release / commit を固定し、logging-observability の実ファイル（Skill、fixture、golden、対応 validator/eval）と現行ガイドを照合する。
 - [ ] 隔離環境で検出対象・非検出対象・対象外の各ケースを実行する。決定論的チェックと LLM 依存ケースは分け、実行環境・結果・未実施部分を記録。対象外ケースや利用コマンドは実装確認後に決定。必要なら個別に小さな合成ケースを用意する。未実行なら記事の表現を縮小し著者へ報告。
 - [ ] 12/5 までに Qiita/public/river-review-advent-skill.md に初稿（ignorePublish: true）、既存手順で promoted_to / Article Graph を同期。
 - [ ] 技術・主張境界・根拠・反例・読者UX・OSS導線・既存記事との差別化・公開安全性をレビューし、独立レビューは取得した結果だけを記録。重大指摘を解消し CI 確認。
 - [ ] 12/14 までに著者承認・限定共有・予約確認（別承認）。12/15 公開確認。認知・試用の観測は #1067 に接続。
+
+### 2026-11-25 執筆・レビュー記録
+
+- 初稿: `Qiita/public/river-review-advent-skill.md`（ignorePublish: true / private: true）。
+- 3ループ（レビュー→対応→再レビュー→再対応）を同一モデルの観点別レビューで実施。記録: `reviews/qiita/river-review-advent-skill.md`。
+- 完全取得した隔離環境で npm ci / npm run eval:fixtures、plugin実行と対象外ケースを検証し証拠保存。独立レビュー・CI最新head・著者承認は残件。
+- Seed の既存別媒体 Plan と status は維持。マージ・公開操作は行わない。
