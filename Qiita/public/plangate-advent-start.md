@@ -16,6 +16,8 @@ posting_campaign_uuid: null
 agreed_posting_campaign_term: false
 ---
 
+[Claude Code Advent Calendar 2026](https://qiita.com/advent-calendar/2026/claudecode) の参加記事です。
+
 Claude Code に「表示文言を直して」と頼むとき、変更してほしい場所は伝えても、変えてほしくない場所まで決めているでしょうか。
 
 実装計画ができたことと、その計画で実装を始めてよいことは別です。この記事では、私が開発している OSS [PlanGate](https://github.com/s977043/PlanGate) を例に、実装前の判断材料を揃える方法を紹介します。
@@ -70,9 +72,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { saveLabel } from '../src/label.mjs';
 
-test('button label', () => {
-  assert.equal(saveLabel, '変更を保存する');
-});
+test('button label', () => assert.equal(saveLabel, '変更を保存する'));
 ```
 
 `src/label.mjs` の `export const saveLabel = '保存する';` は最初の状態です。テストの初期状態も `保存する` とし、最初に動作を確認して Git にコミットします。その後テストを新しい期待値に変更し、失敗を確認してから定数を `変更を保存する` に変更します。
@@ -94,11 +94,13 @@ import { save } from '../src/save.mjs';
 
 test('preserves API and successful result', async () => {
   const payload = { id: 1 };
-  const client = { post: async (url, body) => {
-    assert.equal(url, '/api/save');
-    assert.deepEqual(body, payload);
-    return { ok: true };
-  }};
+  const client = {
+    post: async (url, body) => {
+      assert.equal(url, '/api/save');
+      assert.deepEqual(body, payload);
+      return { ok: true };
+    },
+  };
   assert.deepEqual(await save(client, payload), { ok: true });
 });
 
@@ -127,7 +129,7 @@ git diff HEAD --name-only
 git diff HEAD --exit-code -- src/save.mjs test/save.test.mjs
 ```
 
-ここでは変更前の状態を `HEAD` にコミットしておきます。`git diff HEAD` は追跡済みファイルを基準と比較し、`git status --short` は未追跡ファイルも確認するために併用します。実プロジェクトでは依存定義や API の契約ファイルも、非変更範囲に応じて確認対象へ加えます。
+ここでは依存定義ファイル自体がなく、保存モジュール・保存テストに差分はありませんでした。変更前の状態を `HEAD` にコミットしておきます。`git diff HEAD` は追跡済みファイルを基準と比較し、`git status --short` は未追跡ファイルも確認するために併用します。実プロジェクトでは依存定義や API の契約ファイルも、非変更範囲に応じて確認対象へ加えます。
 
 ## PlanGate では何を判断するのか
 
@@ -195,7 +197,7 @@ PlanGate の導入には段階があります。軽いタスクでは計画や�
 | 実装を承認したか | 対象モードの承認記録 |
 | 承認前の操作を機械的に止められるか | 別途配線した hook の動作検証 |
 
-**プラグインを入れるだけでは hook の強制は有効になりません。** 強制するには別途設定と検証が必要です。警告だけの設定と、操作を拒否する設定も区別します。今回は既存の本番プロジェクトへの強制配線を勧めません。
+**プラグインを入れるだけでは hook の強制は有効になりません。** 強制するには別途設定と検証が必要です。警告だけの設定と、操作を拒否する設定も区別します。まず隔離した環境で、計画を見て実装するか判断できるところまで試すことを勧めます。本番プロジェクトへ導入する場合、hook の設定・既存の権限設定との整合・導入前との差分を別に確認してください。
 
 ## まとめ
 
