@@ -9,7 +9,7 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 - Seeds: 28
 - Explicit provenance contract: 20
 - Legacy seeds: 8
-- Promotion edges: 10
+- Promotion edges: 11
 - Seeds with open author input gate: 6
 
 ## Seeds
@@ -43,12 +43,13 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 | `seed-20260911-media-operating-system-boundaries` | 2026-09-11 | seed | experience | observed | 0 | experience, analysis | Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった | `article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md` | 1 |
 | `seed-20260923-agent-role-boundaries` | 2026-09-23 | seed | external | verified | 0 | analysis, insight | AIエージェントを増やす前に、役割と委譲境界を分ける | `article_seeds/media-operating-system/2026-09-23-agent-role-boundaries.md` | 0 |
 | `seed-20260923-publish-contract` | 2026-09-23 | seed | external | verified | 0 | analysis, tutorial, insight | 自動投稿より先に、公開前の契約とfail-closedを固定する | `article_seeds/media-operating-system/2026-09-23-publish-contract.md` | 0 |
-| `seed-20260924-note-hub-plangate-river-skills` | 2026-09-24 | seed | external | verified | 0 | insight, analysis | 計画を止める・判断を残す・手順を渡す：PlanGate / River Review / Agent Skills の入口 | `article_seeds/note-hub-plangate-river-skills/2026-09-24-note-hub-plangate-river-skills.md` | 0 |
+| `seed-20260924-note-hub-plangate-river-skills` | 2026-09-24 | seed | external | verified | 0 | insight, analysis | 計画を止める・判断を残す・手順を渡す：PlanGate / River Review / Agent Skills の入口 | `article_seeds/note-hub-plangate-river-skills/2026-09-24-note-hub-plangate-river-skills.md` | 1 |
 
 ## Promotions
 
 - `legacy:article_seeds/ai-driven-development/2026-09-10-flow-efficiency` → https://x.com/mine_take/status/2097800316070855017
 - `seed-20260911-media-operating-system-boundaries` → articles_note/new/media-operating-system-boundary-by-change.md
+- `seed-20260924-note-hub-plangate-river-skills` → Qiita/public/plangate-advent-start.md
 - `seed-20260926-agent-team-topology-audit` → articles/ai-agent-team-topology-judgment-escalation.md
 - `seed-20260929-river-review-core-design` → articles/river-review-core-design.md
 - `seed-20260930-openspec-plangate-living-spec` → articles/openspec-plangate-living-spec.md

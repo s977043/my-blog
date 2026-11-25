@@ -14,6 +14,7 @@ source_url: https://github.com/s977043/PlanGate
 source_ref: https://github.com/s977043/river-review / https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview
 evidence_status: verified
 promoted_to:
+  - Qiita/public/plangate-advent-start.md
 article_type_candidates:
   - insight
   - analysis
@@ -149,3 +150,55 @@ Zenn 記事の URL はクロスポスト時のリンク方針（AGENTS.md §記�
 ### 2026-09-24
 
 - 構成案を作成。一次情報は PlanGate / river-review の README と Agent Skills 公式ドキュメント
+
+## Draft Article Plan: qiita/plangate-advent-start
+
+- channel: qiita
+- slug: plangate-advent-start
+- article_type: 比較・実務ガイド
+- reader_problem: Claude Code に小さな実装変更を頼むとき、計画が生成されたことと着手してよいことを区別できず、変更してほしくない範囲・受入条件・検証・承認をどこで明確にするか迷っている開発者。
+- central_claim: AI に実装を任せる前に、何を変えるかだけでなく何を変えないかを決め、受入条件と検証を含む計画を人が判断できる形にする。
+- out_of_scope: Claude Code Plan Mode との機能優劣、全モード・全経路での物理的な編集禁止の保証、プラグイン導入だけで hook が有効になるという主張、未計測の品質・生産性向上、完全自律実装や自動承認の一般化、全機能・全ゲートの解説、会社の事例、未確認の著者体験。
+- claim_boundary: required
+- claim_boundary_reason: OSS の現行機能・導入方法・承認境界・hook の強制範囲・実行例を扱うため。
+- lifecycle: DRAFTED（初稿・観点別レビュー3ループ実施。独立レビュー・実行検証・著者承認は残件）
+- provisional_title: Claude Codeに実装を任せる前に「変更しないこと」を決める ― 自作OSS PlanGateの始め方
+- publication_target: Claude Code Advent Calendar 2026、シリーズ4、2026-12-10（JST）。参加登録済み（2026-11-25、管理Issue #1067 の確認記録）。 https://qiita.com/advent-calendar/2026/claudecode
+- tracking: https://github.com/s977043/my-blog/issues/1067
+
+既存 Seed の PlanGate の設計思想と段階導入を根拠として、Claude Code を使う読者の最初の1タスクに焦点を絞る。既存 note ハブ企画に残る著者確認事項・体験は今回の主張に用いず、元の企画や metadata は変更しない。Qiita 公開済み plangate-ai-coding-workflow の PBI / スクラム運用解説、Zenn Book plangate-agent-governance の全体解説は転載しない。
+
+### Evidence Boundary
+
+- Observed: 個人 OSS PlanGate が公開され、現行 README / plugin guide は v8.24.0 を示している。既存 Seed の PlanGate の役割を、今回の読者課題へ絞り込む。著者の未記録の失敗・感情は補完しない。
+- Verified: 2026-11-25、https://github.com/s977043/PlanGate/blob/main/README.md と https://github.com/s977043/PlanGate/blob/main/plugin/plangate/README.md を確認。plugin は agent / skill / command / rule を配布する。Claude Code marketplace の追加・local scope のインストール・一覧確認が案内されている。導入状態と実際の計画生成・hook 強制は別の確認対象であり、一部コマンドには bin/plangate CLI が必要。
+- Verified: https://github.com/s977043/PlanGate/blob/main/docs/ai/contracts/plan.md は PBI INPUT PACKAGE から plan.md / todo.md / test-cases.md を生成する契約、Goal / Constraints / Files / Testing Strategy 等の成功条件、受入基準が未カバーの場合の停止、scope 外は別 PBI という規約を示す。
+- Verified: https://github.com/s977043/PlanGate/blob/main/docs/staged-adoption-guide.md は Phase 0〜3、導入 Level、Task Mode を別軸としている。Phase 0 ultra-light は計画・ゲート省略、Phase 1 light は簡易計画、Phase 2 standard は C-1/C-3 等の導入、Phase 3 は strict 化。警告と block の区別、hook の jq/sed 前提、plugin 単体では hook 未配布という制約を守る。導入レベルをモードと混同しない。
+- Verified: README の承認境界では C-3（Human）と rollout-policy で定義された eligible run に限る C-3' が別。C-4/merge は Human-owned。今回の例は human approval を扱う標準的な計画確認に限定し、C-3' の詳細は扱わない。v8.24.0 の review-questions.json / render feedback は opt-in のフィードバックであり承認ではない。必要なら補足に留める。
+- Hypothesis: 変更する/しない範囲と AC、検証、未決事項を計画として明示し、承認と実装を分ければ読者が何を判断するか理解しやすくなる。手戻り削減や品質向上は測定していない。例は公開前に隔離された検証 repo で実行し、期待値と観測結果を区別する。
+
+### Outline
+
+1. Claude Code に「小さな変更」を依頼するとき、何を変更しないかが未定のまま計画を承認していないか。
+2. 先に結論: 計画生成と着手判断は別。PlanGate は実装前に判断材料を揃える governance harness（適用モード・設定の範囲で）。
+3. 1タスクの例: 検証用の小規模 repo で表示文言だけを修正する。公開用の合成例として、変更範囲・非変更範囲（API / 挙動 / 依存など）・受入条件・検証方法を対照的に示す。実際の著者体験を装わない。
+4. Claude Code に導入する: 現行 plugin guide の marketplace / local scope / plugin list、必要な CLI を確認。設定変更・本番 repo への強制配線は行わず、検証用 repo を使用。
+5. PlanGate の成果物で何を判断するか: PBI INPUT PACKAGE → plan / todo / test-cases → review → 人間承認（対象モード）という流れを最小限で示す。実行可能なコマンド、plan の記録、受入条件の対応、承認前後の状態は実測後に記載する。
+6. hook 強制と安全境界: plugin の読み込みだけで強制されない、light / standard / strict 配線を混同しない。読者に必要な次の段階を公式ガイドに接続する。
+7. まとめ: 次の1タスクで「今回変えないこと」と確認方法を決める。GitHub / Quick Start と改善提案の導線。
+
+### Execution / Review
+
+- [x] 参加登録確認済み（#1067、2026-11-25 12:35 JST、記事URL未登録）。
+- [ ] 公開リポジトリの固定 release / commit、Claude Code 版、plugin guide / plan contract / approval contract を照合し、利用コマンドと前提を確定する。
+- [ ] 合成タスクで導入確認、計画生成・レビュー・承認境界（選んだ mode の仕様と実際の挙動）、実装後の受入テストを実行し記録。未実施や未確認を成功として書かない。plugin の表示と hook block の確認は別。
+- [ ] 12/1 までに Qiita/public/plangate-advent-start.md に初稿（ignorePublish: true）、既存手順で promoted_to / Article Graph を同期。
+- [ ] 編集・技術・実証範囲・読者UX・既存記事差別化・公開安全性のレビューを行い、独立レビューは取得した結果だけを記録。重大指摘を解消し CI を確認。
+- [ ] 12/8 までに著者判断、12/9 までに限定共有・予約確認（別承認）。12/10 公開確認。認知・試用の観測は #1067 に接続。
+
+### 2026-11-25 執筆・レビュー記録
+
+- 初稿: `Qiita/public/plangate-advent-start.md`（ignorePublish: true / private: true）。
+- 3ループ（レビュー→対応→再レビュー→再対応）を同一モデルの観点別レビューで実施。記録: `reviews/qiita/plangate-advent-start.md`。
+- 合成例で Node.js の受入テスト・非変更範囲を検証。Claude Code/PlanGate の plugin・plan・承認・hook の実行検証、独立レビュー・著者承認は未完了。
+- Seed の既存別媒体 Plan と status は維持。マージ・公開操作は行わない。
