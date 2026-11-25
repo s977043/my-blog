@@ -75,7 +75,39 @@ test('button label', () => {
 });
 ```
 
-`src/label.mjs` の `export const saveLabel = '保存する';` は最初の状態です。テストを新しい期待値に変更した後、定数を `変更を保存する` に変更します。
+`src/label.mjs` の `export const saveLabel = '保存する';` は最初の状態です。テストの初期状態も `保存する` とし、最初に動作を確認して Git にコミットします。その後テストを新しい期待値に変更し、失敗を確認してから定数を `変更を保存する` に変更します。
+
+保存処理の側は、次の小さなモジュールと既存テストで確認しました。これらは変更しません。
+
+```javascript
+// src/save.mjs
+export async function save(client, payload) {
+  return client.post('/api/save', payload);
+}
+```
+
+```javascript
+// test/save.test.mjs
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { save } from '../src/save.mjs';
+
+test('preserves API and successful result', async () => {
+  const payload = { id: 1 };
+  const client = { post: async (url, body) => {
+    assert.equal(url, '/api/save');
+    assert.deepEqual(body, payload);
+    return { ok: true };
+  }};
+  assert.deepEqual(await save(client, payload), { ok: true });
+});
+
+test('preserves rejected result', async () => {
+  const error = new Error('failed');
+  const client = { post: async () => { throw error; } };
+  await assert.rejects(save(client, {}), e => e === error);
+});
+```
 
 | 段階 | 観測結果 |
 | --- | --- |
@@ -86,7 +118,7 @@ test('button label', () => {
 
 テストの対象は表示に使う文字列定数と、モックした保存処理です。実際の UI 表示、通信、PlanGate のゲート強制を確認したものではありません。
 
-確認に使ったコマンドは次のとおりです。合成リポジトリの構成に合わせた例なので、読者のプロジェクトでは既存のテストコマンドとパスに置き換えます。
+確認に使ったコマンドは次のとおりです。上の4ファイルを新規の Git リポジトリに用意すれば、外部パッケージの追加は不要です。読者のプロジェクトでは既存のテストコマンドとパスに置き換えます。
 
 ```bash
 node --test test/*.test.mjs
