@@ -59,10 +59,11 @@ T0 にもテストと受入条件の確認はあります。T1 の違いは、�
 | タスク成功 | 9/9 | 9/9 |
 | 回帰検出 | 0/9 | 0/9 |
 | 人間の介入（平均回数） | 0 | 0 |
+| 重大な境界違反 | 0 | 0 |
 | 平均総トークン | 68,022 | 150,081 |
 | 平均所要時間（概算秒） | 44.54 | 55.78 |
 
-T1 の平均総トークンは T0 の約2.206倍です。総トークンにはキャッシュ済み入力を含み、T1 は Worker と Verifier の合計です。金額が2.21倍になったわけではありません。
+T1 の平均総トークンは T0 の約2.206倍です。総トークンは入力と出力の合計で、キャッシュ済み入力を含みます。T1 は Worker と Verifier の合計です。金額が2.21倍になったわけではありません。介入回数は、人の注意負荷や判断に費やした時間を表すものでもありません。
 
 所要時間は測定区間や精度が揃っていない部分があるため、厳密な速度比較として扱いません。
 
@@ -95,11 +96,17 @@ python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements-ci.txt
 
+python -B scripts/validate_experiment_freeze.py
+python -B scripts/validate_pilot.py \
+  --pilot experiments/EXP-001-t0-vs-t1/pilot/pilot.yaml \
+  --matrix experiments/EXP-001-t0-vs-t1/pilot/run-matrix.yaml \
+  --require-complete
+
 R=experiments/EXP-001-t0-vs-t1/runs/pilot-codex
 python -B scripts/summarize_experiment.py "$R"/EXP-001-*/evaluation.yaml
 ```
 
-上記は実験の再実行ではなく、保存された評価記録の集計です。判断記録には公式スクリプトを実行した記録があります。記事作成時にも18件の `evaluation.yaml` を取得して別途再集計し、掲載値との一致を確認しました。
+上記は実験の再実行ではなく、凍結条件と記録の完全性の検査、および保存された評価記録の集計です。判断記録には公式スクリプトを実行した記録があります。今回の記事制作環境では公式スクリプトそのものは再実行していません。記事作成時にも18件の `evaluation.yaml` を取得して別途再集計し、掲載値との一致を確認しました。
 
 ## 自分の環境で比較を始めるには
 
