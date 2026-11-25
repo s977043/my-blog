@@ -14,6 +14,7 @@ source_url: https://github.com/s977043/PlanGate
 source_ref: https://github.com/s977043/river-review / https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview
 evidence_status: verified
 promoted_to:
+  - Qiita/public/plangate-advent-start.md
 article_type_candidates:
   - insight
   - analysis
@@ -160,9 +161,9 @@ Zenn 記事の URL はクロスポスト時のリンク方針（AGENTS.md §記�
 - out_of_scope: Claude Code Plan Mode との機能優劣、全モード・全経路での物理的な編集禁止の保証、プラグイン導入だけで hook が有効になるという主張、未計測の品質・生産性向上、完全自律実装や自動承認の一般化、全機能・全ゲートの解説、会社の事例、未確認の著者体験。
 - claim_boundary: required
 - claim_boundary_reason: OSS の現行機能・導入方法・承認境界・hook の強制範囲・実行例を扱うため。
-- lifecycle: PLANNED（企画。実践例の検証・初稿・公開承認は未実施）
-- provisional_title: Claude Codeに実装を任せる前に「変更しないこと」を決める — 自作OSS PlanGateの始め方
-- publication_target: Claude Code Advent Calendar 2026、シリーズ4、2026-12-10（JST）。参加登録は未完了。 https://qiita.com/advent-calendar/2026/claudecode
+- lifecycle: DRAFTED（初稿・観点別レビュー3ループ実施。独立レビュー・実行検証・著者承認は残件）
+- provisional_title: Claude Codeに実装を任せる前に「変更しないこと」を決める ― 自作OSS PlanGateの始め方
+- publication_target: Claude Code Advent Calendar 2026、シリーズ4、2026-12-10（JST）。参加登録済み（2026-11-25、管理Issue #1067 の確認記録）。 https://qiita.com/advent-calendar/2026/claudecode
 - tracking: https://github.com/s977043/my-blog/issues/1067
 
 既存 Seed の PlanGate の設計思想と段階導入を根拠として、Claude Code を使う読者の最初の1タスクに焦点を絞る。既存 note ハブ企画に残る著者確認事項・体験は今回の主張に用いず、元の企画や metadata は変更しない。Qiita 公開済み plangate-ai-coding-workflow の PBI / スクラム運用解説、Zenn Book plangate-agent-governance の全体解説は転載しない。
@@ -188,9 +189,16 @@ Zenn 記事の URL はクロスポスト時のリンク方針（AGENTS.md §記�
 
 ### Execution / Review
 
-- [ ] #1067 の枠を著者の Qiita アカウントで確保する。
+- [x] 参加登録確認済み（#1067、2026-11-25 12:35 JST、記事URL未登録）。
 - [ ] 公開リポジトリの固定 release / commit、Claude Code 版、plugin guide / plan contract / approval contract を照合し、利用コマンドと前提を確定する。
 - [ ] 合成タスクで導入確認、計画生成・レビュー・承認境界（選んだ mode の仕様と実際の挙動）、実装後の受入テストを実行し記録。未実施や未確認を成功として書かない。plugin の表示と hook block の確認は別。
 - [ ] 12/1 までに Qiita/public/plangate-advent-start.md に初稿（ignorePublish: true）、既存手順で promoted_to / Article Graph を同期。
 - [ ] 編集・技術・実証範囲・読者UX・既存記事差別化・公開安全性のレビューを行い、独立レビューは取得した結果だけを記録。重大指摘を解消し CI を確認。
 - [ ] 12/8 までに著者判断、12/9 までに限定共有・予約確認（別承認）。12/10 公開確認。認知・試用の観測は #1067 に接続。
+
+### 2026-11-25 執筆・レビュー記録
+
+- 初稿: `Qiita/public/plangate-advent-start.md`（ignorePublish: true / private: true）。
+- 3ループ（レビュー→対応→再レビュー→再対応）を同一モデルの観点別レビューで実施。記録: `reviews/qiita/plangate-advent-start.md`。
+- 合成例で Node.js の受入テスト・非変更範囲を検証。Claude Code/PlanGate の plugin・plan・承認・hook の実行検証、独立レビュー・著者承認は未完了。
+- Seed の既存別媒体 Plan と status は維持。マージ・公開操作は行わない。
