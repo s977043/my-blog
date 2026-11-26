@@ -1,8 +1,8 @@
-# articles_note/new/review-count-not-safety.md の記事レビュー
+# articles_note/published/nf4a30bdbb91d.md の記事レビュー（レビュー時は articles_note/new/review-count-not-safety.md、2026-11-22 公開）
 
 > 記事タイプ: 混合（主: オピニオン / 考察、副: 体験）
 > 想定読者: AIにコードやレビューを任せ始めたエンジニア・EM（確認を増やして安心しようとしている人）
-> 状態: new（編集正本。本文反映可）
+> 状態: published（レビュー時は new）
 
 ## レビュー方針
 

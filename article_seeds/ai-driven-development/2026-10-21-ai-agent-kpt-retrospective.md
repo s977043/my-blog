@@ -14,6 +14,7 @@ source_url:
 source_ref:
 evidence_status: observed
 promoted_to:
+  - articles_note/published/nc8667790bca5.md
 article_type_candidates:
   - experience
   - insight

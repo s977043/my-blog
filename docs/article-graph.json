@@ -412,7 +412,9 @@
       "source_url": "",
       "source_ref": "",
       "evidence_status": "observed",
-      "promoted_to": [],
+      "promoted_to": [
+        "articles_note/published/nc8667790bca5.md"
+      ],
       "article_type_candidates": [
         "experience",
         "insight"
@@ -557,7 +559,9 @@
       "source_url": "",
       "source_ref": "",
       "evidence_status": "unverified",
-      "promoted_to": [],
+      "promoted_to": [
+        "articles_note/published/nf4a30bdbb91d.md"
+      ],
       "article_type_candidates": [
         "insight"
       ],
@@ -760,6 +764,11 @@
       "to": "articles_note/published/n514c78b42bf1.md"
     },
     {
+      "from": "seed-20261021-ai-agent-kpt-retrospective",
+      "relation": "promoted_to",
+      "to": "articles_note/published/nc8667790bca5.md"
+    },
+    {
       "from": "seed-20261102-sakura-agent-review-comparison",
       "relation": "promoted_to",
       "to": "articles/sakura-ai-engine-agent-review-comparison.md"
@@ -773,6 +782,11 @@
       "from": "seed-20261106-dat-observation-gaps",
       "relation": "promoted_to",
       "to": "articles/dat-observation-gaps.md"
+    },
+    {
+      "from": "seed-20261120-ai-review-cognitive-load",
+      "relation": "promoted_to",
+      "to": "articles_note/published/nf4a30bdbb91d.md"
     },
     {
       "from": "seed-20261126-proni-pr-review-order",

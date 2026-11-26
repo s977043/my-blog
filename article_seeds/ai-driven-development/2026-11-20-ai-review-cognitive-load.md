@@ -11,6 +11,7 @@ source_url:
 source_ref:
 evidence_status: unverified
 promoted_to:
+  - articles_note/published/nf4a30bdbb91d.md
 article_type_candidates:
   - insight
 ---
