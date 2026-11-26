@@ -12,6 +12,7 @@ source_url:
 source_ref:
 evidence_status: observed
 promoted_to:
+  - articles_note/new/PRONI-pr-review-order.md
 article_type_candidates:
   - experience
   - insight
@@ -45,7 +46,7 @@ article_type_candidates:
 - 土台の PR の説明に「子 PR を止めている」という記載はなかった。子 PR の説明にも依存の記載はなかった
 - PR テンプレートにも、依頼の必須項目にも、後続ブロック・依存の欄はなかった
 - 当時の「見てほしい順」は、マージする順番と期限で並べたもので、後続ブロックやリスクで並べたものではなかった
-- 振り返りで「後続を止めるかを書く」「後続ブロック → リスクの順で並べる」「依頼中の本数に上限を置く」などの決まりを案として足した。**まだ実施していない**
+- 振り返りで「後続を止めるかを書く」「後続ブロック → リスクの順で並べる」「依頼中の本数に上限を置く」「止める PR が決めた日数を超えたら、分割するかもう 1 人に頼む」「1 本ずつすぐ、が崩れた合図を決めておく」などの決まりを案として足した。**まだ実施していない**
 
 記事で書き分けること:
 
@@ -67,7 +68,7 @@ article_type_candidates:
   - §5.2: 変更行数の中央値は 24 行。レビュアー数の中央値は 1 人。レビュー全体の所要時間の中央値は 4 時間未満。最初のフィードバックまでの中央値は、小さい変更で 1 時間未満、非常に大きい変更で約 5 時間
   - §4.1〜4.2: 導入の最大の目的は理解しやすさと保守性。現在の期待は教育・規範の維持・門番・事故防止
   - §7.1: 変更が大きいほど待ちが延びるという先行研究を引くが、速さを小ささだけに帰していない
-- DORA "2025 State of AI-assisted Software Development"（https://services.google.com/fh/files/misc/2025_state_of_ai_assisted_software_development.pdf）: レビューがボトルネックのまま AI でコードを増やすと滞りが悪化する、という趣旨（初稿前に該当箇所を照合する）
+- DORA "2025 State of AI-assisted Software Development"（https://services.google.com/fh/files/misc/2025_state_of_ai_assisted_software_development.pdf）: 2026-11-26 に PDF を pdftotext で照合。Value stream management の節（p.75）「Focus on flow, not just speed」。リードタイム・プロセスタイム・"the ratio of value-add to wait time" を測るよう勧め、コードレビューがボトルネックの例として "rather than using AI to simply generate more code that will only exacerbate the bottleneck" と書く
 
 使わない:
 

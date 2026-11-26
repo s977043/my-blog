@@ -584,7 +584,9 @@
       "source_url": "",
       "source_ref": "",
       "evidence_status": "observed",
-      "promoted_to": [],
+      "promoted_to": [
+        "articles_note/new/PRONI-pr-review-order.md"
+      ],
       "article_type_candidates": [
         "experience",
         "insight"
@@ -785,6 +787,11 @@
       "from": "seed-20261120-ai-review-cognitive-load",
       "relation": "promoted_to",
       "to": "articles_note/published/nf4a30bdbb91d.md"
+    },
+    {
+      "from": "seed-20261126-proni-pr-review-order",
+      "relation": "promoted_to",
+      "to": "articles_note/new/PRONI-pr-review-order.md"
     }
   ],
   "warnings": [
