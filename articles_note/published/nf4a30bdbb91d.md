@@ -1,12 +1,16 @@
 # AIレビューを3回重ねても、見落としは残った。確認の質は何で決まるのか
 
-> 区分: 個人
+> 出典: https://note.com/mine_unilabo/n/nf4a30bdbb91d  
+> 公開状態: publish  
+> 更新: Sun, 22 Nov 2026 23:44:12 +0900
+
+![](../assets/nf4a30bdbb91d_5bc75bbb5e2a2982e3630967d8e78546.png)
 
 ## レビューを増やせば安心できると思っていました
 
 AIのレビューを3本重ねたのに、欠陥が2つ残りました。
 
-小峯将威（[@mine_take](https://x.com/mine_take)）です。個人でAIを使った開発プロセスの改善を試しながら、チームでの意思決定の進め方を考えています。
+小峯将威（[@mine\_take](https://x.com/mine_take)）です。個人でAIを使った開発プロセスの改善を試しながら、チームでの意思決定の進め方を考えています。
 
 ※本記事は個人の活動として執筆したものであり、所属組織の公式見解ではありません。
 
@@ -22,11 +26,11 @@ AIのレビューを重ねて安心している人に向けて、そう考える
 
 それでも、欠陥が2つ残りました。
 
-後から調べると、理由ははっきりしていました。3本とも、テスト用の入力を同じやり方（`git diff` の出力）で作っていたのです。git を通らない形の入力で起きる欠陥は、3本のどれでも試せていませんでした。
+後から調べると、理由ははっきりしていました。3本とも、テスト用の入力を同じやり方（git diff の出力）で作っていたのです。git を通らない形の入力で起きる欠陥は、3本のどれでも試せていませんでした。
 
 観点が違うつもりでも、入力の作り方が同じなら、観点は分かれていません。見える範囲は同じになります。3本のレビューは、3つの目ではなく、同じ目を3回使っていたことになります。
 
-![同じ入力で3本レビューすると見える範囲は1つのまま。入力の作り方を3種類に分けると見える範囲が分かれる](../assets/review-count-not-safety-input-split.png)
+![](../assets/nf4a30bdbb91d_1795584335-vNFGEkyoJ4eQXwfrhIuPBHLM.png)
 
 ツールを足しても同じでした。別の作業では、同じ形の不備が3か所ありました。静的解析ツール（CodeQL）が警告を出したのは、そのうち1か所だけでした。
 
@@ -84,5 +88,5 @@ AIのレビューを重ねて安心している人に向けて、そう考える
 
 ## 参考
 
-- Parasuraman, R., & Manzey, D. H. (2010). Complacency and bias in human use of automation: An attentional integration. *Human Factors*, 52(3), 381-410.（[PubMed](https://pubmed.ncbi.nlm.nih.gov/21077562/)）
-- Sweller, J. (1988). Cognitive load during problem solving: Effects on learning. *Cognitive Science*, 12(2), 257-285.
+- Parasuraman, R., & Manzey, D. H. (2010). Complacency and bias in human use of automation: An attentional integration. Human Factors, 52(3), 381-410.（[PubMed](https://pubmed.ncbi.nlm.nih.gov/21077562/)）
+- Sweller, J. (1988). Cognitive load during problem solving: Effects on learning. Cognitive Science, 12(2), 257-285.

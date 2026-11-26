@@ -42,7 +42,7 @@
 
 ## 比較する2つの全文
 
-- **Claude Code版（変更しない）**: [PRONI-ai-agent-kpt-retrospective.md](../../articles_note/new/PRONI-ai-agent-kpt-retrospective.md)
+- **Claude Code版（変更しない）**: [nc8667790bca5.md](../../articles_note/published/nc8667790bca5.md)（公開後の版。当時は `articles_note/new/PRONI-ai-agent-kpt-retrospective.md`）
   - 現行タイトル「AIが案を出し、人が決める。アジャイルの振り返りをAI駆動開発に取り入れる」
 - **ChatGPT版（今回追加）**: [2026-10-22-proni-agile-retrospective-chatgpt-draft.md](2026-10-22-proni-agile-retrospective-chatgpt-draft.md)
   - タイトル「AIエージェントとの開発にも、振り返りを。アジャイルで培った改善を続けていく」
