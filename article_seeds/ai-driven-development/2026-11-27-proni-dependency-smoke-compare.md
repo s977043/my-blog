@@ -12,6 +12,7 @@ source_url:
 source_ref:
 evidence_status: observed
 promoted_to:
+  - articles_note/new/PRONI-dependency-smoke-compare.md
 article_type_candidates:
   - experience
 ---
@@ -19,7 +20,7 @@ article_type_candidates:
 # 依存の大きな更新を、更新前との比較で確かめる。新しく出た問題だけを拾うスモーク E2E
 
 > **企画**: 2026年12月 PRONI公式テックブログ（note 会社公式）候補。2026-11-27 に著者が候補 A として選んだ
-> **状態**: 裏取り済み（下記）。Draft Article Plan まで。初稿は未作成
+> **状態**: 裏取り済み（下記）。初稿は `articles_note/new/PRONI-dependency-smoke-compare.md`
 > **位置づけ**: 12月分として保留中の `PRONI-pr-review-order` の代わり。セキュリティ強化 PJ の連載とは重ならない（脆弱性の詳細は書かない）
 > **公開境界**: 会社リポジトリの開発実践が題材。PRONI公式の社内レビュー・広報確認を経る。個人記事への転用不可。著者の個人リポジトリ（River Review・PlanGate など）は使わない
 
