@@ -51,7 +51,7 @@ tools: Read, Grep, Glob, Bash, Write, WebFetch
 
 構成は `articles_note/guides/note-structure-best-practices.md`、品質確認はチェックリストを正として、記事に実質的な改善余地がある項目だけ指摘する。
 
-優先する観点:
+優先する観点: `docs/content-channel-strategy.md` の「経験・独自性・結果・持ち帰りの4観点」を Pass 1 と既存の3ペルソナ・事実検証に適用し、根拠・不足・次の対応をチェック結果や指摘に記録する。記事タイプに不要な失敗や実績は要求しない。
 
 - 冒頭で「何の問題 / 誰向け / 何を持ち帰れるか」が分かるか
 - タイトルと本文の中心主張が一致しているか

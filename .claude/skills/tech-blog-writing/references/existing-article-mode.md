@@ -33,7 +33,7 @@
 5. **Subtraction Gate**: 一般論、重複、別テーマを削れるか
 6. **Channel Gate**: 媒体役割、形式、読者意図に適合するか
 
-各ゲートを `PASS` / `WARN` / `FAIL` で判定する。指摘ゼロを許容し、問題を捏造しない。
+各ゲートを `PASS` / `WARN` / `FAIL` で判定する。`docs/content-channel-strategy.md` の「経験・独自性・結果・持ち帰りの4観点」は新しいゲートにせず、Experience（経験・本人の判断）、Evidence / Scope（独自の知見・結果と限界）、Reader / Subtraction（読者への価値・紹介偏重）へ対応させる。Gate Results の根拠欄に確認した箇所・不足・次の対応を残す。指摘ゼロを許容し、問題を捏造しない。
 
 #### B-3. 既存レビューへ引き渡す
 

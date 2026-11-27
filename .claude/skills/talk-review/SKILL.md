@@ -26,7 +26,7 @@ allowed-tools:
 6. `speaker-notes.md`
 7. `references.md`（存在する場合）
 
-レビュー提案でTalk ContractやVisual Contractを勝手に変更しない。
+レビュー提案でTalk ContractやVisual Contractを勝手に変更しない。`docs/content-channel-strategy.md` の「経験・独自性・結果・持ち帰りの4観点」を Audience / Speaker / Editor / Technical の既存レビューへ適用し、根拠・不足・次の対応を `review.md` に記録する。結果がないのに実践成果を主張する資料や、紹介が持ち帰りを上回る資料は既存の優先度と判定で改善を提案する。
 
 ## 6 Personas
 

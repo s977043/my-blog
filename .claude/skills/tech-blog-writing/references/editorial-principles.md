@@ -2,6 +2,8 @@
 
 > Canonical detail for tech-blog-writing editorial judgment. Entrypoint: `.claude/skills/tech-blog-writing/SKILL.md`.
 
+全媒体共通の正本は `docs/content-channel-strategy.md#実体験を読者の判断に変える制作方針` の「経験・独自性・結果・持ち帰りの4観点」。既存の企画判定と6ゲートへ適用し、記事タイプに応じた根拠・不足・次の対応を出す。新しい採点や合否判定は作らない。
+
 ## 基本原則
 
 ### 1. AIは編集者であり、経験の生成者ではない
