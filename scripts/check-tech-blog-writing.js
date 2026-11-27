@@ -5,6 +5,12 @@ const path = require('path')
 
 const ROOT = path.resolve(__dirname, '..')
 const PATHS = {
+  policy: 'docs/content-channel-strategy.md',
+  agents: 'AGENTS.md',
+  zennReviewer: '.claude/agents/article-reviewer.md',
+  noteReviewer: '.claude/agents/note-article-reviewer.md',
+  talkPlanning: '.claude/skills/talk-planning/SKILL.md',
+  talkReview: '.claude/skills/talk-review/SKILL.md',
   skill: '.claude/skills/tech-blog-writing/SKILL.md',
   editorial: '.claude/skills/tech-blog-writing/references/editorial-principles.md',
   idea: '.claude/skills/tech-blog-writing/references/idea-mode.md',
@@ -16,6 +22,12 @@ const PATHS = {
   seedPlaceholderCheck: 'scripts/check-article-seed-placeholders.js',
   articlePlanCheck: 'scripts/check-article-plan.js',
 }
+
+const EDITORIAL_CRITERIA = '経験・独自性・結果・持ち帰りの4観点'
+const EDITORIAL_CONSUMERS = [
+  'agents', 'editorial', 'idea', 'existing',
+  'zennReviewer', 'noteReviewer', 'talkPlanning', 'talkReview',
+]
 
 const PLAN_TEMPLATE_TEXTS = [
   '実体験なら誰が何を観測したか',
@@ -46,6 +58,21 @@ function validate(files) {
   const seedReadme = files[PATHS.seedReadme]
   const seedPlaceholderCheck = files[PATHS.seedPlaceholderCheck]
   const articlePlanCheck = files[PATHS.articlePlanCheck]
+
+  requireTokens(errors, 'editorial policy', files[PATHS.policy], [
+    `#### ${EDITORIAL_CRITERIA}`,
+    '経験と著者の判断',
+    '独自の知見',
+    '結果と限界',
+    '読者の持ち帰り',
+    'Author Input Gate',
+  ])
+  for (const consumer of EDITORIAL_CONSUMERS) {
+    requireTokens(errors, `editorial consumer ${consumer}`, files[PATHS[consumer]], [
+      PATHS.policy,
+      EDITORIAL_CRITERIA,
+    ])
+  }
 
   requireTokens(errors, 'skill', skill, [
     'references/editorial-principles.md',
@@ -213,6 +240,11 @@ function selfTest() {
   base[PATHS.command] = `${PATHS.skill} ${PATHS.editorial} ${PATHS.idea} ${PATHS.existing} ${PATHS.output} 実在する許可パスなら既存記事モード 長文本文は生成しない 記事本文、Seed metadata、レビュー成果物、設定ファイルを変更していない`
   base[PATHS.articlePlanCheck] = `tech-blog-writing references/idea-mode.md A-5 ${PLAN_TEMPLATE_TEXTS.join(' ')}`
 
+  base[PATHS.policy] = `#### ${EDITORIAL_CRITERIA} 経験と著者の判断 独自の知見 結果と限界 読者の持ち帰り Author Input Gate`
+  for (const consumer of EDITORIAL_CONSUMERS) {
+    base[PATHS[consumer]] += ` ${PATHS.policy} ${EDITORIAL_CRITERIA}`
+  }
+
   const valid = validate(base)
   if (valid.length) throw new Error(`valid fixture failed: ${valid.join('; ')}`)
 
@@ -229,6 +261,14 @@ function selfTest() {
   const driftedTemplate = { ...base, [PATHS.idea]: base[PATHS.idea].replace(PLAN_TEMPLATE_TEXTS[0], 'changed') }
   if (!validate(driftedTemplate).some((e) => e.includes('template text'))) {
     throw new Error('Article Plan template drift was not rejected')
+  }
+
+  for (const consumer of EDITORIAL_CONSUMERS) {
+    const file = PATHS[consumer]
+    const missingEditorialLink = { ...base, [file]: base[file].replace(EDITORIAL_CRITERIA, '') }
+    if (!validate(missingEditorialLink).some((e) => e.includes(`editorial consumer ${consumer}`))) {
+      throw new Error(`missing editorial criteria reference was not rejected: ${consumer}`)
+    }
   }
 
   console.log('[test:tech-blog-writing-contract] PASS')
