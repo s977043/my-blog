@@ -6,10 +6,10 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 
 ## Summary
 
-- Seeds: 29
-- Explicit provenance contract: 21
+- Seeds: 30
+- Explicit provenance contract: 22
 - Legacy seeds: 8
-- Promotion edges: 13
+- Promotion edges: 14
 - Seeds with open author input gate: 6
 
 ## Seeds
@@ -40,6 +40,7 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 | `seed-20261106-dat-observation-gaps` | 2026-11-06 | seed | mixed | observed | 0 | experience, analysis | DATの運用記録を約2週間で109件貯めて分かった、記録の取り方の失敗 | `article_seeds/ai-driven-development/2026-11-06-dat-observation-gaps.md` | 1 |
 | `seed-20261120-ai-review-cognitive-load` | 2026-11-20 | seed | experience | unverified | 0 | insight | AIレビュー疲れの正体を認知負荷で説明する | `article_seeds/ai-driven-development/2026-11-20-ai-review-cognitive-load.md` | 1 |
 | `seed-20261126-proni-pr-review-order` | 2026-11-26 | seed | experience | observed | 0 | experience, insight | 小さいPRでもレビュー待ちは溜まる。後続をブロックするかでレビューの順番を決める | `article_seeds/ai-driven-development/2026-11-26-proni-pr-review-order.md` | 1 |
+| `seed-20261127-proni-dependency-smoke-compare` | 2026-11-27 | seed | experience | observed | 0 | experience | 依存の大きな更新を、更新前との比較で確かめる。新しく出た問題だけを拾うスモーク E2E | `article_seeds/ai-driven-development/2026-11-27-proni-dependency-smoke-compare.md` | 1 |
 | `seed-20261103-omikuji-lockfile-repair` | 2026-11-03 | seed | external | verified | 0 | analysis | pnpmの重複lock修復と検証範囲を分ける | `article_seeds/app-development/2026-11-03-omikuji-lockfile-repair.md` | 1 |
 | `seed-20260911-media-operating-system-boundaries` | 2026-09-11 | seed | experience | observed | 0 | experience, analysis | Webメディアを4つのリポジトリに分けた。分けたかったのはコードではなく「変更理由」だった | `article_seeds/media-operating-system/2026-09-11-four-repository-media-operating-system.md` | 1 |
 | `seed-20260923-agent-role-boundaries` | 2026-09-23 | seed | external | verified | 0 | analysis, insight | AIエージェントを増やす前に、役割と委譲境界を分ける | `article_seeds/media-operating-system/2026-09-23-agent-role-boundaries.md` | 0 |
@@ -61,6 +62,7 @@ This is a read-only projection of `article_seeds/`. The source of truth remains 
 - `seed-20261106-dat-observation-gaps` → articles/dat-observation-gaps.md
 - `seed-20261120-ai-review-cognitive-load` → articles_note/published/nf4a30bdbb91d.md
 - `seed-20261126-proni-pr-review-order` → articles_note/new/PRONI-pr-review-order.md
+- `seed-20261127-proni-dependency-smoke-compare` → articles_note/new/PRONI-dependency-smoke-compare.md
 
 ## Warnings
 

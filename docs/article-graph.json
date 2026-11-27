@@ -596,6 +596,31 @@
       "legacy": false
     },
     {
+      "id": "seed-20261127-proni-dependency-smoke-compare",
+      "path": "article_seeds/ai-driven-development/2026-11-27-proni-dependency-smoke-compare.md",
+      "title": "依存の大きな更新を、更新前との比較で確かめる。新しく出た問題だけを拾うスモーク E2E",
+      "date": "2026-11-27",
+      "status": "seed",
+      "topics": [
+        "ai-driven-development",
+        "testing",
+        "dependency-update"
+      ],
+      "source": "experience",
+      "source_url": "",
+      "source_ref": "",
+      "evidence_status": "observed",
+      "promoted_to": [
+        "articles_note/new/PRONI-dependency-smoke-compare.md"
+      ],
+      "article_type_candidates": [
+        "experience"
+      ],
+      "author_input_required_count": 0,
+      "author_input_gate_open": false,
+      "legacy": false
+    },
+    {
       "id": "seed-20261103-omikuji-lockfile-repair",
       "path": "article_seeds/app-development/2026-11-03-omikuji-lockfile-repair.md",
       "title": "pnpmの重複lock修復と検証範囲を分ける",
@@ -792,6 +817,11 @@
       "from": "seed-20261126-proni-pr-review-order",
       "relation": "promoted_to",
       "to": "articles_note/new/PRONI-pr-review-order.md"
+    },
+    {
+      "from": "seed-20261127-proni-dependency-smoke-compare",
+      "relation": "promoted_to",
+      "to": "articles_note/new/PRONI-dependency-smoke-compare.md"
     }
   ],
   "warnings": [
